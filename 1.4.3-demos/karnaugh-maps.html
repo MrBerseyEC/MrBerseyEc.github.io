@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Karnaugh maps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E8ECEF;--grid:rgba(22,32,43,.05);--panel:#F8FAFB;--ink:#16202B;--muted:#5B6874;--line:#C9D1D8;--one:#1F5BFF;--one-soft:#DDE6FF;--hl:#FFB000;--hl-soft:#FFF0C7;--off:#AEB8C1;--ok:#138A52;--bad:#C2362B;
+  --g0:#1F5BFF;--g1:#E8590C;--g2:#0F9D58;--g3:#C2185B;--g4:#7B3FE4;--g5:#00838F}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--grid:rgba(255,255,255,.035);--panel:#1A222C;--ink:#E7EDF2;--muted:#9AA7B3;--line:#2E3A46;--one:#5B8CFF;--one-soft:#1E2E57;--hl-soft:#3D3110;--off:#4A5764;--ok:#3CC47F;--bad:#FF6B5E;
+  --g0:#5B8CFF;--g1:#FF8A3D;--g2:#3CC47F;--g3:#F06292;--g4:#A983FF;--g5:#26C6DA}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:18px 0 8px}
+h2{font-size:1.15rem;font-weight:800;margin:0 0 8px}
+.lede{color:var(--muted);max-width:62ch;margin:0 0 18px}
+.series{display:flex;gap:6px;flex-wrap:wrap}
+.series a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.series a[aria-current]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.toolbar{display:flex;gap:12px 22px;flex-wrap:wrap;align-items:center;font-size:.92rem}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;border:0;background:var(--panel);color:var(--ink);padding:6px 12px;cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--ink)}
+.seg button[aria-checked=true]{background:var(--ink);color:var(--bg)}
+.check{display:inline-flex;gap:8px;align-items:center;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--one)}
+.expr,.tt,.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+.ob{display:inline-block;border-top:.08em solid currentColor;padding-top:.06em;line-height:1.1;margin:0 .03em}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+table.tt{border-collapse:collapse;font-size:.88rem}
+.tt th,.tt td{padding:3px 10px;text-align:center;border-bottom:1px solid var(--line)}
+.tt th{font-weight:600;color:var(--muted);border-bottom:2px solid var(--ink)}
+.tt td.idx{color:var(--muted)}
+.btn{font:600 .9rem Manrope,sans-serif;padding:7px 13px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;margin-top:22px;align-items:start}
+.panel{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.presets{display:flex;gap:6px;flex-wrap:wrap}
+.presets button{font:600 .85rem Manrope,sans-serif;padding:5px 11px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.presets button:hover{border-color:var(--ink)}
+
+.stage{display:flex;justify-content:center;padding:26px 0 10px}
+.kgrid{--cs:clamp(54px,16vw,86px);display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto}
+.corner{position:relative;width:64px;height:48px;font:600 .9rem 'JetBrains Mono',monospace;color:var(--muted)}
+.corner::after{content:'';position:absolute;inset:0;background:linear-gradient(to top right,transparent calc(50% - 1px),var(--line) 50%,transparent calc(50% + 1px))}
+.corner .c{position:absolute;right:6px;top:2px}.corner .r{position:absolute;left:4px;bottom:2px}
+.colhead,.rowhead{display:grid;font:600 .95rem 'JetBrains Mono',monospace;color:var(--muted)}
+.colhead{grid-auto-flow:column;grid-auto-columns:var(--cs);align-items:end;justify-items:center;padding-bottom:6px}
+.rowhead{grid-auto-rows:var(--cs);align-items:center;justify-items:end;padding-right:10px}
+.cellbox{position:relative;border:2px solid var(--ink)}
+.cells{display:grid}
+.cells button{width:var(--cs);height:var(--cs);position:relative;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel);color:var(--off);font:700 1.5rem 'JetBrains Mono',monospace;cursor:pointer;padding:0}
+.cells button[data-v="1"]{color:var(--ink)}
+.cells button[data-v="2"]{color:var(--hl)}
+.cells button:hover{background:var(--hl-soft)}
+.cells .m{position:absolute;left:5px;top:3px;font:400 .62rem 'JetBrains Mono',monospace;color:var(--muted)}
+.groups{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.grp{position:absolute;border:3px solid var(--gc);border-radius:16px;background:color-mix(in srgb,var(--gc) 10%,transparent);transition:opacity .15s,border-width .15s}
+.groups.focus .grp{opacity:.18}.groups.focus .grp.hot{opacity:1;border-width:4px}
+.hidden{display:none!important}
+
+.result{margin-top:12px;border-top:1.5px solid var(--line);padding-top:16px}
+.fexpr{font:600 clamp(1.2rem,3.4vw,1.7rem)/1.6 'JetBrains Mono',monospace;margin:0 0 12px;overflow-wrap:anywhere}
+.fexpr .t{border-bottom:3px solid var(--gc);padding:0 .1em;cursor:default}
+.glist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.glist li{display:grid;grid-template-columns:14px 1fr;gap:4px 12px;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;cursor:default;outline:none}
+.glist li:hover,.glist li:focus{border-color:var(--gc)}
+.sw{width:14px;height:14px;border-radius:4px;background:var(--gc);margin-top:5px}
+.glist .head{font-weight:700}
+.glist .head .expr{font-weight:600}
+.glist .why{grid-column:2;font-size:.88rem;color:var(--muted)}
+.placeholder{color:var(--muted);font-style:italic}
+.side{display:grid;gap:20px}
+.side ul{margin:0;padding-left:1.1em;color:var(--muted);font-size:.92rem}
+.side ul li{margin:3px 0}
+.side b{color:var(--ink)}
+.tt button{font:700 .88rem 'JetBrains Mono',monospace;border:0;background:none;color:var(--off);cursor:pointer;padding:0 6px}
+.tt button[data-v="1"]{color:var(--one)}.tt button[data-v="2"]{color:var(--hl)}
+.load input{font:1rem 'JetBrains Mono',monospace;padding:8px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink);flex:1;min-width:0}
+.err{color:var(--bad);font-size:.88rem;min-height:1.3em;margin:6px 0 0}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Karnaugh maps</h1>
+  <p class="lede">Click a cell to cycle it through 0, 1 and X (don't care). The map finds the largest groups of 1s and turns each group into one term of the simplest expression.</p>
+  <div class="toolbar">
+    <span>Notation</span>
+    <div class="seg" role="radiogroup" aria-label="Notation" id="nota">
+      <button role="radio" data-n="ocr">¬ ∧ ∨</button>
+      <button role="radio" data-n="words">NOT AND OR</button>
+      <button role="radio" data-n="alg">Algebra</button>
+    </div>
+    <label class="check"><input type="checkbox" id="sol" checked> Show groups and answer</label>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <span>Inputs</span>
+          <div class="seg" role="radiogroup" aria-label="Number of inputs" id="nvars">
+            <button role="radio" data-k="2">2</button><button role="radio" data-k="3">3</button><button role="radio" data-k="4">4</button>
+          </div>
+        </div>
+        <div class="row"><button class="btn" id="rand">Random map</button><button class="btn" id="clear">Clear</button></div>
+      </div>
+      <div class="presets" style="margin-top:12px" id="presets"></div>
+      <div class="stage"><div class="kgrid" id="kmap"></div></div>
+      <div class="result">
+        <p class="fexpr" id="fexpr" aria-live="polite"></p>
+        <ul class="glist" id="glist"></ul>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h2>Grouping rules</h2>
+        <ul>
+          <li>Groups contain only 1s (and Xs if they help).</li>
+          <li>Group sizes are <b>1, 2, 4, 8 or 16</b>, in rectangles.</li>
+          <li>Make each group <b>as large as possible</b>.</li>
+          <li>Use <b>as few groups as possible</b>.</li>
+          <li>Groups may overlap and may <b>wrap around</b> the edges.</li>
+          <li>A variable that changes inside a group drops out of its term.</li>
+        </ul>
+      </div>
+      <div class="panel load">
+        <h2>Load an expression</h2>
+        <div class="row"><input id="ein" value="A'B + AB'C + AC" aria-label="Expression" autocomplete="off" spellcheck="false"><button class="btn" id="eload">Load</button></div>
+        <p class="err" id="eerr"></p>
+      </div>
+      <div class="panel">
+        <h2>Truth table</h2>
+        <div id="tt"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+/* ---------- shared logic helpers (same in all three demos) ---------- */
+const SYM={ocr:{and:' ∧ ',or:' ∨ ',xor:' ⊻ ',not:'¬'},alg:{and:'·',or:' + ',xor:' ⊕ ',not:''},words:{and:' AND ',or:' OR ',xor:' XOR ',not:'NOT '}};
+let NOTA='ocr';
+function parse(src){
+  const s=src.toUpperCase().replace(/\bAND\b/g,'&').replace(/\bXOR\b/g,'^').replace(/\bOR\b/g,'|').replace(/\bNOT\b/g,'!');
+  const t=[];
+  for(const ch of s){
+    if(/\s/.test(ch))continue;
+    if('&·.∧*'.includes(ch))t.push('&');else if('|+∨'.includes(ch))t.push('|');
+    else if('^⊕⊻'.includes(ch))t.push('^');else if('!¬~'.includes(ch))t.push('!');
+    else if("'’".includes(ch))t.push("'");else if('()01ABCD'.includes(ch))t.push(ch);
+    else throw new Error(`Unexpected character “${ch}”. Use A–D, 0, 1, brackets and operators.`);
+  }
+  if(!t.length)throw new Error('Type an expression first.');
+  let i=0;const pk=()=>t[i];
+  const orE=()=>{let n=xorE();while(pk()==='|'){i++;n={t:'or',a:n,b:xorE()}}return n};
+  const xorE=()=>{let n=andE();while(pk()==='^'){i++;n={t:'xor',a:n,b:andE()}}return n};
+  const andE=()=>{let n=un();while(pk()==='&'||(pk()&&'!(01ABCD'.includes(pk()))){if(pk()==='&')i++;n={t:'and',a:n,b:un()}}return n};
+  const un=()=>{if(pk()==='!'){i++;return{t:'not',a:un()}}let n=atom();while(pk()==="'"){i++;n={t:'not',a:n}}return n};
+  const atom=()=>{const c=t[i++];
+    if(c===undefined)throw new Error('The expression ends too early.');
+    if(c==='('){const n=orE();if(t[i]!==')')throw new Error('A closing bracket is missing.');i++;return{t:'grp',a:n}}
+    if(c==='0'||c==='1')return{t:'const',v:+c};
+    if('ABCD'.includes(c))return{t:'var',n:c};
+    throw new Error(`“${c}” is in the wrong place.`)};
+  const tree=orE();if(i<t.length)throw new Error(`“${t[i]}” is in the wrong place.`);return tree;
+}
+function ev(n,e){switch(n.t){case'var':return e[n.n];case'const':return n.v;case'grp':return ev(n.a,e);case'not':return 1-ev(n.a,e);case'and':return ev(n.a,e)&ev(n.b,e);case'or':return ev(n.a,e)|ev(n.b,e);case'xor':return ev(n.a,e)^ev(n.b,e)}}
+function varsOf(n,s=new Set()){if(n.t==='var')s.add(n.n);if(n.a)varsOf(n.a,s);if(n.b)varsOf(n.b,s);return[...s].sort()}
+const PREC={or:1,xor:2,and:3,not:4,var:5,const:5,grp:5};
+function show(n,nota=NOTA,parent=0){
+  const S=SYM[nota];let out;
+  switch(n.t){
+    case'var':return n.n;case'const':return String(n.v);
+    case'grp':return'('+show(n.a,nota,0)+')';
+    case'not':if(nota==='alg')return`<span class="ob">${show(n.a.t==='grp'?n.a.a:n.a,nota,0)}</span>`;out=S.not+show(n.a,nota,4);break;
+    default:out=show(n.a,nota,PREC[n.t])+S[n.t]+show(n.b,nota,PREC[n.t]);
+  }
+  return PREC[n.t]<parent?'('+out+')':out;
+}
+function envFor(row,vars){const e={};vars.forEach((v,k)=>e[v]=(row>>(vars.length-1-k))&1);return e}
+function bindNotation(rerender){
+  const seg=document.getElementById('nota');
+  const sync=()=>seg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-checked',b.dataset.n===NOTA));
+  seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;NOTA=b.dataset.n;sync();rerender()});
+  sync();
+}
+const $=id=>document.getElementById(id);
+
+/* ---------- map state ---------- */
+const VARS='ABCD';
+const GRAY={1:[0,1],2:[0,1,3,2]};
+let N=3,cells=[],showSol=true,groups=[];
+const vars=()=>VARS.slice(0,N).split('');
+function geom(){const rb=N===4?2:1,cb=N-rb;return{rb,cb,rows:GRAY[rb],cols:GRAY[cb]}}
+const bin=(x,w)=>x.toString(2).padStart(w,'0');
+const pop=x=>{let c=0;while(x){c+=x&1;x>>=1}return c};
+const covers=(p,x)=>(x&~p.m)===p.v;
+function reset(n){N=n;cells=new Array(1<<N).fill(0)}
+
+/* ---------- solver: Quine–McCluskey prime implicants + smallest cover ---------- */
+function primeImplicants(list){
+  let level=list.map(v=>({v,m:0}));const primes=new Map();
+  while(level.length){
+    const next=new Map(),used=new Set();
+    for(let i=0;i<level.length;i++)for(let j=i+1;j<level.length;j++){
+      const a=level[i],b=level[j];if(a.m!==b.m)continue;
+      const d=a.v^b.v;if(pop(d)!==1)continue;
+      const k={v:a.v&~d,m:a.m|d};next.set(k.v+':'+k.m,k);used.add(i);used.add(j);
+    }
+    level.forEach((g,i)=>{if(!used.has(i))primes.set(g.v+':'+g.m,g)});
+    level=[...next.values()];
+  }
+  return[...primes.values()];
+}
+function combos(arr,k,fn,start=0,acc=[]){if(acc.length===k)return fn(acc);for(let i=start;i<arr.length;i++){acc.push(arr[i]);combos(arr,k,fn,i+1,acc);acc.pop()}}
+function solve(){
+  const ones=[],dcs=[];cells.forEach((c,i)=>c===1?ones.push(i):c===2&&dcs.push(i));
+  if(!ones.length)return[];
+  const P=primeImplicants([...ones,...dcs]),lits=p=>N-pop(p.m),chosen=[];
+  for(const m of ones){const c=P.filter(p=>covers(p,m));if(c.length===1&&!chosen.includes(c[0]))chosen.push(c[0])}
+  const left=ones.filter(m=>!chosen.some(p=>covers(p,m)));
+  if(left.length){
+    const cand=P.filter(p=>!chosen.includes(p)&&left.some(m=>covers(p,m)));let best=null;
+    for(let k=1;k<=cand.length&&!best;k++)combos(cand,k,set=>{
+      if(left.every(m=>set.some(p=>covers(p,m)))){const cost=set.reduce((s,p)=>s+lits(p),0);if(!best||cost<best.cost)best={set:[...set],cost}}});
+    chosen.push(...best.set);
+  }
+  return chosen.sort((a,b)=>pop(b.m)-pop(a.m)||a.v-b.v);
+}
+function termSrc(p){
+  const out=[];vars().forEach((v,i)=>{const bit=1<<(N-1-i);if(!(p.m&bit))out.push((p.v&bit?'':'!')+v)});
+  return out.length?out.join('&'):'1';
+}
+
+/* ---------- rendering ---------- */
+function runs(set,size){
+  if(set.length===size)return[{s:0,e:size-1,os:0,oe:0}];
+  const has=i=>set.includes((i+size)%size);let s=0;while(!(has(s)&&!has(s-1)))s++;
+  const e=s+set.length-1;
+  return e<size?[{s,e,os:0,oe:0}]:[{s,e:size-1,os:0,oe:1},{s:0,e:e-size,os:1,oe:0}];
+}
+function renderMap(){
+  const g=geom(),V=vars(),rv=V.slice(0,g.rb).join(''),cv=V.slice(g.rb).join('');
+  const idx=(r,c)=>(g.rows[r]<<g.cb)|g.cols[c];
+  $('kmap').innerHTML=`<div class="corner" aria-hidden="true"><span class="c">${cv}</span><span class="r">${rv}</span></div>
+    <div class="colhead">${g.cols.map(c=>`<span>${bin(c,g.cb)}</span>`).join('')}</div>
+    <div class="rowhead">${g.rows.map(r=>`<span>${bin(r,g.rb)}</span>`).join('')}</div>
+    <div class="cellbox"><div class="cells" style="grid-template-columns:repeat(${g.cols.length},var(--cs))">
+      ${g.rows.map((_,r)=>g.cols.map((_,c)=>{const i=idx(r,c),v=cells[i];
+        return`<button data-i="${i}" data-v="${v}" aria-label="${V.map((x,k)=>x+'='+((i>>(N-1-k))&1)).join(' ')}, value ${v===2?'X':v}"><span class="m">${i}</span>${v===2?'X':v}</button>`}).join('')).join('')}
+    </div><div class="groups ${showSol?'':'hidden'}" id="gl"></div></div>`;
+  const R=g.rows.length,C=g.cols.length;
+  $('gl').innerHTML=groups.map((p,k)=>{
+    const rs=[],cs=[];
+    for(let r=0;r<R;r++)for(let c=0;c<C;c++)if(covers(p,idx(r,c))){if(!rs.includes(r))rs.push(r);if(!cs.includes(c))cs.push(c)}
+    const ins=5+6*(k%4);
+    return runs(rs,R).flatMap(rr=>runs(cs,C).map(cc=>{
+      const x0=(cc.s-cc.os*.5)/C*100,x1=(cc.e+1+cc.oe*.5)/C*100,y0=(rr.s-rr.os*.5)/R*100,y1=(rr.e+1+rr.oe*.5)/R*100;
+      return`<div class="grp" data-g="${k}" style="--gc:var(--g${k%6});left:calc(${x0}% + ${ins}px);top:calc(${y0}% + ${ins}px);width:calc(${x1-x0}% - ${2*ins}px);height:calc(${y1-y0}% - ${2*ins}px)"></div>`})).join('');
+  }).join('');
+}
+function renderResult(){
+  const f=$('fexpr'),l=$('glist');
+  if(!showSol){f.innerHTML='F = <span class="placeholder">?</span>';l.innerHTML='<li style="display:block" class="placeholder">Group the 1s on paper first, then tick “Show groups and answer”.</li>';return}
+  if(!groups.length){f.innerHTML='F = 0';l.innerHTML='<li style="display:block" class="placeholder">There are no 1s, so the output is always 0.</li>';return}
+  const terms=groups.map(p=>parse(termSrc(p)));
+  f.innerHTML='F = '+terms.map((t,k)=>`<span class="t" data-g="${k}" style="--gc:var(--g${k%6})">${show(t)}</span>`).join(SYM[NOTA].or);
+  const V=vars();
+  l.innerHTML=groups.map((p,k)=>{
+    const members=[...Array(1<<N).keys()].filter(i=>covers(p,i));
+    const kept=V.filter((_,i)=>!(p.m&(1<<(N-1-i)))),dropped=V.filter((_,i)=>p.m&(1<<(N-1-i)));
+    const keptTxt=kept.map(v=>`${v} is always ${(p.v>>(N-1-V.indexOf(v)))&1}`).join(', ');
+    const why=!kept.length?'Every cell is in this group, so the output is always 1.':
+      `${keptTxt}${dropped.length?`. ${dropped.join(' and ')} change${dropped.length===1?'s':''} inside the group, so ${dropped.length===1?'it drops':'they drop'} out.`:'. This cell could not join a bigger group.'}`;
+    return`<li tabindex="0" data-g="${k}" style="--gc:var(--g${k%6})"><span class="sw"></span>
+      <span class="head">Group of ${members.length}: <span class="expr">${show(terms[k])}</span></span>
+      <span class="why">Cells ${members.join(', ')}. ${why}</span></li>`}).join('');
+}
+function renderTT(){
+  const V=vars();
+  $('tt').innerHTML=`<table class="tt"><thead><tr><th></th>${V.map(v=>`<th>${v}</th>`).join('')}<th>F</th></tr></thead><tbody>
+    ${cells.map((v,i)=>`<tr><td class="idx">${i}</td>${V.map((_,k)=>`<td>${(i>>(N-1-k))&1}</td>`).join('')}<td><button data-i="${i}" data-v="${v}" aria-label="Row ${i} output ${v===2?'X':v}">${v===2?'X':v}</button></td></tr>`).join('')}</tbody></table>`;
+}
+function render(){
+  groups=solve();
+  document.querySelectorAll('#nvars button').forEach(b=>b.setAttribute('aria-checked',+b.dataset.k===N));
+  renderMap();renderResult();renderTT();
+}
+
+/* ---------- interaction ---------- */
+function bump(i){cells[i]=(cells[i]+1)%3;render()}
+$('kmap').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b){const i=+b.dataset.i;bump(i);document.querySelector(`#kmap [data-i="${i}"]`).focus()}});
+$('tt').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b){const i=+b.dataset.i;bump(i);document.querySelector(`#tt [data-i="${i}"]`).focus()}});
+$('nvars').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b){reset(+b.dataset.k);render()}});
+$('clear').onclick=()=>{reset(N);render()};
+$('rand').onclick=()=>{cells=cells.map(()=>{const r=Math.random();return r<.42?1:r<.5&&N>2?2:0});render()};
+$('sol').addEventListener('change',e=>{showSol=e.target.checked;render()});
+function highlight(k){const gl=$('gl');if(!gl)return;gl.classList.toggle('focus',k!==null);gl.querySelectorAll('.grp').forEach(d=>d.classList.toggle('hot',d.dataset.g===k))}
+['glist','fexpr'].forEach(id=>{
+  $(id).addEventListener('mouseover',e=>{const t=e.target.closest('[data-g]');highlight(t?t.dataset.g:null)});
+  $(id).addEventListener('mouseleave',()=>highlight(null));
+  $(id).addEventListener('focusin',e=>{const t=e.target.closest('[data-g]');if(t)highlight(t.dataset.g)});
+  $(id).addEventListener('focusout',()=>highlight(null));
+});
+
+const PRESETS=[
+  {name:'Pair and pair',n:3,ones:[0,2,5,7]},
+  {name:'Wrap-around',n:4,ones:[4,6,12,14]},
+  {name:'Four corners',n:4,ones:[0,2,8,10]},
+  {name:'Group of 8',n:4,ones:[0,2,4,6,8,10,12,14]},
+  {name:"Using don't cares",n:4,ones:[1,3,7,11,15],dc:[0,2,5]},
+  {name:'Overlapping groups',n:4,ones:[0,1,2,3,5,7,13,15]},
+  {name:'No grouping possible',n:3,ones:[1,2,4,7]}
+];
+$('presets').innerHTML=PRESETS.map((p,k)=>`<button data-p="${k}">${p.name}</button>`).join('');
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b)return;const p=PRESETS[+b.dataset.p];
+  reset(p.n);p.ones.forEach(i=>cells[i]=1);(p.dc||[]).forEach(i=>cells[i]=2);render()});
+
+function loadExpr(){
+  try{
+    const t=parse($('ein').value),used=varsOf(t);
+    const n=Math.max(2,...used.map(v=>VARS.indexOf(v)+1));
+    reset(n);const V=vars();cells=cells.map((_,i)=>ev(t,envFor(i,V)));$('eerr').textContent='';render();
+  }catch(err){$('eerr').textContent=err.message}
+}
+$('eload').onclick=loadExpr;$('ein').addEventListener('keydown',e=>{if(e.key==='Enter')loadExpr()});
+
+bindNotation(render);
+reset(3);PRESETS[0].ones.forEach(i=>cells[i]=1);render();
+</script>
+</body>
+</html>
