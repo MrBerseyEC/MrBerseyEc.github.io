@@ -19,7 +19,33 @@ kbd{font:.78rem var(--mono);border:1px solid var(--line);border-radius:4px;paddi
 .trace canvas{display:block;width:100%;height:260px}
 .legend{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:0 16px;font-size:.8rem;color:var(--muted)}
 @media (max-width:640px){.top{grid-template-columns:1fr}}
+/* "How it's built" tab */
+.steps{margin:0 0 4px}
+.step{margin-top:16px}
+.step .hint{margin-top:8px}
+.circuit{overflow-x:auto;margin-top:14px}
+.circuit svg{display:block;width:100%;min-width:560px;height:auto}
+.w{fill:none;stroke-width:3;stroke:var(--off);stroke-linejoin:round}
+.w.on{stroke:var(--one)}
+.w.fb{stroke-dasharray:7 5}
+.dot{fill:var(--off)}.dot.on{fill:var(--one)}
+.gate{fill:var(--panel);stroke:var(--ink);stroke-width:2}
+.gl{font-size:11px;fill:var(--muted)}
+.pin{font-size:14px;font-weight:600;fill:var(--ink)}
+.latch{fill:var(--panel);stroke:var(--ink);stroke-width:2}
+.latch.open{fill:var(--ok-soft);stroke:var(--ok)}
+.st{font-size:12px;font-weight:600;fill:var(--muted)}
+.latch.open~.st{fill:var(--ok)}
+button.bit:disabled{opacity:.45;cursor:default}
+.why p{max-width:76ch;margin:12px 0 0}
+.why .note{max-width:76ch}
 </style>
+<div class="tabs" role="tablist" id="tt">
+  <button role="tab" aria-selected="true" data-p="p-does">What it does</button>
+  <button role="tab" aria-selected="false" data-p="p-built">How it's built (stretch)</button>
+</div>
+
+<div id="p-does">
 <p class="lede">Q copies D only at the instant CLK goes from 0 to 1. Change D between edges and watch Q ignore it.</p>
 
 <div class="top">
@@ -66,6 +92,58 @@ kbd{font:.78rem var(--mono);border:1px solid var(--line);border-radius:4px;paddi
 </div>
 
 <p class="note">Truth table at a rising edge: Q<sub>next</sub> = D. At any other time (CLK high, low, or falling), Q holds its value.</p>
+</div>
+
+<div id="p-built" class="hidden">
+<p class="lede">A flip-flop is not a new kind of component. It is ordinary logic gates, wired so that outputs loop back into inputs. Build it up in three steps; each one fixes a problem with the step before.</p>
+<div class="seg steps" id="steps" aria-label="Build step">
+  <button data-s="1" aria-pressed="true">1 · SR latch</button>
+  <button data-s="2" aria-pressed="false">2 · D latch</button>
+  <button data-s="3" aria-pressed="false">3 · Flip-flop</button>
+</div>
+
+<div class="panel step" id="s1">
+  <h2>Step 1: a loop that remembers</h2>
+  <div class="row"><button class="bit" data-in="S"></button><button class="bit" data-in="R"></button></div>
+  <div class="circuit"><svg id="c1" viewBox="0 0 560 200" aria-label="SR latch: two cross-coupled NOR gates"></svg></div>
+  <p class="status" id="m1" aria-live="polite"></p>
+  <div class="why">
+    <p>Every circuit you have met so far is <b>combinational</b>: the outputs depend only on the inputs right now. Here each NOR gate's output is also an input to the other gate, and that changes everything. Set S to 1, then back to 0. Q stays at 1, because the loop holds itself in place. That is one bit of memory, made from two gates.</p>
+    <p>S <b>sets</b> Q to 1 and R <b>resets</b> it to 0. (A NOR gate is an OR followed by a NOT: it outputs 1 only when both inputs are 0.)</p>
+    <p class="note"><b>The problem.</b> Storing a bit takes two separate inputs, and one combination is broken. Try S = 1 and R = 1 together: both outputs go to 0, so Q̅ is no longer the opposite of Q.</p>
+  </div>
+</div>
+
+<div class="panel step hidden" id="s2">
+  <h2>Step 2: one data input and an enable</h2>
+  <div class="row"><button class="bit" data-in="D2" data-l="D"></button><button class="bit" data-in="EN"></button><button class="btn" data-fb="fb2" aria-pressed="false">Wire Q̅ back to D</button></div>
+  <div class="circuit"><svg id="c2" viewBox="0 0 680 262" aria-label="Gated D latch: a NOT gate and two AND gates feeding an SR latch"></svg></div>
+  <p class="status" id="m2" aria-live="polite"></p>
+  <div class="why">
+    <p>The same latch, with three gates in front of it. S is driven by D and R by NOT D, so they can never both be 1: the broken combination is now impossible. The AND gates only let S and R through while EN is 1.</p>
+    <p>So with EN = 1 the latch is <b>transparent</b> and Q follows D. With EN = 0 it is shut and Q holds, whatever D does.</p>
+    <p class="note"><b>The problem.</b> Q follows D for the <i>whole time</i> EN is high, not just for an instant. That is fatal as soon as an output feeds back to its own input, which is exactly what a counter does (new value = old value + 1). Press <b>Wire Q̅ back to D</b>, then set EN to 1: each change to Q changes D, which changes Q again, and it never settles.</p>
+  </div>
+</div>
+
+<div class="panel step hidden" id="s3">
+  <h2>Step 3: two latches on opposite halves of the clock</h2>
+  <div class="row"><button class="bit" data-in="D3" data-l="D"></button><button class="bit" data-in="CK" data-l="CLK"></button><button class="btn" data-fb="fb3" aria-pressed="false">Wire Q̅ back to D</button></div>
+  <div class="circuit"><svg id="c3" viewBox="0 0 690 262" aria-label="Master-slave D flip-flop: two D latches, the first enabled by the inverted clock"></svg></div>
+  <p class="status" id="m3" aria-live="polite"></p>
+  <p class="hint">Each box is the whole circuit from step 2. Green means that latch is open.</p>
+  <div class="why">
+    <p>Put two D latches in a row and give the first one the <i>inverted</i> clock. It works like an airlock: one door is always shut, so nothing can pass straight through.</p>
+    <p><b>CLK = 0.</b> The first latch (the master) is open and tracks D. The second (the slave) is shut, so Q does not move.<br>
+    <b>CLK rises.</b> The master shuts, freezing whatever D was at that instant. The slave opens and passes that value to Q.<br>
+    <b>CLK = 1.</b> D can change as much as it likes. The changes stop at the master's shut door.<br>
+    <b>CLK falls.</b> The slave shuts, still holding Q, and the master opens again.</p>
+    <p>The only moment Q can change is the rising edge, and the value it takes is the one D had at that edge. That is the behaviour on the first tab, and this is where it comes from.</p>
+    <p>Now press <b>Wire Q̅ back to D</b> and toggle CLK a few times. The loop that ran away in step 2 is tamed: Q flips exactly once per rising edge, so it changes at half the clock's frequency. Chain several of these together and you have a binary counter.</p>
+    <p class="note"><b>Going further.</b> The master needs D to be steady for a short time before it shuts (the <i>setup time</i>) and just after (the <i>hold time</i>). Each gate also takes a few nanoseconds to respond, and those delays are what limit how fast a processor's clock can run. Real chips usually build the two latches from fewer transistors than this, but the master and slave idea is the same.</p>
+  </div>
+</div>
+</div>
 <script>
 const N = 400, RATE = 40; // samples kept, samples per second
 let D = 0, CLK = 0, Q = 0, edges = 0, auto = false, paused = false;
@@ -84,7 +162,7 @@ $('#speed').oninput = e => { period = +e.target.value; $('#spv').textContent = p
 $('#pause').onclick = () => { paused = !paused; $('#pause').textContent = paused ? 'Resume' : 'Pause'; $('#pause').classList.toggle('on', paused); };
 $('#clear').onclick = () => { hist = []; edges = 0; };
 addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
+  if (e.target.tagName === 'INPUT' || $('#p-does').classList.contains('hidden')) return;
   if (e.key === 'd' || e.key === 'D') setD(D ^ 1);
   else if (e.key === 'c' || e.key === 'C') $('#pulse').click();
   else if (e.key === ' ') { e.preventDefault(); $('#pause').click(); }
@@ -148,4 +226,94 @@ function draw(){
 
 setInterval(tick, 1000 / RATE);
 ui(); requestAnimationFrame(draw);
+
+/* ---------- "How it's built" tab ---------- */
+tabs($('#tt'));
+const AND = (x, y) => `<path class="gate" d="M${x} ${y}h40a20 20 0 0 1 0 40h-40Z"/><text class="gl" x="${x+28}" y="${y+24}" text-anchor="middle">AND</text>`;
+const NOR = (x, y) => `<path class="gate" d="M${x} ${y}Q${x+18} ${y+20} ${x} ${y+40}Q${x+42} ${y+40} ${x+60} ${y+20}Q${x+42} ${y} ${x} ${y}Z"/><circle class="gate" cx="${x+65}" cy="${y+20}" r="5"/><text class="gl" x="${x+33}" y="${y+24}" text-anchor="middle">NOR</text>`;
+const NOT = (x, y) => `<path class="gate" d="M${x} ${y}l30 15l-30 15Z"/><circle class="gate" cx="${x+34}" cy="${y+15}" r="4"/>`;
+const W = (n, d, c = '') => `<path class="w ${c}" data-n="${n}" d="${d}"/>`;
+const DOT = (n, x, y, c = '') => `<circle class="dot ${c}" data-n="${n}" cx="${x}" cy="${y}" r="5"/>`;
+const T = (x, y, s, c = 'pin', a = 'start') => `<text class="${c}" x="${x}" y="${y}" text-anchor="${a}">${s}</text>`;
+const OUT = (n, x, y, l) => `<text class="pin" x="${x}" y="${y}">${l} = <tspan data-v="${n}"></tspan></text>`;
+const BOX = (id, x, name) => `<rect class="latch" id="${id}" x="${x}" y="35" width="130" height="120" rx="4"/><text class="st" data-st="${id}" x="${x+65}" y="145" text-anchor="middle"></text>`
+  + T(x + 65, 98, name, 'pin', 'middle') + T(x + 65, 114, 'D latch', 'gl', 'middle') + T(x + 8, 75, 'D') + T(x + 8, 130, 'EN') + T(x + 122, 75, 'Q', 'pin', 'end');
+
+$('#c1').innerHTML = [
+  W('R', 'M50 40H240'), W('S', 'M50 160H240'),
+  W('q1', 'M300 50H500'), W('q1', 'M350 50V84L200 110V140H240'),
+  W('n1', 'M300 150H500'), W('n1', 'M350 150V116L200 90V60H240'),
+  DOT('q1', 350, 50), DOT('n1', 350, 150), NOR(230, 30), NOR(230, 130),
+  T(50, 30, 'R'), T(50, 150, 'S'), OUT('q1', 508, 55, 'Q'), OUT('n1', 508, 155, 'Q̅'),
+].join('');
+
+$('#c2').innerHTML = [
+  W('n2', 'M580 170V248H24V190H50', 'fb'), DOT('n2', 580, 170, 'fb'),
+  W('D2', 'M50 190H240'), W('D2', 'M100 190V40H140'), W('nd', 'M178 40H240'),
+  W('EN', 'M50 115H210'), W('EN', 'M210 115V60H240'), W('EN', 'M210 115V170H240'),
+  W('r', 'M300 50H420'), W('s', 'M300 180H420'),
+  W('q2', 'M480 60H610'), W('q2', 'M530 60V94L380 120V160H420'),
+  W('n2', 'M480 170H610'), W('n2', 'M530 170V136L380 110V70H420'),
+  DOT('D2', 100, 190), DOT('EN', 210, 115), DOT('q2', 530, 60), DOT('n2', 530, 170),
+  NOT(140, 25), AND(240, 30), AND(240, 160), NOR(410, 40), NOR(410, 150),
+  T(50, 180, 'D'), T(50, 105, 'EN'), T(355, 42, 'R', 'gl', 'middle'), T(355, 172, 'S', 'gl', 'middle'), T(157, 18, 'NOT', 'gl', 'middle'),
+  OUT('q2', 618, 65, 'Q'), OUT('n2', 618, 175, 'Q̅'),
+].join('');
+
+$('#c3').innerHTML = [
+  W('n3', 'M590 125V248H24V70H50', 'fb'), DOT('n3', 590, 125, 'fb'),
+  W('D3', 'M50 70H180'), W('m', 'M310 70H420'), W('q3', 'M550 70H620'), W('n3', 'M550 125H620'),
+  W('CK', 'M50 210H370V125H420'), W('CK', 'M110 210V125H130'), W('nck', 'M168 125H180'), DOT('CK', 110, 210),
+  NOT(130, 110), BOX('bm', 180, 'MASTER'), BOX('bs', 420, 'SLAVE'), T(542, 130, 'Q̅', 'pin', 'end'),
+  T(50, 60, 'D'), T(50, 200, 'CLK'), T(149, 103, 'NOT', 'gl', 'middle'), `<text class="gl" x="365" y="60" text-anchor="middle">M = <tspan data-v="m"></tspan></text>`,
+  OUT('q3', 626, 75, 'Q'), OUT('n3', 626, 130, 'Q̅'),
+].join('');
+
+const I = { S: 0, R: 0, q1: 0, n1: 1, D2: 0, EN: 0, q2: 0, n2: 1, fb2: false, D3: 0, CK: 0, m: 0, q3: 0, fb3: false };
+const nor = (a, b) => (a | b) ^ 1;
+let step = 1;
+
+function settle(){
+  // each latch is two NOR gates looped together; work them out in turn until they agree
+  for (let k = 0; k < 3; k++) { I.q1 = nor(I.R, I.n1); I.n1 = nor(I.S, I.q1); }
+  if (I.fb2) I.D2 = I.n2;
+  I.nd = I.D2 ^ 1; I.s = I.D2 & I.EN; I.r = I.nd & I.EN;
+  for (let k = 0; k < 3; k++) { I.q2 = nor(I.r, I.n2); I.n2 = nor(I.s, I.q2); }
+  if (I.fb3) I.D3 = I.q3 ^ 1;
+  I.nck = I.CK ^ 1;
+  if (I.nck) I.m = I.D3;   // master is open while CLK is 0
+  if (I.CK) I.q3 = I.m;    // slave is open while CLK is 1
+  I.n3 = I.q3 ^ 1;
+  if (I.fb3) I.D3 = I.n3;
+}
+
+function paint(){
+  $$('#p-built [data-n]').forEach(e => e.classList.toggle('on', !!I[e.dataset.n]));
+  $$('#p-built [data-v]').forEach(e => e.textContent = I[e.dataset.v]);
+  $$('#p-built [data-in]').forEach(b => { const k = b.dataset.in; b.textContent = (b.dataset.l || k) + ' = ' + I[k]; b.setAttribute('aria-pressed', !!I[k]); });
+  $$('#p-built [data-fb]').forEach(b => { const on = I[b.dataset.fb]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  $$('#p-built .fb').forEach(e => e.classList.toggle('hidden', !I[e.closest('svg').id === 'c2' ? 'fb2' : 'fb3']));
+  $('[data-in=D2]').disabled = I.fb2; $('[data-in=D3]').disabled = I.fb3;
+  [['bm', I.nck], ['bs', I.CK]].forEach(([id, open]) => { $('#' + id).classList.toggle('open', !!open); $(`[data-st=${id}]`).textContent = open ? 'open' : 'shut, holding'; });
+
+  $('#m1').innerHTML = I.S && I.R ? '<span class="badc"><b>S and R are both 1.</b></span> Both outputs are forced to 0, so Q̅ is not the opposite of Q. A latch must never be given this input.'
+    : I.S ? 'S = 1 sets Q to 1.' : I.R ? 'R = 1 resets Q to 0.'
+    : `Both inputs are 0, yet Q is ${I.q1}. The loop is remembering the last thing it was told.`;
+  $('#m2').innerHTML = I.fb2 && I.EN ? '<span class="badc"><b>Unstable.</b></span> The latch is open and Q̅ drives D, so Q keeps chasing its own opposite.'
+    : I.EN ? `EN = 1: the latch is transparent, so Q follows D (${I.D2}).`
+    : `EN = 0: both AND gates output 0, so the loop holds Q = ${I.q2} whatever D does.`;
+  $('#m3').innerHTML = I.CK ? `CLK = 1: the master shut at the rising edge with ${I.m} inside, and the slave is passing it to Q. Changing D does nothing now.`
+    : `CLK = 0: the master is open and tracking D (${I.D3}). The slave is shut, holding Q = ${I.q3}.`;
+}
+
+$('#p-built').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.in) I[b.dataset.in] ^= 1;
+  else if (b.dataset.fb) I[b.dataset.fb] = !I[b.dataset.fb];
+  else if (b.dataset.s) { step = +b.dataset.s; $$('#steps button').forEach(x => x.setAttribute('aria-pressed', x === b)); [1, 2, 3].forEach(n => $('#s' + n).classList.toggle('hidden', n !== step)); }
+  settle(); paint();
+});
+// an open latch with Q̅ wired to D never settles: keep re-evaluating so it visibly oscillates
+setInterval(() => { if (step === 2 && I.fb2 && I.EN) { settle(); paint(); } }, 350);
+settle(); paint();
 </script>
