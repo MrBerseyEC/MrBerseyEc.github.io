@@ -4,42 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Logic gates</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
 <style>
-:root{--bg:#E8ECEF;--grid:rgba(22,32,43,.05);--panel:#F8FAFB;--ink:#16202B;--muted:#5B6874;--line:#C9D1D8;--one:#1F5BFF;--one-soft:#DDE6FF;--hl:#FFB000;--hl-soft:#FFF0C7;--off:#AEB8C1;--ok:#138A52;--bad:#C2362B}
-@media (prefers-color-scheme:dark){:root{--bg:#121820;--grid:rgba(255,255,255,.035);--panel:#1A222C;--ink:#E7EDF2;--muted:#9AA7B3;--line:#2E3A46;--one:#5B8CFF;--one-soft:#1E2E57;--hl-soft:#3D3110;--off:#4A5764;--ok:#3CC47F;--bad:#FF6B5E}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
-h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:18px 0 8px}
-.lede{color:var(--muted);max-width:62ch;margin:0 0 18px}
-.series{display:flex;gap:6px;flex-wrap:wrap}
-.series a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
-.series a[aria-current]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
-.toolbar{display:flex;gap:12px 22px;flex-wrap:wrap;align-items:center;font-size:.92rem}
-.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden}
-.seg button{font:inherit;border:0;background:var(--panel);color:var(--ink);padding:6px 12px;cursor:pointer}
-.seg button+button{border-left:1.5px solid var(--ink)}
-.seg button[aria-checked=true]{background:var(--ink);color:var(--bg)}
-.check{display:inline-flex;gap:8px;align-items:center;cursor:pointer}
-.check input{width:18px;height:18px;accent-color:var(--one)}
-.expr,.tt,.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
-.ob{display:inline-block;border-top:.08em solid currentColor;padding-top:.06em;line-height:1.1;margin:0 .03em}
-button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
-table.tt{border-collapse:collapse;font-size:.95rem}
-.tt th,.tt td{padding:5px 14px;text-align:center;border-bottom:1px solid var(--line)}
-.tt th{font-weight:600;color:var(--muted);border-bottom:2px solid var(--ink)}
-.tt tr.cur td{background:var(--hl-soft)}
-.tt td.one{color:var(--one);font-weight:700}
 .tt td.hid{color:var(--muted);cursor:pointer;text-decoration:underline dotted}
-button.bit{font:600 1rem 'JetBrains Mono',monospace;min-width:72px;padding:8px 10px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
-button.bit[aria-pressed=true]{background:var(--one);border-color:var(--one);color:#fff}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-
 .gates{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:20px;margin-top:26px}
 .gate{background:var(--panel);border:1.5px solid var(--line);border-top:5px solid var(--ink);border-radius:6px 6px 14px 14px;padding:18px 22px 22px;display:grid;grid-template-columns:1fr auto;gap:6px 26px;align-items:start}
-.gate h2{margin:0;font:700 1.9rem/1 'JetBrains Mono',monospace;letter-spacing:-.02em}
+.gate h2{margin:0;font:700 1.9rem/1 var(--mono);letter-spacing:-.02em}
 .gate .expr{font-size:1.15rem;margin:6px 0 2px}
 .gate .desc{color:var(--muted);margin:0 0 4px}
 .gate svg{width:100%;max-width:380px;display:block;margin:4px 0 6px}
@@ -49,10 +22,10 @@ button.bit[aria-pressed=true]{background:var(--one);border-color:var(--one);colo
 .w.on{stroke:var(--one)}
 .w.unknown{stroke-dasharray:3 9}
 .term{fill:var(--off);transition:fill .15s}.term.on{fill:var(--one)}
-svg text{font:700 15px 'JetBrains Mono',monospace;fill:var(--ink)}
+svg text{font:700 15px var(--mono);fill:var(--ink)}
 .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .gives{color:var(--muted);font-size:.9rem;margin:0 2px}
-.lamp{width:58px;height:58px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font:700 1.25rem 'JetBrains Mono',monospace;background:var(--panel);color:var(--ink);transition:background .15s,box-shadow .15s;cursor:default}
+.lamp{width:58px;height:58px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font:700 1.25rem var(--mono);background:var(--panel);color:var(--ink);transition:background .15s,box-shadow .15s;cursor:default}
 .lamp.on{background:var(--one);border-color:var(--one);color:#fff;box-shadow:0 0 0 6px var(--one-soft),0 0 26px var(--one)}
 .lamp.ask{border-style:dashed;cursor:pointer}
 .ttcol{padding-top:4px}
@@ -62,6 +35,8 @@ svg text{font:700 15px 'JetBrains Mono',monospace;fill:var(--ink)}
 </head>
 <body>
 <div class="wrap">
+  <nav class="series" aria-label="1.4.3 demos"><a href="logic-gates.html" aria-current="page">Logic gates</a><a href="boolean-simplification.html">Boolean simplification</a><a href="karnaugh-maps.html">Karnaugh maps</a><a href="d-type-flip-flop.html">D-type flip-flops</a><a href="half-full-adders.html">Half and full adders</a><a href="ripple-carry-adder.html">Ripple-carry adder</a></nav>
+  <p class="spec">OCR A LEVEL · 1.4.3</p>
   <h1>Logic gates</h1>
   <p class="lede">Click an input to switch it between 0 and 1. A wire turns blue when it carries a 1, and the matching row of the truth table lights up.</p>
   <div class="toolbar">
@@ -75,55 +50,9 @@ svg text{font:700 15px 'JetBrains Mono',monospace;fill:var(--ink)}
   </div>
   <main class="gates" id="gates"></main>
 </div>
+<script src="../../assets/site.js"></script>
+<script src="../../assets/logic.js"></script>
 <script>
-/* ---------- shared logic helpers (same in all three demos) ---------- */
-const SYM={ocr:{and:' ∧ ',or:' ∨ ',xor:' ⊻ ',not:'¬'},alg:{and:'·',or:' + ',xor:' ⊕ ',not:''},words:{and:' AND ',or:' OR ',xor:' XOR ',not:'NOT '}};
-let NOTA='ocr';
-function parse(src){
-  const s=src.toUpperCase().replace(/\bAND\b/g,'&').replace(/\bXOR\b/g,'^').replace(/\bOR\b/g,'|').replace(/\bNOT\b/g,'!');
-  const t=[];
-  for(const ch of s){
-    if(/\s/.test(ch))continue;
-    if('&·.∧*'.includes(ch))t.push('&');else if('|+∨'.includes(ch))t.push('|');
-    else if('^⊕⊻'.includes(ch))t.push('^');else if('!¬~'.includes(ch))t.push('!');
-    else if("'’".includes(ch))t.push("'");else if('()01ABCD'.includes(ch))t.push(ch);
-    else throw new Error(`Unexpected character “${ch}”. Use A–D, 0, 1, brackets and operators.`);
-  }
-  if(!t.length)throw new Error('Type an expression first.');
-  let i=0;const pk=()=>t[i];
-  const orE=()=>{let n=xorE();while(pk()==='|'){i++;n={t:'or',a:n,b:xorE()}}return n};
-  const xorE=()=>{let n=andE();while(pk()==='^'){i++;n={t:'xor',a:n,b:andE()}}return n};
-  const andE=()=>{let n=un();while(pk()==='&'||(pk()&&'!(01ABCD'.includes(pk()))){if(pk()==='&')i++;n={t:'and',a:n,b:un()}}return n};
-  const un=()=>{if(pk()==='!'){i++;return{t:'not',a:un()}}let n=atom();while(pk()==="'"){i++;n={t:'not',a:n}}return n};
-  const atom=()=>{const c=t[i++];
-    if(c===undefined)throw new Error('The expression ends too early.');
-    if(c==='('){const n=orE();if(t[i]!==')')throw new Error('A closing bracket is missing.');i++;return{t:'grp',a:n}}
-    if(c==='0'||c==='1')return{t:'const',v:+c};
-    if('ABCD'.includes(c))return{t:'var',n:c};
-    throw new Error(`“${c}” is in the wrong place.`)};
-  const tree=orE();if(i<t.length)throw new Error(`“${t[i]}” is in the wrong place.`);return tree;
-}
-function ev(n,e){switch(n.t){case'var':return e[n.n];case'const':return n.v;case'grp':return ev(n.a,e);case'not':return 1-ev(n.a,e);case'and':return ev(n.a,e)&ev(n.b,e);case'or':return ev(n.a,e)|ev(n.b,e);case'xor':return ev(n.a,e)^ev(n.b,e)}}
-function varsOf(n,s=new Set()){if(n.t==='var')s.add(n.n);if(n.a)varsOf(n.a,s);if(n.b)varsOf(n.b,s);return[...s].sort()}
-const PREC={or:1,xor:2,and:3,not:4,var:5,const:5,grp:5};
-function show(n,nota=NOTA,parent=0){
-  const S=SYM[nota];let out;
-  switch(n.t){
-    case'var':return n.n;case'const':return String(n.v);
-    case'grp':return'('+show(n.a,nota,0)+')';
-    case'not':if(nota==='alg')return`<span class="ob">${show(n.a.t==='grp'?n.a.a:n.a,nota,0)}</span>`;out=S.not+show(n.a,nota,4);break;
-    default:out=show(n.a,nota,PREC[n.t])+S[n.t]+show(n.b,nota,PREC[n.t]);
-  }
-  return PREC[n.t]<parent?'('+out+')':out;
-}
-function envFor(row,vars){const e={};vars.forEach((v,k)=>e[v]=(row>>(vars.length-1-k))&1);return e}
-function bindNotation(rerender){
-  const seg=document.getElementById('nota');
-  const sync=()=>seg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-checked',b.dataset.n===NOTA));
-  seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;NOTA=b.dataset.n;sync();rerender()});
-  sync();
-}
-
 /* ---------- gates ---------- */
 const GATES=[
   {id:'and',name:'AND',vars:['A','B'],src:'A&B',desc:'Output is 1 only when both inputs are 1.'},

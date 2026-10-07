@@ -1,127 +1,104 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Ripple-Carry Adder</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;700;900&family=Chivo+Mono:wght@400;600&display=swap">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ripple-carry adder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
 <style>
-/* Layout: one column, schematic strip of full adders running MSB→LSB, carries flowing right to left */
-:root{
-  --bg:#f3f5f7; --panel:#ffffff; --ink:#18212b; --muted:#5d6b78; --line:#cfd7df;
-  --hi:#e08a00; --hi-soft:#fff1d6; --lo:#8796a3; --lo-soft:#eaeef2; --accent:#1f5f8b; --warn:#b3261e;
-  --display:"Chivo",system-ui,sans-serif; --mono:"Chivo Mono",ui-monospace,Menlo,monospace;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#11161b; --panel:#192029; --ink:#e6ebef; --muted:#93a1ad; --line:#2c3743;
-  --hi:#ffb02e; --hi-soft:#3a2a0c; --lo:#6c7b88; --lo-soft:#222b35; --accent:#6fb3e0; --warn:#f2867d; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#11161b; --panel:#192029; --ink:#e6ebef; --muted:#93a1ad; --line:#2c3743;
-  --hi:#ffb02e; --hi-soft:#3a2a0c; --lo:#6c7b88; --lo-soft:#222b35; --accent:#6fb3e0; --warn:#f2867d; color-scheme:dark}
-body{background:var(--bg);color:var(--ink);font-family:var(--display);font-size:15px;line-height:1.5}
-.wrap{max-width:1040px;margin:0 auto;padding-inline:16px;padding-block:28px 48px;display:grid;gap:22px}
-h1{font-weight:900;font-size:clamp(1.6rem,4vw,2.3rem);margin:0;letter-spacing:-.01em;text-wrap:balance}
-.lede{margin:.3rem 0 0;color:var(--muted);max-width:65ch}
-.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.seg button,.btn{font:600 13px var(--mono);background:var(--panel);color:var(--ink);border:0;padding:8px 12px;cursor:pointer}
-.seg button+button{border-left:1px solid var(--line)}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.btn{border:1px solid var(--line);border-radius:8px}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.label{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-
-.board{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 14px}
-.scroll{overflow-x:auto;padding-bottom:4px}
+.toolbar{margin-bottom:4px}
+.label{font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .chain{display:flex;align-items:stretch;width:max-content;margin:0 auto}
 .rowlabels{display:grid;grid-template-rows:20px 40px 40px 82px 40px;gap:8px;padding-right:8px;align-items:center}
-.rowlabels span{font:600 11px var(--mono);color:var(--muted);text-align:right}
+.rowlabels span{font:600 .72rem var(--mono);color:var(--muted);text-align:right}
 .col{display:grid;grid-template-rows:20px 40px 40px 82px 40px;gap:8px;justify-items:center;width:62px}
-.col .w{font:400 11px var(--mono);color:var(--muted);align-self:end}
-.bit{width:40px;height:40px;border-radius:8px;border:1px solid var(--line);font:600 18px var(--mono);cursor:pointer;
-  background:var(--lo-soft);color:var(--lo);transition:background .15s,color .15s}
-.bit.on{background:var(--hi-soft);color:var(--hi);border-color:var(--hi)}
-.out{width:40px;height:40px;border-radius:8px;display:grid;place-items:center;font:600 18px var(--mono);border:1px dashed var(--line);color:var(--lo)}
-.out.on{background:var(--hi);color:var(--panel);border:1px solid var(--hi)}
+.col .w{font:400 .72rem var(--mono);color:var(--muted);align-self:end}
+.abit{width:40px;height:40px;border-radius:8px;border:2px solid var(--line);font:600 1.1rem var(--mono);cursor:pointer;background:var(--bg);color:var(--muted);transition:background .15s,color .15s}
+.abit.on{background:var(--one-soft);color:var(--one);border-color:var(--one)}
+.out{width:40px;height:40px;border-radius:8px;display:grid;place-items:center;font:600 1.1rem var(--mono);border:1.5px dashed var(--line);color:var(--muted)}
+.out.on{background:var(--one);color:#fff;border:1.5px solid var(--one)}
 .out.pending{color:var(--line)}
-.fa{width:56px;height:82px;border:2px solid var(--ink);border-radius:6px;display:grid;place-items:center;align-content:center;gap:2px;
-  background:var(--panel);cursor:pointer;color:var(--ink);font-family:var(--mono);transition:box-shadow .2s}
-.fa b{font-size:15px} .fa small{font-size:10px;color:var(--muted)}
-.fa.sel{box-shadow:0 0 0 3px var(--accent)}
-.fa.active{box-shadow:0 0 0 3px var(--hi)}
+.fa{width:56px;height:82px;border:2px solid var(--ink);border-radius:6px;display:grid;place-items:center;align-content:center;gap:2px;background:var(--panel);cursor:pointer;color:var(--ink);font-family:var(--mono);transition:box-shadow .2s}
+.fa b{font-size:.95rem}.fa small{font-size:.62rem;color:var(--muted)}
+.fa.sel{box-shadow:0 0 0 3px var(--one)}
+.fa.active{box-shadow:0 0 0 3px var(--hl)}
 .fa.pending{border-style:dashed;color:var(--muted)}
 .carry{display:grid;grid-template-rows:20px 40px 40px 82px 40px;gap:8px;width:34px}
-.carry .c{grid-row:4;align-self:center;display:grid;justify-items:center;gap:2px;font:600 11px var(--mono);color:var(--muted)}
-.carry .wire{width:34px;height:4px;border-radius:2px;background:var(--lo-soft);position:relative}
-.carry .wire::before{content:"";position:absolute;left:-2px;top:-4px;border:6px solid transparent;border-right-color:inherit;border-right-color:var(--lo-soft);border-left:0}
-.carry.on .wire{background:var(--hi)} .carry.on .wire::before{border-right-color:var(--hi)}
-.carry.on .c{color:var(--hi)}
+.carry .c{grid-row:4;align-self:center;display:grid;justify-items:center;gap:2px;font:600 .72rem var(--mono);color:var(--muted)}
+.carry .wire{width:34px;height:4px;border-radius:2px;background:var(--off);position:relative}
+.carry .wire::before{content:"";position:absolute;left:-2px;top:-4px;border:6px solid transparent;border-right-color:var(--off);border-left:0}
+.carry.on .wire{background:var(--one)}.carry.on .wire::before{border-right-color:var(--one)}
+.carry.on .c{color:var(--one)}
 .carry.pending .wire{background:repeating-linear-gradient(90deg,var(--line) 0 4px,transparent 4px 8px)}
 .carry.pending .wire::before{border-right-color:var(--line)}
 .carry.ends .c span:first-child{color:var(--ink)}
-
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
-.sums{display:grid;grid-template-columns:auto 1fr auto;gap:6px 14px;font-family:var(--mono);font-variant-numeric:tabular-nums;align-items:baseline}
+.cols2{margin:20px 0}
+.cols2>.block{margin:0;min-width:0}
+.sums{display:grid;grid-template-columns:auto 1fr auto;gap:6px 14px;font-family:var(--mono);font-variant-numeric:tabular-nums;align-items:baseline;margin-top:8px}
 .sums .bin{letter-spacing:.12em;overflow-wrap:anywhere}
-.sums .rule{grid-column:1/-1;border-top:1px solid var(--ink);margin:2px 0}
+.sums .rule{grid-column:1/-1;border-top:1.5px solid var(--ink);margin:2px 0}
 .sums .dec{text-align:right;font-weight:600}
-.note{margin:.7rem 0 0;color:var(--muted);font-size:14px}
-.note.warn{color:var(--warn)}
-.eq{font-family:var(--mono);font-size:14px;display:grid;gap:6px;margin-top:8px;overflow-x:auto}
+.hint{margin:.7rem 0 0;color:var(--muted);font-size:.9rem}
+.hint.warn{color:var(--bad)}
+.eq{font:.9rem var(--mono);display:grid;gap:6px;margin-top:8px;overflow-x:auto}
 .eq div{white-space:nowrap}
-.v1{color:var(--hi);font-weight:600} .v0{color:var(--lo);font-weight:600}
-h2{font-size:1.05rem;margin:0 0 4px}
-.status{font:600 13px var(--mono);color:var(--muted);min-height:1.5em}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.v1{color:var(--one);font-weight:600}.v0{color:var(--muted);font-weight:600}
+.status{font:600 .85rem var(--mono);color:var(--muted)}
 </style>
-
+</head>
+<body>
 <div class="wrap">
-  <header>
-    <h1>Chaining full adders</h1>
-    <p class="lede">Bit 0 has no carry coming in, so a half adder is enough there. Every other column uses a full adder, which adds its A bit, its B bit and the carry from the column to its right. Each carry-out feeds the next adder to the left. Click any input bit to flip it, then press <em>Ripple</em> to watch the carry travel.</p>
-  </header>
+<nav class="series" aria-label="1.4.3 demos"><a href="logic-gates.html">Logic gates</a><a href="boolean-simplification.html">Boolean simplification</a><a href="karnaugh-maps.html">Karnaugh maps</a><a href="d-type-flip-flop.html">D-type flip-flops</a><a href="half-full-adders.html">Half and full adders</a><a href="ripple-carry-adder.html" aria-current="page">Ripple-carry adder</a></nav>
+<p class="spec">OCR A LEVEL · 1.4.3</p>
+<h1>Chaining full adders</h1>
+<p class="lede">Bit 0 has no carry coming in, so a half adder is enough there. Every other column uses a full adder, which adds its A bit, its B bit and the carry from the column to its right. Each carry-out feeds the next adder to the left. Click any input bit to flip it, then press <em>Ripple</em> to watch the carry travel.</p>
 
-  <div class="controls">
-    <span class="label">Width</span>
-    <div class="seg" id="width">
-      <button data-n="2">2</button><button data-n="4">4</button><button data-n="8">8</button>
-    </div>
-    <span class="label">Bit 0</span>
-    <div class="seg" id="lsb">
-      <button data-h="1">Half adder</button><button data-h="0">Full adder + Cin</button>
-    </div>
-    <button class="btn primary" id="ripple">▶ Ripple</button>
+<div class="toolbar">
+  <span>Width</span>
+  <div class="seg" id="width">
+    <button data-n="2">2</button><button data-n="4">4</button><button data-n="8">8</button>
+  </div>
+  <span>Bit 0</span>
+  <div class="seg" id="lsb">
+    <button data-h="1">Half adder</button><button data-h="0">Full adder + Cin</button>
+  </div>
+  <div class="row">
+    <button class="btn pri" id="ripple">▶ Ripple</button>
     <button class="btn" id="step">Step</button>
     <button class="btn" id="worst">Worst case</button>
     <button class="btn" id="rand">Random</button>
     <button class="btn" id="clear">Clear</button>
     <span class="status" id="status"></span>
   </div>
+</div>
 
-  <section class="board">
-    <div class="scroll"><div class="chain" id="chain"></div></div>
+<section class="block">
+  <div class="scroll"><div class="chain" id="chain"></div></div>
+</section>
+
+<div class="cols2">
+  <section class="block">
+    <h2>Result</h2>
+    <div class="sums" id="sums"></div>
+    <p class="hint" id="overflow"></p>
   </section>
-
-  <div class="grid2">
-    <section class="card">
-      <h2>Result</h2>
-      <div class="sums" id="sums"></div>
-      <p class="note" id="overflow"></p>
-    </section>
-    <section class="card">
-      <h2 id="faTitle">Full adder</h2>
-      <div class="eq" id="eq"></div>
-      <p class="note">Click any adder in the chain to inspect it.</p>
-    </section>
-  </div>
-
-  <section class="card">
-    <h2>Why it's called "ripple carry"</h2>
-    <p class="note" style="margin-top:0">Column <i>i</i> can't finish until it knows its carry-in, which comes from column <i>i</i>−1. So the carry ripples one adder at a time from right to left. Each full adder adds about two gate delays to the carry path, so an <i>n</i>-bit ripple adder needs roughly 2<i>n</i> gate delays in the worst case. Try <em>Worst case</em>: 0111…1 + 0000…1 forces the carry through every stage. Faster designs such as carry-lookahead adders compute the carries in parallel.</p>
+  <section class="block">
+    <h2 id="faTitle">Full adder</h2>
+    <div class="eq" id="eq"></div>
+    <p class="hint">Click any adder in the chain to inspect it.</p>
   </section>
 </div>
 
+<section class="block">
+  <h2>Why it's called "ripple carry"</h2>
+  <p class="sub" style="margin:0">Column <i>i</i> can't finish until it knows its carry-in, which comes from column <i>i</i>−1. So the carry ripples one adder at a time from right to left. Each full adder adds about two gate delays to the carry path, so an <i>n</i>-bit ripple adder needs roughly 2<i>n</i> gate delays in the worst case. Try <em>Worst case</em>: 0111…1 + 0000…1 forces the carry through every stage. Faster designs such as carry-lookahead adders compute the carries in parallel.</p>
+</section>
+</div>
+<script src="../../assets/site.js"></script>
 <script>
 const S={half:true,n:4,a:[],b:[],cin:0,revealed:4,sel:0,timer:null};
-const $=id=>document.getElementById(id);
 function init(n){S.n=n;S.a=Array(n).fill(0);S.b=Array(n).fill(0);S.revealed=n;S.sel=0;
   // example: 6 + 7 for 4-bit, scaled otherwise
   setVal('a',Math.min(6*(n>4?17:1),2**n-1)); setVal('b',Math.min(7*(n>4?13:1),2**n-1)>>(n<3?1:0));render();}
@@ -131,7 +108,7 @@ function compute(){const c=[S.cin],s=[];
   for(let i=0;i<S.n;i++){const a=S.a[i],b=S.b[i],ci=c[i];s[i]=a^b^ci;c[i+1]=(a&b)|(ci&(a^b));}
   return{c,s};}
 function render(){
-  const{c,s}=compute(),n=S.n,r=S.revealed,ch=$('chain');ch.innerHTML='';
+  const{c,s}=compute(),n=S.n,r=S.revealed,ch=$('#chain');ch.innerHTML='';
   const lab=document.createElement('div');lab.className='rowlabels';
   lab.innerHTML='<span></span><span>A</span><span>B</span><span></span><span>Sum</span>';ch.append(lab);
   const carryEl=(idx,end)=>{const d=document.createElement('div');const known=idx<=r;
@@ -144,15 +121,15 @@ function render(){
   for(let i=n-1;i>=0;i--){
     const col=document.createElement('div');col.className='col';const done=i<r;
     col.innerHTML=`<span class="w">2<sup>${i}</sup></span>
-      <button class="bit ${S.a[i]?'on':''}" aria-label="A bit ${i}" data-k="a" data-i="${i}">${S.a[i]}</button>
-      <button class="bit ${S.b[i]?'on':''}" aria-label="B bit ${i}" data-k="b" data-i="${i}">${S.b[i]}</button>
+      <button class="abit ${S.a[i]?'on':''}" aria-label="A bit ${i}" data-k="a" data-i="${i}">${S.a[i]}</button>
+      <button class="abit ${S.b[i]?'on':''}" aria-label="B bit ${i}" data-k="b" data-i="${i}">${S.b[i]}</button>
       <div class="fa ${S.sel===i?'sel':''} ${i===r&&S.timer?'active':''} ${done||i===r?'':'pending'}" data-fa="${i}"><b>${i===0&&S.half?'HA':'FA'}</b><small>bit ${i}</small></div>
       <div class="out ${done?(s[i]?'on':''):'pending'}">${done?s[i]:'?'}</div>`;
     ch.append(col);
     if(i>0)ch.append(carryEl(i));
   }
   if(!S.half)ch.append(carryEl(0,true));
-  ch.querySelectorAll('.bit').forEach(b=>b.onclick=()=>{stop();S[b.dataset.k][+b.dataset.i]^=1;S.revealed=n;render();});
+  ch.querySelectorAll('.abit').forEach(b=>b.onclick=()=>{stop();S[b.dataset.k][+b.dataset.i]^=1;S.revealed=n;render();});
   ch.querySelectorAll('.fa').forEach(f=>f.onclick=()=>{S.sel=+f.dataset.fa;render();});
   document.querySelectorAll('#width button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.n===n));
   document.querySelectorAll('#lsb button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.h==='1')===S.half));
@@ -160,40 +137,40 @@ function render(){
   const bin=arr=>arr.slice().reverse().join(''),A=val(S.a),B=val(S.b),total=A+B+S.cin;
   const full=r>=n;
   const sumBits=full?bin(s):'?'.repeat(n-r)+bin(s.slice(0,r));
-  $('sums').innerHTML=`<span>A</span><span class="bin">${bin(S.a)}</span><span class="dec">${A}</span>
+  $('#sums').innerHTML=`<span>A</span><span class="bin">${bin(S.a)}</span><span class="dec">${A}</span>
     <span>B</span><span class="bin">${bin(S.b)}</span><span class="dec">${B}</span>
     ${S.cin?'<span>Cin</span><span class="bin">'+'&nbsp;'.repeat(n-1)+'1</span><span class="dec">1</span>':''}
     <span class="rule"></span>
     <span>Sum</span><span class="bin">${full?(c[n]?'<span class="v1">1</span>':'')+sumBits:sumBits}</span><span class="dec">${full?total:'…'}</span>`;
-  const ov=$('overflow');
-  if(!full){ov.className='note';ov.textContent=`Carry has reached stage ${r} of ${n}.`;}
-  else if(c[n]){ov.className='note warn';ov.textContent=`Cout = 1. The true answer ${total} doesn't fit in ${n} bits, so an ${n}-bit register would keep only ${total-2**n} (overflow).`;}
-  else{ov.className='note';ov.textContent=`Cout = 0. The answer fits in ${n} bits.`;}
+  const ov=$('#overflow');
+  if(!full){ov.className='hint';ov.textContent=`Carry has reached stage ${r} of ${n}.`;}
+  else if(c[n]){ov.className='hint warn';ov.textContent=`Cout = 1. The true answer ${total} doesn't fit in ${n} bits, so an ${n}-bit register would keep only ${total-2**n} (overflow).`;}
+  else{ov.className='hint';ov.textContent=`Cout = 0. The answer fits in ${n} bits.`;}
   // detail
   const i=S.sel,a=S.a[i],b=S.b[i],ci=c[i],x=a^b,v=t=>`<span class="v${t}">${t}</span>`;
-  if(i===0&&S.half){$('faTitle').textContent='Half adder, bit 0';
-    $('eq').innerHTML=`<div>inputs: A=${v(a)}  B=${v(b)}</div>
+  if(i===0&&S.half){$('#faTitle').textContent='Half adder, bit 0';
+    $('#eq').innerHTML=`<div>inputs: A=${v(a)}  B=${v(b)}</div>
     <div>Sum  = A ⊕ B = ${a} ⊕ ${b} = ${v(x)}</div>
     <div>Cout = A · B = ${a} · ${b} = ${v(a&b)}</div>
     <div class="label" style="margin-top:4px">No carry-in: this is the first column</div>`;}
   else{
-  $('faTitle').textContent=`Full adder, bit ${i}`;
-  $('eq').innerHTML=`<div>inputs: A=${v(a)}  B=${v(b)}  Cin=${v(ci)}</div>
+  $('#faTitle').textContent=`Full adder, bit ${i}`;
+  $('#eq').innerHTML=`<div>inputs: A=${v(a)}  B=${v(b)}  Cin=${v(ci)}</div>
     <div>Sum  = A ⊕ B ⊕ Cin = ${a} ⊕ ${b} ⊕ ${ci} = ${v(x^ci)}</div>
     <div>Cout = A·B + Cin·(A ⊕ B) = ${a&b} + ${ci}·${x} = ${v((a&b)|(ci&x))}</div>
     <div class="label" style="margin-top:4px">${i===0?'Cin comes from the external carry-in (click Cin to toggle)':'Cin is C'+i+', the carry-out of bit '+(i-1)}</div>`;}
-  $('status').textContent=S.timer?`stage ${Math.min(r,n)} / ${n}`:'';
+  $('#status').textContent=S.timer?`stage ${Math.min(r,n)} / ${n}`:'';
 }
 function stop(){clearInterval(S.timer);S.timer=null;}
 function stepOnce(){if(S.revealed>=S.n)S.revealed=0;else S.revealed++;if(S.revealed>=S.n)stop();render();}
-$('ripple').onclick=()=>{stop();S.revealed=0;S.timer=setInterval(stepOnce,matchMedia('(prefers-reduced-motion:reduce)').matches?150:550);render();};
-$('step').onclick=()=>{stop();stepOnce();};
-$('worst').onclick=()=>{stop();setVal('a',2**(S.n-1)-1);setVal('b',1);S.cin=0;S.revealed=S.n;render();};
-$('rand').onclick=()=>{stop();setVal('a',Math.floor(Math.random()*2**S.n));setVal('b',Math.floor(Math.random()*2**S.n));S.revealed=S.n;render();};
-$('clear').onclick=()=>{stop();setVal('a',0);setVal('b',0);S.cin=0;S.revealed=S.n;render();};
+$('#ripple').onclick=()=>{stop();S.revealed=0;S.timer=setInterval(stepOnce,matchMedia('(prefers-reduced-motion:reduce)').matches?150:550);render();};
+$('#step').onclick=()=>{stop();stepOnce();};
+$('#worst').onclick=()=>{stop();setVal('a',2**(S.n-1)-1);setVal('b',1);S.cin=0;S.revealed=S.n;render();};
+$('#rand').onclick=()=>{stop();setVal('a',Math.floor(Math.random()*2**S.n));setVal('b',Math.floor(Math.random()*2**S.n));S.revealed=S.n;render();};
+$('#clear').onclick=()=>{stop();setVal('a',0);setVal('b',0);S.cin=0;S.revealed=S.n;render();};
 document.querySelectorAll('#lsb button').forEach(b=>b.onclick=()=>{stop();S.half=b.dataset.h==='1';if(S.half)S.cin=0;S.revealed=S.n;render();});
 document.querySelectorAll('#width button').forEach(b=>b.onclick=()=>{stop();init(+b.dataset.n);});
 init(4);
 </script>
-
-</body></html>
+</body>
+</html>

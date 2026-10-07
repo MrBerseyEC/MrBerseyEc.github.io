@@ -1,0 +1,82 @@
+/* Shared styles for every page on the site.
+   Link this first, then put anything that only one page needs in a <style> block in that page. */
+
+/* ---------- tokens ---------- */
+:root{--bg:#E8ECEF;--grid:rgba(22,32,43,.05);--panel:#F8FAFB;--ink:#16202B;--muted:#5B6874;--line:#C9D1D8;--one:#1F5BFF;--one-soft:#DDE6FF;--hl:#FFB000;--hl-soft:#FFF0C7;--off:#AEB8C1;--ok:#138A52;--ok-soft:#D7F2E3;--bad:#C2362B;--bad-soft:#F9DEDB;--sans:Manrope,system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--grid:rgba(255,255,255,.035);--panel:#1A222C;--ink:#E7EDF2;--muted:#9AA7B3;--line:#2E3A46;--one:#5B8CFF;--one-soft:#1E2E57;--hl-soft:#3D3110;--off:#4A5764;--ok:#3CC47F;--ok-soft:#14321F;--bad:#FF6B5E;--bad-soft:#3A1A17}}
+
+/* ---------- page ---------- */
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.55 var(--sans)}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:6px 0 8px}
+.lede{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.series{display:flex;gap:6px;flex-wrap:wrap}
+.series a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.series a:hover{color:var(--ink);border-color:var(--muted)}
+.series a[aria-current]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.spec{font:600 .78rem var(--mono);color:var(--muted);letter-spacing:.06em;margin:22px 0 0}
+
+/* ---------- containers ---------- */
+.block{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0}
+.block>h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.01em}
+.panel{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px}
+.panel>h2{font-size:1.15rem;font-weight:800;margin:0 0 8px}
+.block .panel{background:var(--bg)}
+.sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.toolbar{display:flex;gap:12px 22px;flex-wrap:wrap;align-items:center;font-size:.92rem}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.cols2{grid-template-columns:1fr}}
+.scroll{overflow-x:auto}
+.note{background:var(--hl-soft);border-left:4px solid var(--hl);padding:10px 14px;border-radius:6px;margin:14px 0 0;font-size:.95rem}
+.status{font-size:.95rem;min-height:1.5em}
+
+/* ---------- controls ---------- */
+.btn{font:700 .9rem var(--sans);padding:8px 14px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--hl-soft)}
+.btn.pri{background:var(--ink);color:var(--bg)}
+.btn:disabled{opacity:.35;cursor:default;background:var(--panel);color:var(--ink)}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;border:0;background:var(--panel);color:var(--ink);padding:6px 12px;cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--ink)}
+.seg button[aria-checked=true],.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1.5px solid var(--line);margin:0 0 18px}
+.tabs button{font:700 .95rem var(--sans);padding:10px 14px;border:0;border-bottom:4px solid transparent;background:none;color:var(--muted);cursor:pointer;margin-bottom:-1.5px}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--hl)}
+button.bit{font:600 1rem var(--mono);min-width:72px;padding:8px 10px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
+button.bit[aria-pressed=true]{background:var(--one);border-color:var(--one);color:#fff}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:.92rem;cursor:pointer}
+.check input[type=checkbox]{width:18px;height:18px}
+select,input[type=text],input[type=search],input[type=password],input[type=number]{font:1rem var(--sans);padding:7px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink)}
+input[type=range],input[type=checkbox]{accent-color:var(--one)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+
+/* ---------- text and tables ---------- */
+.mono,.expr,.tt{font-family:var(--mono)}
+.ob{display:inline-block;border-top:.08em solid currentColor;padding-top:.06em;line-height:1.1;margin:0 .03em}
+.okc{color:var(--ok)}.badc{color:var(--bad)}
+.hidden{display:none!important}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.t th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+/* truth tables */
+table.tt{border-collapse:collapse;font-size:.92rem}
+.tt th,.tt td{padding:5px 12px;text-align:center;border-bottom:1px solid var(--line)}
+.tt th{font-weight:600;color:var(--muted);border-bottom:2px solid var(--ink)}
+.tt tr.cur td{background:var(--hl-soft)}
+.tt td.one{color:var(--one);font-weight:700}
+
+/* ---------- multiple-choice quiz cards (built by cardQuiz in site.js) ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.card.right{border-color:var(--ok);background:var(--ok-soft)}
+.card.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.card .opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.card .opts button{font:600 .85rem var(--sans);padding:6px 11px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.card .opts button.picked{border-color:var(--ink)}
+.card .fb{font-size:.88rem;margin:8px 0 0}
+.quizbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.score{font-weight:800}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
