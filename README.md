@@ -1,30 +1,34 @@
 # HTB's Resources
 
-## A-Level Computer Science
+Interactive Computer Science demos for GCSE and A-Level, published at <https://mrberseyec.github.io/>.
 
-### 1.4.3 Boolean Algebra 
-- [Logic Gates](/a-level/1.4.3-demos/logic-gates.html)
-- [Boolean Simplification](/a-level/1.4.3-demos/boolean-simplification.html)
-- [Karnaugh Maps](/a-level/1.4.3-demos/karnaugh-maps.html)
-- [D-Type Flip Flops](/a-level/1.4.3-demos/d-type-flip-flop.html)
-- [Half and Full Adders](/a-level/1.4.3-demos/half-full-adders.html)
-- [Ripple-Carry Adder](/a-level/1.4.3-demos/ripple-carry-adder.html)
+The site is built with [Jekyll](https://jekyllrb.com/), which GitHub Pages runs automatically on every push.
 
-## GCSE Computer Science
+## Adding a demo
 
-### Topic 3
-- [Fetch-Decode-Execute](/gcse/3/fde-cycle.html)
-- [Secondary Storage](/gcse/3/secondary-storage.html)
-- [Embedded Systems](/gcse/3/embedded-systems.html)
-- [Operating Systems](/gcse/3/operating-systems.html)
-- [Utility Software](/gcse/3/utility-software.html)
-- [Langauges & Translations](/gcse/3/languages-translators.html)
+1. Create the page, for example `gcse/6/functions.html`. Start it with front matter, then write only the page's own content:
 
-### Topic 6
-- [Inputs & Outputs](/gcse/6/inputs-outputs.html)
-- [Variables & Constants](/gcse/6/variables-constants.html)
-- [Selection (If Statements)](/gcse/6/selection.html)
-- [Count-Controlled Repetition (For Loops)](/gcse/6/for-loops.html)
-- [Condition-Controlled Repetition (While Loops)](/gcse/6/while-loops.html)
-- [1D Lists](/gcse/6/lists.html)
-- [Strings](/gcse/6/strings.html)
+   ```html
+   ---
+   layout: demo
+   title: "Functions"
+   spec: "EDEXCEL GCSE · TOPIC 6"
+   python: true
+   ---
+   <p class="lede">…</p>
+   ```
+
+   `python: true` loads the runnable Python editors and `logic: true` loads the Boolean expression helpers. Add `heading:` if the main heading should differ from the title.
+
+2. Add one line for it to `_data/courses.yml`. The home page and the links at the top of every demo in that topic update themselves.
+
+The shared page shell is `_layouts/demo.html`. Shared styles and scripts are in `assets/`.
+
+## Previewing locally
+
+Opening the `.html` files directly no longer shows the finished pages, because Jekyll assembles them.
+
+```sh
+bundle install            # first time only
+bundle exec jekyll serve  # then open http://localhost:4000
+```

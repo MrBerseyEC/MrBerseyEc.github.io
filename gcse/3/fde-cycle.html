@@ -1,12 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fetch-decode-execute</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "Fetch-decode-execute"
+spec: "EDEXCEL GCSE · 3.1.1"
+---
 <style>
 .machine{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.62fr) minmax(0,1fr);align-items:stretch;margin-top:14px}
 .cpu,.ram{border:3px solid var(--ink);border-radius:14px;padding:14px;background:var(--bg)}
@@ -49,12 +45,6 @@
 .info b{color:var(--ink)}
 @media (max-width:860px){.machine{grid-template-columns:1fr}.buses{flex-direction:row;padding:14px 0;gap:10px}.bus{flex:1}}
 </style>
-</head>
-<body>
-<div class="wrap">
-<nav class="series" aria-label="Topic 3 demos"><a class="home" href="../../index.html">← Home</a><a href="fde-cycle.html" aria-current="page">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
-<p class="spec">EDEXCEL GCSE · 3.1.1</p>
-<h1>Fetch-decode-execute</h1>
 <p class="lede">In a von Neumann computer the program and its data are held together in the same main memory (the stored program concept). The CPU fetches each instruction, decodes it and executes it, over and over. Step through to see every register and bus involved.</p>
 
 <section class="block">
@@ -104,11 +94,8 @@
 
 <section class="block">
   <h2>Quick check</h2>
-  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
-  <div class="cards" id="quiz"></div>
+  {% include quiz.html %}
 </section>
-</div>
-<script src="../../assets/site.js"></script>
 <script>
 const OPS={0:'HALT',1:'LOAD',2:'ADD',3:'SUB',4:'STORE'}, CODE={HALT:0,LOAD:1,ADD:2,SUB:3,STORE:4};
 const PRESETS=[
@@ -222,5 +209,3 @@ cardQuiz($('#quiz'),[
  {q:'What is the stored program concept?',opts:['Programs are kept on secondary storage','Instructions and data are held in the same main memory','Programs are stored inside the CPU'],a:'Instructions and data are held in the same main memory',why:'The CPU fetches instructions from the same RAM that holds the data they work on.'},
 ],R,$('#score'),$('#qreset'));
 </script>
-</body>
-</html>

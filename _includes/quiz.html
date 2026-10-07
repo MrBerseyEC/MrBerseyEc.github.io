@@ -1,0 +1,4 @@
+{%- comment -%} Score bar and empty card grid for cardQuiz() in assets/site.js.
+   A page with more than one quiz passes n, e.g. {% raw %}{% include quiz.html n=2 %}{% endraw %} gives #quiz2, #score2, #qreset2. {%- endcomment -%}
+<div class="quizbar"><span class="score" id="score{{ include.n }}"></span><button class="btn" id="qreset{{ include.n }}">Reset questions</button></div>
+  <div class="cards" id="quiz{{ include.n }}"></div>

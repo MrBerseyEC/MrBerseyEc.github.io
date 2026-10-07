@@ -1,14 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Strings</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-<link rel="stylesheet" href="../../assets/site.css">
-<link rel="stylesheet" href="../../assets/py.css">
+---
+layout: demo
+title: "Strings"
+spec: "EDEXCEL GCSE · TOPIC 6"
+python: true
+---
 <style>
 .sx{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center;margin:6px 0 4px}
 .sx label{display:inline-flex;gap:8px;align-items:center;font-weight:700}
@@ -16,12 +11,6 @@
 .sx input[type=text]{width:14em;font-family:var(--mono)}
 .strip .cell{cursor:default}
 </style>
-</head>
-<body>
-<div class="wrap">
-<nav class="series" aria-label="Topic 6 demos"><a class="home" href="../../index.html">← Home</a><a href="inputs-outputs.html">Inputs &amp; outputs</a><a href="variables-constants.html">Variables &amp; constants</a><a href="selection.html">Selection</a><a href="for-loops.html">For loops</a><a href="while-loops.html">While loops</a><a href="lists.html">Lists</a><a href="strings.html" aria-current="page">Strings</a></nav>
-<p class="spec">EDEXCEL GCSE · TOPIC 6</p>
-<h1>Strings</h1>
 <p class="lede">A string is a sequence of characters: letters, digits, spaces and symbols. Names, passwords, postcodes and messages are all strings. Because a string is a sequence, each character has an index, and Python has plenty of built-in tools for measuring, cutting, searching and changing text.</p>
 
 <section class="block">
@@ -246,11 +235,6 @@ else:
     <li>Write a program that asks for a full name and displays the initials.</li>
   </ul>
 </section>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
-<script src="../../assets/site.js"></script>
-<script src="../../assets/py.js"></script>
 <script>
 /* slice explorer */
 function drawSlice(){
@@ -262,5 +246,3 @@ function drawSlice(){
 }
 ['#sw','#ss','#se'].forEach(id=>$(id).oninput=drawSlice);drawSlice();
 </script>
-</body>
-</html>

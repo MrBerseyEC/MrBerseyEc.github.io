@@ -1,12 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Secondary storage</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "Secondary storage"
+spec: "EDEXCEL GCSE · 3.1.2"
+---
 <style>
 .pw{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .box{border:3px solid var(--ink);border-radius:14px;padding:14px;min-height:190px;background:var(--bg);transition:opacity .3s}
@@ -36,12 +32,6 @@
 .dots i{color:var(--off);font-style:normal}
 @media (max-width:640px){.pw{grid-template-columns:1fr}}
 </style>
-</head>
-<body>
-<div class="wrap">
-<nav class="series" aria-label="Topic 3 demos"><a class="home" href="../../index.html">← Home</a><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html" aria-current="page">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
-<p class="spec">EDEXCEL GCSE · 3.1.2</p>
-<h1>Secondary storage</h1>
 <p class="lede">RAM is volatile: it loses everything when the power goes off. Secondary storage is non-volatile, so it keeps programs and files permanently. It stores the same 0s and 1s in three very different physical ways.</p>
 
 <section class="block" id="power">
@@ -106,11 +96,8 @@
 
 <section class="block">
   <h2>Which would you choose?</h2>
-  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
-  <div class="cards" id="quiz"></div>
+  {% include quiz.html %}
 </section>
-</div>
-<script src="../../assets/site.js"></script>
 <script>
 /* ---------- power demo ---------- */
 const DISK=['essay.docx','photo.jpg','game.exe','song.mp3'];let on=true,inRam=[];
@@ -210,5 +197,3 @@ cardQuiz($('#quiz'),[
  {q:'A smartphone.',a:'Solid state',why:'Tiny, robust, silent and low power.'},
 ],['Magnetic','Optical','Solid state'],$('#score'),$('#qreset'));
 </script>
-</body>
-</html>

@@ -1,12 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Operating systems</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "Operating systems"
+spec: "EDEXCEL GCSE · 3.2.1"
+---
 <style>
 /* files */
 .fm{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
@@ -49,12 +45,6 @@
 .msg{min-height:1.5em;font-weight:700;margin-top:8px}
 @media (max-width:760px){.fm{grid-template-columns:1fr}.pipe{grid-template-columns:1fr}}
 </style>
-</head>
-<body>
-<div class="wrap">
-<nav class="series" aria-label="Topic 3 demos"><a class="home" href="../../index.html">← Home</a><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html" aria-current="page">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
-<p class="spec">EDEXCEL GCSE · 3.2.1</p>
-<h1>Operating systems</h1>
 <p class="lede">The operating system (OS) sits between the hardware, the applications and the user. It manages files, processes, peripherals and users, and provides the interface so nobody has to deal with the hardware directly.</p>
 
 <section class="block">
@@ -146,11 +136,8 @@
 
 <section class="block">
   <h2>Quick check</h2>
-  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
-  <div class="cards" id="quiz"></div>
+  {% include quiz.html %}
 </section>
-</div>
-<script src="../../assets/site.js"></script>
 <script>
 tabs($('#tt'));
 /* =============== FILES =============== */
@@ -291,5 +278,3 @@ cardQuiz($('#quiz'),[
  {q:'Stopping a student opening the exam papers folder.',a:'User',why:'Access rights decide what each user is allowed to read or change.'},
 ],['File','Process','Peripheral','User'],$('#score'),$('#qreset'));
 </script>
-</body>
-</html>

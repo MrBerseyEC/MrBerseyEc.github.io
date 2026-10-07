@@ -80,4 +80,4 @@ table.tt{border-collapse:collapse;font-size:.92rem}
 .quizbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
 .score{font-weight:800}
 
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

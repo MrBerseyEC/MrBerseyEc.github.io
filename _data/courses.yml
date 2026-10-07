@@ -1,0 +1,44 @@
+# Every demo on the site is listed here, and only here.
+# The home page and the strip of links at the top of each demo are both built from this file.
+#   title: the name shown on the home page
+#   nav:   the shorter name shown in the strip at the top of each demo in the same topic
+#   url:   the path to the page, starting with /
+
+- id: alevel
+  name: A-Level Computer Science
+  tag: OCR
+  topics:
+    - title: 1.4.3 Boolean Algebra
+      label: 1.4.3 demos
+      pages:
+        - { title: "Logic Gates",            nav: "Logic gates",            url: /a-level/1.4.3-demos/logic-gates.html }
+        - { title: "Boolean Simplification", nav: "Boolean simplification", url: /a-level/1.4.3-demos/boolean-simplification.html }
+        - { title: "Karnaugh Maps",          nav: "Karnaugh maps",          url: /a-level/1.4.3-demos/karnaugh-maps.html }
+        - { title: "D-Type Flip Flops",      nav: "D-type flip-flops",      url: /a-level/1.4.3-demos/d-type-flip-flop.html }
+        - { title: "Half and Full Adders",   nav: "Half and full adders",   url: /a-level/1.4.3-demos/half-full-adders.html }
+        - { title: "Ripple-Carry Adder",     nav: "Ripple-carry adder",     url: /a-level/1.4.3-demos/ripple-carry-adder.html }
+
+- id: gcse
+  name: GCSE Computer Science
+  tag: Edexcel
+  topics:
+    - title: Topic 3 (Computers)
+      label: Topic 3 demos
+      pages:
+        - { title: "Fetch-Decode-Execute",    nav: "Fetch-decode-execute",    url: /gcse/3/fde-cycle.html }
+        - { title: "Secondary Storage",       nav: "Secondary storage",       url: /gcse/3/secondary-storage.html }
+        - { title: "Embedded Systems",        nav: "Embedded systems",        url: /gcse/3/embedded-systems.html }
+        - { title: "Operating Systems",       nav: "Operating systems",       url: /gcse/3/operating-systems.html }
+        - { title: "Utility Software",        nav: "Utility software",        url: /gcse/3/utility-software.html }
+        - { title: "Robust Software",         nav: "Robust software",         url: /gcse/3/robust-software.html }
+        - { title: "Languages & Translators", nav: "Languages & translators", url: /gcse/3/languages-translators.html }
+    - title: Topic 6 (Python)
+      label: Topic 6 demos
+      pages:
+        - { title: "Inputs & Outputs",      nav: "Inputs & outputs",      url: /gcse/6/inputs-outputs.html }
+        - { title: "Variables & Constants", nav: "Variables & constants", url: /gcse/6/variables-constants.html }
+        - { title: "Selection",             nav: "Selection",             url: /gcse/6/selection.html }
+        - { title: "For Loops",             nav: "For loops",             url: /gcse/6/for-loops.html }
+        - { title: "While Loops",           nav: "While loops",           url: /gcse/6/while-loops.html }
+        - { title: "1D Lists",              nav: "Lists",                 url: /gcse/6/lists.html }
+        - { title: "Strings",               nav: "Strings",               url: /gcse/6/strings.html }

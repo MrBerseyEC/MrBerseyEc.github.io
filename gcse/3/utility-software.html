@@ -1,12 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Utility software</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "Utility software"
+spec: "EDEXCEL GCSE · 3.2.2"
+---
 <style>
 /* defrag */
 .disk{display:grid;grid-template-columns:repeat(16,1fr);gap:3px;max-width:720px;margin:12px 0}
@@ -43,12 +39,6 @@
 .fb2.rec{border-style:dashed}
 @media (max-width:760px){.cmpgrid{grid-template-columns:1fr}.pix div{width:15px;height:15px}}
 </style>
-</head>
-<body>
-<div class="wrap">
-<nav class="series" aria-label="Topic 3 demos"><a class="home" href="../../index.html">← Home</a><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html" aria-current="page">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
-<p class="spec">EDEXCEL GCSE · 3.2.2</p>
-<h1>Utility software</h1>
 <p class="lede">Utility software helps to maintain, protect and tidy up a computer system. It is not the operating system and it is not an application for the user's own tasks: it looks after the computer itself.</p>
 
 <section class="block">
@@ -116,11 +106,8 @@
 
 <section class="block">
   <h2>Quick check</h2>
-  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
-  <div class="cards" id="quiz"></div>
+  {% include quiz.html %}
 </section>
-</div>
-<script src="../../assets/site.js"></script>
 <script>
 tabs($('#tt'));
 /* ================= DEFRAG ================= */
@@ -262,5 +249,3 @@ cardQuiz($('#quiz'),[
  {q:'Which type of compression is suitable for a program file (.exe)?',opts:['Lossless','Lossy'],a:'Lossless',why:'Every bit of a program must be restored exactly, or it will not run.'},
 ],['Defragmentation','Compression','Backup','Anti-malware','File repair'],$('#score'),$('#qreset'));
 </script>
-</body>
-</html>

@@ -1,15 +1,11 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Logic gates</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "Logic gates"
+spec: "OCR A LEVEL · 1.4.3"
+logic: true
+---
 <style>
 .tt td.hid{color:var(--muted);cursor:pointer;text-decoration:underline dotted}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .gates{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:20px;margin-top:26px}
 .gate{background:var(--panel);border:1.5px solid var(--line);border-top:5px solid var(--ink);border-radius:6px 6px 14px 14px;padding:18px 22px 22px;display:grid;grid-template-columns:1fr auto;gap:6px 26px;align-items:start}
 .gate h2{margin:0;font:700 1.9rem/1 var(--mono);letter-spacing:-.02em}
@@ -32,12 +28,6 @@ svg text{font:700 15px var(--mono);fill:var(--ink)}
 .ttcol .cap{font-size:.85rem;color:var(--muted);margin:0 0 6px}
 @media (max-width:600px){.gate{grid-template-columns:1fr}}
 </style>
-</head>
-<body>
-<div class="wrap">
-  <nav class="series" aria-label="1.4.3 demos"><a class="home" href="../../index.html">← Home</a><a href="logic-gates.html" aria-current="page">Logic gates</a><a href="boolean-simplification.html">Boolean simplification</a><a href="karnaugh-maps.html">Karnaugh maps</a><a href="d-type-flip-flop.html">D-type flip-flops</a><a href="half-full-adders.html">Half and full adders</a><a href="ripple-carry-adder.html">Ripple-carry adder</a></nav>
-  <p class="spec">OCR A LEVEL · 1.4.3</p>
-  <h1>Logic gates</h1>
   <p class="lede">Click an input to switch it between 0 and 1. A wire turns blue when it carries a 1, and the matching row of the truth table lights up.</p>
   <div class="toolbar">
     <span>Notation</span>
@@ -49,9 +39,6 @@ svg text{font:700 15px var(--mono);fill:var(--ink)}
     <label class="check"><input type="checkbox" id="predict"> Hide outputs so the class can predict</label>
   </div>
   <main class="gates" id="gates"></main>
-</div>
-<script src="../../assets/site.js"></script>
-<script src="../../assets/logic.js"></script>
 <script>
 /* ---------- gates ---------- */
 const GATES=[
@@ -135,5 +122,3 @@ GATES.forEach(build);
 bindNotation(()=>GATES.forEach(update));
 document.getElementById('predict').addEventListener('change',e=>{predict=e.target.checked;GATES.forEach(g=>{g.seen.clear();update(g)})});
 </script>
-</body>
-</html>

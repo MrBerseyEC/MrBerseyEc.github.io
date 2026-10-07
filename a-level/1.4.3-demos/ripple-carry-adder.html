@@ -1,12 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ripple-carry adder</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "Ripple-carry adder"
+heading: "Chaining full adders"
+spec: "OCR A LEVEL · 1.4.3"
+---
 <style>
 .toolbar{margin-bottom:4px}
 .label{font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -47,12 +44,6 @@
 .v1{color:var(--one);font-weight:600}.v0{color:var(--muted);font-weight:600}
 .status{font:600 .85rem var(--mono);color:var(--muted)}
 </style>
-</head>
-<body>
-<div class="wrap">
-<nav class="series" aria-label="1.4.3 demos"><a class="home" href="../../index.html">← Home</a><a href="logic-gates.html">Logic gates</a><a href="boolean-simplification.html">Boolean simplification</a><a href="karnaugh-maps.html">Karnaugh maps</a><a href="d-type-flip-flop.html">D-type flip-flops</a><a href="half-full-adders.html">Half and full adders</a><a href="ripple-carry-adder.html" aria-current="page">Ripple-carry adder</a></nav>
-<p class="spec">OCR A LEVEL · 1.4.3</p>
-<h1>Chaining full adders</h1>
 <p class="lede">Bit 0 has no carry coming in, so a half adder is enough there. Every other column uses a full adder, which adds its A bit, its B bit and the carry from the column to its right. Each carry-out feeds the next adder to the left. Click any input bit to flip it, then press <em>Ripple</em> to watch the carry travel.</p>
 
 <div class="toolbar">
@@ -95,8 +86,6 @@
   <h2>Why it's called "ripple carry"</h2>
   <p class="sub" style="margin:0">Column <i>i</i> can't finish until it knows its carry-in, which comes from column <i>i</i>−1. So the carry ripples one adder at a time from right to left. Each full adder adds about two gate delays to the carry path, so an <i>n</i>-bit ripple adder needs roughly 2<i>n</i> gate delays in the worst case. Try <em>Worst case</em>: 0111…1 + 0000…1 forces the carry through every stage. Faster designs such as carry-lookahead adders compute the carries in parallel.</p>
 </section>
-</div>
-<script src="../../assets/site.js"></script>
 <script>
 const S={half:true,n:4,a:[],b:[],cin:0,revealed:4,sel:0,timer:null};
 function init(n){S.n=n;S.a=Array(n).fill(0);S.b=Array(n).fill(0);S.revealed=n;S.sel=0;
@@ -172,5 +161,3 @@ document.querySelectorAll('#lsb button').forEach(b=>b.onclick=()=>{stop();S.half
 document.querySelectorAll('#width button').forEach(b=>b.onclick=()=>{stop();init(+b.dataset.n);});
 init(4);
 </script>
-</body>
-</html>

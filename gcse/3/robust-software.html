@@ -1,12 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Robust software</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "Robust software"
+spec: "EDEXCEL GCSE · 3.2.3"
+---
 <style>
 .review{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:start}
 .code{font:.9rem/1.75 var(--mono);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px 0;overflow-x:auto}
@@ -29,12 +25,6 @@
 .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 @media (max-width:860px){.review{grid-template-columns:1fr}}
 </style>
-</head>
-<body>
-<div class="wrap">
-<nav class="series" aria-label="Topic 3 demos"><a class="home" href="../../index.html">← Home</a><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html" aria-current="page">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
-<p class="spec">EDEXCEL GCSE · 3.2.3</p>
-<h1>Robust software</h1>
 <p class="lede">Robust software keeps working correctly, even with unexpected input or when someone deliberately tries to break it. Weaknesses in code (vulnerabilities) can be exploited by attackers, so developers look for them through code reviews, and keep audit trails to spot and investigate misuse.</p>
 
 <section class="block">
@@ -57,11 +47,8 @@
   </div>
   <div class="scroll"><table class="t log" id="log"></table></div>
   <h3 style="margin:20px 0 8px">Investigate</h3>
-  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
-  <div class="cards" id="quiz"></div>
+  {% include quiz.html %}
 </section>
-</div>
-<script src="../../assets/site.js"></script>
 <script>
 const SRC=[
 'ADMIN_PASSWORD = "letmein"',
@@ -140,5 +127,3 @@ cardQuiz($('#quiz'),[
  {q:'Which change would most directly have stopped this attack?',opts:['Lock accounts after 3 failed logins','Make the log text bigger','Delete the audit trail every night'],a:'Lock accounts after 3 failed logins',why:'Account lockout stops repeated password guessing. The audit trail is what revealed the weakness.'},
 ],null,$('#score'),$('#qreset'));
 </script>
-</body>
-</html>

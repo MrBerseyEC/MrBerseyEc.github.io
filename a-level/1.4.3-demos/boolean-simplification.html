@@ -1,18 +1,14 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Boolean simplification</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "Boolean simplification"
+spec: "OCR A LEVEL · 1.4.3"
+logic: true
+---
 <style>
 .tt th,.tt td{white-space:nowrap}
 .tt td.diff{background:color-mix(in srgb,var(--bad) 16%,transparent)}
 .tt .sep{border-left:2px solid var(--line)}
 .ttwrap{overflow-x:auto;max-width:100%}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .laws{display:grid;grid-template-columns:230px 1fr;gap:0;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
 .lawlist{display:flex;flex-direction:column;border-right:1.5px solid var(--line);padding:8px 0}
 .lawlist button{font:600 .98rem var(--sans);text-align:left;background:none;border:0;border-left:4px solid transparent;color:var(--ink);padding:9px 16px;cursor:pointer}
@@ -49,12 +45,6 @@ ol.steps .expr{font-size:1.3rem}
 .hint{font-size:.85rem;color:var(--muted)}
 @media (max-width:760px){.laws{grid-template-columns:1fr}.lawlist{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1.5px solid var(--line);padding:0}.lawlist button{white-space:nowrap;border-left:0;border-bottom:4px solid transparent}.lawlist button[aria-selected=true]{border-bottom-color:var(--hl)}.worked{grid-template-columns:1fr}.check-in{grid-template-columns:1fr}}
 </style>
-</head>
-<body>
-<div class="wrap">
-  <nav class="series" aria-label="1.4.3 demos"><a class="home" href="../../index.html">← Home</a><a href="logic-gates.html">Logic gates</a><a href="boolean-simplification.html" aria-current="page">Boolean simplification</a><a href="karnaugh-maps.html">Karnaugh maps</a><a href="d-type-flip-flop.html">D-type flip-flops</a><a href="half-full-adders.html">Half and full adders</a><a href="ripple-carry-adder.html">Ripple-carry adder</a></nav>
-  <p class="spec">OCR A LEVEL · 1.4.3</p>
-  <h1>Boolean simplification</h1>
   <p class="lede">Every rule is proved by a truth table: if both sides give the same output for every input, they are equivalent and one can replace the other.</p>
   <div class="toolbar">
     <span>Notation</span>
@@ -104,9 +94,6 @@ ol.steps .expr{font-size:1.3rem}
       <div class="ttwrap" id="ctt" style="margin-top:12px"></div>
     </div>
   </section>
-</div>
-<script src="../../assets/site.js"></script>
-<script src="../../assets/logic.js"></script>
 <script>
 const unionVars=trees=>[...new Set(trees.flatMap(t=>varsOf(t)))].sort();
 const cell=v=>`<td class="${v?'one':''}">${v}</td>`;
@@ -202,5 +189,3 @@ $('#c1').addEventListener('input',renderCheck);$('#c2').addEventListener('input'
 const all=()=>{renderLaw();renderEx();renderCheck()};
 bindNotation(all);all();
 </script>
-</body>
-</html>

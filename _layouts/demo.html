@@ -1,0 +1,46 @@
+{%- comment -%}
+  Shell for every demo page. Front matter a page can set:
+    title    browser tab title
+    heading  the <h1>, when it differs from title
+    spec     the small specification reference above the heading
+    python   true to load the runnable Python editors (assets/py.js)
+    logic    true to load the Boolean expression helpers (assets/logic.js)
+  The strip of links comes from the page's topic in _data/courses.yml.
+{%- endcomment -%}
+{%- for course in site.data.courses -%}
+  {%- for topic in course.topics -%}
+    {%- assign hit = topic.pages | where: "url", page.url | first -%}
+    {%- if hit -%}{%- assign series = topic -%}{%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+<!doctype html>
+<html lang="en">
+<head>
+{% include head.html %}
+{%- if page.python %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="{{ '/assets/py.css' | relative_url }}">
+{%- endif %}
+<script src="{{ '/assets/site.js' | relative_url }}"></script>
+{%- if page.logic %}
+<script src="{{ '/assets/logic.js' | relative_url }}"></script>
+{%- endif %}
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="{{ series.label | escape }}"><a class="home" href="{{ '/' | relative_url }}">← Home</a>
+{%- for p in series.pages -%}
+  <a href="{{ p.url | relative_url }}"{% if p.url == page.url %} aria-current="page"{% endif %}>{{ p.nav | escape }}</a>
+{%- endfor -%}
+</nav>
+<p class="spec">{{ page.spec | escape }}</p>
+<h1>{{ page.heading | default: page.title | escape }}</h1>
+{{ content }}
+</div>
+{%- if page.python %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="{{ '/assets/py.js' | relative_url }}"></script>
+{%- endif %}
+</body>
+</html>

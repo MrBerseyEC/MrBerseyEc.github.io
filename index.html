@@ -1,13 +1,11 @@
+---
+title: "HTB's Vibe Coded Demos"
+description: "Interactive Computer Science demos for GCSE and A-Level students."
+---
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HTB's Vibe Coded Demos</title>
-<meta name="description" content="Interactive Computer Science demos for GCSE and A-Level students.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css">
+{% include head.html %}
 <style>
 .controls{position:sticky;top:0;z-index:10;display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 0;background:linear-gradient(var(--bg) 75%,transparent)}
 .search{flex:1 1 260px;display:flex;align-items:center;gap:8px;background:var(--panel);border:2px solid var(--line);border-radius:8px;padding:0 10px}
@@ -53,46 +51,8 @@ footer{margin-top:28px;color:var(--muted);font:.78rem var(--mono)}
 </div>
 
 <script>
-// ── Add new demos here ─────────────────────────────────────
-const COURSES = [
-  {
-    id: "alevel", name: "A-Level Computer Science", tag: "OCR",
-    topics: [
-      { title: "1.4.3 Boolean Algebra", links: [
-        ["Logic Gates", "a-level/1.4.3-demos/logic-gates.html"],
-        ["Boolean Simplification", "a-level/1.4.3-demos/boolean-simplification.html"],
-        ["Karnaugh Maps", "a-level/1.4.3-demos/karnaugh-maps.html"],
-        ["D-Type Flip Flops", "a-level/1.4.3-demos/d-type-flip-flop.html"],
-        ["Half and Full Adders", "a-level/1.4.3-demos/half-full-adders.html"],
-        ["Ripple-Carry Adder", "a-level/1.4.3-demos/ripple-carry-adder.html"],
-      ]},
-    ],
-  },
-  {
-    id: "gcse", name: "GCSE Computer Science", tag: "Edexcel",
-    topics: [
-      { title: "Topic 3 (Computers)", links: [
-        ["Fetch-Decode-Execute", "gcse/3/fde-cycle.html"],
-        ["Secondary Storage", "gcse/3/secondary-storage.html"],
-        ["Embedded Systems", "gcse/3/embedded-systems.html"],
-        ["Operating Systems", "gcse/3/operating-systems.html"],
-        ["Utility Software", "gcse/3/utility-software.html"],
-        ["Robust Software", "gcse/3/robust-software.html"],
-        ["Languages & Translators", "gcse/3/languages-translators.html"],
-      ]},
-      { title: "Topic 6 (Python)", links: [
-        ["Inputs & Outputs", "gcse/6/inputs-outputs.html"],
-        ["Variables & Constants", "gcse/6/variables-constants.html"],
-        ["Selection", "gcse/6/selection.html"],
-        ["For Loops", "gcse/6/for-loops.html"],
-        ["While Loops", "gcse/6/while-loops.html"],
-        ["1D Lists", "gcse/6/lists.html"],
-        ["Strings", "gcse/6/strings.html"],
-      ]},
-    ],
-  },
-];
-// ────────────────────────────────────────────────────────────
+// The list of demos lives in _data/courses.yml. Add new demos there.
+const COURSES = {{ site.data.courses | jsonify }};
 
 const main = document.getElementById("main");
 let total = 0;
@@ -104,8 +64,8 @@ main.innerHTML = COURSES.map(c => `
       <div class="topic">
         <h3>${t.title}</h3>
         <div class="cards">
-          ${t.links.map(([name, href], i) => (total++, `
-            <a class="card" href="${href}" data-search="${(name + " " + t.title).toLowerCase()}">
+          ${t.pages.map(({title: name, url}, i) => (total++, `
+            <a class="card" href="{{ site.baseurl }}${url}" data-search="${(name + " " + t.title).toLowerCase()}">
               <span class="num">${String(i + 1).padStart(2, "0")}</span>
               <span>${name}</span>
               <span class="arrow">→</span>

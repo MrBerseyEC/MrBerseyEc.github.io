@@ -1,12 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Languages & translators</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "Languages & translators"
+spec: "EDEXCEL GCSE · 3.3.1 · 3.3.2"
+---
 <style>
 .three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .lang h3{margin:0;font-size:1.05rem}
@@ -31,12 +27,6 @@
 .exe.made{border-style:solid;border-color:var(--ok);color:var(--ok)}
 @media (max-width:860px){.three{grid-template-columns:1fr}.race{grid-template-columns:1fr}}
 </style>
-</head>
-<body>
-<div class="wrap">
-<nav class="series" aria-label="Topic 3 demos"><a class="home" href="../../index.html">← Home</a><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html" aria-current="page">Languages &amp; translators</a></nav>
-<p class="spec">EDEXCEL GCSE · 3.3.1 · 3.3.2</p>
-<h1>Languages &amp; translators</h1>
 <p class="lede">The CPU can only execute machine code: binary instructions for its own instruction set. Everything else has to be translated into machine code first, by an assembler, a compiler or an interpreter.</p>
 
 <section class="block">
@@ -53,8 +43,7 @@
 
 <section class="block">
   <h2>High-level or low-level?</h2>
-  <div class="quizbar"><span class="score" id="score1"></span><button class="btn" id="qreset1">Reset questions</button></div>
-  <div class="cards" id="quiz1"></div>
+  {% include quiz.html n=1 %}
 </section>
 
 <section class="block">
@@ -88,11 +77,8 @@
 
 <section class="block">
   <h2>Quick check</h2>
-  <div class="quizbar"><span class="score" id="score2"></span><button class="btn" id="qreset2">Reset questions</button></div>
-  <div class="cards" id="quiz2"></div>
+  {% include quiz.html n=2 %}
 </section>
-</div>
-<script src="../../assets/site.js"></script>
 <script>
 /* ---------- three levels ---------- */
 const PY=['a = 5','b = 3','total = a + b','print(total)'];
@@ -169,5 +155,3 @@ cardQuiz($('#quiz2'),[
  {q:'Which needs to translate the code again every time the program is run?',a:'Interpreter',why:'It never saves the translated machine code.'},
 ],['Compiler','Interpreter'],$('#score2'),$('#qreset2'));
 </script>
-</body>
-</html>

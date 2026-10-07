@@ -1,12 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>D-type flip-flops</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css">
+---
+layout: demo
+title: "D-type flip-flops"
+heading: "D flip-flop (positive-edge triggered)"
+spec: "OCR A LEVEL · 1.4.3"
+---
 <style>
 .top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;margin-top:22px}
 svg text{font-family:var(--mono)}
@@ -23,12 +20,6 @@ kbd{font:.78rem var(--mono);border:1px solid var(--line);border-radius:4px;paddi
 .legend{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:0 16px;font-size:.8rem;color:var(--muted)}
 @media (max-width:640px){.top{grid-template-columns:1fr}}
 </style>
-</head>
-<body>
-<div class="wrap">
-<nav class="series" aria-label="1.4.3 demos"><a class="home" href="../../index.html">← Home</a><a href="logic-gates.html">Logic gates</a><a href="boolean-simplification.html">Boolean simplification</a><a href="karnaugh-maps.html">Karnaugh maps</a><a href="d-type-flip-flop.html" aria-current="page">D-type flip-flops</a><a href="half-full-adders.html">Half and full adders</a><a href="ripple-carry-adder.html">Ripple-carry adder</a></nav>
-<p class="spec">OCR A LEVEL · 1.4.3</p>
-<h1>D flip-flop (positive-edge triggered)</h1>
 <p class="lede">Q copies D only at the instant CLK goes from 0 to 1. Change D between edges and watch Q ignore it.</p>
 
 <div class="top">
@@ -75,8 +66,6 @@ kbd{font:.78rem var(--mono);border:1px solid var(--line);border-radius:4px;paddi
 </div>
 
 <p class="note">Truth table at a rising edge: Q<sub>next</sub> = D. At any other time (CLK high, low, or falling), Q holds its value.</p>
-</div>
-<script src="../../assets/site.js"></script>
 <script>
 const N = 400, RATE = 40; // samples kept, samples per second
 let D = 0, CLK = 0, Q = 0, edges = 0, auto = false, paused = false;
@@ -160,5 +149,3 @@ function draw(){
 setInterval(tick, 1000 / RATE);
 ui(); requestAnimationFrame(draw);
 </script>
-</body>
-</html>
