@@ -30,7 +30,6 @@ table.tt{border-collapse:collapse;font-size:.88rem}
 .cells{display:grid}
 .cells button{width:var(--cs);height:var(--cs);position:relative;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel);color:var(--off);font:700 1.5rem var(--mono);cursor:pointer;padding:0}
 .cells button[data-v="1"]{color:var(--ink)}
-.cells button[data-v="2"]{color:var(--hl)}
 .cells button:hover{background:var(--hl-soft)}
 .cells .m{position:absolute;left:5px;top:3px;font:400 .62rem var(--mono);color:var(--muted)}
 .groups{position:absolute;inset:0;pointer-events:none;overflow:hidden}
@@ -52,7 +51,7 @@ table.tt{border-collapse:collapse;font-size:.88rem}
 .side ul li{margin:3px 0}
 .side b{color:var(--ink)}
 .tt button{font:700 .88rem var(--mono);border:0;background:none;color:var(--off);cursor:pointer;padding:0 6px}
-.tt button[data-v="1"]{color:var(--one)}.tt button[data-v="2"]{color:var(--hl)}
+.tt button[data-v="1"]{color:var(--one)}
 .load input{font:1rem var(--mono);padding:8px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink);flex:1;min-width:0}
 .err{color:var(--bad);font-size:.88rem;min-height:1.3em;margin:6px 0 0}
 @media (max-width:900px){.layout{grid-template-columns:1fr}}
@@ -63,7 +62,7 @@ table.tt{border-collapse:collapse;font-size:.88rem}
   <nav class="series" aria-label="1.4.3 demos"><a href="logic-gates.html">Logic gates</a><a href="boolean-simplification.html">Boolean simplification</a><a href="karnaugh-maps.html" aria-current="page">Karnaugh maps</a><a href="d-type-flip-flop.html">D-type flip-flops</a><a href="half-full-adders.html">Half and full adders</a><a href="ripple-carry-adder.html">Ripple-carry adder</a></nav>
   <p class="spec">OCR A LEVEL · 1.4.3</p>
   <h1>Karnaugh maps</h1>
-  <p class="lede">Click a cell to cycle it through 0, 1 and X (don't care). The map finds the largest groups of 1s and turns each group into one term of the simplest expression.</p>
+  <p class="lede">Click a cell to switch it between 0 and 1. The map finds the largest groups of 1s and turns each group into one term of the simplest expression.</p>
   <div class="toolbar">
     <span>Notation</span>
     <div class="seg" role="radiogroup" aria-label="Notation" id="nota">
@@ -97,7 +96,7 @@ table.tt{border-collapse:collapse;font-size:.88rem}
       <div class="panel">
         <h2>Grouping rules</h2>
         <ul>
-          <li>Groups contain only 1s (and Xs if they help).</li>
+          <li>Groups contain only 1s.</li>
           <li>Group sizes are <b>1, 2, 4, 8 or 16</b>, in rectangles.</li>
           <li>Make each group <b>as large as possible</b>.</li>
           <li>Use <b>as few groups as possible</b>.</li>
@@ -148,9 +147,9 @@ function primeImplicants(list){
 }
 function combos(arr,k,fn,start=0,acc=[]){if(acc.length===k)return fn(acc);for(let i=start;i<arr.length;i++){acc.push(arr[i]);combos(arr,k,fn,i+1,acc);acc.pop()}}
 function solve(){
-  const ones=[],dcs=[];cells.forEach((c,i)=>c===1?ones.push(i):c===2&&dcs.push(i));
+  const ones=[];cells.forEach((c,i)=>c===1&&ones.push(i));
   if(!ones.length)return[];
-  const P=primeImplicants([...ones,...dcs]),lits=p=>N-pop(p.m),chosen=[];
+  const P=primeImplicants(ones),lits=p=>N-pop(p.m),chosen=[];
   for(const m of ones){const c=P.filter(p=>covers(p,m));if(c.length===1&&!chosen.includes(c[0]))chosen.push(c[0])}
   const left=ones.filter(m=>!chosen.some(p=>covers(p,m)));
   if(left.length){
@@ -181,7 +180,7 @@ function renderMap(){
     <div class="rowhead">${g.rows.map(r=>`<span>${bin(r,g.rb)}</span>`).join('')}</div>
     <div class="cellbox"><div class="cells" style="grid-template-columns:repeat(${g.cols.length},var(--cs))">
       ${g.rows.map((_,r)=>g.cols.map((_,c)=>{const i=idx(r,c),v=cells[i];
-        return`<button data-i="${i}" data-v="${v}" aria-label="${V.map((x,k)=>x+'='+((i>>(N-1-k))&1)).join(' ')}, value ${v===2?'X':v}"><span class="m">${i}</span>${v===2?'X':v}</button>`}).join('')).join('')}
+        return`<button data-i="${i}" data-v="${v}" aria-label="${V.map((x,k)=>x+'='+((i>>(N-1-k))&1)).join(' ')}, value ${v}"><span class="m">${i}</span>${v}</button>`}).join('')).join('')}
     </div><div class="groups ${showSol?'':'hidden'}" id="gl"></div></div>`;
   const R=g.rows.length,C=g.cols.length;
   $('#gl').innerHTML=groups.map((p,k)=>{
@@ -213,7 +212,7 @@ function renderResult(){
 function renderTT(){
   const V=vars();
   $('#tt').innerHTML=`<table class="tt"><thead><tr><th></th>${V.map(v=>`<th>${v}</th>`).join('')}<th>F</th></tr></thead><tbody>
-    ${cells.map((v,i)=>`<tr><td class="idx">${i}</td>${V.map((_,k)=>`<td>${(i>>(N-1-k))&1}</td>`).join('')}<td><button data-i="${i}" data-v="${v}" aria-label="Row ${i} output ${v===2?'X':v}">${v===2?'X':v}</button></td></tr>`).join('')}</tbody></table>`;
+    ${cells.map((v,i)=>`<tr><td class="idx">${i}</td>${V.map((_,k)=>`<td>${(i>>(N-1-k))&1}</td>`).join('')}<td><button data-i="${i}" data-v="${v}" aria-label="Row ${i} output ${v}">${v}</button></td></tr>`).join('')}</tbody></table>`;
 }
 function render(){
   groups=solve();
@@ -222,12 +221,12 @@ function render(){
 }
 
 /* ---------- interaction ---------- */
-function bump(i){cells[i]=(cells[i]+1)%3;render()}
+function bump(i){cells[i]^=1;render()}
 $('#kmap').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b){const i=+b.dataset.i;bump(i);document.querySelector(`#kmap [data-i="${i}"]`).focus()}});
 $('#tt').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b){const i=+b.dataset.i;bump(i);document.querySelector(`#tt [data-i="${i}"]`).focus()}});
 $('#nvars').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b){reset(+b.dataset.k);render()}});
 $('#clear').onclick=()=>{reset(N);render()};
-$('#rand').onclick=()=>{cells=cells.map(()=>{const r=Math.random();return r<.42?1:r<.5&&N>2?2:0});render()};
+$('#rand').onclick=()=>{cells=cells.map(()=>Math.random()<.45?1:0);render()};
 $('#sol').addEventListener('change',e=>{showSol=e.target.checked;render()});
 function highlight(k){const gl=$('#gl');if(!gl)return;gl.classList.toggle('focus',k!==null);gl.querySelectorAll('.grp').forEach(d=>d.classList.toggle('hot',d.dataset.g===k))}
 ['glist','fexpr'].forEach(id=>{
@@ -242,13 +241,12 @@ const PRESETS=[
   {name:'Wrap-around',n:4,ones:[4,6,12,14]},
   {name:'Four corners',n:4,ones:[0,2,8,10]},
   {name:'Group of 8',n:4,ones:[0,2,4,6,8,10,12,14]},
-  {name:"Using don't cares",n:4,ones:[1,3,7,11,15],dc:[0,2,5]},
   {name:'Overlapping groups',n:4,ones:[0,1,2,3,5,7,13,15]},
   {name:'No grouping possible',n:3,ones:[1,2,4,7]}
 ];
 $('#presets').innerHTML=PRESETS.map((p,k)=>`<button data-p="${k}">${p.name}</button>`).join('');
 $('#presets').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b)return;const p=PRESETS[+b.dataset.p];
-  reset(p.n);p.ones.forEach(i=>cells[i]=1);(p.dc||[]).forEach(i=>cells[i]=2);render()});
+  reset(p.n);p.ones.forEach(i=>cells[i]=1);render()});
 
 function loadExpr(){
   try{
