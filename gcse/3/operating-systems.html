@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Operating systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E8ECEF;--grid:rgba(22,32,43,.05);--panel:#F8FAFB;--ink:#16202B;--muted:#5B6874;--line:#C9D1D8;--one:#1F5BFF;--one-soft:#DDE6FF;--hl:#FFB000;--hl-soft:#FFF0C7;--off:#AEB8C1;--ok:#138A52;--ok-soft:#D7F2E3;--bad:#C2362B;--bad-soft:#F9DEDB}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--grid:rgba(255,255,255,.035);--panel:#1A222C;--ink:#E7EDF2;--muted:#9AA7B3;--line:#2E3A46;--one:#5B8CFF;--one-soft:#1E2E57;--hl-soft:#3D3110;--off:#4A5764;--ok:#3CC47F;--ok-soft:#14321F;--bad:#FF6B5E;--bad-soft:#3A1A17}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:6px 0 8px}
+.lede{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.series{display:flex;gap:6px;flex-wrap:wrap}
+.series a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.series a[aria-current]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.spec{font:600 .78rem 'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;margin:22px 0 0}
+.block{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0}
+.block>h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:700 .9rem Manrope,system-ui,sans-serif;padding:8px 14px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--hl-soft)}
+.btn.pri{background:var(--ink);color:var(--bg)}
+.btn:disabled{opacity:.35;cursor:default;background:var(--panel);color:var(--ink)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1.5px solid var(--line);margin:0 0 18px}
+.tabs button{font:700 .95rem Manrope,system-ui,sans-serif;padding:10px 14px;border:0;border-bottom:4px solid transparent;background:none;color:var(--muted);cursor:pointer;margin-bottom:-1.5px}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--hl)}
+.mono{font-family:'JetBrains Mono',monospace}
+.note{background:var(--hl-soft);border-left:4px solid var(--hl);padding:10px 14px;border-radius:6px;margin:14px 0 0;font-size:.95rem}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:.92rem;cursor:pointer}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.t th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.okc{color:var(--ok)}.badc{color:var(--bad)}
+.hidden{display:none!important}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.card.right{border-color:var(--ok);background:var(--ok-soft)}
+.card.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.card .opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.card .opts button{font:600 .85rem Manrope,system-ui,sans-serif;padding:6px 11px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.card .opts button.picked{border-color:var(--ink)}
+.card .fb{font-size:.88rem;margin:8px 0 0}
+.quizbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.score{font-weight:800}
+select,input[type=text],input[type=password],input[type=number]{font:1rem Manrope,system-ui,sans-serif;padding:7px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink)}
+input[type=range],input[type=checkbox]{accent-color:var(--one)}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.cols2{grid-template-columns:1fr}}
+.status{font-size:.95rem;min-height:1.5em}
+
+/* files */
+.fm{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.tree{font:.95rem 'JetBrains Mono',monospace;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:10px;min-height:260px}
+.tree ul{list-style:none;margin:0;padding-left:20px}.tree>ul{padding-left:0}
+.tree .n{display:inline-block;padding:2px 8px;border-radius:6px;cursor:pointer}
+.tree .n:hover{background:var(--hl-soft)}
+.tree .n.sel{background:var(--ink);color:var(--bg)}
+.log{font:.85rem 'JetBrains Mono',monospace;background:var(--bg);border-radius:8px;padding:10px;max-height:150px;overflow:auto;margin-top:10px;color:var(--muted)}
+.log div:first-child{color:var(--ink)}
+/* processes */
+.cpuBox{border:3px solid var(--ink);border-radius:12px;padding:12px;min-width:200px;text-align:center}
+.cpuBox .cur{font-weight:800;font-size:1.2rem;min-height:1.6em;border-radius:8px;padding:6px}
+.chip{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:700;font-size:.85rem;color:#fff;margin:2px}
+.gantt{display:flex;flex-wrap:wrap;gap:2px;margin:8px 0 0;min-height:30px}
+.gantt span{width:22px;height:28px;border-radius:3px;display:inline-block}
+.rambar{display:flex;height:40px;border:2px solid var(--ink);border-radius:8px;overflow:hidden;margin-top:6px}
+.rambar div{height:100%;color:#fff;font:700 .72rem Manrope,sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;transition:flex .3s}
+.plist{width:100%}
+.prog{height:8px;border-radius:4px;background:var(--line);overflow:hidden;min-width:80px}
+.prog div{height:100%}
+/* peripherals */
+.devs{display:flex;flex-wrap:wrap;gap:10px}
+.dev{border:2px solid var(--line);border-radius:10px;padding:10px 12px;min-width:140px;background:var(--bg)}
+.dev b{display:block}
+.dev small{color:var(--muted)}
+.dev.ok{border-color:var(--ok)}.dev.no{border-color:var(--bad)}
+.pipe{display:grid;grid-template-columns:1fr 2fr 1fr;gap:12px;align-items:center;margin-top:12px}
+.buf{height:46px;border:2px solid var(--ink);border-radius:8px;display:flex;gap:3px;padding:4px;align-items:stretch}
+.buf span{flex:0 0 18px;background:var(--one);border-radius:3px}
+.endbox{border:2px solid var(--ink);border-radius:10px;padding:10px;text-align:center;font-weight:700}
+.endbox small{display:block;font-weight:600;color:var(--muted)}
+/* users */
+.login{max-width:340px;display:grid;gap:8px}
+.folders{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:10px}
+.folder{border:2px solid var(--line);border-radius:10px;padding:12px;background:var(--bg)}
+.folder b{display:block;margin-bottom:6px}
+.perm{font-size:.8rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--line);display:inline-block;margin-bottom:8px}
+.perm.rw{background:var(--ok);color:#fff}.perm.r{background:var(--one);color:#fff}
+.msg{min-height:1.5em;font-weight:700;margin-top:8px}
+@media (max-width:760px){.fm{grid-template-columns:1fr}.pipe{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 3 demos"><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html" aria-current="page">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
+<p class="spec">EDEXCEL GCSE · 3.2.1</p>
+<h1>Operating systems</h1>
+<p class="lede">The operating system (OS) sits between the hardware, the applications and the user. It manages files, processes, peripherals and users, and provides the interface so nobody has to deal with the hardware directly.</p>
+
+<section class="block">
+  <div class="tabs" role="tablist" id="tt">
+    <button role="tab" aria-selected="true" data-p="p-file">File management</button>
+    <button role="tab" aria-selected="false" data-p="p-proc">Process management</button>
+    <button role="tab" aria-selected="false" data-p="p-peri">Peripheral management</button>
+    <button role="tab" aria-selected="false" data-p="p-user">User management</button>
+  </div>
+
+  <!-- FILES -->
+  <div id="p-file">
+    <p class="sub">The OS organises files into a hierarchy of folders, keeps track of where each one is stored on disk, and records details such as name, size, type and owner. Select something, then try the actions.</p>
+    <div class="fm">
+      <div>
+        <div class="row" style="margin-bottom:10px">
+          <button class="btn" id="f-newd">New folder</button><button class="btn" id="f-newf">New file</button>
+          <button class="btn" id="f-ren">Rename</button><button class="btn" id="f-del">Delete</button>
+        </div>
+        <div class="tree" id="tree"></div>
+      </div>
+      <div>
+        <table class="t" id="fdet"></table>
+        <div class="row" style="margin-top:10px"><label class="check">Move to <select id="f-mv"></select></label><button class="btn" id="f-go">Move</button></div>
+        <div class="log" id="flog"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCESSES -->
+  <div id="p-proc" class="hidden">
+    <p class="sub">A single CPU core can only run one process at a time. The OS gives each process a short <b>time slice</b> in turn, switching so fast that they all seem to run at once (multitasking). It also gives each process its own area of RAM, and takes it back when the process ends.</p>
+    <div class="row" style="margin-bottom:12px">
+      <button class="btn pri" id="p-run">Run</button><button class="btn" id="p-reset">Reset</button>
+      <label class="check">Time slice <input type="range" id="p-q" min="1" max="4" value="1"> <b id="p-qv">1</b></label>
+      <select id="p-add"></select><button class="btn" id="p-addb">Open program</button>
+    </div>
+    <div class="row" style="align-items:flex-start;gap:20px">
+      <div class="cpuBox"><small style="color:var(--muted);font-weight:700">CPU IS RUNNING</small><div class="cur" id="p-cur">—</div></div>
+      <div style="flex:1;min-width:260px"><b>Ready queue</b> <small style="color:var(--muted)">(waiting for their turn)</small><div id="p-queue" style="min-height:34px;margin-top:4px"></div>
+        <b>CPU time line</b><div class="gantt" id="gantt"></div></div>
+    </div>
+    <div style="margin-top:14px"><b>RAM allocation</b> <small style="color:var(--muted)" id="p-free"></small><div class="rambar" id="rambar"></div></div>
+    <table class="t plist" id="plist" style="margin-top:14px"></table>
+    <p class="status" id="p-msg" style="margin-top:8px"></p>
+  </div>
+
+  <!-- PERIPHERALS -->
+  <div id="p-peri" class="hidden">
+    <p class="sub">Peripherals are devices connected to the computer. The OS talks to each one through a <b>device driver</b>: software that translates the OS's general commands into the instructions that particular device understands. It also uses <b>buffers</b> so a fast CPU isn't held up by a slow device.</p>
+    <div class="devs" id="devs"></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="plug">Plug in a new printer</button><span class="status" id="plugmsg"></span></div>
+    <h3 style="margin:22px 0 4px">Printing a 12-page document</h3>
+    <div class="row"><button class="btn pri" id="print">Print</button><label class="check"><input type="checkbox" id="usebuf" checked> Use a buffer</label></div>
+    <div class="pipe">
+      <div class="endbox" id="cpuSt">CPU<small>idle</small></div>
+      <div><small style="color:var(--muted);font-weight:700" id="bufLab">Buffer (in RAM)</small><div class="buf" id="buf"></div></div>
+      <div class="endbox" id="prSt">Printer<small>0 / 12 pages</small></div>
+    </div>
+    <p class="status" id="prmsg" style="margin-top:10px"></p>
+  </div>
+
+  <!-- USERS -->
+  <div id="p-user" class="hidden">
+    <p class="sub">The OS lets several people share one computer safely. Each user has an account protected by a password. The OS checks who you are (authentication), then controls which files and settings you can access (access rights).</p>
+    <div class="cols2">
+      <div id="loginArea">
+        <div class="login">
+          <input type="text" id="u" placeholder="Username" autocomplete="off">
+          <input type="password" id="pwd" placeholder="Password">
+          <button class="btn pri" id="lg">Log in</button>
+          <p class="msg" id="lmsg"></p>
+        </div>
+        <table class="t" style="max-width:420px;margin-top:6px"><tr><th>Demo accounts</th><th>Password</th><th>Type</th></tr>
+          <tr><td class="mono">alex</td><td class="mono">maple</td><td>Student</td></tr>
+          <tr><td class="mono">mr.shah</td><td class="mono">chalk</td><td>Teacher</td></tr>
+          <tr><td class="mono">admin</td><td class="mono">server</td><td>Administrator</td></tr></table>
+        <p class="note">Try a wrong password three times.</p>
+      </div>
+      <div id="desk" class="hidden">
+        <div class="row" style="justify-content:space-between"><b id="who"></b><button class="btn" id="lo">Log out</button></div>
+        <div class="folders" id="folders"></div>
+        <p class="msg" id="amsg"></p>
+        <div id="adminPanel" class="hidden"><h3 style="margin:16px 0 4px">Administrator: set access rights</h3><div class="scroll"><table class="t" id="ptable"></table></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
+  <div class="cards" id="quiz"></div>
+</section>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+/* tabs: buttons need role=tab and data-p=<panel id> */
+function tabs(root){const b=[...root.querySelectorAll('[role=tab]')];b.forEach(x=>x.onclick=()=>b.forEach(y=>{y.setAttribute('aria-selected',y===x);document.getElementById(y.dataset.p).classList.toggle('hidden',y!==x)}))}
+/* multiple-choice cards. items: {q,a,why,opts?} */
+function cardQuiz(el,items,opts,scoreEl,resetBtn){
+  function build(){
+    let right=0,done=0;el.innerHTML='';
+    const show=()=>{if(scoreEl)scoreEl.textContent=`${right} correct out of ${done} answered (${items.length} questions)`};
+    items.forEach(it=>{
+      const c=document.createElement('div');c.className='card';
+      c.innerHTML=`<div>${it.q}</div><div class="opts"></div><p class="fb hidden"></p>`;
+      const o=c.querySelector('.opts'),fb=c.querySelector('.fb');
+      (it.opts||opts).forEach(op=>{const b=document.createElement('button');b.textContent=op;b.onclick=()=>{
+        if(c.dataset.done)return;c.dataset.done=1;done++;b.classList.add('picked');
+        const ok=op===it.a;if(ok)right++;c.classList.add(ok?'right':'wrong');
+        fb.innerHTML=(ok?'<b>Correct.</b> ':`<b>Answer: ${it.a}.</b> `)+it.why;fb.classList.remove('hidden');show()};o.appendChild(b)});
+      el.appendChild(c)});
+    show();
+  }
+  build();if(resetBtn)resetBtn.onclick=build;
+}
+
+tabs($('#tt'));
+/* =============== FILES =============== */
+let uid=0;const N=(name,kids,size)=>({id:++uid,name,kids:kids||null,size:size||0,made:new Date(2026,8,1+uid%20,9+uid%8,uid*7%60)});
+const root=N('C:',[N('Documents',[N('essay.docx',null,48),N('notes.txt',null,2)]),N('Pictures',[N('holiday.jpg',null,3400),N('cat.png',null,850)]),N('Program Files',[N('browser.exe',null,182000)])]);
+let sel=root.kids[0];
+const isSys=n=>pathOf(n).includes('Program Files');
+function walk(n,f,p=null){f(n,p);(n.kids||[]).forEach(k=>walk(k,f,n))}
+function parentOf(x){let r=null;walk(root,(n,p)=>{if(n===x)r=p});return r}
+function pathOf(x){const a=[];for(let n=x;n;n=parentOf(n))a.unshift(n.name);return a.join('\\')}
+function flog(t){$('#flog').insertAdjacentHTML('afterbegin',`<div>${t}</div>`)}
+const ext=n=>n.kids?'Folder':(n.name.split('.')[1]||'file').toUpperCase()+' file';
+const fmt=k=>k>=1000?(k/1000).toFixed(1)+' MB':k+' KB';
+const total=n=>n.kids?n.kids.reduce((s,k)=>s+total(k),0):n.size;
+function drawFiles(){
+  const li=n=>`<li><span class="n${n===sel?' sel':''}" data-id="${n.id}">${n.kids?'📁':'📄'} ${n.name}</span>${n.kids&&n.kids.length?'<ul>'+n.kids.map(li).join('')+'</ul>':''}</li>`;
+  $('#tree').innerHTML='<ul>'+li(root)+'</ul>';
+  $('#fdet').innerHTML=[['Name',sel.name],['Type',ext(sel)],['Location',pathOf(sel)],['Size',fmt(total(sel))],['Created',sel.made.toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'})],['Owner',isSys(sel)?'SYSTEM':'alex']].map(r=>`<tr><th>${r[0]}</th><td class="mono">${r[1]}</td></tr>`).join('');
+  const dirs=[];walk(root,n=>{if(n.kids&&n!==sel&&!pathOf(n).startsWith(pathOf(sel)+'\\'))dirs.push(n)});
+  $('#f-mv').innerHTML=dirs.map(d=>`<option value="${d.id}">${pathOf(d)}</option>`).join('');
+}
+const byId=id=>{let r;walk(root,n=>{if(n.id==id)r=n});return r};
+$('#tree').onclick=e=>{const s=e.target.closest('.n');if(s){sel=byId(s.dataset.id);drawFiles()}};
+const target=()=>sel.kids?sel:parentOf(sel);
+function guard(){if(isSys(sel)||sel===root){flog(`✖ Access denied: ${pathOf(sel)} is protected. Only an administrator can change it.`);return false}return true}
+$('#f-newd').onclick=()=>{const d=target();if(isSys(d)){sel=d;guard();return}const name=prompt('Folder name:','Coursework');if(!name)return;
+  if(d.kids.some(k=>k.name===name)){flog(`✖ ${name} already exists here. Names must be unique within a folder.`);return}
+  const n=N(name,[]);d.kids.push(n);sel=n;flog(`Created folder ${pathOf(n)} and added it to the directory structure.`);drawFiles()};
+$('#f-newf').onclick=()=>{const d=target();if(isSys(d)){sel=d;guard();return}const name=prompt('File name:','homework.docx');if(!name)return;
+  if(d.kids.some(k=>k.name===name)){flog(`✖ ${name} already exists here.`);return}
+  const n=N(name,null,Math.ceil(Math.random()*90));d.kids.push(n);sel=n;flog(`Saved ${pathOf(n)}: found free space on the disk and recorded where the file's blocks are.`);drawFiles()};
+$('#f-ren').onclick=()=>{if(!guard())return;const name=prompt('New name:',sel.name);if(!name||name===sel.name)return;const p=parentOf(sel);
+  if(p.kids.some(k=>k.name===name)){flog(`✖ ${name} already exists here.`);return}
+  flog(`Renamed ${sel.name} to ${name}. Only the directory entry changed; the data on disk did not move.`);sel.name=name;drawFiles()};
+$('#f-del').onclick=()=>{if(!guard())return;const p=parentOf(sel);p.kids=p.kids.filter(k=>k!==sel);flog(`Deleted ${pathOf(p)}\\${sel.name}: its space on disk is marked as free to reuse.`);sel=p;drawFiles()};
+$('#f-go').onclick=()=>{if(!guard())return;const d=byId($('#f-mv').value);if(!d)return;if(isSys(d)){flog('✖ Access denied: Program Files is protected.');return}
+  if(d.kids.some(k=>k.name===sel.name)){flog(`✖ ${d.name} already contains ${sel.name}.`);return}
+  const p=parentOf(sel);p.kids=p.kids.filter(k=>k!==sel);d.kids.push(sel);flog(`Moved ${sel.name} from ${pathOf(p)} to ${pathOf(d)}.`);drawFiles()};
+flog('Ready. The OS is tracking 7 files and folders.');drawFiles();
+
+/* =============== PROCESSES =============== */
+const RAM=1024,OSMEM=200;
+const PROGS=[['Music player',4,120,'#7B4DFF'],['Web browser',7,300,'#1F5BFF'],['Word processor',3,150,'#138A52'],['Antivirus scan',5,200,'#C2362B'],['Game',6,400,'#D97706'],['Photo editor',5,250,'#0E9AA7']];
+let procs,queue,cur,used,ptimer=null,gantt;
+function preset(){procs=[];queue=[];cur=null;used=0;gantt=[];PROGS.slice(0,4).forEach(p=>start(p,true));$('#p-msg').textContent='';drawProc()}
+function start(p,quiet){
+  const mem=procs.filter(x=>!x.done).reduce((s,x)=>s+x.mem,OSMEM);
+  if(mem+p[2]>RAM){$('#p-msg').innerHTML=`<span class="badc">✖ Not enough free RAM to load ${p[0]} (${p[2]} MB needed, ${RAM-mem} MB free). Close something, or let a process finish first.</span>`;return}
+  const pr={name:p[0],need:p[1],mem:p[2],col:p[3],ran:0,done:false};procs.push(pr);queue.push(pr);
+  if(!quiet)$('#p-msg').textContent=`The OS loaded ${p[0]} into RAM and added it to the ready queue.`;drawProc();
+}
+function ptick(){
+  const q=+$('#p-q').value;
+  if(cur&&(cur.done||used>=q)){if(!cur.done)queue.push(cur);cur=null}
+  if(!cur){cur=queue.shift()||null;used=0;if(!cur){stopP();$('#p-msg').textContent='All processes have finished. Their RAM has been released.';drawProc();return}}
+  cur.ran++;used++;gantt.push(cur.col);
+  if(cur.ran>=cur.need){cur.done=true;$('#p-msg').textContent=`${cur.name} finished. The OS freed its ${cur.mem} MB of RAM.`}
+  drawProc();
+}
+function drawProc(){
+  $('#p-cur').textContent=cur&&!cur.done?cur.name:'—';$('#p-cur').style.background=cur&&!cur.done?cur.col:'transparent';$('#p-cur').style.color=cur&&!cur.done?'#fff':'';
+  $('#p-queue').innerHTML=queue.map(p=>`<span class="chip" style="background:${p.col}">${p.name}</span>`).join('')||'<span style="color:var(--muted)">empty</span>';
+  $('#gantt').innerHTML=gantt.slice(-40).map(c=>`<span style="background:${c}"></span>`).join('');
+  const live=procs.filter(p=>!p.done),usedM=live.reduce((s,p)=>s+p.mem,OSMEM);
+  $('#rambar').innerHTML=`<div style="flex:${OSMEM};background:#5B6874">OS</div>`+live.map(p=>`<div style="flex:${p.mem};background:${p.col}">${p.name}</div>`).join('')+`<div style="flex:${RAM-usedM};background:transparent;color:var(--muted)">free</div>`;
+  $('#p-free').textContent=`${usedM} MB of ${RAM} MB in use`;
+  $('#plist').innerHTML='<tr><th>Process</th><th>State</th><th>Progress</th><th>RAM</th></tr>'+procs.map(p=>`<tr><td><span class="chip" style="background:${p.col}">${p.name}</span></td><td>${p.done?'Finished':p===cur?'<b>Running</b>':'Ready'}</td><td><div class="prog"><div style="width:${p.ran/p.need*100}%;background:${p.col}"></div></div></td><td class="mono">${p.done?'freed':p.mem+' MB'}</td></tr>`).join('');
+}
+function stopP(){clearInterval(ptimer);ptimer=null;$('#p-run').textContent='Run'}
+$('#p-run').onclick=()=>{if(ptimer)stopP();else{ptimer=setInterval(ptick,550);$('#p-run').textContent='Pause'}};
+$('#p-reset').onclick=()=>{stopP();preset()};
+$('#p-q').oninput=()=>$('#p-qv').textContent=$('#p-q').value;
+$('#p-add').innerHTML=PROGS.map((p,i)=>`<option value="${i}">${p[0]} (${p[2]} MB)</option>`).join('');
+$('#p-addb').onclick=()=>start(PROGS[$('#p-add').value]);
+preset();
+
+/* =============== PERIPHERALS =============== */
+const devs=[['Keyboard','Input','Keyboard driver',true],['Mouse','Input','HID mouse driver',true],['Monitor','Output','Display driver',true]];
+let printer=null,printing=false;
+function drawDevs(){$('#devs').innerHTML=[...devs,...(printer?[printer]:[])].map(d=>`<div class="dev ${d[3]?'ok':'no'}"><b>${d[0]}</b><small>${d[1]} device</small><div style="font-size:.85rem;margin-top:4px">${d[3]?'✔ '+d[2]:'✖ No driver'}</div></div>`).join('')}
+$('#plug').onclick=async()=>{if(printer)return;$('#plug').disabled=true;printer=['Printer','Output','',false];drawDevs();
+  for(const t of['New device detected on USB port…','Identifying device: LaserJet 2200…','Searching for a matching driver…','Installing driver…']){$('#plugmsg').textContent=t;await sleep(800)}
+  printer[2]='LaserJet 2200 driver';printer[3]=true;drawDevs();$('#plugmsg').textContent='✔ Driver installed. The OS can now send print jobs to this printer.'};
+async function print(){
+  if(printing)return;
+  if(!printer||!printer[3]){$('#prmsg').innerHTML='<span class="badc">✖ The OS cannot communicate with a printer: no printer driver is installed. Plug one in first.</span>';return}
+  printing=true;$('#print').disabled=true;const buf=$('#usebuf').checked;let inBuf=0,printed=0,sent=0,cpuBusy=0;const t0=Date.now();
+  const draw=()=>{$('#buf').innerHTML='<span></span>'.repeat(inBuf);$('#prSt').innerHTML=`Printer<small>${printed} / 12 pages</small>`};
+  $('#bufLab').textContent=buf?'Buffer (in RAM)':'No buffer: CPU must wait for each page';
+  const cpu=t=>$('#cpuSt').innerHTML='CPU<small>'+t+'</small>';
+  if(buf){
+    const printerLoop=(async()=>{while(printed<12){if(inBuf>0){await sleep(650);inBuf--;printed++;draw()}else await sleep(40)}})();
+    for(;sent<12;sent++){cpu('sending page '+(sent+1));inBuf++;draw();await sleep(60)}
+    cpuBusy=Date.now()-t0;cpu('✔ free for other tasks');$('#prmsg').textContent=`The CPU handed all 12 pages to the buffer in ${(cpuBusy/1000).toFixed(1)} s and went back to other work. The printer takes pages from the buffer at its own speed.`;
+    await printerLoop;
+  }else{
+    for(;sent<12;sent++){cpu('waiting for printer…');inBuf=1;draw();await sleep(650);inBuf=0;printed++;draw()}
+    cpuBusy=Date.now()-t0;cpu('idle');
+  }
+  const tot=((Date.now()-t0)/1000).toFixed(1);
+  $('#prmsg').textContent=buf?`Done in ${tot} s, but the CPU was only tied up for ${(cpuBusy/1000).toFixed(1)} s.`:`Done in ${tot} s, and the CPU was stuck waiting the whole ${tot} s.`;
+  cpu('idle');printing=false;$('#print').disabled=false;
+}
+$('#print').onclick=print;drawDevs();
+
+/* =============== USERS =============== */
+const USERS={alex:{pw:'maple',role:'Student'},'mr.shah':{pw:'chalk',role:'Teacher'},admin:{pw:'server',role:'Administrator'}};
+const FOLDERS=['My documents','Shared homework','Exam papers','System settings'];
+const PERM={Student:{'My documents':'rw','Shared homework':'r','Exam papers':'none','System settings':'none'},
+            Teacher:{'My documents':'rw','Shared homework':'rw','Exam papers':'rw','System settings':'none'},
+            Administrator:{'My documents':'rw','Shared homework':'rw','Exam papers':'rw','System settings':'rw'}};
+const LBL={rw:'Read & write',r:'Read only',none:'No access'};
+let fails={},locked={},me=null;
+$('#lg').onclick=()=>{const u=$('#u').value.trim().toLowerCase(),p=$('#pwd').value,m=$('#lmsg');
+  if(locked[u]&&Date.now()<locked[u]){m.innerHTML=`<span class="badc">🔒 Account locked after 3 failed attempts. Try again in ${Math.ceil((locked[u]-Date.now())/1000)} s.</span>`;return}
+  if(USERS[u]&&USERS[u].pw===p){fails[u]=0;me=u;$('#pwd').value='';m.textContent='';showDesk();return}
+  fails[u]=(fails[u]||0)+1;
+  if(USERS[u]&&fails[u]>=3){locked[u]=Date.now()+20000;fails[u]=0;m.innerHTML='<span class="badc">🔒 3 failed attempts: account locked for 20 seconds. This stops someone guessing passwords over and over.</span>'}
+  else m.innerHTML=`<span class="badc">✖ Username or password not recognised.${USERS[u]?` (${3-fails[u]} attempt${3-fails[u]>1?'s':''} left)`:''}</span>`};
+$('#pwd').onkeydown=e=>{if(e.key==='Enter')$('#lg').click()};
+function showDesk(){const r=USERS[me].role;$('#loginArea').classList.add('hidden');$('#desk').classList.remove('hidden');
+  $('#who').textContent=`Logged in as ${me} (${r})`;$('#amsg').textContent='';$('#adminPanel').classList.toggle('hidden',r!=='Administrator');drawFolders();drawPT()}
+function drawFolders(){const r=USERS[me].role;
+  $('#folders').innerHTML=FOLDERS.map(f=>{const p=PERM[r][f];return`<div class="folder"><b>📁 ${f}</b><span class="perm ${p}">${LBL[p]}</span><div class="row" style="gap:6px"><button class="btn" data-f="${f}" data-a="open">Open</button><button class="btn" data-f="${f}" data-a="edit">Edit</button></div></div>`}).join('')}
+$('#folders').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=PERM[USERS[me].role][b.dataset.f],need=b.dataset.a==='open'?['r','rw']:['rw'];
+  $('#amsg').innerHTML=need.includes(p)?`<span class="okc">✔ Access granted: ${b.dataset.a==='open'?'opened':'you can edit'} ${b.dataset.f}.</span>`:`<span class="badc">✖ Access denied: your account does not have ${b.dataset.a==='open'?'read':'write'} permission for ${b.dataset.f}.</span>`};
+function drawPT(){$('#ptable').innerHTML='<tr><th>Folder</th><th>Student</th><th>Teacher</th></tr>'+FOLDERS.map(f=>`<tr><td>${f}</td>${['Student','Teacher'].map(r=>`<td><select data-r="${r}" data-f="${f}">${Object.keys(LBL).map(k=>`<option value="${k}"${PERM[r][f]===k?' selected':''}>${LBL[k]}</option>`).join('')}</select></td>`).join('')}</tr>`).join('')}
+$('#ptable').onchange=e=>{const s=e.target;PERM[s.dataset.r][s.dataset.f]=s.value;$('#amsg').textContent=`Updated: ${s.dataset.r} accounts now have "${LBL[s.value]}" on ${s.dataset.f}. Log in as that user to check.`};
+$('#lo').onclick=()=>{me=null;$('#desk').classList.add('hidden');$('#loginArea').classList.remove('hidden')};
+
+cardQuiz($('#quiz'),[
+ {q:'Allocating each running program its own area of RAM.',a:'Process',why:'Process management includes memory allocation so programs cannot overwrite each other.'},
+ {q:'Giving each program a short turn on the CPU so they appear to run at the same time.',a:'Process',why:'Scheduling time slices is how the OS provides multitasking.'},
+ {q:'Using a driver so the computer can communicate with a new webcam.',a:'Peripheral',why:'Device drivers translate between the OS and specific hardware.'},
+ {q:'Holding print data in a buffer so the CPU can carry on with other work.',a:'Peripheral',why:'Buffering lets fast and slow devices work together.'},
+ {q:'Organising files into folders and keeping track of where each is stored.',a:'File',why:'File management covers naming, organising, saving, moving and deleting.'},
+ {q:'Locking an account after three wrong passwords.',a:'User',why:'User management handles accounts, authentication and security.'},
+ {q:'Stopping a student opening the exam papers folder.',a:'User',why:'Access rights decide what each user is allowed to read or change.'},
+],['File','Process','Peripheral','User'],$('#score'),$('#qreset'));
+</script>
+</body>
+</html>

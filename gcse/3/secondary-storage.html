@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Secondary storage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E8ECEF;--grid:rgba(22,32,43,.05);--panel:#F8FAFB;--ink:#16202B;--muted:#5B6874;--line:#C9D1D8;--one:#1F5BFF;--one-soft:#DDE6FF;--hl:#FFB000;--hl-soft:#FFF0C7;--off:#AEB8C1;--ok:#138A52;--ok-soft:#D7F2E3;--bad:#C2362B;--bad-soft:#F9DEDB}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--grid:rgba(255,255,255,.035);--panel:#1A222C;--ink:#E7EDF2;--muted:#9AA7B3;--line:#2E3A46;--one:#5B8CFF;--one-soft:#1E2E57;--hl-soft:#3D3110;--off:#4A5764;--ok:#3CC47F;--ok-soft:#14321F;--bad:#FF6B5E;--bad-soft:#3A1A17}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:6px 0 8px}
+.lede{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.series{display:flex;gap:6px;flex-wrap:wrap}
+.series a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.series a[aria-current]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.spec{font:600 .78rem 'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;margin:22px 0 0}
+.block{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0}
+.block>h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:700 .9rem Manrope,system-ui,sans-serif;padding:8px 14px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--hl-soft)}
+.btn.pri{background:var(--ink);color:var(--bg)}
+.btn:disabled{opacity:.35;cursor:default;background:var(--panel);color:var(--ink)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1.5px solid var(--line);margin:0 0 18px}
+.tabs button{font:700 .95rem Manrope,system-ui,sans-serif;padding:10px 14px;border:0;border-bottom:4px solid transparent;background:none;color:var(--muted);cursor:pointer;margin-bottom:-1.5px}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--hl)}
+.mono{font-family:'JetBrains Mono',monospace}
+.note{background:var(--hl-soft);border-left:4px solid var(--hl);padding:10px 14px;border-radius:6px;margin:14px 0 0;font-size:.95rem}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:.92rem;cursor:pointer}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.t th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.okc{color:var(--ok)}.badc{color:var(--bad)}
+.hidden{display:none!important}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.card.right{border-color:var(--ok);background:var(--ok-soft)}
+.card.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.card .opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.card .opts button{font:600 .85rem Manrope,system-ui,sans-serif;padding:6px 11px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.card .opts button.picked{border-color:var(--ink)}
+.card .fb{font-size:.88rem;margin:8px 0 0}
+.quizbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.score{font-weight:800}
+select,input[type=text],input[type=password],input[type=number]{font:1rem Manrope,system-ui,sans-serif;padding:7px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink)}
+input[type=range],input[type=checkbox]{accent-color:var(--one)}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.cols2{grid-template-columns:1fr}}
+.status{font-size:.95rem;min-height:1.5em}
+
+.pw{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.box{border:3px solid var(--ink);border-radius:14px;padding:14px;min-height:190px;background:var(--bg);transition:opacity .3s}
+.box h3{margin:0;font-size:1rem}
+.box .tag{font-size:.8rem;color:var(--muted);margin:0 0 10px}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+.file{font:600 .85rem 'JetBrains Mono',monospace;padding:8px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.file:hover{border-color:var(--one)}
+.file.gone{animation:vanish .6s forwards}
+@keyframes vanish{to{opacity:0;transform:scale(.6)}}
+.off .box.ram{opacity:.45}
+.powerdot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:-1px}
+.off .powerdot{background:var(--bad)}
+.bitsrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.bit{font:700 1rem 'JetBrains Mono',monospace;width:34px;height:38px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.bit[data-v="1"]{border-color:var(--one);color:var(--one)}
+.stage svg{width:100%;height:auto;display:block;max-width:820px}
+.stage text{font:700 14px 'JetBrains Mono',monospace;fill:var(--ink)}
+.stage .lbl{font:600 12px Manrope,sans-serif;fill:var(--muted)}
+.readout{font:600 1.05rem 'JetBrains Mono',monospace;margin:10px 0 0;min-height:1.5em}
+.how{margin:12px 0 0;padding-left:1.1em}
+.how li{margin:4px 0}
+.spin{transform-origin:70px 70px;transform-box:view-box}
+.spinning .spin{animation:rot 1s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.dots{letter-spacing:2px;color:var(--one);white-space:nowrap}
+.dots i{color:var(--off);font-style:normal}
+@media (max-width:640px){.pw{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 3 demos"><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html" aria-current="page">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
+<p class="spec">EDEXCEL GCSE · 3.1.2</p>
+<h1>Secondary storage</h1>
+<p class="lede">RAM is volatile: it loses everything when the power goes off. Secondary storage is non-volatile, so it keeps programs and files permanently. It stores the same 0s and 1s in three very different physical ways.</p>
+
+<section class="block" id="power">
+  <h2>Why do we need secondary storage?</h2>
+  <p class="sub">Click a file on the storage drive to open it (it is copied into RAM). Then switch the power off and back on.</p>
+  <div class="row" style="margin-bottom:14px"><button class="btn pri" id="pbtn">Switch power off</button><span class="status" id="pstat"><span class="powerdot"></span>Power on</span></div>
+  <div class="pw">
+    <div class="box ram"><h3>Main memory (RAM)</h3><p class="tag">Volatile · fast · holds what is in use right now</p><div class="files" id="ramfiles"></div></div>
+    <div class="box"><h3>Secondary storage (SSD)</h3><p class="tag">Non-volatile · larger · keeps files permanently</p><div class="files" id="disk"></div></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>How the 0s and 1s are stored</h2>
+  <p class="sub">Type a character (or click the bits), choose a technology, then write the data and read it back.</p>
+  <div class="bitsrow"><label class="check">Character <input type="text" id="ch" maxlength="1" value="A" style="width:3.2em;text-align:center"></label><span id="bits" class="row" style="gap:6px"></span></div>
+  <div class="tabs" role="tablist" id="tt">
+    <button role="tab" aria-selected="true" data-p="tab-mag">Magnetic</button>
+    <button role="tab" aria-selected="false" data-p="tab-opt">Optical</button>
+    <button role="tab" aria-selected="false" data-p="tab-ssd">Solid state</button>
+  </div>
+  <div id="tab-mag" class="stage">
+    <div class="row" style="margin-bottom:10px"><button class="btn pri" data-act="write" data-t="mag">Write</button><button class="btn" data-act="read" data-t="mag">Read</button></div>
+    <svg viewBox="0 0 820 200" id="svg-mag"></svg>
+    <p class="readout" id="out-mag"></p>
+    <ul class="how">
+      <li>A hard disk drive (HDD) has spinning <b>platters</b> coated in a magnetic material.</li>
+      <li>A <b>read/write head</b> on a moving arm magnetises tiny areas of the surface in one of two directions: one direction represents 1, the other 0.</li>
+      <li>To read, the head senses the direction of each area as it passes underneath.</li>
+      <li>Moving parts make it slower to access, noisier and easier to damage than solid state, but it is cheap for very large capacities. Magnetic tape works the same way, for backups.</li>
+    </ul>
+  </div>
+  <div id="tab-opt" class="stage hidden">
+    <div class="row" style="margin-bottom:10px"><button class="btn pri" data-act="write" data-t="opt">Burn</button><button class="btn" data-act="read" data-t="opt">Read</button></div>
+    <svg viewBox="0 0 820 220" id="svg-opt"></svg>
+    <p class="readout" id="out-opt"></p>
+    <ul class="how">
+      <li>CDs, DVDs and Blu-ray discs store data on a spiral track of <b>pits</b> (dips) and <b>lands</b> (flat areas).</li>
+      <li>To read, a <b>laser</b> shines on the track. A land reflects the light straight back to a sensor; a pit scatters it, so less light returns.</li>
+      <li>To write a recordable disc, a stronger laser changes the dye layer to make the equivalent of pits.</li>
+      <li>Cheap and portable, but low capacity, slow, and easily scratched.</li>
+    </ul>
+    <p class="note">Simplification: here a land is 1 and a pit is 0. On real discs, a change from pit to land (or land to pit) represents a 1, and no change represents a 0.</p>
+  </div>
+  <div id="tab-ssd" class="stage hidden">
+    <div class="row" style="margin-bottom:10px"><button class="btn pri" data-act="write" data-t="ssd">Write</button><button class="btn" data-act="read" data-t="ssd">Read</button></div>
+    <svg viewBox="0 0 820 210" id="svg-ssd"></svg>
+    <p class="readout" id="out-ssd"></p>
+    <ul class="how">
+      <li>Solid state drives (SSDs), USB sticks and memory cards use <b>flash memory</b> made of millions of tiny cells (transistors).</li>
+      <li>Each cell has a <b>floating gate</b> that can trap electrons. A cell with trapped electrons reads as 0; an empty cell reads as 1.</li>
+      <li>Cells must be <b>erased</b> (emptied) a whole block at a time before they can be written again, which is why each cell can only be rewritten a limited number of times.</li>
+      <li>No moving parts: very fast, silent, low power and hard to damage, but more expensive per GB.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Comparing them</h2>
+  <div class="scroll"><table class="t" id="cmp"></table></div>
+</section>
+
+<section class="block">
+  <h2>Which would you choose?</h2>
+  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
+  <div class="cards" id="quiz"></div>
+</section>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+/* tabs: buttons need role=tab and data-p=<panel id> */
+function tabs(root){const b=[...root.querySelectorAll('[role=tab]')];b.forEach(x=>x.onclick=()=>b.forEach(y=>{y.setAttribute('aria-selected',y===x);document.getElementById(y.dataset.p).classList.toggle('hidden',y!==x)}))}
+/* multiple-choice cards. items: {q,a,why,opts?} */
+function cardQuiz(el,items,opts,scoreEl,resetBtn){
+  function build(){
+    let right=0,done=0;el.innerHTML='';
+    const show=()=>{if(scoreEl)scoreEl.textContent=`${right} correct out of ${done} answered (${items.length} questions)`};
+    items.forEach(it=>{
+      const c=document.createElement('div');c.className='card';
+      c.innerHTML=`<div>${it.q}</div><div class="opts"></div><p class="fb hidden"></p>`;
+      const o=c.querySelector('.opts'),fb=c.querySelector('.fb');
+      (it.opts||opts).forEach(op=>{const b=document.createElement('button');b.textContent=op;b.onclick=()=>{
+        if(c.dataset.done)return;c.dataset.done=1;done++;b.classList.add('picked');
+        const ok=op===it.a;if(ok)right++;c.classList.add(ok?'right':'wrong');
+        fb.innerHTML=(ok?'<b>Correct.</b> ':`<b>Answer: ${it.a}.</b> `)+it.why;fb.classList.remove('hidden');show()};o.appendChild(b)});
+      el.appendChild(c)});
+    show();
+  }
+  build();if(resetBtn)resetBtn.onclick=build;
+}
+
+/* ---------- power demo ---------- */
+const DISK=['essay.docx','photo.jpg','game.exe','song.mp3'];let on=true,inRam=[];
+function drawPower(){
+  $('#disk').innerHTML=DISK.map(f=>`<button class="file" data-f="${f}">${f}</button>`).join('');
+  $('#ramfiles').innerHTML=(on?['operating system',...inRam]:[]).map(f=>`<span class="file" style="cursor:default">${f}</span>`).join('')||'<span style="color:var(--muted)">(empty)</span>';
+  $('#power').classList.toggle('off',!on);
+  $('#pbtn').textContent=on?'Switch power off':'Switch power on';
+  $('#pstat').innerHTML=`<span class="powerdot"></span>${on?'Power on':'Power off: RAM has lost its contents, the drive has not'}`;
+}
+$('#disk').onclick=e=>{const b=e.target.closest('.file');if(!b)return;if(!on){$('#pstat').innerHTML='<span class="powerdot"></span>Nothing can be opened with the power off.';return}
+  if(!inRam.includes(b.dataset.f))inRam.push(b.dataset.f);drawPower()};
+$('#pbtn').onclick=async()=>{if(on){$$('#ramfiles .file').forEach(f=>f.classList.add('gone'));await sleep(600);on=false;inRam=[]}else on=true;drawPower()};
+drawPower();
+
+/* ---------- bits ---------- */
+let bits=[0,1,0,0,0,0,0,1],busy=false;
+const stored={mag:Array(8).fill(null),opt:Array(8).fill(null),ssd:Array(8).fill(1)};
+const head={mag:-1,opt:-1,ssd:-1};
+function drawBits(){$('#bits').innerHTML=bits.map((b,i)=>`<button class="bit" data-i="${i}" data-v="${b}">${b}</button>`).join('')}
+$('#bits').onclick=e=>{const b=e.target.closest('.bit');if(!b)return;bits[b.dataset.i]^=1;drawBits();const c=parseInt(bits.join(''),2);$('#ch').value=c>=32&&c<127?String.fromCharCode(c):''};
+$('#ch').oninput=()=>{const c=$('#ch').value.charCodeAt(0);if(c<256){bits=c.toString(2).padStart(8,'0').split('').map(Number);drawBits()}};
+drawBits();
+const X=i=>70+i*90;
+function svgMag(){
+  const s=stored.mag,h=head.mag;let g='';
+  for(let i=0;i<8;i++){const v=s[i],x=X(i);
+    const fill=v===null?'var(--off)':v?'var(--one)':'var(--hl)';
+    g+=`<rect x="${x-40}" y="110" width="80" height="44" rx="6" fill="${v===null?'var(--panel)':fill}" stroke="var(--ink)" stroke-width="2" opacity="${v===null?1:.9}"/>`;
+    if(v!==null)g+=`<text x="${x}" y="138" text-anchor="middle" style="fill:${v?'#fff':'#16202B'}">${v?'N → S':'S ← N'}</text>`;
+    g+=`<text class="lbl" x="${x}" y="180" text-anchor="middle">${v===null?'blank':v?'1':'0'}</text>`}
+  if(h>=0)g+=`<g><rect x="${X(h)-14}" y="40" width="28" height="56" rx="4" fill="var(--ink)"/><polygon points="${X(h)-14},96 ${X(h)+14},96 ${X(h)},106" fill="var(--ink)"/><line x1="${X(h)}" y1="0" x2="${X(h)}" y2="40" stroke="var(--ink)" stroke-width="6"/><text class="lbl" x="${X(h)+22}" y="66">read/write head</text></g>`;
+  g+=`<text class="lbl" x="30" y="195">track on the platter surface →</text>`;
+  $('#svg-mag').innerHTML=g;
+}
+function svgOpt(){
+  const s=stored.opt,h=head.opt;let g=`<rect x="20" y="40" width="780" height="20" fill="var(--off)" opacity=".5"/>`;
+  for(let i=0;i<8;i++){const v=s[i],x=X(i);
+    if(v===0)g+=`<rect x="${x-34}" y="60" width="68" height="22" fill="var(--panel)" stroke="var(--ink)" stroke-width="2"/>`;
+    g+=`<line x1="${x-45}" y1="${v===0?82:60}" x2="${x+45}" y2="${v===0?82:60}" stroke="var(--ink)" stroke-width="3"/>`;
+    g+=`<text class="lbl" x="${x}" y="30" text-anchor="middle">${v===null?'':v?'land = 1':'pit = 0'}</text>`}
+  if(h>=0){const x=X(h),v=s[h],ref=v===1;
+    g+=`<rect x="${x-40}" y="180" width="80" height="26" rx="5" fill="var(--ink)"/><text x="${x}" y="198" text-anchor="middle" style="fill:var(--bg);font-size:12px">laser</text>`;
+    g+=`<line x1="${x-8}" y1="180" x2="${x}" y2="${v===0?84:62}" stroke="var(--bad)" stroke-width="4"/>`;
+    if(v!==null)g+=ref?`<line x1="${x}" y1="62" x2="${x+20}" y2="180" stroke="var(--bad)" stroke-width="4"/><circle cx="${x+22}" cy="172" r="7" fill="var(--hl)"/>`
+      :`<line x1="${x}" y1="84" x2="${x+40}" y2="130" stroke="var(--bad)" stroke-width="2" stroke-dasharray="4 4"/><line x1="${x}" y1="84" x2="${x-38}" y2="128" stroke="var(--bad)" stroke-width="2" stroke-dasharray="4 4"/><circle cx="${x+22}" cy="172" r="7" fill="var(--off)"/>`;
+    g+=`<text class="lbl" x="${x+48}" y="176">${v===null?'':ref?'light reflected → 1':'light scattered → 0'}</text>`}
+  $('#svg-opt').innerHTML=g;
+}
+function svgSsd(){
+  const s=stored.ssd,h=head.ssd;let g='';
+  for(let i=0;i<8;i++){const v=s[i],x=X(i);
+    g+=`<rect x="${x-38}" y="30" width="76" height="110" rx="8" fill="var(--panel)" stroke="${h===i?'var(--one)':'var(--ink)'}" stroke-width="${h===i?4:2}"/>`;
+    g+=`<text class="lbl" x="${x}" y="48" text-anchor="middle">control gate</text><rect x="${x-26}" y="70" width="52" height="34" rx="4" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 3"/>`;
+    if(v===0)for(let k=0;k<5;k++)g+=`<circle cx="${x-18+k*9}" cy="${80+(k%2)*12}" r="4" fill="var(--one)"/><text x="${x-18+k*9}" y="${83+(k%2)*12}" text-anchor="middle" style="font-size:7px;fill:#fff">−</text>`;
+    g+=`<text class="lbl" x="${x}" y="125" text-anchor="middle">floating gate</text>`;
+    g+=`<text x="${x}" y="170" text-anchor="middle">${v}</text><text class="lbl" x="${x}" y="190" text-anchor="middle">${v===0?'charged':'empty'}</text>`}
+  $('#svg-ssd').innerHTML=g;
+}
+const draw={mag:svgMag,opt:svgOpt,ssd:svgSsd};
+function setButtons(d){$$('[data-act]').forEach(b=>b.disabled=d)}
+async function act(t,a){
+  if(busy)return;busy=true;setButtons(true);const out=$('#out-'+t),D=draw[t];
+  if(t==='mag')$('#tab-mag').classList.add('spinning');
+  if(a==='write'){
+    if(t==='ssd'){out.textContent='Erasing the block first: all cells emptied to 1…';stored.ssd=Array(8).fill(1);head.ssd=-1;D();await sleep(900)}
+    for(let i=0;i<8;i++){head[t]=i;stored[t][i]=bits[i];out.textContent=`Writing bit ${i+1}: ${bits[i]}`;D();await sleep(380)}
+    out.textContent='Written: '+bits.join('');
+  }else{
+    let r='';for(let i=0;i<8;i++){head[t]=i;D();const v=stored[t][i];r+=v===null?'?':v;out.textContent='Reading: '+r;await sleep(380)}
+    const c=parseInt(r,2);out.textContent=r.includes('?')?`Read ${r}: nothing has been written yet.`:`Read ${r} = ${c} = '${c>=32&&c<127?String.fromCharCode(c):'?'}'`;
+  }
+  head[t]=-1;D();$('#tab-mag').classList.remove('spinning');busy=false;setButtons(false);
+}
+$$('[data-act]').forEach(b=>b.onclick=()=>act(b.dataset.t,b.dataset.act));
+tabs($('#tt'));svgMag();svgOpt();svgSsd();
+
+/* ---------- comparison ---------- */
+const dots=n=>`<span class="dots">${'●'.repeat(n)}<i>${'●'.repeat(5-n)}</i></span>`;
+const CMP=[['Capacity',4,1,4,'HDDs reach 20+ TB. CD 700 MB, DVD 4.7 GB, Blu-ray 25–100 GB.'],
+ ['Speed of access',2,1,5,'SSDs have no moving parts, so there is no waiting for a disk to spin or a head to move.'],
+ ['Durability',2,2,5,'HDDs can be damaged if dropped while running. Discs scratch. SSDs survive knocks, but cells wear out after many rewrites.'],
+ ['Portability',2,4,5,'Discs and USB sticks are light and small.'],
+ ['Cheapness per GB',5,4,3,'HDDs are the cheapest way to store a lot of data. Discs are cheap to mass-produce.'],
+ ['Silent, low power',1,2,5,'Spinning platters use power and make noise.']];
+$('#cmp').innerHTML='<tr><th></th><th>Magnetic</th><th>Optical</th><th>Solid state</th><th>Why</th></tr>'+CMP.map(r=>`<tr><td><b>${r[0]}</b></td><td>${dots(r[1])}</td><td>${dots(r[2])}</td><td>${dots(r[3])}</td><td style="color:var(--muted)">${r[4]}</td></tr>`).join('')+
+ '<tr><td><b>Typical uses</b></td><td>Desktop PCs, servers, backup tapes</td><td>Films, games, software distribution, archives</td><td>Laptops, phones, cameras, consoles, USB sticks</td><td></td></tr>';
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'A student\'s laptop that is carried around school all day.',a:'Solid state',why:'No moving parts, so it survives being knocked, and it is fast, light and low power for longer battery life.'},
+ {q:'A server storing months of CCTV footage as cheaply as possible.',a:'Magnetic',why:'HDDs give huge capacity at the lowest cost per GB; speed matters less here.'},
+ {q:'A band selling copies of their album at gigs.',a:'Optical',why:'CDs are very cheap to produce in bulk and easy to hand out.'},
+ {q:'The memory card in a digital camera.',a:'Solid state',why:'Small, light, robust and needs no moving parts.'},
+ {q:'A company keeping 50 TB of nightly backups that are rarely read.',a:'Magnetic',why:'Magnetic tape or HDDs are cheapest per GB; slow access does not matter for archives.'},
+ {q:'A games console that needs levels to load very quickly.',a:'Solid state',why:'Fastest access times of the three.'},
+ {q:'A smartphone.',a:'Solid state',why:'Tiny, robust, silent and low power.'},
+],['Magnetic','Optical','Solid state'],$('#score'),$('#qreset'));
+</script>
+</body>
+</html>

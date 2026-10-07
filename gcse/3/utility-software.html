@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Utility software</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E8ECEF;--grid:rgba(22,32,43,.05);--panel:#F8FAFB;--ink:#16202B;--muted:#5B6874;--line:#C9D1D8;--one:#1F5BFF;--one-soft:#DDE6FF;--hl:#FFB000;--hl-soft:#FFF0C7;--off:#AEB8C1;--ok:#138A52;--ok-soft:#D7F2E3;--bad:#C2362B;--bad-soft:#F9DEDB}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--grid:rgba(255,255,255,.035);--panel:#1A222C;--ink:#E7EDF2;--muted:#9AA7B3;--line:#2E3A46;--one:#5B8CFF;--one-soft:#1E2E57;--hl-soft:#3D3110;--off:#4A5764;--ok:#3CC47F;--ok-soft:#14321F;--bad:#FF6B5E;--bad-soft:#3A1A17}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:6px 0 8px}
+.lede{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.series{display:flex;gap:6px;flex-wrap:wrap}
+.series a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.series a[aria-current]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.spec{font:600 .78rem 'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;margin:22px 0 0}
+.block{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0}
+.block>h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:700 .9rem Manrope,system-ui,sans-serif;padding:8px 14px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--hl-soft)}
+.btn.pri{background:var(--ink);color:var(--bg)}
+.btn:disabled{opacity:.35;cursor:default;background:var(--panel);color:var(--ink)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1.5px solid var(--line);margin:0 0 18px}
+.tabs button{font:700 .95rem Manrope,system-ui,sans-serif;padding:10px 14px;border:0;border-bottom:4px solid transparent;background:none;color:var(--muted);cursor:pointer;margin-bottom:-1.5px}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--hl)}
+.mono{font-family:'JetBrains Mono',monospace}
+.note{background:var(--hl-soft);border-left:4px solid var(--hl);padding:10px 14px;border-radius:6px;margin:14px 0 0;font-size:.95rem}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:.92rem;cursor:pointer}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.t th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.okc{color:var(--ok)}.badc{color:var(--bad)}
+.hidden{display:none!important}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.card.right{border-color:var(--ok);background:var(--ok-soft)}
+.card.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.card .opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.card .opts button{font:600 .85rem Manrope,system-ui,sans-serif;padding:6px 11px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.card .opts button.picked{border-color:var(--ink)}
+.card .fb{font-size:.88rem;margin:8px 0 0}
+.quizbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.score{font-weight:800}
+select,input[type=text],input[type=password],input[type=number]{font:1rem Manrope,system-ui,sans-serif;padding:7px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink)}
+input[type=range],input[type=checkbox]{accent-color:var(--one)}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.cols2{grid-template-columns:1fr}}
+.status{font-size:.95rem;min-height:1.5em}
+
+/* defrag */
+.disk{display:grid;grid-template-columns:repeat(16,1fr);gap:3px;max-width:720px;margin:12px 0}
+.blk{aspect-ratio:1;border-radius:4px;background:var(--line);display:flex;align-items:center;justify-content:center;font:700 .72rem 'JetBrains Mono',monospace;color:#fff;transition:background .15s,transform .15s}
+.blk.read{outline:3px solid var(--ink);transform:scale(1.15);z-index:1}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.85rem}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:14px;height:14px;border-radius:3px;display:inline-block}
+/* compression */
+.pix{display:grid;gap:1px;background:var(--line);border:2px solid var(--ink);width:max-content;user-select:none;touch-action:none}
+.pix div{width:20px;height:20px}
+.pal{display:flex;gap:6px}
+.pal button{width:30px;height:30px;border-radius:6px;border:2px solid var(--line);cursor:pointer}
+.pal button.sel{border-color:var(--ink);box-shadow:0 0 0 3px var(--hl)}
+.rle{font:.82rem/1.6 'JetBrains Mono',monospace;background:var(--bg);border-radius:8px;padding:8px 10px;max-height:290px;overflow:auto;white-space:pre}
+.cmpgrid{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start}
+.big{font:800 1.4rem 'JetBrains Mono',monospace}
+/* backup */
+.bk td.c{text-align:center;font-weight:800}
+.bk td.copy{background:var(--one-soft);color:var(--one)}
+.bk tr.need td:first-child{background:var(--hl-soft)}
+.bk tr.need td{border-bottom-color:var(--hl)}
+/* malware */
+.scan td{font-size:.88rem}
+.scan tr.now td{background:var(--hl-soft)}
+.tagq{font-weight:800;color:var(--bad)}.tagc{font-weight:700;color:var(--ok)}
+/* repair */
+.blocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:12px 0}
+.fb2{border:2px solid var(--line);border-radius:10px;padding:10px;background:var(--bg)}
+.fb2 .txt{font:700 1rem 'JetBrains Mono',monospace;white-space:pre;min-height:1.4em}
+.fb2 small{color:var(--muted);font:.78rem 'JetBrains Mono',monospace}
+.fb2.bad{border-color:var(--bad);background:var(--bad-soft)}
+.fb2.fixed{border-color:var(--ok);background:var(--ok-soft)}
+.fb2.rec{border-style:dashed}
+@media (max-width:760px){.cmpgrid{grid-template-columns:1fr}.pix div{width:15px;height:15px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 3 demos"><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html" aria-current="page">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
+<p class="spec">EDEXCEL GCSE · 3.2.2</p>
+<h1>Utility software</h1>
+<p class="lede">Utility software helps to maintain, protect and tidy up a computer system. It is not the operating system and it is not an application for the user's own tasks: it looks after the computer itself.</p>
+
+<section class="block">
+  <div class="tabs" role="tablist" id="tt">
+    <button role="tab" aria-selected="true" data-p="u-defrag">Defragmentation</button>
+    <button role="tab" aria-selected="false" data-p="u-comp">Compression</button>
+    <button role="tab" aria-selected="false" data-p="u-back">Backup</button>
+    <button role="tab" aria-selected="false" data-p="u-mal">Anti-malware</button>
+    <button role="tab" aria-selected="false" data-p="u-rep">File repair</button>
+  </div>
+
+  <div id="u-defrag">
+    <p class="sub">On a hard disk, a file is stored in blocks. Over time, as files are deleted and new ones saved into the gaps, files get split into scattered pieces (fragmented). The read/write head then has to jump around to read one file, which is slow. Defragmentation moves the pieces so each file is in one continuous run, and gathers the free space together.</p>
+    <div class="row">
+      <label class="check">Read file <select id="d-file"></select></label><button class="btn" id="d-read">Read</button>
+      <button class="btn" id="d-save">Save a new file</button><button class="btn" id="d-del">Delete a file</button>
+      <button class="btn pri" id="d-go">Defragment</button>
+    </div>
+    <div class="disk" id="disk"></div>
+    <div class="legend" id="legend"></div>
+    <p class="status" id="d-msg" style="margin-top:10px"></p>
+    <p class="note">Solid state drives should <b>not</b> be defragmented. Any block can be read equally quickly, so there is no speed gain, and the extra writes wear out the flash cells.</p>
+  </div>
+
+  <div id="u-comp" class="hidden">
+    <p class="sub">Compression makes files smaller, so they use less storage and transfer faster. Paint the 16 × 12 image (4 colours, so 2 bits per pixel) and compare the two kinds.</p>
+    <div class="row" style="margin-bottom:12px"><div class="pal" id="pal"></div><button class="btn" data-pre="flag">Flag</button><button class="btn" data-pre="smile">Smiley</button><button class="btn" data-pre="noise">Random noise</button><button class="btn" data-pre="clear">Clear</button></div>
+    <div class="cmpgrid">
+      <div><b>Original</b><div class="pix" id="pix" style="margin-top:6px"></div><p class="big" id="osize"></p></div>
+      <div class="cols2">
+        <div><b>Lossless: run-length encoding</b><p style="color:var(--muted);font-size:.9rem;margin:4px 0 8px">Each row is stored as runs of (count, colour). Each run costs 6 bits. Decompressing gives back exactly the same image.</p>
+          <div class="rle" id="rle"></div><p class="big" id="rsize"></p><button class="btn" id="unz">Decompress and check</button><p class="status" id="unzmsg"></p></div>
+        <div><b>Lossy: reduce resolution</b><p style="color:var(--muted);font-size:.9rem;margin:4px 0 8px">Every 2 × 2 square is replaced by its most common colour. Detail is thrown away for good, like JPEG or MP3 do with detail you are unlikely to notice.</p>
+          <div class="pix" id="lossy"></div><p class="big" id="lsize"></p><p class="status" id="lmsg"></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="u-back" class="hidden">
+    <p class="sub">A backup is a copy of files kept somewhere else, so they can be restored if the originals are lost through hardware failure, accidental deletion, theft or malware. Backup utilities copy files automatically on a schedule. Pick a method, then press Disaster.</p>
+    <div class="row"><select id="b-m"><option value="full">Full backup every night</option><option value="inc">Incremental (full on Monday, then only what changed since the previous backup)</option><option value="diff">Differential (full on Monday, then everything changed since Monday)</option></select>
+      <button class="btn pri" id="b-dis">Disaster on Friday morning!</button></div>
+    <div class="scroll"><table class="t bk" id="bk" style="margin-top:12px"></table></div>
+    <p class="status" id="b-msg"></p>
+    <p class="note">Keep at least one backup off-site or in the cloud: a fire or flood that destroys the computer would also destroy a backup drive sitting next to it.</p>
+  </div>
+
+  <div id="u-mal" class="hidden">
+    <p class="sub">Anti-malware software scans files and compares them against a database of <b>signatures</b>: patterns of bytes known to belong to malware. Matches are quarantined (isolated so they can't run) or deleted. Heuristic analysis also looks for suspicious behaviour, to catch new malware with no signature yet.</p>
+    <div class="row"><button class="btn pri" id="m-scan">Scan</button><label class="check"><input type="checkbox" id="m-heur"> Heuristic analysis</label><button class="btn" id="m-upd">Update signature database</button><button class="btn" id="m-reset">Restore files</button></div>
+    <div class="cols2" style="margin-top:12px">
+      <div class="scroll"><table class="t scan" id="m-files"></table></div>
+      <div><b>Signature database</b><table class="t" id="m-db" style="margin-top:4px"></table><p class="status" id="m-msg" style="margin-top:10px"></p></div>
+    </div>
+  </div>
+
+  <div id="u-rep" class="hidden">
+    <p class="sub">Files can be corrupted by a power cut while saving, a failing disk, or a crash. A file repair utility checks the file's structure (here, a checksum for each block) to find damage, and rebuilds what it can from recovery information saved with the file.</p>
+    <div class="row"><button class="btn" id="r-cor">Power cut while saving</button><button class="btn pri" id="r-fix">Run file repair</button><button class="btn" id="r-new">Reset file</button></div>
+    <div class="blocks" id="r-blocks"></div>
+    <p class="status" id="r-msg"></p>
+    <p class="note">The checksum here is the sum of the character codes mod 256. The recovery block is every block XORed together, so XORing it with the good blocks rebuilds one missing block. With two damaged blocks there isn't enough information, which is why repair doesn't always work.</p>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
+  <div class="cards" id="quiz"></div>
+</section>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+/* tabs: buttons need role=tab and data-p=<panel id> */
+function tabs(root){const b=[...root.querySelectorAll('[role=tab]')];b.forEach(x=>x.onclick=()=>b.forEach(y=>{y.setAttribute('aria-selected',y===x);document.getElementById(y.dataset.p).classList.toggle('hidden',y!==x)}))}
+/* multiple-choice cards. items: {q,a,why,opts?} */
+function cardQuiz(el,items,opts,scoreEl,resetBtn){
+  function build(){
+    let right=0,done=0;el.innerHTML='';
+    const show=()=>{if(scoreEl)scoreEl.textContent=`${right} correct out of ${done} answered (${items.length} questions)`};
+    items.forEach(it=>{
+      const c=document.createElement('div');c.className='card';
+      c.innerHTML=`<div>${it.q}</div><div class="opts"></div><p class="fb hidden"></p>`;
+      const o=c.querySelector('.opts'),fb=c.querySelector('.fb');
+      (it.opts||opts).forEach(op=>{const b=document.createElement('button');b.textContent=op;b.onclick=()=>{
+        if(c.dataset.done)return;c.dataset.done=1;done++;b.classList.add('picked');
+        const ok=op===it.a;if(ok)right++;c.classList.add(ok?'right':'wrong');
+        fb.innerHTML=(ok?'<b>Correct.</b> ':`<b>Answer: ${it.a}.</b> `)+it.why;fb.classList.remove('hidden');show()};o.appendChild(b)});
+      el.appendChild(c)});
+    show();
+  }
+  build();if(resetBtn)resetBtn.onclick=build;
+}
+
+tabs($('#tt'));
+/* ================= DEFRAG ================= */
+const COLS=['#1F5BFF','#C2362B','#138A52','#7B4DFF','#D97706','#0E9AA7','#DB2777','#5B6874'];
+const NB=64;let disk=Array(NB).fill(null),files={},nextF=0,dbusy=false;
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+function saveFile(name,size){const free=disk.map((v,i)=>v===null?i:-1).filter(i=>i>=0);if(free.length<size)return false;
+  files[name]={col:COLS[nextF++%COLS.length],size};for(let k=0;k<size;k++)disk[free[k]]=[name,k];return true}
+function delFile(name){disk=disk.map(v=>v&&v[0]===name?null:v);delete files[name]}
+function initDisk(){disk=Array(NB).fill(null);files={};nextF=0;seed=7;
+  [['A',6],['B',5],['C',7],['D',4],['E',5],['F',6],['G',5]].forEach(f=>saveFile(...f));
+  delFile('B');delFile('E');saveFile('H',8);delFile('D');saveFile('I',7);saveFile('J',4);}
+function drawDisk(hi=-1){
+  $('#disk').innerHTML=disk.map((v,i)=>`<div class="blk${i===hi?' read':''}" style="${v?'background:'+files[v[0]].col:''}">${v?v[0]+(v[1]+1):''}</div>`).join('');
+  const names=Object.keys(files);
+  $('#legend').innerHTML=names.map(n=>{const s=frags(n);return`<span><i style="background:${files[n].col}"></i>${n}: ${s} piece${s>1?'s':''}</span>`}).join('')+'<span><i style="background:var(--line)"></i>free</span>';
+  const cur=$('#d-file').value;$('#d-file').innerHTML=names.map(n=>`<option${n===cur?' selected':''}>${n}</option>`).join('');
+}
+function blocksOf(n){return disk.map((v,i)=>v&&v[0]===n?[v[1],i]:null).filter(Boolean).sort((a,b)=>a[0]-b[0]).map(x=>x[1])}
+function frags(n){const b=blocksOf(n);let f=1;for(let i=1;i<b.length;i++)if(b[i]!==b[i-1]+1)f++;return f}
+const busyD=v=>{dbusy=v;$$('#u-defrag button').forEach(b=>b.disabled=v)};
+$('#d-read').onclick=async()=>{const n=$('#d-file').value;if(!n||dbusy)return;busyD(true);const b=blocksOf(n);let jumps=0,dist=0,pos=b[0];
+  for(let i=0;i<b.length;i++){if(i&&b[i]!==b[i-1]+1)jumps++;dist+=Math.abs(b[i]-pos);pos=b[i];drawDisk(b[i]);$('#d-msg').textContent=`Reading ${n}, block ${i+1} of ${b.length}…`;await sleep(300)}
+  $('#d-msg').textContent=`Read ${n}: ${b.length} blocks, ${jumps} jump${jumps===1?'':'s'} of the read/write head, which travelled ${dist} blocks in total. ${jumps?'Each jump wastes time while the head moves and the disk spins round.':'No jumps: the file is contiguous, so it reads quickly.'}`;
+  drawDisk();busyD(false)};
+$('#d-save').onclick=()=>{if(dbusy)return;let c=75;while(files[String.fromCharCode(c)]&&c<90)c++;const nm=String.fromCharCode(c);const size=3+Math.floor(rnd()*6);
+  if(saveFile(nm,size))$('#d-msg').textContent=`Saved file ${nm} (${size} blocks) into the first free gaps it could find, so it may be fragmented.`;else $('#d-msg').textContent='Disk full.';drawDisk()};
+$('#d-del').onclick=()=>{if(dbusy)return;const n=$('#d-file').value;if(!n)return;delFile(n);$('#d-msg').textContent=`Deleted ${n}. Its blocks are now free gaps between other files.`;drawDisk()};
+$('#d-go').onclick=async()=>{if(dbusy)return;busyD(true);$('#d-msg').textContent='Defragmenting: moving blocks so each file is stored contiguously…';
+  const order=[];Object.keys(files).sort().forEach(n=>blocksOf(n).forEach(i=>order.push(disk[i])));
+  for(let i=0;i<order.length;i++){const want=order[i];const j=disk.findIndex((v,k)=>k>=i&&v&&v[0]===want[0]&&v[1]===want[1]);if(j!==i){[disk[i],disk[j]]=[disk[j],disk[i]];drawDisk(i);await sleep(90)}}
+  drawDisk();$('#d-msg').textContent='Done. Every file is in one piece and all the free space is together at the end, so new files can be saved without fragmenting.';busyD(false)};
+initDisk();drawDisk();
+
+/* ================= COMPRESSION ================= */
+const W=16,H=12,PAL=['#FFFFFF','#16202B','#C2362B','#1F5BFF'],PN=['W','K','R','B'];
+let img=Array(W*H).fill(0),brush=1,down=false;
+$('#pal').innerHTML=PAL.map((c,i)=>`<button style="background:${c}" data-c="${i}" class="${i===1?'sel':''}" aria-label="colour ${PN[i]}"></button>`).join('');
+$('#pal').onclick=e=>{const b=e.target.closest('button');if(!b)return;brush=+b.dataset.c;$$('#pal button').forEach(x=>x.classList.toggle('sel',x===b))};
+function pre(k){
+  if(k==='clear')img=Array(W*H).fill(0);
+  if(k==='flag')img=img.map((_,i)=>{const x=i%W,y=Math.floor(i/W);return(x>=6&&x<=8)||(y>=5&&y<=6)?2:(y<4?3:0)});
+  if(k==='noise')img=img.map(()=>Math.floor(Math.random()*4));
+  if(k==='smile'){img=Array(W*H).fill(3);const s=(x,y,c)=>img[y*W+x]=c;for(let y=1;y<11;y++)for(let x=3;x<13;x++){const dx=x-7.5,dy=y-5.5;if(dx*dx+dy*dy<26)s(x,y,0)}
+    [[6,4],[9,4],[6,3],[9,3]].forEach(p=>s(...p,1));[[5,7],[6,8],[7,8],[8,8],[9,8],[10,7]].forEach(p=>s(...p,2))}
+  drawPix();
+}
+$$('[data-pre]').forEach(b=>b.onclick=()=>pre(b.dataset.pre));
+function grid(el,data,w,size){el.style.gridTemplateColumns=`repeat(${w},${size}px)`;el.innerHTML=data.map((c,i)=>`<div data-i="${i}" style="background:${PAL[c]};width:${size}px;height:${size}px"></div>`).join('')}
+const cell=()=>innerWidth<760?15:20;
+function paint(e){const t=document.elementFromPoint(e.clientX,e.clientY);if(t&&t.parentNode===$('#pix')&&t.dataset.i){img[t.dataset.i]=brush;t.style.background=PAL[brush];update()}}
+$('#pix').onpointerdown=e=>{down=true;paint(e)};addEventListener('pointerup',()=>down=false);$('#pix').onpointermove=e=>{if(down)paint(e)};
+function runs(){const rows=[];for(let y=0;y<H;y++){const r=[];let c=img[y*W],n=0;for(let x=0;x<W;x++){const v=img[y*W+x];if(v===c)n++;else{r.push([n,c]);c=v;n=1}}r.push([n,c]);rows.push(r)}return rows}
+function update(){
+  const orig=W*H*2,R=runs(),nr=R.reduce((s,r)=>s+r.length,0),rbits=nr*6;
+  $('#osize').textContent=`${orig} bits`;
+  $('#rle').textContent=R.map((r,y)=>`row ${String(y+1).padStart(2)}: `+r.map(([n,c])=>n+PN[c]).join(' ')).join('\n');
+  $('#rsize').innerHTML=`${rbits} bits <span style="font-size:.9rem;color:${rbits<orig?'var(--ok)':'var(--bad)'}">(${Math.round(rbits/orig*100)}% of original${rbits>=orig?': bigger!':''})</span>`;
+  const lw=W/2,lh=H/2,L=[];for(let y=0;y<lh;y++)for(let x=0;x<lw;x++){const c=[0,0,0,0];[[0,0],[1,0],[0,1],[1,1]].forEach(([a,b])=>c[img[(2*y+b)*W+2*x+a]]++);L.push(c.indexOf(Math.max(...c)))}
+  grid($('#lossy'),L,lw,cell()*2+1);
+  let lost=0;for(let i=0;i<W*H;i++){const x=i%W,y=Math.floor(i/W);if(L[Math.floor(y/2)*lw+Math.floor(x/2)]!==img[i])lost++}
+  $('#lsize').innerHTML=`${lw*lh*2} bits <span style="font-size:.9rem;color:var(--ok)">(25% of original)</span>`;
+  $('#lmsg').textContent=lost?`${lost} pixel${lost>1?'s':''} can never be recovered: that information has gone.`:'This image happened to survive, but in general the detail is lost.';
+  $('#unzmsg').textContent='';
+}
+$('#unz').onclick=()=>{const R=runs(),back=[];R.forEach(r=>r.forEach(([n,c])=>{for(let k=0;k<n;k++)back.push(c)}));
+  const same=back.every((v,i)=>v===img[i]);$('#unzmsg').innerHTML=same?'<span class="okc">✔ Rebuilt image is identical to the original, pixel for pixel.</span>':'<span class="badc">Mismatch</span>'};
+function drawPix(){grid($('#pix'),img,W,cell());update()}
+pre('flag');
+
+/* ================= BACKUP ================= */
+const BF=['essay.docx','marks.xlsx','photos/','code.py','notes.txt'];
+const CH={Mon:[0,1,2,3,4],Tue:[0,4],Wed:[3],Thu:[0,1]};const DAYS=Object.keys(CH);
+function plan(m){const p={};let since=new Set();DAYS.forEach((d,i)=>{if(m==='full'||i===0){p[d]=[0,1,2,3,4];since=new Set()}
+  else if(m==='inc')p[d]=CH[d];else{CH[d].forEach(x=>since.add(x));p[d]=[...since].sort()}});return p}
+function drawBk(need=[]){const p=plan($('#b-m').value);
+  $('#bk').innerHTML='<tr><th>Night</th><th>Changed that day</th>'+BF.map(f=>`<th class="mono" style="text-transform:none">${f}</th>`).join('')+'<th>Files copied</th></tr>'+
+  DAYS.map(d=>`<tr class="${need.includes(d)?'need':''}"><td><b>${d}</b></td><td style="color:var(--muted)">${d==='Mon'?'(first backup)':CH[d].map(i=>BF[i]).join(', ')}</td>${BF.map((f,i)=>`<td class="c ${p[d].includes(i)?'copy':''}">${p[d].includes(i)?'✔':''}</td>`).join('')}<td class="mono">${p[d].length}</td></tr>`).join('')+
+  `<tr><td colspan="${BF.length+2}"><b>Total copied</b></td><td class="mono"><b>${DAYS.reduce((s,d)=>s+p[d].length,0)}</b></td></tr>`;
+}
+$('#b-m').onchange=()=>{drawBk();$('#b-msg').textContent=''};
+$('#b-dis').onclick=()=>{const m=$('#b-m').value,need=m==='full'?['Thu']:m==='inc'?DAYS:['Mon','Thu'];drawBk(need);
+  $('#b-msg').innerHTML={full:'💥 The hard drive has failed. To restore, you only need <b>Thursday\'s</b> backup: it contains everything. But full backups copy the most data and take the longest every night.',
+   inc:'💥 To restore, you need <b>Monday\'s full backup and then every incremental after it, in order</b> (Tue, Wed, Thu). Nightly backups are quick and small, but restoring is slower and one missing night breaks the chain.',
+   diff:'💥 To restore, you need <b>Monday\'s full backup plus only the latest differential</b> (Thu). A middle ground: each differential grows during the week, but restoring needs just two sets.'}[m]};
+drawBk();
+
+/* ================= ANTI-MALWARE ================= */
+const FILES0=[['holiday.jpg','FF D8 FF E0 4A 46 49 46',''],['essay.docx','50 4B 03 04 14 00 06 00',''],['free_game.exe','4D 5A 90 00 E8 3C 7F 21',''],
+ ['song.mp3','49 44 33 03 00 00 00 0F',''],['invoice.pdf.exe','4D 5A 90 00 B7 11 C4 0D','Copies itself to every USB drive; edits start-up settings'],['setup.exe','4D 5A 90 00 03 00 00 00','Installs a program the user chose to install'],
+ ['budget.xlsm','50 4B 03 04 D0 0D 66 1E',''],['notes.txt','54 6F 20 64 6F 3A 20 6D','']];
+const DB0=[['E8 3C 7F 21','Trojan.FakeGame'],['D0 0D 66 1E','Macro.Dropper'],['6A 00 FF 15','Ransom.Locker']];
+let mfiles,db,mbusy=false;
+function mreset(){mfiles=FILES0.map(f=>({n:f[0],b:f[1],beh:f[2],st:''}));db=DB0.map(x=>x.slice());$('#m-msg').textContent='';drawMal(-1)}
+function drawMal(now){
+  $('#m-files').innerHTML='<tr><th>File</th><th>Bytes</th><th>Result</th></tr>'+mfiles.map((f,i)=>`<tr class="${i===now?'now':''}"><td class="mono">${f.n}</td><td class="mono" style="font-size:.78rem">${f.b}</td><td>${f.st}</td></tr>`).join('');
+  $('#m-db').innerHTML='<tr><th>Signature</th><th>Malware</th></tr>'+db.map(d=>`<tr><td class="mono">${d[0]}</td><td>${d[1]}</td></tr>`).join('');
+}
+$('#m-scan').onclick=async()=>{if(mbusy)return;mbusy=true;let q=0;
+  for(let i=0;i<mfiles.length;i++){const f=mfiles[i];if(f.st.includes('Quarantined')){continue}
+    f.st='scanning…';drawMal(i);await sleep(380);
+    const hit=db.find(d=>f.b.includes(d[0]));
+    if(hit){f.st=`<span class="tagq">Quarantined: ${hit[1]}</span>`;q++}
+    else if($('#m-heur').checked&&/itself|start-up/.test(f.beh)){f.st=`<span class="tagq">Quarantined: suspicious behaviour</span> <small style="color:var(--muted)">(${f.beh.toLowerCase()})</small>`;q++}
+    else f.st='<span class="tagc">clean</span>';drawMal(i)}
+  drawMal(-1);mbusy=false;
+  const missed=mfiles.find(f=>f.n==='invoice.pdf.exe'&&f.st.includes('clean'));
+  $('#m-msg').innerHTML=`Scan complete: ${q} new threat${q===1?'':'s'} quarantined.`+(missed?' <b>But invoice.pdf.exe is a brand-new worm</b>: its signature isn\'t in the database yet, so it was missed. Try heuristic analysis, or update the database and scan again.':'');
+};
+$('#m-upd').onclick=()=>{if(db.some(d=>d[1]==='Worm.Invoice'))return;db.push(['B7 11 C4 0D','Worm.Invoice']);drawMal(-1);$('#m-msg').textContent='Downloaded the latest signatures. This is why anti-malware must be updated regularly.'};
+$('#m-reset').onclick=mreset;mreset();
+
+/* ================= FILE REPAIR ================= */
+const DOC='Coursework: due Friday 10th, 3 pages, cite 2 sources.';
+const BS=9;let blocks,damaged;
+const cks=s=>[...s].reduce((a,c)=>a+c.charCodeAt(0),0)%256;
+const xor=(a,b)=>[...a].map((c,i)=>String.fromCharCode(c.charCodeAt(0)^b.charCodeAt(i))).join('');
+function rnew(){const t=DOC.padEnd(Math.ceil(DOC.length/BS)*BS,' ');blocks=[];for(let i=0;i<t.length;i+=BS){const s=t.slice(i,i+BS);blocks.push({t:s,ck:cks(s),st:''})}
+  rec=blocks.reduce((a,b)=>xor(a,b.t),'\0'.repeat(BS));$('#r-msg').textContent='The file is saved with a checksum for each block and one recovery block.';drawR()}
+let rec;
+const vis=s=>[...s].map(c=>{const k=c.charCodeAt(0);return k>=32&&k<127?c:'·'}).join('');
+function drawR(){$('#r-blocks').innerHTML=blocks.map((b,i)=>`<div class="fb2 ${b.st}"><small>block ${i+1} · stored checksum ${b.ck}</small><div class="txt">${vis(b.t).replace(/</g,'&lt;')}</div><small>${b.st==='bad'?'✖ checksum now '+cks(b.t):b.st==='fixed'?'✔ rebuilt':b.st==='lost'?'✖ cannot rebuild':''}</small></div>`).join('')+
+  `<div class="fb2 rec"><small>recovery block (XOR of all)</small><div class="txt">${vis(rec)}</div></div>`}
+$('#r-cor').onclick=()=>{const ok=blocks.map((b,i)=>i).filter(i=>blocks[i].ck===cks(blocks[i].t));if(!ok.length)return;const i=ok[Math.floor(Math.random()*ok.length)];
+  blocks[i].t=[...blocks[i].t].map(()=>String.fromCharCode(33+Math.floor(Math.random()*90))).join('');blocks[i].st='';drawR();$('#r-msg').textContent='Power was lost mid-save and part of the file is now garbage. Opening it would fail or show nonsense.'};
+$('#r-fix').onclick=async()=>{const bad=[];for(let i=0;i<blocks.length;i++){if(cks(blocks[i].t)!==blocks[i].ck){blocks[i].st='bad';bad.push(i)}}drawR();
+  if(!bad.length){$('#r-msg').textContent='All checksums match: the file is fine.';return}
+  $('#r-msg').textContent=`Checksums show ${bad.length} damaged block${bad.length>1?'s':''}…`;await sleep(900);
+  if(bad.length===1){const i=bad[0];blocks[i].t=blocks.reduce((a,b,k)=>k===i?a:xor(a,b.t),rec);blocks[i].st='fixed';drawR();$('#r-msg').textContent=`Block ${i+1} rebuilt from the recovery block and the other good blocks. The file opens normally again.`}
+  else{bad.forEach(i=>blocks[i].st='lost');drawR();$('#r-msg').textContent='Too many blocks are damaged to rebuild them. The utility can recover the readable blocks, but the rest of the file is lost: this is where a backup is needed.'}};
+$('#r-new').onclick=rnew;rnew();
+
+cardQuiz($('#quiz'),[
+ {q:'A hard disk has become slow because files are stored in scattered pieces.',a:'Defragmentation',why:'It rearranges files into contiguous blocks so the head moves less.'},
+ {q:'A video is too large to email.',a:'Compression',why:'Compressing it reduces the file size so it transfers faster.'},
+ {q:'A school wants to be able to recover its files after a ransomware attack.',a:'Backup',why:'A clean copy kept elsewhere can be restored after the attack.'},
+ {q:'A downloaded program might contain a trojan.',a:'Anti-malware',why:'Scanning compares it against known signatures and suspicious behaviour.'},
+ {q:'A document won\'t open after the computer crashed while saving it.',a:'File repair',why:'File repair checks the file\'s structure and fixes what it can.'},
+ {q:'Which type of compression is suitable for a program file (.exe)?',opts:['Lossless','Lossy'],a:'Lossless',why:'Every bit of a program must be restored exactly, or it will not run.'},
+],['Defragmentation','Compression','Backup','Anti-malware','File repair'],$('#score'),$('#qreset'));
+</script>
+</body>
+</html>

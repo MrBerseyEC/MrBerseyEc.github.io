@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Languages & translators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E8ECEF;--grid:rgba(22,32,43,.05);--panel:#F8FAFB;--ink:#16202B;--muted:#5B6874;--line:#C9D1D8;--one:#1F5BFF;--one-soft:#DDE6FF;--hl:#FFB000;--hl-soft:#FFF0C7;--off:#AEB8C1;--ok:#138A52;--ok-soft:#D7F2E3;--bad:#C2362B;--bad-soft:#F9DEDB}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--grid:rgba(255,255,255,.035);--panel:#1A222C;--ink:#E7EDF2;--muted:#9AA7B3;--line:#2E3A46;--one:#5B8CFF;--one-soft:#1E2E57;--hl-soft:#3D3110;--off:#4A5764;--ok:#3CC47F;--ok-soft:#14321F;--bad:#FF6B5E;--bad-soft:#3A1A17}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:6px 0 8px}
+.lede{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.series{display:flex;gap:6px;flex-wrap:wrap}
+.series a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.series a[aria-current]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.spec{font:600 .78rem 'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;margin:22px 0 0}
+.block{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0}
+.block>h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:700 .9rem Manrope,system-ui,sans-serif;padding:8px 14px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--hl-soft)}
+.btn.pri{background:var(--ink);color:var(--bg)}
+.btn:disabled{opacity:.35;cursor:default;background:var(--panel);color:var(--ink)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1.5px solid var(--line);margin:0 0 18px}
+.tabs button{font:700 .95rem Manrope,system-ui,sans-serif;padding:10px 14px;border:0;border-bottom:4px solid transparent;background:none;color:var(--muted);cursor:pointer;margin-bottom:-1.5px}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--hl)}
+.mono{font-family:'JetBrains Mono',monospace}
+.note{background:var(--hl-soft);border-left:4px solid var(--hl);padding:10px 14px;border-radius:6px;margin:14px 0 0;font-size:.95rem}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:.92rem;cursor:pointer}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.t th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.okc{color:var(--ok)}.badc{color:var(--bad)}
+.hidden{display:none!important}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.card.right{border-color:var(--ok);background:var(--ok-soft)}
+.card.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.card .opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.card .opts button{font:600 .85rem Manrope,system-ui,sans-serif;padding:6px 11px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.card .opts button.picked{border-color:var(--ink)}
+.card .fb{font-size:.88rem;margin:8px 0 0}
+.quizbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.score{font-weight:800}
+select,input[type=text],input[type=password],input[type=number]{font:1rem Manrope,system-ui,sans-serif;padding:7px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink)}
+input[type=range],input[type=checkbox]{accent-color:var(--one)}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.cols2{grid-template-columns:1fr}}
+.status{font-size:.95rem;min-height:1.5em}
+
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.lang h3{margin:0;font-size:1.05rem}
+.lang .lv{font-size:.8rem;color:var(--muted);margin:0 0 8px}
+.src{font:.92rem/1.9 'JetBrains Mono',monospace;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px 0;overflow-x:auto}
+.src div{padding:0 12px;white-space:pre;border-left:4px solid transparent;transition:background .15s}
+.src div.on{background:var(--hl-soft);border-left-color:var(--hl)}
+.src .c{color:var(--muted)}
+.race{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.lane{border:2px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.lane h3{margin:0 0 2px}
+.lane .how{font-size:.85rem;color:var(--muted);margin:0 0 10px;min-height:2.6em}
+.src div.tr{background:var(--hl-soft);border-left-color:var(--hl)}
+.src div.ex{background:var(--one-soft);border-left-color:var(--one)}
+.src div.done{border-left-color:var(--ok)}
+.src div.err{background:var(--bad-soft);border-left-color:var(--bad)}
+.console{font:.88rem/1.6 'JetBrains Mono',monospace;background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;min-height:110px;margin-top:10px;white-space:pre-wrap}
+.console .e{color:#FF8A80}.console .s{color:#9AA7B3}
+.stats{display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;margin-top:8px;color:var(--muted)}
+.stats b{color:var(--ink);font-family:'JetBrains Mono',monospace}
+.exe{display:inline-flex;align-items:center;gap:6px;font:700 .85rem 'JetBrains Mono',monospace;padding:4px 10px;border-radius:8px;border:2px dashed var(--line);color:var(--muted);margin-top:8px}
+.exe.made{border-style:solid;border-color:var(--ok);color:var(--ok)}
+@media (max-width:860px){.three{grid-template-columns:1fr}.race{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 3 demos"><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html" aria-current="page">Languages &amp; translators</a></nav>
+<p class="spec">EDEXCEL GCSE · 3.3.1 · 3.3.2</p>
+<h1>Languages &amp; translators</h1>
+<p class="lede">The CPU can only execute machine code: binary instructions for its own instruction set. Everything else has to be translated into machine code first, by an assembler, a compiler or an interpreter.</p>
+
+<section class="block">
+  <h2>One program, three levels</h2>
+  <p class="sub">The same program written three ways: add two numbers and output the total. Hover over (or tap) a line to see what it becomes at the other levels.</p>
+  <label class="check" style="margin-bottom:12px"><input type="checkbox" id="hex"> Show machine code in hex</label>
+  <div class="three">
+    <div class="lang"><h3>Python</h3><p class="lv">High-level</p><div class="src" id="L-py"></div></div>
+    <div class="lang"><h3>Assembly language</h3><p class="lv">Low-level · one line per machine instruction</p><div class="src" id="L-asm"></div></div>
+    <div class="lang"><h3>Machine code</h3><p class="lv">Low-level · what the CPU actually runs</p><div class="src" id="L-mc"></div></div>
+  </div>
+  <p class="note">The instruction set here matches the one in the fetch-decode-execute demo (a 4-bit opcode then a 4-bit address), with one extra instruction, OUT (opcode 0101). One line of Python, <span class="mono">total = a + b</span>, becomes three machine instructions.</p>
+</section>
+
+<section class="block">
+  <h2>High-level or low-level?</h2>
+  <div class="quizbar"><span class="score" id="score1"></span><button class="btn" id="qreset1">Reset questions</button></div>
+  <div class="cards" id="quiz1"></div>
+</section>
+
+<section class="block">
+  <h2>Compiler vs interpreter</h2>
+  <p class="sub">Both translate high-level code into machine code, but at different times. Run both, then add an error and run again. Then press Run again without changing anything.</p>
+  <div class="row" style="margin-bottom:12px">
+    <button class="btn pri" id="go">Run both</button>
+    <label class="check"><input type="checkbox" id="e1"> Add an error on line 4</label>
+    <label class="check"><input type="checkbox" id="e2"> Add an error on line 5</label>
+    <button class="btn" id="clr">Reset</button>
+  </div>
+  <div class="race">
+    <div class="lane"><h3>Interpreter</h3><p class="how" id="ihow">Translates one line, runs it, then moves on to the next. Translates again every time the program is run.</p>
+      <div class="src" id="I-src"></div><div class="console" id="I-out"></div>
+      <div class="stats"><span>Lines translated: <b id="I-tr">0</b></span><span>Time: <b id="I-t">0.0 s</b></span></div></div>
+    <div class="lane"><h3>Compiler</h3><p class="how" id="chow">Translates the whole program first into an executable file of machine code, then that file is run. It only needs translating again if the code changes.</p>
+      <div class="src" id="C-src"></div><div class="console" id="C-out"></div>
+      <div class="stats"><span>Lines translated: <b id="C-tr">0</b></span><span>Time: <b id="C-t">0.0 s</b></span></div>
+      <span class="exe" id="exe">📦 program.exe (not built)</span></div>
+  </div>
+  <p class="note">Python itself checks the whole file for syntax errors before it runs anything, so it doesn't behave quite like the textbook interpreter shown here. The textbook model is what the exam expects.</p>
+  <div class="scroll" style="margin-top:16px"><table class="t">
+    <tr><th></th><th>Interpreter</th><th>Compiler</th></tr>
+    <tr><td><b>How</b></td><td>Translates and runs one line at a time</td><td>Translates the whole program in one go, before it runs</td></tr>
+    <tr><td><b>Output</b></td><td>No executable file; the source code and interpreter are needed every time</td><td>A standalone executable file that runs without the compiler</td></tr>
+    <tr><td><b>Errors</b></td><td>Stops at the first error it reaches; lines before it have already run</td><td>Reports all the errors it finds; nothing runs until they are fixed</td></tr>
+    <tr><td><b>Speed</b></td><td>Slower to run, as each line is translated every time</td><td>Faster to run once compiled, but compiling takes time</td></tr>
+    <tr><td><b>Best for</b></td><td>Developing and debugging: quick to test small changes</td><td>Distributing finished software; the source code stays private</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  <div class="quizbar"><span class="score" id="score2"></span><button class="btn" id="qreset2">Reset questions</button></div>
+  <div class="cards" id="quiz2"></div>
+</section>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+/* tabs: buttons need role=tab and data-p=<panel id> */
+function tabs(root){const b=[...root.querySelectorAll('[role=tab]')];b.forEach(x=>x.onclick=()=>b.forEach(y=>{y.setAttribute('aria-selected',y===x);document.getElementById(y.dataset.p).classList.toggle('hidden',y!==x)}))}
+/* multiple-choice cards. items: {q,a,why,opts?} */
+function cardQuiz(el,items,opts,scoreEl,resetBtn){
+  function build(){
+    let right=0,done=0;el.innerHTML='';
+    const show=()=>{if(scoreEl)scoreEl.textContent=`${right} correct out of ${done} answered (${items.length} questions)`};
+    items.forEach(it=>{
+      const c=document.createElement('div');c.className='card';
+      c.innerHTML=`<div>${it.q}</div><div class="opts"></div><p class="fb hidden"></p>`;
+      const o=c.querySelector('.opts'),fb=c.querySelector('.fb');
+      (it.opts||opts).forEach(op=>{const b=document.createElement('button');b.textContent=op;b.onclick=()=>{
+        if(c.dataset.done)return;c.dataset.done=1;done++;b.classList.add('picked');
+        const ok=op===it.a;if(ok)right++;c.classList.add(ok?'right':'wrong');
+        fb.innerHTML=(ok?'<b>Correct.</b> ':`<b>Answer: ${it.a}.</b> `)+it.why;fb.classList.remove('hidden');show()};o.appendChild(b)});
+      el.appendChild(c)});
+    show();
+  }
+  build();if(resetBtn)resetBtn.onclick=build;
+}
+
+/* ---------- three levels ---------- */
+const PY=['a = 5','b = 3','total = a + b','print(total)'];
+const ASM=[['LOAD A','  ; ACC ← A'],['ADD B','   ; ACC ← ACC + B'],['STORE TOTAL',''],['OUT','     ; output ACC'],['HALT',''],['A     DAT 5',''],['B     DAT 3',''],['TOTAL DAT 0','']];
+const MC=[0x15,0x26,0x47,0x50,0x00,0x05,0x03,0x00];
+const MAP=[[5],[6],[0,1,2],[3]]; /* python line -> asm/mc lines */
+function drawLv(){const hex=$('#hex').checked;
+  $('#L-py').innerHTML=PY.map((l,i)=>`<div data-py="${i}">${l}</div>`).join('');
+  $('#L-asm').innerHTML=ASM.map((l,i)=>`<div data-m="${i}">${l[0]}<span class="c">${l[1]}</span></div>`).join('');
+  $('#L-mc').innerHTML=MC.map((w,i)=>`<div data-m="${i}"><span class="c">${i}: </span>${hex?w.toString(16).toUpperCase().padStart(2,'0'):w.toString(2).padStart(8,'0').replace(/(\d{4})/,'$1 ')}</div>`).join('')}
+function hi(py){$$('.three .src div').forEach(d=>d.classList.remove('on'));if(py===null)return;
+  document.querySelector(`[data-py="${py}"]`).classList.add('on');MAP[py].forEach(m=>$$(`[data-m="${m}"]`).forEach(d=>d.classList.add('on')))}
+function pyFor(m){return MAP.findIndex(a=>a.includes(m))}
+document.querySelector('.three').addEventListener('pointerover',e=>{const d=e.target.closest('div[data-py],div[data-m]');if(!d)return;
+  const p=d.dataset.py!==undefined?+d.dataset.py:pyFor(+d.dataset.m);hi(p<0?null:p);if(p<0)$$(`[data-m="${d.dataset.m}"]`).forEach(x=>x.classList.add('on'))});
+document.querySelector('.three').addEventListener('pointerleave',()=>hi(null));
+$('#hex').onchange=drawLv;drawLv();
+
+cardQuiz($('#quiz1'),[
+ {q:'Uses English-like keywords such as <span class="mono">print</span> and <span class="mono">while</span>.',a:'High-level',why:'High-level languages are designed to be read and written by people.'},
+ {q:'One statement can become many machine code instructions.',a:'High-level',why:'For example, total = a + b became three instructions.'},
+ {q:'Gives direct control over the hardware, such as specific registers and memory addresses.',a:'Low-level',why:'Assembly and machine code work directly with the CPU\'s registers and memory.'},
+ {q:'Portable: the same code can run on different types of processor.',a:'High-level',why:'It just needs a translator for each platform. Low-level code is written for one processor\'s instruction set.'},
+ {q:'Executed directly by the CPU, with no translation needed.',a:'Low-level',why:'Only machine code runs directly. Even assembly needs an assembler.'},
+ {q:'Easier to read, write and debug.',a:'High-level',why:'Meaningful names, structures and built-in functions make code clearer.'},
+ {q:'Used to write very fast, memory-efficient code for small embedded systems or device drivers.',a:'Low-level',why:'The programmer controls exactly which instructions run and what memory is used.'},
+ {q:'Each instruction has a mnemonic such as LOAD or ADD.',a:'Low-level',why:'That is assembly language, translated by an assembler, one mnemonic per machine instruction.'},
+],['High-level','Low-level'],$('#score1'),$('#qreset1'));
+
+/* ---------- race ---------- */
+const OK=['name = "Ada"','print("Hello", name)','score = 7 * 6','print("Score:", score)','print("Done")'];
+const BAD={3:['print("Score:" score)','Syntax error on line 4: missing comma between items'],4:['print("Done)','Syntax error on line 5: string is not closed']};
+const OUTS={1:'Hello Ada',3:'Score: 42',4:'Done'};
+let built=null,stats={I:0,C:0},running=false;
+const code=()=>OK.map((l,i)=>(i===3&&$('#e1').checked)||(i===4&&$('#e2').checked)?BAD[i][0]:l);
+const errAt=i=>(i===3&&$('#e1').checked)||(i===4&&$('#e2').checked)?BAD[i][1]:null;
+const key=()=>code().join('\n');
+function drawSrc(id,marks={}){$(id).innerHTML=code().map((l,i)=>`<div class="${marks[i]||''}"><span class="c">${i+1}  </span>${l.replace(/</g,'&lt;')}</div>`).join('')}
+function out(id,html){$(id).insertAdjacentHTML('beforeend',html+'\n')}
+function timerFor(id){const t0=performance.now();const h=setInterval(()=>$(id).textContent=((performance.now()-t0)/1000).toFixed(1)+' s',100);return()=>{clearInterval(h);$(id).textContent=((performance.now()-t0)/1000).toFixed(1)+' s'}}
+async function interp(){
+  const m={};$('#I-out').innerHTML='';const stop=timerFor('#I-t');
+  for(let i=0;i<OK.length;i++){
+    m[i]='tr';drawSrc('#I-src',m);await sleep(450);stats.I++;$('#I-tr').textContent=stats.I;
+    const e=errAt(i);if(e){m[i]='err';drawSrc('#I-src',m);out('#I-out',`<span class="e">${e}\nProgram stopped.</span>`);stop();return}
+    m[i]='ex';drawSrc('#I-src',m);if(OUTS[i])out('#I-out',OUTS[i]);await sleep(250);m[i]='done';drawSrc('#I-src',m);
+  }
+  out('#I-out','<span class="s">[finished]</span>');stop();
+}
+async function comp(){
+  const m={};$('#C-out').innerHTML='';const stop=timerFor('#C-t');
+  if(built!==key()){
+    built=null;$('#exe').className='exe';$('#exe').textContent='📦 program.exe (not built)';
+    out('#C-out','<span class="s">Compiling…</span>');const errs=[];
+    for(let i=0;i<OK.length;i++){m[i]='tr';drawSrc('#C-src',m);await sleep(220);stats.C++;$('#C-tr').textContent=stats.C;const e=errAt(i);if(e){errs.push(e);m[i]='err'}else m[i]='done';drawSrc('#C-src',m)}
+    if(errs.length){out('#C-out',`<span class="e">${errs.length} error${errs.length>1?'s':''} found:\n${errs.join('\n')}\nNo executable produced. Nothing has run.</span>`);stop();return}
+    built=key();$('#exe').className='exe made';$('#exe').textContent='📦 program.exe built';out('#C-out','<span class="s">Compiled. Running program.exe…</span>');
+  }else out('#C-out','<span class="s">Code unchanged: running the existing program.exe, no translation needed…</span>');
+  for(let i=0;i<OK.length;i++){m[i]='ex';drawSrc('#C-src',m);if(OUTS[i])out('#C-out',OUTS[i]);await sleep(90);m[i]='done'}
+  drawSrc('#C-src',m);out('#C-out','<span class="s">[finished]</span>');stop();
+}
+$('#go').onclick=async()=>{if(running)return;running=true;$('#go').disabled=true;await Promise.all([interp(),comp()]);running=false;$('#go').disabled=false;$('#go').textContent='Run again'};
+const fresh=()=>{if(running)return;drawSrc('#I-src');drawSrc('#C-src');$('#I-out').innerHTML='';$('#C-out').innerHTML='';$('#go').textContent='Run both'};
+$('#e1').onchange=$('#e2').onchange=fresh;
+$('#clr').onclick=()=>{if(running)return;built=null;stats={I:0,C:0};$('#I-tr').textContent=$('#C-tr').textContent='0';$('#I-t').textContent=$('#C-t').textContent='0.0 s';$('#exe').className='exe';$('#exe').textContent='📦 program.exe (not built)';$('#e1').checked=$('#e2').checked=false;fresh()};
+fresh();
+
+cardQuiz($('#quiz2'),[
+ {q:'Which translator produces an executable file that can be run without the translator?',a:'Compiler',why:'The compiled machine code is saved as a standalone file.'},
+ {q:'A program with an error on line 20 prints some output before stopping. Which translator was used?',a:'Interpreter',why:'An interpreter runs lines 1–19 before it reaches the error.'},
+ {q:'A developer wants to sell software without giving away the source code.',a:'Compiler',why:'Customers get the executable, not the source code.'},
+ {q:'A student wants to test small changes to their code quickly, line by line.',a:'Interpreter',why:'No need to recompile the whole program; errors are shown as soon as they are reached.'},
+ {q:'Which translator reports all syntax errors together before anything runs?',a:'Compiler',why:'It translates the whole program first, so it can list every error it finds.'},
+ {q:'Which needs to translate the code again every time the program is run?',a:'Interpreter',why:'It never saves the translated machine code.'},
+],['Compiler','Interpreter'],$('#score2'),$('#qreset2'));
+</script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Robust software</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E8ECEF;--grid:rgba(22,32,43,.05);--panel:#F8FAFB;--ink:#16202B;--muted:#5B6874;--line:#C9D1D8;--one:#1F5BFF;--one-soft:#DDE6FF;--hl:#FFB000;--hl-soft:#FFF0C7;--off:#AEB8C1;--ok:#138A52;--ok-soft:#D7F2E3;--bad:#C2362B;--bad-soft:#F9DEDB}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--grid:rgba(255,255,255,.035);--panel:#1A222C;--ink:#E7EDF2;--muted:#9AA7B3;--line:#2E3A46;--one:#5B8CFF;--one-soft:#1E2E57;--hl-soft:#3D3110;--off:#4A5764;--ok:#3CC47F;--ok-soft:#14321F;--bad:#FF6B5E;--bad-soft:#3A1A17}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:6px 0 8px}
+.lede{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.series{display:flex;gap:6px;flex-wrap:wrap}
+.series a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.series a[aria-current]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.spec{font:600 .78rem 'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;margin:22px 0 0}
+.block{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0}
+.block>h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:700 .9rem Manrope,system-ui,sans-serif;padding:8px 14px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--hl-soft)}
+.btn.pri{background:var(--ink);color:var(--bg)}
+.btn:disabled{opacity:.35;cursor:default;background:var(--panel);color:var(--ink)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1.5px solid var(--line);margin:0 0 18px}
+.tabs button{font:700 .95rem Manrope,system-ui,sans-serif;padding:10px 14px;border:0;border-bottom:4px solid transparent;background:none;color:var(--muted);cursor:pointer;margin-bottom:-1.5px}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--hl)}
+.mono{font-family:'JetBrains Mono',monospace}
+.note{background:var(--hl-soft);border-left:4px solid var(--hl);padding:10px 14px;border-radius:6px;margin:14px 0 0;font-size:.95rem}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:.92rem;cursor:pointer}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.t th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.okc{color:var(--ok)}.badc{color:var(--bad)}
+.hidden{display:none!important}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.card.right{border-color:var(--ok);background:var(--ok-soft)}
+.card.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.card .opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.card .opts button{font:600 .85rem Manrope,system-ui,sans-serif;padding:6px 11px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.card .opts button.picked{border-color:var(--ink)}
+.card .fb{font-size:.88rem;margin:8px 0 0}
+.quizbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.score{font-weight:800}
+select,input[type=text],input[type=password],input[type=number]{font:1rem Manrope,system-ui,sans-serif;padding:7px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink)}
+input[type=range],input[type=checkbox]{accent-color:var(--one)}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.cols2{grid-template-columns:1fr}}
+.status{font-size:.95rem;min-height:1.5em}
+
+.review{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:start}
+.code{font:.9rem/1.75 'JetBrains Mono',monospace;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px 0;overflow-x:auto}
+.code div{display:grid;grid-template-columns:2.6em 1fr;padding-right:12px;cursor:pointer;border-left:4px solid transparent;white-space:pre}
+.code div:hover{background:var(--hl-soft)}
+.code .ln{color:var(--muted);text-align:right;padding-right:12px;user-select:none}
+.code div.flag{background:var(--hl-soft);border-left-color:var(--hl)}
+.code div.hit{background:var(--ok-soft);border-left-color:var(--ok)}
+.code div.miss{background:var(--bad-soft);border-left-color:var(--bad)}
+.code div.fp{border-left-color:var(--off);opacity:.7}
+.code div.blank{cursor:default}.code div.blank:hover{background:none}
+.kw{color:#7B4DFF}.str{color:var(--ok)}.cm{color:var(--muted)}
+.issues{display:grid;gap:8px}
+.issue{border:2px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg);font-size:.92rem}
+.issue.hit{border-color:var(--ok)}.issue.miss{border-color:var(--bad)}
+.issue b{display:block}
+.log td{font:.84rem 'JetBrains Mono',monospace;white-space:nowrap}
+.log td.d{white-space:normal;font-family:Manrope,sans-serif}
+.log tr.sus td{background:var(--bad-soft)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+@media (max-width:860px){.review{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 3 demos"><a href="fde-cycle.html">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html" aria-current="page">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
+<p class="spec">EDEXCEL GCSE · 3.2.3</p>
+<h1>Robust software</h1>
+<p class="lede">Robust software keeps working correctly, even with unexpected input or when someone deliberately tries to break it. Weaknesses in code (vulnerabilities) can be exploited by attackers, so developers look for them through code reviews, and keep audit trails to spot and investigate misuse.</p>
+
+<section class="block">
+  <h2>Code review</h2>
+  <p class="sub">In a code review, other programmers read through code looking for bugs and vulnerabilities before it is released. This program has <b>6</b> problems. Click the lines you think are a problem, then check your review.</p>
+  <div class="row" style="margin-bottom:12px"><button class="btn pri" id="chk">Check my review</button><button class="btn" id="rst">Start again</button><span class="score" id="rscore"></span></div>
+  <div class="review">
+    <div class="code" id="code"></div>
+    <div class="issues" id="issues"><p style="color:var(--muted);margin:0">Flagged lines appear highlighted. Explanations will appear here when you check.</p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Audit trail</h2>
+  <p class="sub">An audit trail is a log the system keeps of who did what, and when. It can't stop an attack on its own, but it lets you detect unusual activity, investigate what happened, and hold people accountable. Something odd happened to the Year 10 mock grades. Use the log to find out what.</p>
+  <div class="filters">
+    <label class="check">User <select id="fu"><option value="">All</option></select></label>
+    <label class="check">Action <select id="fa"><option value="">All</option></select></label>
+    <label class="check"><input type="checkbox" id="fs"> Highlight unusual activity</label>
+  </div>
+  <div class="scroll"><table class="t log" id="log"></table></div>
+  <h3 style="margin:20px 0 8px">Investigate</h3>
+  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
+  <div class="cards" id="quiz"></div>
+</section>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+/* tabs: buttons need role=tab and data-p=<panel id> */
+function tabs(root){const b=[...root.querySelectorAll('[role=tab]')];b.forEach(x=>x.onclick=()=>b.forEach(y=>{y.setAttribute('aria-selected',y===x);document.getElementById(y.dataset.p).classList.toggle('hidden',y!==x)}))}
+/* multiple-choice cards. items: {q,a,why,opts?} */
+function cardQuiz(el,items,opts,scoreEl,resetBtn){
+  function build(){
+    let right=0,done=0;el.innerHTML='';
+    const show=()=>{if(scoreEl)scoreEl.textContent=`${right} correct out of ${done} answered (${items.length} questions)`};
+    items.forEach(it=>{
+      const c=document.createElement('div');c.className='card';
+      c.innerHTML=`<div>${it.q}</div><div class="opts"></div><p class="fb hidden"></p>`;
+      const o=c.querySelector('.opts'),fb=c.querySelector('.fb');
+      (it.opts||opts).forEach(op=>{const b=document.createElement('button');b.textContent=op;b.onclick=()=>{
+        if(c.dataset.done)return;c.dataset.done=1;done++;b.classList.add('picked');
+        const ok=op===it.a;if(ok)right++;c.classList.add(ok?'right':'wrong');
+        fb.innerHTML=(ok?'<b>Correct.</b> ':`<b>Answer: ${it.a}.</b> `)+it.why;fb.classList.remove('hidden');show()};o.appendChild(b)});
+      el.appendChild(c)});
+    show();
+  }
+  build();if(resetBtn)resetBtn.onclick=build;
+}
+
+const SRC=[
+'ADMIN_PASSWORD = "letmein"',
+'',
+'def login():',
+'    while True:',
+'        attempt = input("Password: ")',
+'        log.write("Login attempt: " + attempt)',
+'        if attempt == ADMIN_PASSWORD:',
+'            return True',
+'        print("Wrong password")',
+'',
+'def buyTickets(price):',
+'    qty = int(input("How many tickets? "))',
+'    total = qty * price',
+'    print("Total to pay: £", total)',
+'    return total',
+'',
+'def findStudent(name):',
+'    sql = "SELECT * FROM students WHERE name = \'" + name + "\'"',
+'    return database.run(sql)',
+'',
+'def average(marks):',
+'    return sum(marks) / len(marks)'];
+const ISS={
+ 0:['Hard-coded password','Anyone who can see the source code knows the admin password, and it can\'t be changed without editing the program. Store a hashed password securely instead.'],
+ 3:['Unlimited login attempts','An attacker can keep guessing forever (brute force). Limit the number of attempts or lock the account.'],
+ 5:['Password written to a log in plain text','Every attempt, including the correct password, is saved where other people might read it. Never log passwords.'],
+ 11:['No input validation','Typing "two" crashes the program, and a negative number gives a negative total, so a customer could get money back. Check the input is a whole number in a sensible range.'],
+ 17:['SQL injection','The user\'s input is pasted straight into a database query. Typing <span class="mono">\' OR \'1\'=\'1</span> as a name would return every student. Use a parameterised query.'],
+ 21:['Division by zero','If the list is empty, len(marks) is 0 and the program crashes. Check the list isn\'t empty first.']};
+let flags=new Set(),checked=false;
+const hl=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/("[^"]*")/g,'<span class="str">$1</span>').replace(/\b(def|while|True|if|return)\b/g,'<span class="kw">$1</span>');
+function drawCode(){
+  $('#code').innerHTML=SRC.map((l,i)=>{let c=l.trim()?'':'blank';if(!checked&&flags.has(i))c+=' flag';
+    if(checked){if(ISS[i])c+=flags.has(i)?' hit':' miss';else if(flags.has(i))c+=' fp'}
+    return`<div class="${c}" data-i="${i}"><span class="ln">${i+1}</span><span>${hl(l)||' '}</span></div>`}).join('');
+}
+$('#code').onclick=e=>{const d=e.target.closest('div[data-i]');if(!d||checked||d.classList.contains('blank'))return;const i=+d.dataset.i;flags.has(i)?flags.delete(i):flags.add(i);drawCode()};
+$('#chk').onclick=()=>{checked=true;drawCode();const keys=Object.keys(ISS).map(Number),hits=keys.filter(k=>flags.has(k)).length,fps=[...flags].filter(f=>!ISS[f]).length;
+  $('#rscore').textContent=`Found ${hits} of ${keys.length}`+(fps?`, plus ${fps} line${fps>1?'s':''} that ${fps>1?'are':'is'} fine`:'');
+  $('#issues').innerHTML=keys.map(k=>`<div class="issue ${flags.has(k)?'hit':'miss'}"><b>Line ${k+1}: ${ISS[k][0]} ${flags.has(k)?'✔':'(missed)'}</b>${ISS[k][1]}</div>`).join('')};
+$('#rst').onclick=()=>{flags.clear();checked=false;$('#rscore').textContent='';$('#issues').innerHTML='<p style="color:var(--muted);margin:0">Flagged lines appear highlighted. Explanations will appear here when you check.</p>';drawCode()};
+drawCode();
+
+/* audit trail */
+const LOG=[
+ ['Mon 16:02','mrs.khan','LOGIN','Success','Staff room PC 2',0],
+ ['Mon 16:10','mrs.khan','EDIT','Grades/Y10-mock.xlsx (entered marks)','Staff room PC 2',0],
+ ['Mon 16:31','mrs.khan','LOGOUT','','Staff room PC 2',0],
+ ['Mon 17:05','j.lee','LOGIN','Success','Library PC 4',0],
+ ['Mon 17:06','j.lee','OPEN','Homework/Y10-python.docx','Library PC 4',0],
+ ['Mon 17:40','j.lee','LOGOUT','','Library PC 4',0],
+ ['Tue 02:47','mrs.khan','LOGIN','Failed: wrong password','Remote (unknown location)',1],
+ ['Tue 02:47','mrs.khan','LOGIN','Failed: wrong password','Remote (unknown location)',1],
+ ['Tue 02:48','mrs.khan','LOGIN','Failed: wrong password','Remote (unknown location)',1],
+ ['Tue 02:48','mrs.khan','LOGIN','Failed: wrong password','Remote (unknown location)',1],
+ ['Tue 02:51','mrs.khan','LOGIN','Success','Remote (unknown location)',1],
+ ['Tue 02:53','mrs.khan','EDIT','Grades/Y10-mock.xlsx (14 cells changed)','Remote (unknown location)',1],
+ ['Tue 02:55','mrs.khan','DELETE','Backups/Y10-mock-copy.xlsx','Remote (unknown location)',1],
+ ['Tue 02:56','mrs.khan','LOGOUT','','Remote (unknown location)',1],
+ ['Tue 08:12','mrs.khan','LOGIN','Success','Staff room PC 2',0],
+ ['Tue 08:14','mrs.khan','OPEN','Grades/Y10-mock.xlsx','Staff room PC 2',0],
+ ['Tue 08:20','j.lee','LOGIN','Success','Library PC 4',0]];
+const uniq=k=>[...new Set(LOG.map(r=>r[k]))];
+uniq(1).forEach(u=>$('#fu').insertAdjacentHTML('beforeend',`<option>${u}</option>`));
+uniq(2).forEach(a=>$('#fa').insertAdjacentHTML('beforeend',`<option>${a}</option>`));
+function drawLog(){const u=$('#fu').value,a=$('#fa').value,s=$('#fs').checked;
+  $('#log').innerHTML='<tr><th>When</th><th>User</th><th>Action</th><th>Details</th><th>Where from</th></tr>'+LOG.filter(r=>(!u||r[1]===u)&&(!a||r[2]===a)).map(r=>`<tr class="${s&&r[5]?'sus':''}"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td class="d">${r[3]}</td><td class="d">${r[4]}</td></tr>`).join('')}
+['#fu','#fa','#fs'].forEach(id=>$(id).onchange=drawLog);drawLog();
+
+cardQuiz($('#quiz'),[
+ {q:'Which account was used to change the grades overnight?',opts:['mrs.khan','j.lee','Nobody: the log shows no changes'],a:'mrs.khan',why:'The edit at 02:53 was made while logged in as mrs.khan, though not necessarily by her.'},
+ {q:'What is the strongest evidence that the account was broken into?',opts:['Four failed logins in a row from an unknown remote location at 02:47','mrs.khan logged in from the staff room at 08:12','j.lee opened a homework file'],a:'Four failed logins in a row from an unknown remote location at 02:47',why:'Repeated wrong guesses, at an odd time, from an unusual place, followed by a success, suggests the password was guessed.'},
+ {q:'What else did the intruder do to cover their tracks?',opts:['Deleted the backup copy of the grades','Opened a homework file','Changed mrs.khan\'s password'],a:'Deleted the backup copy of the grades',why:'Deleting Backups/Y10-mock-copy.xlsx at 02:55 removes the easy way to see what was originally there.'},
+ {q:'Which change would most directly have stopped this attack?',opts:['Lock accounts after 3 failed logins','Make the log text bigger','Delete the audit trail every night'],a:'Lock accounts after 3 failed logins',why:'Account lockout stops repeated password guessing. The audit trail is what revealed the weakness.'},
+],null,$('#score'),$('#qreset'));
+</script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fetch-decode-execute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E8ECEF;--grid:rgba(22,32,43,.05);--panel:#F8FAFB;--ink:#16202B;--muted:#5B6874;--line:#C9D1D8;--one:#1F5BFF;--one-soft:#DDE6FF;--hl:#FFB000;--hl-soft:#FFF0C7;--off:#AEB8C1;--ok:#138A52;--ok-soft:#D7F2E3;--bad:#C2362B;--bad-soft:#F9DEDB}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--grid:rgba(255,255,255,.035);--panel:#1A222C;--ink:#E7EDF2;--muted:#9AA7B3;--line:#2E3A46;--one:#5B8CFF;--one-soft:#1E2E57;--hl-soft:#3D3110;--off:#4A5764;--ok:#3CC47F;--ok-soft:#14321F;--bad:#FF6B5E;--bad-soft:#3A1A17}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:6px 0 8px}
+.lede{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.series{display:flex;gap:6px;flex-wrap:wrap}
+.series a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.series a[aria-current]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.spec{font:600 .78rem 'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;margin:22px 0 0}
+.block{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0}
+.block>h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:700 .9rem Manrope,system-ui,sans-serif;padding:8px 14px;border-radius:8px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--hl-soft)}
+.btn.pri{background:var(--ink);color:var(--bg)}
+.btn:disabled{opacity:.35;cursor:default;background:var(--panel);color:var(--ink)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1.5px solid var(--line);margin:0 0 18px}
+.tabs button{font:700 .95rem Manrope,system-ui,sans-serif;padding:10px 14px;border:0;border-bottom:4px solid transparent;background:none;color:var(--muted);cursor:pointer;margin-bottom:-1.5px}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--hl)}
+.mono{font-family:'JetBrains Mono',monospace}
+.note{background:var(--hl-soft);border-left:4px solid var(--hl);padding:10px 14px;border-radius:6px;margin:14px 0 0;font-size:.95rem}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:.92rem;cursor:pointer}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.t th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.okc{color:var(--ok)}.badc{color:var(--bad)}
+.hidden{display:none!important}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.card.right{border-color:var(--ok);background:var(--ok-soft)}
+.card.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.card .opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.card .opts button{font:600 .85rem Manrope,system-ui,sans-serif;padding:6px 11px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.card .opts button.picked{border-color:var(--ink)}
+.card .fb{font-size:.88rem;margin:8px 0 0}
+.quizbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.score{font-weight:800}
+select,input[type=text],input[type=password],input[type=number]{font:1rem Manrope,system-ui,sans-serif;padding:7px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink)}
+input[type=range],input[type=checkbox]{accent-color:var(--one)}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.cols2{grid-template-columns:1fr}}
+.status{font-size:.95rem;min-height:1.5em}
+
+.machine{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.62fr) minmax(0,1fr);align-items:stretch;margin-top:14px}
+.cpu,.ram{border:3px solid var(--ink);border-radius:14px;padding:14px;background:var(--bg)}
+.cpu>h3,.ram>h3{margin:0 0 10px;font-size:.9rem;letter-spacing:.08em;text-transform:uppercase}
+.units{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.unit,.reg{border:2px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--panel);transition:border-color .2s,box-shadow .2s;cursor:pointer}
+.unit b,.reg b{display:block;font:700 .95rem 'JetBrains Mono',monospace}
+.unit small,.reg small{color:var(--muted);font-size:.72rem;line-height:1.25;display:block}
+.reg .v{font:600 1.05rem 'JetBrains Mono',monospace;margin-top:4px;min-height:1.4em;border-radius:4px}
+.reg .v i{font:600 .78rem Manrope,sans-serif;color:var(--muted);font-style:normal;margin-left:6px}
+.regs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.reg.acc{grid-column:span 2}
+.on{border-color:var(--one)!important;box-shadow:0 0 0 4px var(--one-soft)}
+.changed .v{animation:flash .9s}
+@keyframes flash{from{background:var(--hl)}to{background:transparent}}
+.clock .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--off);margin-right:6px;transition:background .1s}
+.clock.pulse .dot{background:var(--hl);box-shadow:0 0 10px var(--hl)}
+.buses{display:flex;flex-direction:column;justify-content:center;gap:24px;padding:0 8px;cursor:pointer}
+.bus .lab{font:800 .74rem Manrope,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:flex;justify-content:space-between;gap:4px;flex-wrap:wrap}
+.bus .lab .dir{font-weight:600;text-transform:none;letter-spacing:0}
+.bus .bar{height:14px;border-radius:7px;background:var(--off);margin:4px 0;transition:background .2s}
+.bus.on .bar{background:var(--one)}
+.bus.on{box-shadow:none}
+.bus .val{font:600 .88rem 'JetBrains Mono',monospace;min-height:1.3em;text-align:center}
+.mem{width:100%;border-collapse:collapse;font:.88rem 'JetBrains Mono',monospace}
+.mem td{padding:3px 6px;border-bottom:1px solid var(--line)}
+.mem td.a{color:var(--muted);width:2.6em}
+.mem td.m{font-family:Manrope,sans-serif;font-weight:700}
+.mem td.k{font:600 .7rem Manrope,sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;text-align:right}
+.mem tr.data td.m{color:var(--ok)}
+.mem tr.hi td{background:var(--one-soft)}
+.mem tr.wr td{animation:flash 1.2s}
+.mem tr.edit{cursor:pointer}
+.mem tr.edit:hover td.m{text-decoration:underline}
+.phases{display:flex;gap:6px;margin:16px 0 8px;flex-wrap:wrap}
+.phases span{padding:5px 14px;border-radius:999px;border:2px solid var(--line);font-weight:800;color:var(--muted)}
+.phases span.now{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.explain{font-size:1.06rem;min-height:3.3em;margin:0;max-width:85ch}
+.info{margin:14px 0 0;font-size:.95rem;color:var(--muted);min-height:3em}
+.info b{color:var(--ink)}
+@media (max-width:860px){.machine{grid-template-columns:1fr}.buses{flex-direction:row;padding:14px 0;gap:10px}.bus{flex:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 3 demos"><a href="fde-cycle.html" aria-current="page">Fetch-decode-execute</a><a href="secondary-storage.html">Secondary storage</a><a href="embedded-systems.html">Embedded systems</a><a href="operating-systems.html">Operating systems</a><a href="utility-software.html">Utility software</a><a href="robust-software.html">Robust software</a><a href="languages-translators.html">Languages &amp; translators</a></nav>
+<p class="spec">EDEXCEL GCSE · 3.1.1</p>
+<h1>Fetch-decode-execute</h1>
+<p class="lede">In a von Neumann computer the program and its data are held together in the same main memory (the stored program concept). The CPU fetches each instruction, decodes it and executes it, over and over. Step through to see every register and bus involved.</p>
+
+<section class="block">
+  <div class="row" style="justify-content:space-between">
+    <div class="row">
+      <button class="btn pri" id="step">Step ▸</button>
+      <button class="btn" id="play">Play</button>
+      <button class="btn" id="reset">Reset</button>
+      <label class="check">Speed <input type="range" id="speed" min="300" max="2000" value="1000" step="100"></label>
+    </div>
+    <div class="row">
+      <select id="preset" aria-label="Program"></select>
+      <label class="check"><input type="checkbox" id="bin"> Show memory as binary</label>
+    </div>
+  </div>
+  <div class="phases"><span data-ph="Fetch">Fetch</span><span data-ph="Decode">Decode</span><span data-ph="Execute">Execute</span></div>
+  <p class="explain" id="explain"></p>
+  <div class="machine">
+    <div class="cpu" id="cpu">
+      <h3>CPU</h3>
+      <div class="units">
+        <div class="unit" id="cu"><b>CU</b><small>Control unit</small></div>
+        <div class="unit" id="alu"><b>ALU</b><small>Arithmetic logic unit</small></div>
+        <div class="unit clock" id="clock"><b><span class="dot"></span>Clock</b><small>Ticks: <span id="ticks">0</span></small></div>
+      </div>
+      <div class="regs">
+        <div class="reg" id="pc"><b>PC</b><small>Program counter</small><div class="v"></div></div>
+        <div class="reg" id="mar"><b>MAR</b><small>Memory address register</small><div class="v"></div></div>
+        <div class="reg" id="mdr"><b>MDR</b><small>Memory data register</small><div class="v"></div></div>
+        <div class="reg" id="cir"><b>CIR</b><small>Current instruction register</small><div class="v"></div></div>
+        <div class="reg acc" id="acc"><b>ACC</b><small>Accumulator</small><div class="v"></div></div>
+      </div>
+    </div>
+    <div class="buses">
+      <div class="bus" id="b-addr"><div class="lab"><span>Address bus</span><span class="dir">CPU → RAM</span></div><div class="bar"></div><div class="val"></div></div>
+      <div class="bus" id="b-data"><div class="lab"><span>Data bus</span><span class="dir">CPU ⇄ RAM</span></div><div class="bar"></div><div class="val"></div></div>
+      <div class="bus" id="b-ctrl"><div class="lab"><span>Control bus</span><span class="dir">CPU ⇄ RAM</span></div><div class="bar"></div><div class="val"></div></div>
+    </div>
+    <div class="ram" id="ram">
+      <h3>Main memory (RAM)</h3>
+      <table class="mem" id="mem"></table>
+    </div>
+  </div>
+  <p class="info" id="info">Click any part of the diagram to see what it does. Click a data value in memory to change it before you run.</p>
+  <p class="note">Every instruction here is 8 bits: a 4-bit <b>opcode</b> (what to do) followed by a 4-bit <b>operand</b> (the memory address to use). Tick "Show memory as binary" and notice that instructions and numbers look exactly the same. The CPU only knows which is which because the PC points at instructions.</p>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  <div class="quizbar"><span class="score" id="score"></span><button class="btn" id="qreset">Reset questions</button></div>
+  <div class="cards" id="quiz"></div>
+</section>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+/* tabs: buttons need role=tab and data-p=<panel id> */
+function tabs(root){const b=[...root.querySelectorAll('[role=tab]')];b.forEach(x=>x.onclick=()=>b.forEach(y=>{y.setAttribute('aria-selected',y===x);document.getElementById(y.dataset.p).classList.toggle('hidden',y!==x)}))}
+/* multiple-choice cards. items: {q,a,why,opts?} */
+function cardQuiz(el,items,opts,scoreEl,resetBtn){
+  function build(){
+    let right=0,done=0;el.innerHTML='';
+    const show=()=>{if(scoreEl)scoreEl.textContent=`${right} correct out of ${done} answered (${items.length} questions)`};
+    items.forEach(it=>{
+      const c=document.createElement('div');c.className='card';
+      c.innerHTML=`<div>${it.q}</div><div class="opts"></div><p class="fb hidden"></p>`;
+      const o=c.querySelector('.opts'),fb=c.querySelector('.fb');
+      (it.opts||opts).forEach(op=>{const b=document.createElement('button');b.textContent=op;b.onclick=()=>{
+        if(c.dataset.done)return;c.dataset.done=1;done++;b.classList.add('picked');
+        const ok=op===it.a;if(ok)right++;c.classList.add(ok?'right':'wrong');
+        fb.innerHTML=(ok?'<b>Correct.</b> ':`<b>Answer: ${it.a}.</b> `)+it.why;fb.classList.remove('hidden');show()};o.appendChild(b)});
+      el.appendChild(c)});
+    show();
+  }
+  build();if(resetBtn)resetBtn.onclick=build;
+}
+
+const OPS={0:'HALT',1:'LOAD',2:'ADD',3:'SUB',4:'STORE'}, CODE={HALT:0,LOAD:1,ADD:2,SUB:3,STORE:4};
+const PRESETS=[
+ {name:'Add two numbers',prog:['LOAD 6','ADD 7','STORE 8','HALT'],data:{6:5,7:3,8:0}},
+ {name:'Subtract',prog:['LOAD 6','SUB 7','STORE 8','HALT'],data:{6:9,7:4,8:0}},
+ {name:'Add three numbers',prog:['LOAD 8','ADD 9','ADD 10','STORE 11','HALT'],data:{8:4,9:7,10:2,11:0}},
+ {name:'Double a number',prog:['LOAD 5','ADD 5','STORE 6','HALT'],data:{5:21,6:0}}];
+const INFO={
+ pc:'<b>Program counter (PC)</b> holds the address of the next instruction to be fetched. It is incremented during every fetch.',
+ mar:'<b>Memory address register (MAR)</b> holds the address of the memory location about to be read from or written to. Its contents go out on the address bus.',
+ mdr:'<b>Memory data register (MDR)</b> holds the instruction or data just read from memory, or about to be written to it. It sits at the CPU end of the data bus.',
+ cir:'<b>Current instruction register (CIR)</b> holds the instruction that is being decoded and executed.',
+ acc:'<b>Accumulator (ACC)</b> holds the result of calculations carried out by the ALU.',
+ cu:'<b>Control unit (CU)</b> decodes instructions and sends control signals (such as memory read and memory write) to coordinate the rest of the computer.',
+ alu:'<b>Arithmetic logic unit (ALU)</b> carries out calculations (such as add and subtract) and logical operations and comparisons.',
+ clock:'<b>Clock</b> sends out a steady stream of pulses that keep every component in step. A higher clock speed (in GHz) means more cycles, so more instructions, per second.',
+ 'b-addr':'<b>Address bus</b> carries memory addresses from the CPU to RAM. It is one-way: only the CPU sends addresses.',
+ 'b-data':'<b>Data bus</b> carries instructions and data between the CPU and RAM. It is two-way.',
+ 'b-ctrl':'<b>Control bus</b> carries control signals, such as memory read, memory write and the clock signal. It is two-way.',
+ ram:'<b>Main memory (RAM)</b> holds the program being run and the data it uses, side by side. Every location has its own address.'};
+let S,kinds,queue,timer=null,last={};
+const b8=v=>v.toString(2).padStart(8,'0');
+const enc=t=>{const[o,n]=t.split(' ');return CODE[o]*16+(+n||0)};
+const dis=w=>{const o=OPS[w>>4];return !o?'?':o==='HALT'?'HALT':o+' '+(w&15)};
+const meaning=(w,k)=>k==='instr'?dis(w):k==='data'?String(w):'';
+
+function load(){
+  stop();const p=PRESETS[$('#preset').value];
+  S={pc:0,mar:null,mdr:null,mdrK:'',cir:null,acc:0,mem:Array(16).fill(0),halted:false,ticks:0};
+  kinds=Array(16).fill('');
+  p.prog.forEach((t,i)=>{S.mem[i]=enc(t);kinds[i]='instr'});
+  for(const[a,v]of Object.entries(p.data)){S.mem[a]=v;kinds[a]='data'}
+  queue=[];$('#step').disabled=false;
+  render({ph:'',hi:[],text:'Press <b>Step</b> to start fetching the first instruction, from address 0.'});
+}
+function fetchSteps(){return[
+ ()=>{S.mar=S.pc;return{ph:'Fetch',hi:['pc','mar'],ch:['mar'],text:`The address held in the PC (<b>${S.pc}</b>) is copied into the MAR.`}},
+ ()=>({ph:'Fetch',hi:['mar','b-addr','b-ctrl','cu'],row:S.mar,bus:{'b-addr':S.mar,'b-ctrl':'memory read'},text:`The MAR puts address <b>${S.mar}</b> on the address bus, and the CU sends a <b>memory read</b> signal along the control bus.`}),
+ ()=>{S.mdr=S.mem[S.mar];S.mdrK=kinds[S.mar];return{ph:'Fetch',hi:['b-data','mdr'],row:S.mar,ch:['mdr'],bus:{'b-data':b8(S.mdr)+'  →CPU'},text:`The contents of address ${S.mar} (<b>${meaning(S.mdr,S.mdrK)||S.mdr}</b>) travel along the data bus into the MDR.`}},
+ ()=>{S.cir=S.mdr;S.pc++;return{ph:'Fetch',hi:['mdr','cir','pc'],ch:['cir','pc'],text:`The instruction is copied from the MDR into the CIR, and the PC is incremented to <b>${S.pc}</b>, ready for the next fetch.`}},
+ ()=>{const o=S.cir>>4,n=S.cir&15,nm=OPS[o]||'unknown',bits=b8(S.cir);queue.push(...execSteps(nm,n));
+   return{ph:'Decode',hi:['cir','cu'],text:`The CU decodes the instruction in the CIR, <b class="mono">${bits}</b>. The opcode <b class="mono">${bits.slice(0,4)}</b> means <b>${nm}</b>.`+(nm==='HALT'?'':` The operand <b class="mono">${bits.slice(4)}</b> is address <b>${n}</b>.`)}}];}
+function execSteps(nm,n){
+ const read=[
+  ()=>{S.mar=n;return{ph:'Execute',hi:['cir','mar'],ch:['mar'],text:`The operand, address <b>${n}</b>, is copied into the MAR.`}},
+  ()=>{S.mdr=S.mem[n];S.mdrK='data';return{ph:'Execute',hi:['mar','b-addr','b-ctrl','b-data','mdr','cu'],row:n,ch:['mdr'],bus:{'b-addr':n,'b-ctrl':'memory read','b-data':b8(S.mdr)+'  →CPU'},text:`Address ${n} goes on the address bus with a <b>memory read</b> signal. The value stored there (<b>${S.mdr}</b>) comes back along the data bus into the MDR.`}}];
+ if(nm==='HALT')return[()=>{S.halted=true;return{ph:'Execute',hi:['cu'],text:'<b>HALT</b>: the CU stops the cycle. The program has finished.'}}];
+ if(nm==='LOAD')return[...read,()=>{S.acc=S.mdr;return{ph:'Execute',hi:['mdr','acc'],ch:['acc'],text:`<b>LOAD</b>: the value in the MDR (<b>${S.mdr}</b>) is copied into the accumulator.`}}];
+ if(nm==='ADD'||nm==='SUB')return[...read,()=>{const a=S.acc,add=nm==='ADD';S.acc=add?(a+S.mdr)&255:(a-S.mdr+256)&255;
+   return{ph:'Execute',hi:['cu','alu','acc','mdr'],ch:['acc'],text:`<b>${nm}</b>: the CU tells the ALU to ${add?'add':'subtract'}. ${a} ${add?'+':'−'} ${S.mdr} = <b>${S.acc}</b>, which is placed in the accumulator.`}}];
+ if(nm==='STORE')return[
+  ()=>{S.mar=n;S.mdr=S.acc;S.mdrK='data';return{ph:'Execute',hi:['cir','mar','acc','mdr'],ch:['mar','mdr'],text:`The operand (address <b>${n}</b>) is copied into the MAR, and the value in the accumulator (<b>${S.acc}</b>) is copied into the MDR.`}},
+  ()=>{S.mem[n]=S.mdr;kinds[n]='data';return{ph:'Execute',hi:['mar','mdr','b-addr','b-data','b-ctrl','cu'],row:n,wr:true,bus:{'b-addr':n,'b-data':b8(S.mdr)+'  →RAM','b-ctrl':'memory write'},text:`<b>STORE</b>: address ${n} goes on the address bus, the value ${S.mdr} goes on the data bus, and the CU sends a <b>memory write</b> signal. Location ${n} now holds <b>${S.mdr}</b>.`}}];
+ return[()=>{S.halted=true;return{ph:'Execute',hi:['cu'],text:'That is not a valid instruction, so the CPU stops.'}}];
+}
+function step(){
+  if(S.halted){stop();return}
+  if(!queue.length)queue=fetchSteps();
+  const r=queue.shift()();S.ticks++;render(r);
+  const c=$('#clock');c.classList.add('pulse');setTimeout(()=>c.classList.remove('pulse'),250);
+  if(S.halted){stop();$('#step').disabled=true}
+}
+function regVal(id){
+  if(id==='pc'||id==='mar')return S[id]===null?'—':String(S[id]);
+  if(id==='acc')return String(S.acc);
+  const w=S[id];if(w===null)return'—';
+  const k=id==='cir'?'instr':S.mdrK;
+  return`${b8(w)}<i>${meaning(w,k)?'= '+meaning(w,k):''}</i>`;
+}
+function render(r){
+  last=r;
+  $$('.phases span').forEach(s=>s.classList.toggle('now',s.dataset.ph===r.ph));
+  $('#explain').innerHTML=r.text;
+  $$('.on').forEach(e=>e.classList.remove('on'));
+  (r.hi||[]).forEach(id=>document.getElementById(id).classList.add('on'));
+  ['pc','mar','mdr','cir','acc'].forEach(id=>{const el=document.getElementById(id);el.querySelector('.v').innerHTML=regVal(id);el.classList.remove('changed')});
+  void document.body.offsetWidth;(r.ch||[]).forEach(id=>document.getElementById(id).classList.add('changed'));
+  ['b-addr','b-data','b-ctrl'].forEach(id=>{const v=r.bus&&r.bus[id];document.querySelector('#'+id+' .val').textContent=v===undefined?'':v});
+  $('#ticks').textContent=S.ticks;
+  drawMem(r);
+}
+function drawMem(r){
+  const bin=$('#bin').checked,running=S.ticks>0;
+  $('#mem').innerHTML=S.mem.map((w,i)=>{const k=kinds[i];
+    const cls=[k==='data'?'data':'',r.row===i?'hi':'',r.row===i&&r.wr?'wr':'',k==='data'&&!running?'edit':''].join(' ');
+    const shown=bin?b8(w):(meaning(w,k)||'0');
+    return`<tr class="${cls}" data-i="${i}"><td class="a">${i}</td><td class="m">${shown}</td><td class="k">${k==='instr'?'instruction':k}${i===S.pc&&!S.halted?' ← PC':''}</td></tr>`}).join('');
+}
+$('#mem').onclick=e=>{const tr=e.target.closest('tr.edit');if(!tr)return;const i=+tr.dataset.i;
+  const v=prompt(`New value for address ${i} (0–255):`,S.mem[i]);if(v===null)return;const n=parseInt(v,10);
+  if(n>=0&&n<=255){S.mem[i]=n;drawMem(last)}};
+$('#cpu').addEventListener('click',e=>{const t=e.target.closest('.unit,.reg');$('#info').innerHTML=INFO[t?t.id:'']||$('#info').innerHTML});
+$('.buses').addEventListener('click',e=>{const t=e.target.closest('.bus');if(t)$('#info').innerHTML=INFO[t.id]});
+$('#ram').querySelector('h3').onclick=()=>$('#info').innerHTML=INFO.ram;
+function stop(){clearInterval(timer);timer=null;$('#play').textContent='Play'}
+$('#play').onclick=()=>{if(timer){stop();return}if(S.halted)return;$('#play').textContent='Pause';step();timer=setInterval(step,2300-+$('#speed').value)};
+$('#speed').oninput=()=>{if(timer){stop();$('#play').click()}};
+$('#step').onclick=()=>{stop();step()};
+$('#reset').onclick=load;$('#preset').onchange=load;$('#bin').onchange=()=>drawMem(last);
+$('#preset').innerHTML=PRESETS.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
+load();
+const R=['PC','MAR','MDR','CIR','ACC'];
+cardQuiz($('#quiz'),[
+ {q:'Which register holds the address of the next instruction to be fetched?',a:'PC',why:'The program counter is copied to the MAR at the start of each fetch, then incremented.'},
+ {q:'Which register holds the address that is put on the address bus?',a:'MAR',why:'The memory address register feeds the address bus.'},
+ {q:'Which register holds the instruction while the CU decodes it?',a:'CIR',why:'The instruction is copied from the MDR to the current instruction register.'},
+ {q:'Which register receives whatever arrives along the data bus?',a:'MDR',why:'The memory data register sits at the CPU end of the data bus, for reads and writes.'},
+ {q:'Which register holds the result of the ALU\'s last calculation?',a:'ACC',why:'The accumulator stores results from the ALU.'},
+ {q:'Which bus can only carry information in one direction?',opts:['Address','Data','Control'],a:'Address',why:'Only the CPU sends addresses to memory; data and control signals travel both ways.'},
+ {q:'Which bus carries the memory read and memory write signals?',opts:['Address','Data','Control'],a:'Control',why:'The CU sends control signals, including read, write and clock, on the control bus.'},
+ {q:'What is the stored program concept?',opts:['Programs are kept on secondary storage','Instructions and data are held in the same main memory','Programs are stored inside the CPU'],a:'Instructions and data are held in the same main memory',why:'The CPU fetches instructions from the same RAM that holds the data they work on.'},
+],R,$('#score'),$('#qreset'));
+</script>
+</body>
+</html>
