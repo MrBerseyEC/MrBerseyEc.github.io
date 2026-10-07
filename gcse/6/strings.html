@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Strings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="../../assets/site.css">
+<link rel="stylesheet" href="../../assets/py.css">
+<style>
+.sx{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center;margin:6px 0 4px}
+.sx label{display:inline-flex;gap:8px;align-items:center;font-weight:700}
+.sx input[type=number]{width:5em;font-family:var(--mono)}
+.sx input[type=text]{width:14em;font-family:var(--mono)}
+.strip .cell{cursor:default}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 6 demos"><a class="home" href="../../index.html">← Home</a><a href="inputs-outputs.html">Inputs &amp; outputs</a><a href="variables-constants.html">Variables &amp; constants</a><a href="selection.html">Selection</a><a href="for-loops.html">For loops</a><a href="while-loops.html">While loops</a><a href="lists.html">Lists</a><a href="strings.html" aria-current="page">Strings</a></nav>
+<p class="spec">EDEXCEL GCSE · TOPIC 6</p>
+<h1>Strings</h1>
+<p class="lede">A string is a sequence of characters: letters, digits, spaces and symbols. Names, passwords, postcodes and messages are all strings. Because a string is a sequence, each character has an index, and Python has plenty of built-in tools for measuring, cutting, searching and changing text.</p>
+
+<section class="block">
+  <h2>Slice explorer</h2>
+  <p class="sub">Every character has an index, starting at 0. A slice cuts out part of a string: it begins at the start index and stops just <b>before</b> the end index. Change the word and the two numbers.</p>
+  <div class="sx">
+    <label>word <input type="text" id="sw" value="COMPUTER" maxlength="24" spellcheck="false" autocomplete="off"></label>
+    <label>start <input type="number" id="ss" value="0" min="0"></label>
+    <label>end <input type="number" id="se" value="3" min="0"></label>
+  </div>
+  <div class="strip" id="strip"></div>
+  <p class="readout" id="read"></p>
+  <ul class="try">
+    <li>Slice out "PUT".</li>
+    <li>Make the slice contain a single character. What do you notice about start and end?</li>
+    <li>Make start and end the same. What do you get?</li>
+    <li>Type your own name, including a space. Does the space have an index?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Length and indexing</h2>
+  <p class="sub"><code>len()</code> returns the number of characters. Square brackets with one index fetch a single character, exactly as with a list.</p>
+  <div class="py"><textarea>
+word = "COMPUTER"
+
+print(len(word))
+print(word[0])
+print(word[3])
+print(word[len(word) - 1])
+</textarea></div>
+  <ul class="try">
+    <li>Predict all four outputs before running it.</li>
+    <li>Change the word to something longer. Which line always displays the last character, and why does it still work?</li>
+    <li>Try <code>print(word[8])</code>.</li>
+    <li>Try to change a character with <code>word[0] = "K"</code>. Strings can't be edited in place: you have to build a new one.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Slicing and joining</h2>
+  <p class="sub">A slice returns a new, shorter string. The <code>+</code> operator joins strings together (concatenation), and <code>*</code> repeats a string.</p>
+  <div class="py" data-vars><textarea>
+firstName = "Grace"
+surname = "Hopper"
+
+initial = firstName[0:1]
+shortSurname = surname[0:4]
+username = initial + shortSurname + "07"
+
+print(username)
+print("=" * len(username))
+
+fullName = firstName + " " + surname
+print(fullName)
+print(len(fullName))
+</textarea></div>
+  <ul class="try">
+    <li>Change the names to your own. Does the username still work?</li>
+    <li>Make the username use the first 3 letters of the first name and the last 2 letters of the surname. Use <code>len()</code> to find where the last 2 letters start.</li>
+    <li>Change the first letter of <code>firstName</code> to "T" by joining "T" to a slice.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Changing and checking case</h2>
+  <p class="sub">These subprograms are written after the string with a dot. The ones that begin with "is" answer a question with <code>True</code> or <code>False</code>. None of them change the original string: they hand back a result.</p>
+  <div class="py"><textarea>
+answer = "Yes"
+
+print(answer.upper())
+print(answer.lower())
+print(answer)
+
+print(answer.isupper())
+print(answer.upper().isupper())
+
+reply = input("Do you want to continue? ")
+if reply.lower() == "yes":
+    print("Carrying on.")
+else:
+    print("Stopping.")
+</textarea></div>
+  <ul class="try">
+    <li>Why does line 5 still display "Yes" after lines 3 and 4?</li>
+    <li>Answer the question with YES, yes and yEs. Why do they all work?</li>
+    <li>Remove <code>.lower()</code> from line 11 and try YES again.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>What kind of characters are these?</h2>
+  <p class="sub">Three checks that are very useful for validating input.</p>
+  <div class="py"><textarea>
+text = input("Type something: ")
+
+print("Only letters?            " + str(text.isalpha()))
+print("Only digits?             " + str(text.isdigit()))
+print("Only letters and digits? " + str(text.isalnum()))
+
+if text.isdigit():
+    number = int(text)
+    print("Doubled, that is " + str(number * 2))
+else:
+    print("That can't safely be converted to an integer.")
+</textarea></div>
+  <ul class="try">
+    <li>Try <code>hello</code>, <code>2025</code>, <code>Year11</code>, <code>hello world</code> and <code>3.5</code>. Explain each row of results.</li>
+    <li>Why is it a good idea to check <code>isdigit()</code> before using <code>int()</code>?</li>
+    <li>Put this inside a <code>while</code> loop so that it keeps asking until the user types a whole number.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Searching, replacing and splitting</h2>
+  <p class="sub"><code>find()</code> returns the index where some text first appears, or -1 if it isn't there. <code>replace()</code> swaps every occurrence. <code>strip()</code> trims unwanted characters from both ends. <code>split()</code> breaks a string into a list.</p>
+  <div class="py" data-vars><textarea>
+sentence = "the cat sat on the mat"
+
+print(sentence.find("cat"))
+print(sentence.find("dog"))
+print(sentence.replace("the", "a"))
+
+words = sentence.split(" ")
+print(words)
+print(len(words))
+
+messy = "***WINNER***"
+print(messy.strip("*"))
+
+record = "Asha,15,Blue"
+fields = record.split(",")
+print(fields[0] + " is in " + fields[2] + " house")
+</textarea></div>
+  <ul class="try">
+    <li>What does <code>sentence.find("the")</code> return, even though "the" appears twice?</li>
+    <li>Use <code>find()</code> in an <code>if</code> statement to display whether a sentence contains the word "sat".</li>
+    <li>Change the record to use a different separator, and update the <code>split()</code> to match.</li>
+    <li>Look at <code>fields[1]</code> in the table. What data type is the 15?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Looping through a string</h2>
+  <p class="sub">A <code>for</code> loop visits every character in turn. Here it counts the vowels and builds a new string without them.</p>
+  <div class="py"><textarea>
+VOWELS = "aeiou"
+
+text = input("Type a sentence: ")
+count = 0
+withoutVowels = ""
+
+for letter in text:
+    if VOWELS.find(letter.lower()) != -1:
+        count = count + 1
+    else:
+        withoutVowels = withoutVowels + letter
+
+print("Vowels: " + str(count))
+print(withoutVowels)
+</textarea></div>
+  <ul class="try">
+    <li>How does line 8 decide whether a letter is a vowel?</li>
+    <li>Why is <code>.lower()</code> needed on line 8?</li>
+    <li>Change the program to count spaces instead, then use that to display the number of words.</li>
+    <li>Write a loop that builds the sentence backwards.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Characters are numbers underneath</h2>
+  <p class="sub">Every character is stored as a number, its character code. <code>ord()</code> gives the code for a character and <code>chr()</code> gives the character for a code. This program uses them for a Caesar cipher, which shifts every letter along the alphabet.</p>
+  <div class="py"><textarea>
+SHIFT = 3
+
+print(ord("A"))
+print(ord("a"))
+print(chr(66))
+
+message = input("Message to encrypt: ").upper()
+secret = ""
+
+for letter in message:
+    if letter.isalpha():
+        position = ord(letter) - ord("A")
+        newPosition = (position + SHIFT) % 26
+        secret = secret + chr(ord("A") + newPosition)
+    else:
+        secret = secret + letter
+
+print(secret)
+</textarea></div>
+  <ul class="try">
+    <li>Encrypt "HELLO". Then encrypt "XYZ". What does the <code>% 26</code> do?</li>
+    <li>What shift would turn the secret message back into the original?</li>
+    <li>Why are spaces and punctuation left alone?</li>
+    <li>Which is bigger, <code>ord("a")</code> or <code>ord("Z")</code>? What does that mean for <code>"apple" &lt; "Zebra"</code>?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Playground</h2>
+  <p class="sub">A starter password checker. Change it or replace it with your own.</p>
+  <div class="py big"><textarea>
+MIN_LENGTH = 8
+
+password = input("Choose a password: ")
+
+if len(password) < MIN_LENGTH:
+    print("Too short: use at least " + str(MIN_LENGTH) + " characters.")
+elif password.isalpha():
+    print("Add at least one digit or symbol.")
+elif password.islower():
+    print("Add at least one capital letter.")
+else:
+    print("That password is acceptable.")
+</textarea></div>
+  <ul class="try">
+    <li>Reject passwords that contain a space.</li>
+    <li>Use a loop to count how many digits are in the password, and insist on at least two.</li>
+    <li>Write a program that checks whether a word is a palindrome (the same forwards and backwards, like "level").</li>
+    <li>Write a program that asks for a full name and displays the initials.</li>
+  </ul>
+</section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="../../assets/site.js"></script>
+<script src="../../assets/py.js"></script>
+<script>
+/* slice explorer */
+function drawSlice(){
+  const w=$('#sw').value,n=id=>Math.max(0,Math.trunc(+$(id).value||0)),a=n('#ss'),b=n('#se');
+  $('#strip').innerHTML='';
+  [...w].forEach((ch,i)=>{const c=document.createElement('span');c.className='cell'+(i>=a&&i<b?' on':'');
+    c.innerHTML=`<span class="ix">${i}</span><span class="val"></span>`;c.lastChild.textContent=ch;$('#strip').appendChild(c)});
+  $('#read').textContent=`word[${a}:${b}] is "${w.slice(a,b)}"        len(word) is ${w.length}`;
+}
+['#sw','#ss','#se'].forEach(id=>$(id).oninput=drawSlice);drawSlice();
+</script>
+</body>
+</html>

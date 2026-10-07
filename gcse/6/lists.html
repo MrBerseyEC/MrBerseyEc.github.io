@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lists</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="../../assets/site.css">
+<link rel="stylesheet" href="../../assets/py.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 6 demos"><a class="home" href="../../index.html">← Home</a><a href="inputs-outputs.html">Inputs &amp; outputs</a><a href="variables-constants.html">Variables &amp; constants</a><a href="selection.html">Selection</a><a href="for-loops.html">For loops</a><a href="while-loops.html">While loops</a><a href="lists.html" aria-current="page">Lists</a><a href="strings.html">Strings</a></nav>
+<p class="spec">EDEXCEL GCSE · TOPIC 6</p>
+<h1>One-dimensional lists</h1>
+<p class="lede">A variable holds one value. A list holds many values under a single name, in order. Each item has a numbered position called its index, so a program can store thirty marks in one list instead of thirty separate variables. In Python, a list is used wherever another language would use an array.</p>
+
+<section class="block">
+  <h2>Index explorer</h2>
+  <p class="sub">This is the list <code>pets = ["cat", "dog", "fish", "hamster", "rabbit"]</code>. The small number above each item is its index. Click an item to see the code that would fetch it.</p>
+  <div class="strip" id="strip"></div>
+  <p class="readout" id="read"></p>
+  <p class="note">Indexes start at <b>0</b>, not 1. A list with 5 items has indexes 0 to 4, so the last index is always one less than the length.</p>
+</section>
+
+<section class="block">
+  <h2>Creating a list and reading items</h2>
+  <p class="sub">A list is written in square brackets with commas between the items. Use the list's name followed by an index in square brackets to get one item. <code>len()</code> tells you how many items there are.</p>
+  <div class="py"><textarea>
+pets = ["cat", "dog", "fish", "hamster", "rabbit"]
+
+print(pets)
+print(pets[0])
+print(pets[2])
+print(len(pets))
+print(pets[len(pets) - 1])
+</textarea></div>
+  <ul class="try">
+    <li>Change line 5 so that it displays "hamster".</li>
+    <li>What does line 7 do? Why is the <code>- 1</code> needed?</li>
+    <li>Try <code>print(pets[5])</code> and read the error message.</li>
+    <li>Make a list of five numbers instead. Do numbers need quote marks?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Changing items</h2>
+  <p class="sub">Assigning to an index replaces the item in that position. The rest of the list is untouched.</p>
+  <div class="py" data-vars><textarea>
+scores = [12, 7, 15, 9]
+print(scores)
+
+scores[1] = 20
+print(scores)
+
+scores[3] = scores[3] + 1
+print(scores)
+</textarea></div>
+  <ul class="try">
+    <li>Set the first score to 0.</li>
+    <li>Add a line that swaps the first and last scores. You will need an extra variable.</li>
+    <li>Try <code>scores[4] = 50</code>. Can you create a new item by assigning to an index that doesn't exist?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Adding and removing items</h2>
+  <p class="sub">Lists can grow and shrink while the program runs. <code>append()</code> adds to the end, <code>insert()</code> adds at a chosen index and shuffles everything after it along, and <code>del</code> removes the item at an index.</p>
+  <div class="py" data-vars><textarea>
+queue = ["Asha", "Ben", "Chloe"]
+print(queue)
+
+queue.append("Dev")
+print(queue)
+
+queue.insert(0, "Ella")
+print(queue)
+
+del queue[2]
+print(queue)
+
+print("People in the queue: " + str(len(queue)))
+</textarea></div>
+  <div class="scroll"><table class="t ref">
+    <tr><th>Code</th><th>What it does</th></tr>
+    <tr><td>aList = []</td><td>Creates an empty list</td></tr>
+    <tr><td>len(aList)</td><td>Returns the number of items</td></tr>
+    <tr><td>aList.append(item)</td><td>Adds the item to the end</td></tr>
+    <tr><td>aList.insert(index, item)</td><td>Inserts the item just before the one currently at that index</td></tr>
+    <tr><td>del aList[index]</td><td>Removes the item at that index</td></tr>
+  </table></div>
+  <ul class="try">
+    <li>Who was removed by line 10? Why wasn't it Chloe?</li>
+    <li>The person at the front of the queue is served. Which line of code removes them?</li>
+    <li>Insert "Finn" so that he is second in the queue.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Visiting every item with a loop</h2>
+  <p class="sub">There are two ways to loop through a list. The first gives you each item in turn. The second counts through the indexes, which is what you need when the position matters or when you want to change the items.</p>
+  <div class="py"><textarea>
+pets = ["cat", "dog", "fish", "hamster"]
+
+print("Each item in turn")
+for pet in pets:
+    print(pet)
+
+print("Using the index")
+for index in range(len(pets)):
+    print(str(index) + ": " + pets[index])
+</textarea></div>
+  <ul class="try">
+    <li>Add another pet to the list. Do you have to change either loop?</li>
+    <li>Change the second loop to number the pets from 1 instead of 0, without changing which pets are displayed.</li>
+    <li>Make the second loop display the list backwards, using a negative step in <code>range()</code>.</li>
+    <li>Use the index loop to change every item to upper case with <code>pets[index] = pets[index].upper()</code>, then print the list.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Total, average and highest</h2>
+  <p class="sub">Combine a list with a loop and a running total and you can process any amount of data with the same few lines.</p>
+  <div class="py" data-vars><textarea>
+marks = [14, 18, 9, 20, 11, 16]
+
+total = 0
+highest = marks[0]
+
+for mark in marks:
+    total = total + mark
+    if mark > highest:
+        highest = mark
+
+average = total / len(marks)
+
+print("Total:   " + str(total))
+print("Average: " + str(round(average, 1)))
+print("Highest: " + str(highest))
+</textarea></div>
+  <ul class="try">
+    <li>Add three more marks to the list. Does anything else need to change?</li>
+    <li>Why does <code>highest</code> start as <code>marks[0]</code> and not as 0? Think about a list of negative temperatures.</li>
+    <li>Add code to find the lowest mark.</li>
+    <li>Count how many marks are 15 or more.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Searching a list</h2>
+  <p class="sub">A linear search checks each item in turn, from the start, to see whether it matches the one you want.</p>
+  <div class="py"><textarea>
+names = ["Asha", "Ben", "Chloe", "Dev", "Ella"]
+
+target = input("Who are you looking for? ")
+found = False
+
+for index in range(len(names)):
+    if names[index] == target:
+        found = True
+        print(target + " is at index " + str(index))
+
+if not found:
+    print(target + " is not in the list")
+</textarea></div>
+  <ul class="try">
+    <li>Search for "Dev", then for "Zak", then for "dev". Explain each result.</li>
+    <li>Make the search ignore capital letters, using <code>.lower()</code> on both sides of the comparison.</li>
+    <li>Add "Ben" to the list a second time. What does the search display?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Building a list from input</h2>
+  <p class="sub">Start with an empty list and <code>append()</code> to it inside a loop.</p>
+  <div class="py" data-vars><textarea>
+shopping = []
+
+item = input("Add an item (or press Enter to finish): ")
+while item != "":
+    shopping.append(item)
+    item = input("Add an item (or press Enter to finish): ")
+
+print("You need " + str(len(shopping)) + " things:")
+for item in shopping:
+    print("- " + item)
+</textarea></div>
+  <ul class="try">
+    <li>Number the items in the final output: 1, 2, 3 and so on.</li>
+    <li>Change the program so that it asks for exactly 5 items using a <code>for</code> loop.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Playground</h2>
+  <p class="sub">A starter program. Change it or replace it with your own.</p>
+  <div class="py big" data-vars><textarea>
+temperatures = [12.5, 14.0, 9.5, 17.0, 15.5, 11.0, 13.5]
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+for index in range(len(days)):
+    print("{:<4} {:>5.1f}".format(days[index], temperatures[index]))
+</textarea></div>
+  <ul class="try">
+    <li>Display the warmest day by name. You will need to remember the index of the highest temperature.</li>
+    <li>Display only the days that were warmer than the average.</li>
+    <li>Make a new list containing every temperature converted to Fahrenheit (multiply by 9, divide by 5, add 32).</li>
+    <li>Write a program that reverses a list into a new list.</li>
+  </ul>
+</section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="../../assets/site.js"></script>
+<script src="../../assets/py.js"></script>
+<script>
+/* index explorer */
+const PETS=['cat','dog','fish','hamster','rabbit'];
+function drawStrip(sel){
+  $('#strip').innerHTML=PETS.map((p,i)=>`<button class="cell${i===sel?' on':''}" data-i="${i}" aria-pressed="${i===sel}"><span class="ix">${i}</span><span class="val">"${p}"</span></button>`).join('');
+  $('#read').textContent=sel===null?`len(pets) is ${PETS.length}`:`pets[${sel}] is "${PETS[sel]}"`;
+}
+$('#strip').onclick=e=>{const c=e.target.closest('.cell');if(c)drawStrip(+c.dataset.i)};
+drawStrip(null);
+</script>
+</body>
+</html>

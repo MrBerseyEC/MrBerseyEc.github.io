@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>For loops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="../../assets/site.css">
+<link rel="stylesheet" href="../../assets/py.css">
+<style>
+.rx{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center;margin:6px 0 4px}
+.rx label{display:inline-flex;gap:8px;align-items:center;font-weight:700}
+.rx input{width:5.5em;font-family:var(--mono)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0;min-height:42px}
+.chips span{font:600 .95rem var(--mono);min-width:42px;text-align:center;padding:7px 10px;border-radius:8px;background:var(--one);color:#fff}
+.chips span.more{background:none;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 6 demos"><a class="home" href="../../index.html">← Home</a><a href="inputs-outputs.html">Inputs &amp; outputs</a><a href="variables-constants.html">Variables &amp; constants</a><a href="selection.html">Selection</a><a href="for-loops.html" aria-current="page">For loops</a><a href="while-loops.html">While loops</a><a href="lists.html">Lists</a><a href="strings.html">Strings</a></nav>
+<p class="spec">EDEXCEL GCSE · TOPIC 6</p>
+<h1>Count-controlled repetition</h1>
+<p class="lede">Repetition means running the same lines of code more than once. When you know in advance how many times to repeat, use a count-controlled loop. In Python that is a <code>for</code> loop with <code>range()</code>, which counts for you.</p>
+
+<section class="block">
+  <h2>Repeating a fixed number of times</h2>
+  <p class="sub">The indented lines under the <code>for</code> are the body of the loop. They run once for every number that <code>range()</code> produces. Lines that are not indented run once, after the loop has finished.</p>
+  <div class="py"><textarea>
+for count in range(5):
+    print("Hello")
+
+print("Finished")
+</textarea></div>
+  <ul class="try">
+    <li>Make it say hello 12 times.</li>
+    <li>Indent line 4 so that it is inside the loop. What changes?</li>
+    <li>How many lines of output would <code>range(0)</code> give? Predict, then test.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>The loop variable</h2>
+  <p class="sub">Each time round the loop, the variable after <code>for</code> (here it is called <code>count</code>) holds the next number from the range. You can use it inside the loop like any other variable.</p>
+  <div class="py"><textarea>
+for count in range(5):
+    print(count)
+</textarea></div>
+  <ul class="try">
+    <li>What is the first number displayed? What is the last? Is 5 ever displayed?</li>
+    <li>Change line 2 to <code>print(count + 1)</code>.</li>
+    <li>Change line 2 to <code>print(count * count)</code>.</li>
+    <li>Rename the variable to <code>lap</code> in both places. Does the program still work?</li>
+  </ul>
+  <p class="note"><code>range(5)</code> produces five numbers, 0, 1, 2, 3 and 4. It starts at 0 and stops <b>before</b> it reaches 5.</p>
+</section>
+
+<section class="block">
+  <h2>Range explorer</h2>
+  <p class="sub"><code>range()</code> can take up to three values: where to start, where to stop (it never includes this number), and the step between numbers. Change the values to see which numbers the loop would count through.</p>
+  <div class="rx">
+    <label>start <input type="number" id="rs" value="0"></label>
+    <label>stop <input type="number" id="re" value="5"></label>
+    <label>step <input type="number" id="rp" value="1"></label>
+  </div>
+  <p class="readout" id="rcode"></p>
+  <div class="chips" id="rout" aria-live="polite"></div>
+  <p class="status" id="rmsg" style="margin-top:10px"></p>
+  <ul class="try">
+    <li>Make it count from 1 to 10.</li>
+    <li>Make it produce the even numbers from 2 to 20.</li>
+    <li>Make it count down from 10 to 1. You will need a negative step.</li>
+    <li>Find three different settings that produce no numbers at all.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Start, stop and step in a program</h2>
+  <p class="sub">If you give one value it is the stop. Two values are the start and the stop. Three values are the start, the stop and the step. This program also uses <code>time.sleep()</code> to pause between numbers.</p>
+  <div class="py"><textarea>
+import time
+
+print("Counting up")
+for number in range(1, 6):
+    print(number)
+
+print("Counting in tens")
+for number in range(10, 51, 10):
+    print(number)
+
+print("Counting down")
+for number in range(5, 0, -1):
+    print(number)
+    time.sleep(0.5)
+print("Lift off!")
+</textarea></div>
+  <ul class="try">
+    <li>Why is the stop value 51 on line 8? What happens if you use 50?</li>
+    <li>Make the countdown start from 10.</li>
+    <li>Add a loop that displays the odd numbers from 1 to 19.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Using the loop variable in a calculation</h2>
+  <p class="sub">The loop variable is most useful when each repetition needs to do something slightly different.</p>
+  <div class="py"><textarea>
+table = int(input("Which times table? "))
+
+for number in range(1, 13):
+    answer = number * table
+    print("{:>2} x {} = {:>3}".format(number, table, answer))
+</textarea></div>
+  <ul class="try">
+    <li>Make the table go up to 20 times.</li>
+    <li>Ask the user how far the table should go, and use their answer as the stop value. Careful: the stop value is not included.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Keeping a running total</h2>
+  <p class="sub">A very common pattern: set a total to zero before the loop, add to it inside the loop, and use it after the loop.</p>
+  <div class="py" data-vars><textarea>
+HOW_MANY = 4
+
+total = 0
+for count in range(HOW_MANY):
+    mark = int(input("Enter mark " + str(count + 1) + ": "))
+    total = total + mark
+
+average = total / HOW_MANY
+print("Total: " + str(total))
+print("Average: " + str(round(average, 1)))
+</textarea></div>
+  <ul class="try">
+    <li>Move <code>total = 0</code> inside the loop, as its first line. Why is the total now wrong?</li>
+    <li>Indent the last three lines so they are inside the loop. What do you see?</li>
+    <li>Change the program to add up all the whole numbers from 1 to 100 without asking for any input.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>A loop inside a loop</h2>
+  <p class="sub">Loops can be nested. For each single turn of the outer loop, the inner loop runs all the way through.</p>
+  <div class="py"><textarea>
+for row in range(1, 4):
+    print("Row " + str(row))
+    for seat in range(1, 5):
+        print("    Seat " + str(row) + "-" + str(seat))
+</textarea></div>
+  <ul class="try">
+    <li>How many seats are displayed in total? How could you work that out from the two ranges?</li>
+    <li>Change the hall to 5 rows of 3 seats.</li>
+    <li>Replace the inner loop with a single line, <code>print("*" * row)</code>. What shape appears?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Looping over a string or a list</h2>
+  <p class="sub">A <code>for</code> loop can also visit every item in a data structure, one at a time. This is called iteration. There is no <code>range()</code>: the loop variable holds each item in turn.</p>
+  <div class="py"><textarea>
+for letter in "PYTHON":
+    print(letter)
+
+for colour in ["red", "amber", "green"]:
+    print("The light is " + colour)
+</textarea></div>
+  <ul class="try">
+    <li>Change the word and the list of colours.</li>
+    <li>How many times does each loop repeat? What decides that?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Playground</h2>
+  <p class="sub">A starter program. Change it or replace it with your own.</p>
+  <div class="py big"><textarea>
+width = int(input("Width: "))
+height = int(input("Height: "))
+
+for row in range(height):
+    print("# " * width)
+</textarea></div>
+  <ul class="try">
+    <li>Draw a right-angled triangle of stars that is as tall as the user asks.</li>
+    <li>Display the first 10 square numbers.</li>
+    <li>FizzBuzz: count from 1 to 30, but display "Fizz" for multiples of 3, "Buzz" for multiples of 5, and "FizzBuzz" for multiples of both.</li>
+    <li>Ask for a number and display its factorial (for example, 5! = 5 × 4 × 3 × 2 × 1 = 120).</li>
+  </ul>
+</section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="../../assets/site.js"></script>
+<script src="../../assets/py.js"></script>
+<script>
+/* range explorer */
+function drawRange(){
+  const v=id=>Math.trunc(+$(id).value||0),a=v('#rs'),b=v('#re'),c=v('#rp');
+  $('#rcode').textContent=`for number in range(${a}, ${b}, ${c}):`;
+  const out=[];let n=0;
+  if(c)for(let i=a;c>0?i<b:i>b;i+=c){n++;if(out.length<40)out.push(i)}
+  $('#rout').innerHTML=out.map(x=>`<span>${x}</span>`).join('')+(n>out.length?`<span class="more">… and ${n-out.length} more</span>`:'');
+  $('#rmsg').textContent=!c?'The step can\'t be 0: the loop would never get anywhere, so Python gives an error.'
+    :!n?`No numbers. Counting ${c>0?'up':'down'} from ${a} can never reach ${b}, so the loop body would not run at all.`
+    :`The loop repeats ${n} time${n>1?'s':''}. It starts at ${a} and stops before ${b}.`;
+}
+['#rs','#re','#rp'].forEach(id=>$(id).oninput=drawRange);drawRange();
+</script>
+</body>
+</html>

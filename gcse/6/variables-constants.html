@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Variables and constants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="../../assets/site.css">
+<link rel="stylesheet" href="../../assets/py.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 6 demos"><a class="home" href="../../index.html">← Home</a><a href="inputs-outputs.html">Inputs &amp; outputs</a><a href="variables-constants.html" aria-current="page">Variables &amp; constants</a><a href="selection.html">Selection</a><a href="for-loops.html">For loops</a><a href="while-loops.html">While loops</a><a href="lists.html">Lists</a><a href="strings.html">Strings</a></nav>
+<p class="spec">EDEXCEL GCSE · TOPIC 6</p>
+<h1>Variables and constants</h1>
+<p class="lede">A variable is a named place in memory that holds a value, and the value can change while the program runs. A constant is a named value that is set once and should not change. On this page, each program shows a table of its variables when it finishes, so you can see exactly what ended up in memory.</p>
+
+<section class="block">
+  <h2>Assignment</h2>
+  <p class="sub">The <code>=</code> sign means "becomes". Python works out the value on the right, then stores it under the name on the left. Assigning to the same name again replaces the old value.</p>
+  <div class="py" data-vars><textarea>
+score = 0
+print(score)
+
+score = 10
+print(score)
+
+score = score + 5
+print(score)
+</textarea></div>
+  <ul class="try">
+    <li>Line 7 would make no sense in maths. Explain what it does in a program.</li>
+    <li>Add a line that doubles the score, then print it again.</li>
+    <li>Add a second variable called <code>lives</code> that starts at 3. Check that it shows up in the table.</li>
+    <li>Move line 1 to the bottom of the program. What is in <code>score</code> at the end, and why?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Data types</h2>
+  <p class="sub">Every value has a data type. Python decides the type from the value you assign. Run this and look at the "Data type" column in the table.</p>
+  <div class="py" data-vars><textarea>
+age = 15
+height = 1.68
+name = "Sam"
+initial = "S"
+isStudent = True
+
+print(age)
+print(height)
+print(name)
+print(initial)
+print(isStudent)
+</textarea></div>
+  <div class="scroll"><table class="t ref">
+    <tr><th>Python</th><th>Data type</th><th>Holds</th><th>Examples</th></tr>
+    <tr><td>int</td><td>Integer</td><td>Whole numbers</td><td class="mono">15, 0, -3</td></tr>
+    <tr><td>float</td><td>Real</td><td>Numbers with a decimal point</td><td class="mono">1.68, -0.5, 3.0</td></tr>
+    <tr><td>bool</td><td>Boolean</td><td>One of two values</td><td class="mono">True, False</td></tr>
+    <tr><td>str</td><td>Character / string</td><td>A single character, or a sequence of characters</td><td class="mono">"S", "Sam", "07700 900123"</td></tr>
+  </table></div>
+  <ul class="try">
+    <li>Change <code>age</code> to <code>15.0</code>. What happens to its data type?</li>
+    <li>Put quote marks around <code>True</code>. What type is it now?</li>
+    <li>Why is a phone number usually stored as a string, not an integer?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Converting between types</h2>
+  <p class="sub">You can convert a value from one type to another using <code>int()</code>, <code>float()</code>, <code>str()</code> and <code>bool()</code>. The original variable is not changed, so store the result somewhere.</p>
+  <div class="py" data-vars><textarea>
+text = "42"
+print(text + text)
+
+number = int(text)
+print(number + number)
+
+real = float(text)
+print(real)
+
+whole = int(7.9)
+print(whole)
+
+label = str(3.14)
+print("Pi is roughly " + label)
+</textarea></div>
+  <ul class="try">
+    <li>Lines 2 and 5 both use <code>+</code>. Why are the results so different?</li>
+    <li>Look at <code>whole</code>. Does <code>int()</code> round to the nearest whole number?</li>
+    <li>Try <code>round(7.9)</code> and <code>round(3.14159, 2)</code> instead.</li>
+    <li>Change line 1 to <code>text = "forty-two"</code>. Which line breaks?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Arithmetic operators</h2>
+  <p class="sub">Variables can be used in calculations. Notice that Python has three operators to do with division.</p>
+  <div class="py"><textarea>
+a = 17
+b = 5
+
+print("a + b  = " + str(a + b))
+print("a - b  = " + str(a - b))
+print("a * b  = " + str(a * b))
+print("a / b  = " + str(a / b))
+print("a // b = " + str(a // b))
+print("a % b  = " + str(a % b))
+print("a ** b = " + str(a ** b))
+</textarea></div>
+  <div class="scroll"><table class="t ref">
+    <tr><th>Operator</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>+</td><td>Addition</td><td class="mono">17 + 5 is 22</td></tr>
+    <tr><td>-</td><td>Subtraction</td><td class="mono">17 - 5 is 12</td></tr>
+    <tr><td>*</td><td>Multiplication</td><td class="mono">17 * 5 is 85</td></tr>
+    <tr><td>/</td><td>Division (the answer is always a real number)</td><td class="mono">17 / 5 is 3.4</td></tr>
+    <tr><td>//</td><td>Integer division (how many whole times it goes in)</td><td class="mono">17 // 5 is 3</td></tr>
+    <tr><td>%</td><td>Modulus (the remainder after integer division)</td><td class="mono">17 % 5 is 2</td></tr>
+    <tr><td>**</td><td>Exponentiation (to the power of)</td><td class="mono">17 ** 5 is 1419857</td></tr>
+  </table></div>
+  <ul class="try">
+    <li>Change <code>a</code> to 20. What is the remainder now? What does <code>20 / 5</code> give: <code>4</code> or <code>4.0</code>?</li>
+    <li>How could you use <code>%</code> to tell whether a number is even?</li>
+    <li>There are 135 minutes in a film. Use <code>//</code> and <code>%</code> to display that as hours and minutes.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Constants</h2>
+  <p class="sub">A constant is a value that is fixed while the program runs, like a VAT rate or the number of players in a team. By convention, constants are named in capital letters and set at the top of the program. They make code easier to read, and if the value ever needs updating you only change it in one place.</p>
+  <div class="py" data-vars><textarea>
+VAT_RATE = 0.2
+TICKET_PRICE = 8.5
+
+tickets = int(input("How many tickets? "))
+
+subtotal = tickets * TICKET_PRICE
+vat = subtotal * VAT_RATE
+total = subtotal + vat
+
+print("Subtotal: £{:.2f}".format(subtotal))
+print("VAT:      £{:.2f}".format(vat))
+print("Total:    £{:.2f}".format(total))
+</textarea></div>
+  <ul class="try">
+    <li>Ticket prices go up to £9.25. How many lines do you need to change?</li>
+    <li>Rewrite line 6 without the constant, as <code>tickets * 8.5</code>. Which version is easier to understand?</li>
+    <li>Add a constant <code>BOOKING_FEE</code> of £1.50 that is added once to every order.</li>
+  </ul>
+  <p class="note">Python doesn't actually stop you changing a constant. The capital letters are a signal to other programmers: this value is not meant to change.</p>
+</section>
+
+<section class="block">
+  <h2>Naming, and things that go wrong</h2>
+  <p class="sub">Identifiers (names) can contain letters, digits and underscores, and must start with a letter. Capital letters matter: <code>total</code> and <code>Total</code> are different names. This program has two bugs. Fix them one at a time.</p>
+  <div class="py" data-vars><textarea>
+firstName = "Ada"
+print("Hello " + firstname)
+
+bonus = points + 10
+points = 50
+print(bonus)
+</textarea></div>
+  <ul class="try">
+    <li>Fix the error on line 2. What exactly was wrong?</li>
+    <li>Now run it again. Why can't Python work out line 4? Fix it by changing the order of the lines.</li>
+    <li>Rename <code>bonus</code> to <code>2ndScore</code>. Why is that not allowed?</li>
+    <li>Which is the better name for a variable holding a player's score: <code>s</code>, <code>x1</code> or <code>playerScore</code>?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Playground</h2>
+  <p class="sub">A starter program that uses variables, a constant, input and arithmetic. Change it, break it, or delete it and write your own.</p>
+  <div class="py big" data-vars><textarea>
+SECONDS_IN_MINUTE = 60
+
+seconds = int(input("How many seconds? "))
+
+minutes = seconds // SECONDS_IN_MINUTE
+remaining = seconds % SECONDS_IN_MINUTE
+
+print(str(minutes) + " minutes and " + str(remaining) + " seconds")
+</textarea></div>
+  <ul class="try">
+    <li>Extend it to display hours, minutes and seconds.</li>
+    <li>Write a program that swaps the values of two variables. You will need a third variable.</li>
+    <li>Write a program that asks for the radius of a circle and displays its area. Put <code>import math</code> on the first line and use <code>math.pi</code>.</li>
+  </ul>
+</section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="../../assets/site.js"></script>
+<script src="../../assets/py.js"></script>
+</body>
+</html>

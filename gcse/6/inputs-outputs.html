@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inputs and outputs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="../../assets/site.css">
+<link rel="stylesheet" href="../../assets/py.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 6 demos"><a class="home" href="../../index.html">← Home</a><a href="inputs-outputs.html" aria-current="page">Inputs &amp; outputs</a><a href="variables-constants.html">Variables &amp; constants</a><a href="selection.html">Selection</a><a href="for-loops.html">For loops</a><a href="while-loops.html">While loops</a><a href="lists.html">Lists</a><a href="strings.html">Strings</a></nav>
+<p class="spec">EDEXCEL GCSE · TOPIC 6</p>
+<h1>Inputs and outputs</h1>
+<p class="lede">Almost every program takes something in, does something with it, and sends something out. In Python, <code>print()</code> displays output on the screen and <code>input()</code> collects what the user types on the keyboard. Every box of code on this page is real Python: change it, press Run, and see what happens.</p>
+
+<section class="block">
+  <h2>Output with print()</h2>
+  <p class="sub">Python runs one line at a time, from the top to the bottom. <code>print()</code> displays whatever is inside its brackets. Text (a string) needs quote marks around it. Numbers and calculations do not.</p>
+  <div class="py"><textarea>
+print("Hello, world!")
+print("Each print starts a new line.")
+print(7)
+print(3 + 4)
+print("3 + 4")
+</textarea></div>
+  <ul class="try">
+    <li>Change the first message to say hello to you.</li>
+    <li>Lines 4 and 5 look similar. Why do they display different things?</li>
+    <li>Delete one of the quote marks on line 1 and run it. Read the error message, then fix it.</li>
+    <li>Swap two lines over. Does the order of the output change?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Input with input()</h2>
+  <p class="sub"><code>input()</code> displays a prompt, waits for the user to type something and press Enter, then hands back what they typed. Store the answer in a variable so you can use it later. When you run this, type your answer into the highlighted box in the output.</p>
+  <div class="py"><textarea>
+name = input("What is your name? ")
+print("Hello " + name)
+print("Nice to meet you.")
+</textarea></div>
+  <ul class="try">
+    <li>Add a second question that asks for the user's favourite food, and print a reply that uses it.</li>
+    <li>Remove the space at the end of the prompt, just before the closing quote mark. What changes?</li>
+    <li>What happens if the user just presses Enter without typing anything?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>input() always gives you a string</h2>
+  <p class="sub">Even if the user types a number, <code>input()</code> returns it as text. This program has a bug. Run it, type your age, and read the error.</p>
+  <div class="py"><textarea>
+age = input("How old are you? ")
+print(age + 1)
+</textarea></div>
+  <p class="sub" style="margin-top:18px">Python can't add the number 1 to a piece of text. The fix is to convert the input: <code>int()</code> for whole numbers, <code>float()</code> for numbers with a decimal point. To join a number onto text for printing, convert it back with <code>str()</code>.</p>
+  <div class="py"><textarea>
+age = int(input("How old are you? "))
+nextAge = age + 1
+print("Next year you will be " + str(nextAge))
+
+height = float(input("How tall are you in metres? "))
+print("That is " + str(height * 100) + " cm")
+</textarea></div>
+  <ul class="try">
+    <li>Type <code>fifteen</code> as your age. What error do you get, and why?</li>
+    <li>Take the <code>str()</code> off line 3 and run it. Which error comes back?</li>
+    <li>Type <code>1.5</code> for the age question. Why doesn't <code>int()</code> like it?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Building an output message</h2>
+  <p class="sub">There are two ways to mix text and values in one line of output. You can join strings with <code>+</code> (concatenation), or you can write a string with <code>{}</code> placeholders and fill them in using <code>.format()</code>.</p>
+  <div class="py"><textarea>
+item = "pizza"
+price = 4.5
+quantity = 3
+total = price * quantity
+
+# Concatenation: every part must be a string
+print("You ordered " + str(quantity) + " x " + item)
+print("Total: £" + str(total))
+
+# format: each {} is filled in, in order
+print("You ordered {} x {}".format(quantity, item))
+print("Total: £{:.2f}".format(total))
+</textarea></div>
+  <ul class="try">
+    <li>Compare the two "Total" lines. What did <code>{:.2f}</code> do to the number?</li>
+    <li>Change <code>.2f</code> to <code>.0f</code>, then to <code>.3f</code>.</li>
+    <li>Change the price to <code>4.99</code>. Which total looks more like a real receipt?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Lining output up in columns</h2>
+  <p class="sub">A placeholder can also set how wide a value should be and which side it sits on. <code>&lt;</code> is left aligned, <code>&gt;</code> is right aligned and <code>^</code> is centred. The number after it is the width in characters. Multiplying a string repeats it, which is handy for drawing lines.</p>
+  <div class="py"><textarea>
+layout = "{:<10} {:>5} {:>8}"
+
+print(layout.format("Item", "Qty", "Price"))
+print("=" * 25)
+print(layout.format("Pizza", 3, "13.50"))
+print(layout.format("Lemonade", 12, "9.60"))
+print(layout.format("Cake", 1, "2.75"))
+print("-" * 25)
+print("{:<10} {:>5} {:>8.2f}".format("Total", 16, 25.85))
+</textarea></div>
+  <div class="scroll"><table class="t ref">
+    <tr><th>Placeholder</th><th>Meaning</th></tr>
+    <tr><td>{}</td><td>Put the next value here</td></tr>
+    <tr><td>{:&lt;10}</td><td>Left aligned in a space 10 characters wide</td></tr>
+    <tr><td>{:&gt;5}</td><td>Right aligned in a space 5 characters wide</td></tr>
+    <tr><td>{:^9}</td><td>Centred in a space 9 characters wide</td></tr>
+    <tr><td>{:.2f}</td><td>A real number shown with exactly 2 digits after the decimal point</td></tr>
+    <tr><td>{:8.2f}</td><td>8 characters wide, with 2 digits after the decimal point</td></tr>
+  </table></div>
+  <ul class="try">
+    <li>Change <code>{:&lt;10}</code> to <code>{:&gt;10}</code> on line 1. What moves?</li>
+    <li>Add another item to the receipt.</li>
+    <li>Make the first column wider so that "Strawberry milkshake" would fit.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Playground: input, process, output</h2>
+  <p class="sub">This program follows the classic pattern: get the inputs, work something out, display the result. Change it into something of your own.</p>
+  <div class="py big"><textarea>
+# Input
+length = float(input("Length of the room in metres: "))
+width = float(input("Width of the room in metres: "))
+
+# Process
+area = length * width
+
+# Output
+print("The area is " + str(area) + " square metres")
+</textarea></div>
+  <ul class="try">
+    <li>Carpet costs £12.50 per square metre. Display the cost of carpeting the room, to 2 decimal places.</li>
+    <li>Write a program that asks for a name and a year of birth, then displays how old that person will be in 2050.</li>
+    <li>Write a program that asks for three test marks and displays them neatly in a table with a total.</li>
+  </ul>
+</section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="../../assets/site.js"></script>
+<script src="../../assets/py.js"></script>
+</body>
+</html>

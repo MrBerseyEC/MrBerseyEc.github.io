@@ -19,3 +19,12 @@
 - [Operating Systems](/gcse/3/operating-systems.html)
 - [Utility Software](/gcse/3/utility-software.html)
 - [Langauges & Translations](/gcse/3/languages-translators.html)
+
+### Topic 6
+- [Inputs & Outputs](/gcse/6/inputs-outputs.html)
+- [Variables & Constants](/gcse/6/variables-constants.html)
+- [Selection (If Statements)](/gcse/6/selection.html)
+- [Count-Controlled Repetition (For Loops)](/gcse/6/for-loops.html)
+- [Condition-Controlled Repetition (While Loops)](/gcse/6/while-loops.html)
+- [1D Lists](/gcse/6/lists.html)
+- [Strings](/gcse/6/strings.html)

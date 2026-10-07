@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>While loops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="../../assets/site.css">
+<link rel="stylesheet" href="../../assets/py.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 6 demos"><a class="home" href="../../index.html">← Home</a><a href="inputs-outputs.html">Inputs &amp; outputs</a><a href="variables-constants.html">Variables &amp; constants</a><a href="selection.html">Selection</a><a href="for-loops.html">For loops</a><a href="while-loops.html" aria-current="page">While loops</a><a href="lists.html">Lists</a><a href="strings.html">Strings</a></nav>
+<p class="spec">EDEXCEL GCSE · TOPIC 6</p>
+<h1>Condition-controlled repetition</h1>
+<p class="lede">Sometimes you can't know in advance how many times a loop should repeat: keep asking until the password is right, keep playing until the lives run out. A condition-controlled loop repeats for as long as a condition is true. In Python that is a <code>while</code> loop.</p>
+
+<section class="block">
+  <h2>How a while loop works</h2>
+  <p class="sub">Python checks the condition. If it is true, the indented body runs, and then Python goes back up and checks the condition again. As soon as the condition is false, the loop ends and the program carries on underneath.</p>
+  <div class="py" data-vars><textarea>
+count = 5
+
+while count > 0:
+    print(count)
+    count = count - 1
+
+print("Lift off!")
+</textarea></div>
+  <ul class="try">
+    <li>What value does <code>count</code> have when the loop ends? Check the table.</li>
+    <li>Change the condition to <code>count >= 0</code>. What extra line appears?</li>
+    <li>Make it count down in twos from 20.</li>
+    <li>Make it count <b>up</b> from 1 to 5. You need to change three things.</li>
+  </ul>
+  <p class="note">A while loop needs three things: a starting value (line 1), a condition that uses it (line 3), and something inside the loop that changes it (line 5).</p>
+</section>
+
+<section class="block">
+  <h2>When the loop never ends</h2>
+  <p class="sub">This program is missing the line that changes <code>count</code>, so the condition stays true forever. This is called an infinite loop. Run it, then use the Stop button. (This page will also stop a program that produces a huge amount of output.)</p>
+  <div class="py"><textarea>
+count = 1
+
+while count <= 5:
+    print(count)
+
+print("Done")
+</textarea></div>
+  <ul class="try">
+    <li>Fix the program so that it displays 1 to 5 and then "Done".</li>
+    <li>Now change your fix to <code>count = count - 1</code>. Why is that also an infinite loop?</li>
+    <li>Is the line <code>print("Done")</code> ever reached in the broken version?</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Repeating until the user gets it right</h2>
+  <p class="sub">Here nobody knows how many attempts it will take, so a count-controlled loop won't do. Notice that the question is asked once before the loop, and again at the end of the loop body.</p>
+  <div class="py"><textarea>
+PASSWORD = "python123"
+
+attempt = input("Password: ")
+
+while attempt != PASSWORD:
+    print("Wrong password. Try again.")
+    attempt = input("Password: ")
+
+print("Access granted.")
+</textarea></div>
+  <ul class="try">
+    <li>Type the right password first time. How many times does the loop body run?</li>
+    <li>Delete line 7 and get the password wrong. What happens, and why?</li>
+    <li>Add a variable that counts the attempts, and display it at the end.</li>
+    <li>Harder: only allow 3 attempts. The condition will need <code>and</code>.</li>
+  </ul>
+  <p class="note">A while loop checks its condition <b>before</b> each repetition. If the condition is false the very first time, the body does not run at all.</p>
+</section>
+
+<section class="block">
+  <h2>Validation: refusing bad input</h2>
+  <p class="sub">A while loop can keep a user stuck until they enter something sensible. The condition describes what <b>bad</b> input looks like.</p>
+  <div class="py"><textarea>
+rating = int(input("Rate the film from 1 to 5: "))
+
+while rating < 1 or rating > 5:
+    print("That is not between 1 and 5.")
+    rating = int(input("Rate the film from 1 to 5: "))
+
+print("Thank you. You gave it " + "*" * rating)
+</textarea></div>
+  <ul class="try">
+    <li>Test it with 0, 6, -3 and then 4.</li>
+    <li>Change <code>or</code> to <code>and</code>. Can any number ever be less than 1 <b>and</b> greater than 5?</li>
+    <li>Change the allowed range to 1 to 10.</li>
+    <li>What happens if the user types <code>five</code>? This validation only checks the range.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Repeating until a stop value is entered</h2>
+  <p class="sub">The user decides when to stop by typing a special value. A running total is kept along the way.</p>
+  <div class="py" data-vars><textarea>
+total = 0
+items = 0
+
+price = float(input("Price of item (0 to finish): "))
+
+while price != 0:
+    total = total + price
+    items = items + 1
+    price = float(input("Price of item (0 to finish): "))
+
+print("{} items, total £{:.2f}".format(items, total))
+</textarea></div>
+  <ul class="try">
+    <li>Enter 0 straight away. What is displayed?</li>
+    <li>Display the average price at the end. What goes wrong if there are no items, and how could you prevent it?</li>
+    <li>Ignore negative prices: display a warning and don't add them to the total.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>A guessing game</h2>
+  <p class="sub">This program picks a random number using the <code>random</code> library, then loops until you guess it.</p>
+  <div class="py"><textarea>
+import random
+
+secret = random.randint(1, 20)
+guesses = 0
+guess = 0
+
+print("I am thinking of a number from 1 to 20.")
+
+while guess != secret:
+    guess = int(input("Your guess: "))
+    guesses = guesses + 1
+    if guess < secret:
+        print("Too low.")
+    elif guess > secret:
+        print("Too high.")
+
+print("Correct! You took " + str(guesses) + " guesses.")
+</textarea></div>
+  <ul class="try">
+    <li>Why does <code>guess</code> start at 0 on line 5? What could go wrong if it started at 7?</li>
+    <li>Change the range to 1 to 100. What is the smartest strategy, and how many guesses does it need at most?</li>
+    <li>Give the player only 5 guesses, and reveal the number if they run out.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>For or while?</h2>
+  <p class="sub">Both programs below display the numbers 1 to 5. Compare how much work each loop does for you.</p>
+  <div class="py"><textarea>
+print("With a for loop")
+for number in range(1, 6):
+    print(number)
+
+print("With a while loop")
+number = 1
+while number <= 5:
+    print(number)
+    number = number + 1
+</textarea></div>
+  <div class="scroll"><table class="t ref">
+    <tr><th></th><th>for</th><th>while</th></tr>
+    <tr><td>Type</td><td>Count-controlled</td><td>Condition-controlled</td></tr>
+    <tr><td>Use when</td><td>You know how many repetitions there will be before the loop starts</td><td>You don't know how many repetitions it will take</td></tr>
+    <tr><td>Stops when</td><td>The range runs out</td><td>The condition becomes false</td></tr>
+    <tr><td>Examples</td><td>Display a times table. Ask for 5 marks.</td><td>Ask until the password is correct. Play until lives reach 0.</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Playground</h2>
+  <p class="sub">A starter program. Change it or replace it with your own.</p>
+  <div class="py big" data-vars><textarea>
+TARGET = 1000
+
+savings = float(input("How much do you have saved? "))
+weekly = float(input("How much will you save each week? "))
+weeks = 0
+
+while savings < TARGET:
+    savings = savings + weekly
+    weeks = weeks + 1
+
+print("You will reach £" + str(TARGET) + " after " + str(weeks) + " weeks.")
+</textarea></div>
+  <ul class="try">
+    <li>What happens if the user enters 0 for the weekly amount? Add validation so it must be more than 0.</li>
+    <li>Write a program that keeps doubling a number, starting from 1, until it is more than 1000. How many doublings does it take?</li>
+    <li>Write a menu that repeats until the user chooses "quit".</li>
+    <li>Write a dice game that keeps rolling until it rolls a 6, then says how many rolls it took.</li>
+  </ul>
+</section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="../../assets/site.js"></script>
+<script src="../../assets/py.js"></script>
+</body>
+</html>

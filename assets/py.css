@@ -1,0 +1,62 @@
+/* Styles for the runnable Python editors built by py.js. Link after site.css and the CodeMirror stylesheet. */
+:root{--kw:#7B4DFF}
+@media (prefers-color-scheme:dark){:root{--kw:#B49BFF}}
+
+/* JetBrains Mono joins != <= >= == into single symbols by default. Students need to see the characters they type. */
+/* CodeMirror switches ligatures back on for its own lines, hence the extra selectors. */
+body,.py .CodeMirror,.py .CodeMirror pre.CodeMirror-line,.py .CodeMirror pre.CodeMirror-line-like{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.py{margin:14px 0 0}
+.py-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.py-status{font-size:.88rem;color:var(--muted);margin-left:4px}
+.py-status.okc{color:var(--ok)}.py-status.badc{color:var(--bad)}
+.py-main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:860px){.py-main{grid-template-columns:minmax(0,1fr)}}
+.py-label{font:600 .72rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 4px}
+
+/* editor */
+.py-ed{border:2px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
+.py-ed:focus-within{border-color:var(--ink)}
+.py-ed textarea{display:block;width:100%;min-height:160px;border:0;padding:10px;background:none;color:var(--ink);font:.9rem/1.6 var(--mono);resize:vertical}
+.py .CodeMirror{height:auto;font:.9rem/1.6 var(--mono);background:var(--bg);color:var(--ink)}
+.py .CodeMirror-scroll{min-height:72px}
+.py.big .CodeMirror-scroll{min-height:300px}
+.py .CodeMirror-lines{padding:8px 0}
+.py .CodeMirror-gutters{background:var(--bg);border-right:1px solid var(--line)}
+.py .CodeMirror-linenumber{color:var(--muted);padding:0 8px 0 6px}
+.py .CodeMirror-cursor{border-left:2px solid var(--ink)}
+.py .CodeMirror-selected,.py .CodeMirror-focused .CodeMirror-selected{background:var(--one-soft)}
+.py .CodeMirror .cm-keyword,.py .CodeMirror .cm-operator.cm-keyword{color:var(--kw);font-weight:600}
+.py .CodeMirror .cm-string{color:var(--ok)}
+.py .CodeMirror .cm-number,.py .CodeMirror .cm-builtin{color:var(--one)}
+.py .CodeMirror .cm-comment{color:var(--muted);font-style:italic}
+.py .CodeMirror .cm-def{color:var(--ink);font-weight:700}
+.py .CodeMirror .cm-variable,.py .CodeMirror .cm-variable-2,.py .CodeMirror .cm-property,.py .CodeMirror .cm-operator,.py .CodeMirror .cm-punctuation{color:var(--ink)}
+.py .py-errline{background:var(--bad-soft)}
+
+/* console */
+.py-out{margin:0;min-height:72px;max-height:420px;overflow:auto;border:2px solid var(--line);border-radius:10px;background:var(--bg);padding:10px 12px;font:.9rem/1.6 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.py.big .py-out{min-height:300px}
+.py-out:empty::before{content:"Press Run to see the output here.";color:var(--muted);font-family:var(--sans)}
+.py-in{font:inherit;color:var(--ink);background:var(--hl-soft);border:0;border-bottom:2px solid var(--hl);border-radius:4px 4px 0 0;padding:0 6px;width:14ch;max-width:100%;outline:0}
+.py-err{color:var(--bad);font-weight:600}
+.py-note{color:var(--muted)}
+.py-vars{margin-top:12px}
+.py-vars td{word-break:break-word}
+
+/* page furniture shared by the Topic 6 pages */
+.try{background:var(--hl-soft);border-left:4px solid var(--hl);border-radius:6px;padding:10px 14px 10px 34px;margin:14px 0 0;font-size:.95rem}
+.try::before{content:"Have a play";display:block;font-weight:800;margin-left:-20px}
+.try li{margin:2px 0}
+.block code,.lede code{font:600 .9em var(--mono);background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:1px 5px;white-space:nowrap}
+.try code{background:var(--panel)}
+.ref{margin-top:6px}
+.ref td:first-child{font-family:var(--mono);white-space:nowrap}
+/* a row of numbered boxes showing index positions */
+.strip{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.strip .cell{display:grid;justify-items:center;gap:2px;font-family:var(--mono);cursor:pointer;background:none;border:0;padding:0;color:inherit}
+.strip .ix{font-size:.75rem;color:var(--muted)}
+.strip .val{min-width:42px;padding:8px 10px;border:2px solid var(--ink);border-radius:8px;background:var(--bg);font-weight:600;white-space:pre}
+.strip .cell.on .val{background:var(--one);border-color:var(--one);color:#fff}
+.strip .cell.on .ix{color:var(--one);font-weight:700}
+.readout{font:600 1rem var(--mono);margin:8px 0 0;min-height:1.6em;white-space:pre-wrap}

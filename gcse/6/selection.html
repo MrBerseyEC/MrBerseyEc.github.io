@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Selection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="../../assets/site.css">
+<link rel="stylesheet" href="../../assets/py.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="series" aria-label="Topic 6 demos"><a class="home" href="../../index.html">← Home</a><a href="inputs-outputs.html">Inputs &amp; outputs</a><a href="variables-constants.html">Variables &amp; constants</a><a href="selection.html" aria-current="page">Selection</a><a href="for-loops.html">For loops</a><a href="while-loops.html">While loops</a><a href="lists.html">Lists</a><a href="strings.html">Strings</a></nav>
+<p class="spec">EDEXCEL GCSE · TOPIC 6</p>
+<h1>Selection</h1>
+<p class="lede">Selection lets a program choose which lines to run. It asks a question that is either true or false, then follows a different path depending on the answer. In Python, selection is written with <code>if</code>, <code>elif</code> and <code>else</code>.</p>
+
+<section class="block">
+  <h2>Conditions: questions with a True or False answer</h2>
+  <p class="sub">A condition compares two values using a relational operator. The result is always a Boolean: <code>True</code> or <code>False</code>.</p>
+  <div class="py"><textarea>
+score = 7
+
+print(score == 7)
+print(score != 7)
+print(score > 5)
+print(score >= 10)
+print(score < 7)
+print(score <= 7)
+</textarea></div>
+  <div class="scroll"><table class="t ref">
+    <tr><th>Operator</th><th>Meaning</th></tr>
+    <tr><td>==</td><td>Equal to</td></tr>
+    <tr><td>!=</td><td>Not equal to</td></tr>
+    <tr><td>&gt;</td><td>Greater than</td></tr>
+    <tr><td>&gt;=</td><td>Greater than or equal to</td></tr>
+    <tr><td>&lt;</td><td>Less than</td></tr>
+    <tr><td>&lt;=</td><td>Less than or equal to</td></tr>
+  </table></div>
+  <ul class="try">
+    <li>Before you run it, predict each of the six answers.</li>
+    <li>Change <code>score</code> to 10 and predict again.</li>
+    <li>Add <code>print("cat" == "Cat")</code>. Do capital letters matter?</li>
+  </ul>
+  <p class="note">One equals sign (<code>=</code>) stores a value. Two equals signs (<code>==</code>) ask whether two values are the same. Mixing them up is one of the most common mistakes.</p>
+</section>
+
+<section class="block">
+  <h2>if</h2>
+  <p class="sub">The indented lines under an <code>if</code> only run when the condition is true. The line needs a colon at the end, and the indentation (4 spaces) is how Python knows which lines belong to the <code>if</code>.</p>
+  <div class="py"><textarea>
+temperature = int(input("What is the temperature in °C? "))
+
+if temperature > 25:
+    print("It is hot today.")
+    print("Remember your sun cream.")
+
+print("Have a nice day.")
+</textarea></div>
+  <ul class="try">
+    <li>Run it with 30, then with 10. Which line runs both times, and why?</li>
+    <li>What happens at exactly 25? Change the condition so that 25 counts as hot.</li>
+    <li>Remove the indentation from line 5. How does the program behave now?</li>
+    <li>Delete the colon on line 3 and read the error.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>if ... else</h2>
+  <p class="sub"><code>else</code> gives the program something to do when the condition is false. Exactly one of the two blocks will run, never both.</p>
+  <div class="py"><textarea>
+number = int(input("Enter a whole number: "))
+
+if number % 2 == 0:
+    print(str(number) + " is even")
+else:
+    print(str(number) + " is odd")
+</textarea></div>
+  <ul class="try">
+    <li>How does <code>number % 2 == 0</code> detect an even number?</li>
+    <li>Change the program to say whether the number is a multiple of 5.</li>
+    <li>Write a program that asks for a password and displays "Access granted" or "Access denied".</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>if ... elif ... else</h2>
+  <p class="sub">When there are more than two paths, use <code>elif</code> (short for "else if"). Python checks the conditions from the top and runs the block for the <b>first</b> one that is true, then skips the rest. The <code>else</code> at the end catches everything that is left.</p>
+  <div class="py"><textarea>
+mark = int(input("Enter a mark out of 100: "))
+
+if mark >= 70:
+    grade = "Distinction"
+elif mark >= 55:
+    grade = "Merit"
+elif mark >= 40:
+    grade = "Pass"
+else:
+    grade = "Not yet passed"
+
+print("Result: " + grade)
+</textarea></div>
+  <ul class="try">
+    <li>Test the boundaries: try 39, 40, 54, 55, 69 and 70.</li>
+    <li>A mark of 90 is also greater than 55 and 40. Why isn't the result "Pass"?</li>
+    <li>Swap the order so that <code>mark >= 40</code> is checked first. What goes wrong?</li>
+    <li>Add a new top grade, "Distinction*", for 85 and above.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Combining conditions: and, or, not</h2>
+  <p class="sub">Logical operators join conditions together. With <code>and</code>, both sides must be true. With <code>or</code>, at least one side must be true. <code>not</code> flips true to false and false to true.</p>
+  <div class="py"><textarea>
+age = int(input("How old are you? "))
+hasTicket = input("Do you have a ticket? (y/n) ") == "y"
+
+if age >= 12 and hasTicket:
+    print("Enjoy the film.")
+elif age >= 12 and not hasTicket:
+    print("You need to buy a ticket first.")
+else:
+    print("Sorry, this film is a 12.")
+
+if age < 5 or age >= 65:
+    print("You also qualify for free popcorn.")
+</textarea></div>
+  <div class="scroll"><table class="t ref">
+    <tr><th>Operator</th><th>True when</th><th>Example</th></tr>
+    <tr><td>and</td><td>Both sides are true</td><td class="mono">age &gt;= 12 and hasTicket</td></tr>
+    <tr><td>or</td><td>Either side is true (or both)</td><td class="mono">age &lt; 5 or age &gt;= 65</td></tr>
+    <tr><td>not</td><td>The condition is false</td><td class="mono">not hasTicket</td></tr>
+  </table></div>
+  <ul class="try">
+    <li>Find inputs that reach each of the three messages.</li>
+    <li>Change <code>and</code> to <code>or</code> on line 4. Who gets in now who shouldn't?</li>
+    <li>Why can the popcorn message appear as well as one of the others?</li>
+    <li>Write a condition that is true only when a number is between 1 and 10 inclusive.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Selection inside selection</h2>
+  <p class="sub">An <code>if</code> can go inside another <code>if</code>. This is called nesting. The inner question is only asked when the outer condition was true. Each level is indented by another 4 spaces.</p>
+  <div class="py"><textarea>
+username = input("Username: ")
+
+if username == "admin":
+    password = input("Password: ")
+    if password == "letmein":
+        print("Welcome back.")
+    else:
+        print("Wrong password.")
+else:
+    print("Unknown user.")
+</textarea></div>
+  <ul class="try">
+    <li>When is the user never asked for a password?</li>
+    <li>Which <code>if</code> does each <code>else</code> belong to? How can you tell?</li>
+    <li>Add a second user with a different password.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Playground</h2>
+  <p class="sub">A starter program that makes a decision. Change it or replace it with your own.</p>
+  <div class="py big"><textarea>
+FULL_PRICE = 12.0
+
+age = int(input("Age: "))
+
+if age < 5:
+    price = 0.0
+elif age < 16:
+    price = FULL_PRICE / 2
+else:
+    price = FULL_PRICE
+
+print("Ticket price: £{:.2f}".format(price))
+</textarea></div>
+  <ul class="try">
+    <li>Add a 25% discount for anyone aged 65 or over.</li>
+    <li>Ask whether the visitor is a member. Members get £2 off any ticket that isn't already free.</li>
+    <li>Write a program that asks for two numbers and displays which one is bigger, or says they are equal.</li>
+    <li>Write a program that asks for a year and says whether it is a leap year.</li>
+  </ul>
+</section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="../../assets/site.js"></script>
+<script src="../../assets/py.js"></script>
+</body>
+</html>
