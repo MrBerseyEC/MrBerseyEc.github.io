@@ -16,6 +16,12 @@ spec: "EDEXCEL GCSE · 3.1.1"
 .regs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .reg.acc{grid-column:span 2}
 .on{border-color:var(--one)!important;box-shadow:0 0 0 4px var(--one-soft)}
+.rl{margin:6px 0 0}
+.rl div{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid var(--line);padding:3px 0}
+.rl dt{font-size:.82rem;color:var(--muted)}
+.rl dd{margin:0}
+.rl .v{margin:0}
+#sim.core .s-only,#sim:not(.core) .c-only{display:none}
 .changed .v{animation:flash .9s}
 @keyframes flash{from{background:var(--hl)}to{background:transparent}}
 .clock .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--off);margin-right:6px;transition:background .1s}
@@ -45,9 +51,9 @@ spec: "EDEXCEL GCSE · 3.1.1"
 .info b{color:var(--ink)}
 @media (max-width:860px){.machine{grid-template-columns:1fr}.buses{flex-direction:row;padding:14px 0;gap:10px}.bus{flex:1}}
 </style>
-<p class="lede">In a von Neumann computer the program and its data are held together in the same main memory (the stored program concept). The CPU fetches each instruction, decodes it and executes it, over and over. Step through to see every register and bus involved.</p>
+<p class="lede">In a von Neumann computer the program and its data are held together in the same main memory (the stored program concept). The CPU fetches each instruction, decodes it and executes it, over and over. Step through to see how the CPU, the buses and main memory work together.</p>
 
-<section class="block">
+<section class="block core" id="sim">
   <div class="row" style="justify-content:space-between">
     <div class="row">
       <button class="btn pri" id="step">Step ▸</button>
@@ -56,6 +62,7 @@ spec: "EDEXCEL GCSE · 3.1.1"
       <label class="check">Speed <input type="range" id="speed" min="300" max="2000" value="1000" step="100"></label>
     </div>
     <div class="row">
+      <div class="seg" id="level" role="group" aria-label="Level of detail"><button aria-pressed="true" data-l="0">GCSE</button><button aria-pressed="false" data-l="1">Stretch</button></div>
       <select id="preset" aria-label="Program"></select>
       <label class="check"><input type="checkbox" id="bin"> Show memory as binary</label>
     </div>
@@ -70,7 +77,14 @@ spec: "EDEXCEL GCSE · 3.1.1"
         <div class="unit" id="alu"><b>ALU</b><small>Arithmetic logic unit</small></div>
         <div class="unit clock" id="clock"><b><span class="dot"></span>Clock</b><small>Ticks: <span id="ticks">0</span></small></div>
       </div>
-      <div class="regs">
+      <div class="reg c-only" id="regs"><b>Registers</b><small>Small, very fast stores inside the CPU</small>
+        <dl class="rl">
+          <div id="r-pc"><dt>Address of next instruction</dt><dd class="v"></dd></div>
+          <div id="r-cir"><dt>Current instruction</dt><dd class="v"></dd></div>
+          <div id="r-acc"><dt>Result of calculations</dt><dd class="v"></dd></div>
+        </dl>
+      </div>
+      <div class="regs s-only">
         <div class="reg" id="pc"><b>PC</b><small>Program counter</small><div class="v"></div></div>
         <div class="reg" id="mar"><b>MAR</b><small>Memory address register</small><div class="v"></div></div>
         <div class="reg" id="mdr"><b>MDR</b><small>Memory data register</small><div class="v"></div></div>
@@ -89,7 +103,8 @@ spec: "EDEXCEL GCSE · 3.1.1"
     </div>
   </div>
   <p class="info" id="info">Click any part of the diagram to see what it does. Click a data value in memory to change it before you run.</p>
-  <p class="note">Every instruction here is 8 bits: a 4-bit <b>opcode</b> (what to do) followed by a 4-bit <b>operand</b> (the memory address to use). Tick "Show memory as binary" and notice that instructions and numbers look exactly the same. The CPU only knows which is which because the PC points at instructions.</p>
+  <p class="note c-only">Tick "Show memory as binary" and notice that instructions and numbers look exactly the same: everything in main memory is stored as binary. Want to go further? Switch to <b>Stretch</b> to see each register inside the CPU by name. You do not need to know the register names for the GCSE.</p>
+  <p class="note s-only"><b>Stretch:</b> the named registers go beyond the GCSE specification. Every instruction here is 8 bits: a 4-bit <b>opcode</b> (what to do) followed by a 4-bit <b>operand</b> (the memory address to use). Tick "Show memory as binary" and notice that instructions and numbers look exactly the same. The CPU only knows which is which because the PC points at instructions.</p>
 </section>
 
 <section class="block">
@@ -115,8 +130,12 @@ const INFO={
  'b-addr':'<b>Address bus</b> carries memory addresses from the CPU to RAM. It is one-way: only the CPU sends addresses.',
  'b-data':'<b>Data bus</b> carries instructions and data between the CPU and RAM. It is two-way.',
  'b-ctrl':'<b>Control bus</b> carries control signals, such as memory read, memory write and the clock signal. It is two-way.',
+ regs:'<b>Registers</b> are small, very fast stores inside the CPU. They hold the addresses, instructions and data the CPU is working with right now.',
  ram:'<b>Main memory (RAM)</b> holds the program being run and the data it uses, side by side. Every location has its own address.'};
-let S,kinds,queue,timer=null,last={};
+const WHAT={HALT:()=>'stop',LOAD:n=>`copy the value at address ${n} into the CPU`,ADD:n=>`add the value at address ${n} to the value the CPU is holding`,
+ SUB:n=>`subtract the value at address ${n} from the value the CPU is holding`,STORE:n=>`copy the value the CPU is holding into address ${n}`};
+const INFO0=$('#info').innerHTML;
+let S,kinds,queue,timer=null,last={},stretch=false;
 const b8=v=>v.toString(2).padStart(8,'0');
 const enc=t=>{const[o,n]=t.split(' ');return CODE[o]*16+(+n||0)};
 const dis=w=>{const o=OPS[w>>4];return !o?'?':o==='HALT'?'HALT':o+' '+(w&15)};
@@ -138,6 +157,22 @@ function fetchSteps(){return[
  ()=>{S.cir=S.mdr;S.pc++;return{ph:'Fetch',hi:['mdr','cir','pc'],ch:['cir','pc'],text:`The instruction is copied from the MDR into the CIR, and the PC is incremented to <b>${S.pc}</b>, ready for the next fetch.`}},
  ()=>{const o=S.cir>>4,n=S.cir&15,nm=OPS[o]||'unknown',bits=b8(S.cir);queue.push(...execSteps(nm,n));
    return{ph:'Decode',hi:['cir','cu'],text:`The CU decodes the instruction in the CIR, <b class="mono">${bits}</b>. The opcode <b class="mono">${bits.slice(0,4)}</b> means <b>${nm}</b>.`+(nm==='HALT'?'':` The operand <b class="mono">${bits.slice(4)}</b> is address <b>${n}</b>.`)}}];}
+// GCSE level: the same machine, described without naming the individual registers
+function fetchCore(){return[
+ ()=>{S.mar=S.pc;return{ph:'Fetch',hi:['cu','regs','b-addr','b-ctrl'],row:S.mar,bus:{'b-addr':S.mar,'b-ctrl':'memory read'},text:`A register in the CPU holds the address of the next instruction (<b>${S.pc}</b>). That address is sent along the address bus, and the CU sends a <b>memory read</b> signal along the control bus.`}},
+ ()=>{const a=S.mar;S.mdr=S.mem[a];S.mdrK=kinds[a];S.cir=S.mdr;S.pc++;return{ph:'Fetch',hi:['b-data','regs'],row:a,ch:['r-cir','r-pc'],bus:{'b-data':b8(S.cir)+'  →CPU'},text:`The instruction at address ${a} (<b>${dis(S.cir)}</b>) travels along the data bus into the CPU, where it is held in a register. The address of the next instruction goes up to <b>${S.pc}</b>.`}},
+ ()=>{const n=S.cir&15,nm=OPS[S.cir>>4]||'unknown';queue.push(...execCore(nm,n));
+   return{ph:'Decode',hi:['regs','cu'],text:`The CU decodes the instruction to work out what has to be done. <b>${dis(S.cir)}</b> means ${(WHAT[nm]||(()=>'nothing the CPU understands'))(n)}.`}}];}
+function execCore(nm,n){
+ const rd={'b-addr':n,'b-ctrl':'memory read'};
+ if(nm==='LOAD')return[()=>{S.mar=n;S.mdr=S.mem[n];S.mdrK='data';S.acc=S.mdr;return{ph:'Execute',hi:['cu','b-addr','b-ctrl','b-data','regs'],row:n,ch:['r-acc'],bus:{...rd,'b-data':b8(S.mdr)+'  →CPU'},text:`<b>LOAD</b>: address ${n} goes on the address bus with a <b>memory read</b> signal on the control bus. The value stored there (<b>${S.mdr}</b>) comes back along the data bus and is held in a register.`}}];
+ if(nm==='ADD'||nm==='SUB')return[
+  ()=>{S.mar=n;S.mdr=S.mem[n];S.mdrK='data';return{ph:'Execute',hi:['cu','b-addr','b-ctrl','b-data'],row:n,bus:{...rd,'b-data':b8(S.mdr)+'  →CPU'},text:`Address ${n} goes on the address bus with a <b>memory read</b> signal on the control bus. The value stored there (<b>${S.mdr}</b>) comes back along the data bus to the CPU.`}},
+  ()=>{const a=S.acc,add=nm==='ADD';S.acc=add?(a+S.mdr)&255:(a-S.mdr+256)&255;
+   return{ph:'Execute',hi:['cu','alu','regs'],ch:['r-acc'],text:`<b>${nm}</b>: the CU tells the ALU to ${add?'add':'subtract'}. ${a} ${add?'+':'−'} ${S.mdr} = <b>${S.acc}</b>. The result is held in a register.`}}];
+ if(nm==='STORE')return[()=>{S.mar=n;S.mdr=S.acc;S.mdrK='data';S.mem[n]=S.mdr;kinds[n]='data';return{ph:'Execute',hi:['cu','regs','b-addr','b-data','b-ctrl'],row:n,wr:true,bus:{'b-addr':n,'b-data':b8(S.mdr)+'  →RAM','b-ctrl':'memory write'},text:`<b>STORE</b>: address ${n} goes on the address bus, the value ${S.mdr} goes on the data bus, and the CU sends a <b>memory write</b> signal along the control bus. Location ${n} now holds <b>${S.mdr}</b>.`}}];
+ return execSteps(nm==='HALT'?nm:'',n);
+}
 function execSteps(nm,n){
  const read=[
   ()=>{S.mar=n;return{ph:'Execute',hi:['cir','mar'],ch:['mar'],text:`The operand, address <b>${n}</b>, is copied into the MAR.`}},
@@ -153,14 +188,16 @@ function execSteps(nm,n){
 }
 function step(){
   if(S.halted){stop();return}
-  if(!queue.length)queue=fetchSteps();
+  if(!queue.length)queue=stretch?fetchSteps():fetchCore();
   const r=queue.shift()();S.ticks++;render(r);
   const c=$('#clock');c.classList.add('pulse');setTimeout(()=>c.classList.remove('pulse'),250);
   if(S.halted){stop();$('#step').disabled=true}
 }
 function regVal(id){
   if(id==='pc'||id==='mar')return S[id]===null?'—':String(S[id]);
-  if(id==='acc')return String(S.acc);
+  if(id==='acc'||id==='r-acc')return String(S.acc);
+  if(id==='r-pc')return String(S.pc);
+  if(id==='r-cir')return S.cir===null?'—':dis(S.cir);
   const w=S[id];if(w===null)return'—';
   const k=id==='cir'?'instr':S.mdrK;
   return`${b8(w)}<i>${meaning(w,k)?'= '+meaning(w,k):''}</i>`;
@@ -171,7 +208,7 @@ function render(r){
   $('#explain').innerHTML=r.text;
   $$('.on').forEach(e=>e.classList.remove('on'));
   (r.hi||[]).forEach(id=>document.getElementById(id).classList.add('on'));
-  ['pc','mar','mdr','cir','acc'].forEach(id=>{const el=document.getElementById(id);el.querySelector('.v').innerHTML=regVal(id);el.classList.remove('changed')});
+  ['pc','mar','mdr','cir','acc','r-pc','r-cir','r-acc'].forEach(id=>{const el=document.getElementById(id);el.querySelector('.v').innerHTML=regVal(id);el.classList.remove('changed')});
   void document.body.offsetWidth;(r.ch||[]).forEach(id=>document.getElementById(id).classList.add('changed'));
   ['b-addr','b-data','b-ctrl'].forEach(id=>{const v=r.bus&&r.bus[id];document.querySelector('#'+id+' .val').textContent=v===undefined?'':v});
   $('#ticks').textContent=S.ticks;
@@ -182,7 +219,7 @@ function drawMem(r){
   $('#mem').innerHTML=S.mem.map((w,i)=>{const k=kinds[i];
     const cls=[k==='data'?'data':'',r.row===i?'hi':'',r.row===i&&r.wr?'wr':'',k==='data'&&!running?'edit':''].join(' ');
     const shown=bin?b8(w):(meaning(w,k)||'0');
-    return`<tr class="${cls}" data-i="${i}"><td class="a">${i}</td><td class="m">${shown}</td><td class="k">${k==='instr'?'instruction':k}${i===S.pc&&!S.halted?' ← PC':''}</td></tr>`}).join('');
+    return`<tr class="${cls}" data-i="${i}"><td class="a">${i}</td><td class="m">${shown}</td><td class="k">${k==='instr'?'instruction':k}${i===S.pc&&!S.halted?(stretch?' ← PC':' ← next'):''}</td></tr>`}).join('');
 }
 $('#mem').onclick=e=>{const tr=e.target.closest('tr.edit');if(!tr)return;const i=+tr.dataset.i;
   const v=prompt(`New value for address ${i} (0–255):`,S.mem[i]);if(v===null)return;const n=parseInt(v,10);
@@ -196,9 +233,19 @@ $('#speed').oninput=()=>{if(timer){stop();$('#play').click()}};
 $('#step').onclick=()=>{stop();step()};
 $('#reset').onclick=load;$('#preset').onchange=load;$('#bin').onchange=()=>drawMem(last);
 $('#preset').innerHTML=PRESETS.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
-load();
-const R=['PC','MAR','MDR','CIR','ACC'];
-cardQuiz($('#quiz'),[
+const R=['PC','MAR','MDR','CIR','ACC'],P=['Control unit','ALU','Registers','Clock'],B=['Address','Data','Control'];
+const QCORE=[
+ {q:'Which part of the CPU decodes each instruction?',a:'Control unit',why:'The control unit decodes instructions and sends out control signals to coordinate the other components.'},
+ {q:'Which part of the CPU carries out calculations and logical comparisons?',a:'ALU',why:'The arithmetic logic unit does the arithmetic (such as add and subtract) and the logic.'},
+ {q:'Which part of the CPU holds the instruction and data being worked on right now?',a:'Registers',why:'Registers are small, very fast stores inside the CPU.'},
+ {q:'Which part sends out regular pulses to keep every component in step?',a:'Clock',why:'A higher clock speed means more cycles, so more instructions, per second.'},
+ {q:'Which bus carries the location in memory that the CPU wants to use?',opts:B,a:'Address',why:'The address bus carries memory addresses from the CPU to RAM.'},
+ {q:'Which bus carries a fetched instruction from RAM to the CPU?',opts:B,a:'Data',why:'The data bus carries instructions and data between the CPU and RAM, in both directions.'},
+ {q:'Which bus carries the memory read and memory write signals?',opts:B,a:'Control',why:'The CU sends control signals, including read, write and clock, on the control bus.'},
+ {q:'Which bus can only carry information in one direction?',opts:B,a:'Address',why:'Only the CPU sends addresses to memory; data and control signals travel both ways.'},
+ {q:'What is the stored program concept?',opts:['Programs are kept on secondary storage','Instructions and data are held in the same main memory','Programs are stored inside the CPU'],a:'Instructions and data are held in the same main memory',why:'The CPU fetches instructions from the same RAM that holds the data they work on.'},
+];
+const QSTRETCH=[
  {q:'Which register holds the address of the next instruction to be fetched?',a:'PC',why:'The program counter is copied to the MAR at the start of each fetch, then incremented.'},
  {q:'Which register holds the address that is put on the address bus?',a:'MAR',why:'The memory address register feeds the address bus.'},
  {q:'Which register holds the instruction while the CU decodes it?',a:'CIR',why:'The instruction is copied from the MDR to the current instruction register.'},
@@ -207,5 +254,13 @@ cardQuiz($('#quiz'),[
  {q:'Which bus can only carry information in one direction?',opts:['Address','Data','Control'],a:'Address',why:'Only the CPU sends addresses to memory; data and control signals travel both ways.'},
  {q:'Which bus carries the memory read and memory write signals?',opts:['Address','Data','Control'],a:'Control',why:'The CU sends control signals, including read, write and clock, on the control bus.'},
  {q:'What is the stored program concept?',opts:['Programs are kept on secondary storage','Instructions and data are held in the same main memory','Programs are stored inside the CPU'],a:'Instructions and data are held in the same main memory',why:'The CPU fetches instructions from the same RAM that holds the data they work on.'},
-],R,$('#score'),$('#qreset'));
+];
+function setLevel(on){
+  stretch=on;$('#sim').classList.toggle('core',!on);
+  $$('#level button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.l==='1')===on));
+  $('#info').innerHTML=INFO0;load();
+  cardQuiz($('#quiz'),on?QSTRETCH:QCORE,on?R:P,$('#score'),$('#qreset'));
+}
+$('#level').onclick=e=>{const b=e.target.closest('button');if(b)setLevel(b.dataset.l==='1')};
+setLevel(location.hash==='#stretch');
 </script>
