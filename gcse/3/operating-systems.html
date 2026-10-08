@@ -24,6 +24,7 @@ spec: "EDEXCEL GCSE · 3.2.1"
 .plist{width:100%}
 .prog{height:8px;border-radius:4px;background:var(--line);overflow:hidden;min-width:80px}
 .prog div{height:100%}
+#p-algs tr.on td{background:var(--hl-soft)}
 /* peripherals */
 .devs{display:flex;flex-wrap:wrap;gap:10px}
 .dev{border:2px solid var(--line);border-radius:10px;padding:10px 12px;min-width:140px;background:var(--bg)}
@@ -76,9 +77,15 @@ spec: "EDEXCEL GCSE · 3.2.1"
 
   <!-- PROCESSES -->
   <div id="p-proc" class="hidden">
-    <p class="sub">A single CPU core can only run one process at a time. The OS gives each process a short <b>time slice</b> in turn, switching so fast that they all seem to run at once (multitasking). It also gives each process its own area of RAM, and takes it back when the process ends.</p>
+    <p class="sub">A single CPU core can only run one process at a time, so the OS uses a <b>scheduling algorithm</b> to decide which process goes next. Switching between processes quickly makes them all seem to run at once (multitasking). The OS also gives each process its own area of RAM, and takes it back when the process ends.</p>
+    <table class="t" id="p-algs" style="margin-bottom:14px"><tr><th>Scheduling algorithm</th><th>How it works</th></tr>
+      <tr data-a="fifo"><td><b>First in, first out</b></td><td>Processes queue in the order in which they arrive. The process at the head of the queue gets to use the CPU until it is finished, or is held up waiting for another resource like a printer.</td></tr>
+      <tr data-a="sjf"><td><b>Shortest job first</b></td><td>The process which is closest to finishing goes next.</td></tr>
+      <tr data-a="rr"><td><b>Round robin</b></td><td>Each process is assigned a <b>time slice</b>. Processes wait their turn in a queue and the process at the head of the queue goes next. At the end of its time slice, if it isn't finished, it goes to the back of the queue and the next process is taken from the front. Some processes have a higher priority than others and get more time slices.</td></tr>
+    </table>
     <div class="row" style="margin-bottom:12px">
       <button class="btn pri" id="p-run">Run</button><button class="btn" id="p-reset">Reset</button>
+      <label class="check">Algorithm <select id="p-alg"><option value="fifo">First in, first out</option><option value="sjf">Shortest job first</option><option value="rr" selected>Round robin</option></select></label>
       <label class="check">Time slice <input type="range" id="p-q" min="1" max="4" value="1"> <b id="p-qv">1</b></label>
       <select id="p-add"></select><button class="btn" id="p-addb">Open program</button>
     </div>
@@ -180,39 +187,55 @@ flog('Ready. The OS is tracking 7 files and folders.');drawFiles();
 
 /* =============== PROCESSES =============== */
 const RAM=1024,OSMEM=200;
-const PROGS=[['Music player',4,120,'#7B4DFF'],['Web browser',7,300,'#1F5BFF'],['Word processor',3,150,'#138A52'],['Antivirus scan',5,200,'#C2362B'],['Game',6,400,'#D97706'],['Photo editor',5,250,'#0E9AA7']];
+// name, CPU time needed, RAM, colour, priority (2 = high), CPU time used before it needs the printer
+const PROGS=[['Music player',4,120,'#7B4DFF',2],['Web browser',7,300,'#1F5BFF'],['Word processor',3,150,'#138A52',1,1],['Antivirus scan',5,200,'#C2362B'],['Game',6,400,'#D97706'],['Photo editor',5,250,'#0E9AA7']];
 let procs,queue,cur,used,ptimer=null,gantt;
 function preset(){procs=[];queue=[];cur=null;used=0;gantt=[];PROGS.slice(0,4).forEach(p=>start(p,true));$('#p-msg').textContent='';drawProc()}
 function start(p,quiet){
   const mem=procs.filter(x=>!x.done).reduce((s,x)=>s+x.mem,OSMEM);
   if(mem+p[2]>RAM){$('#p-msg').innerHTML=`<span class="badc">✖ Not enough free RAM to load ${p[0]} (${p[2]} MB needed, ${RAM-mem} MB free). Close something, or let a process finish first.</span>`;return}
-  const pr={name:p[0],need:p[1],mem:p[2],col:p[3],ran:0,done:false};procs.push(pr);queue.push(pr);
+  const pr={name:p[0],need:p[1],mem:p[2],col:p[3],pri:p[4]||1,io:p[5]||0,wait:0,ran:0,done:false};procs.push(pr);queue.push(pr);
   if(!quiet)$('#p-msg').textContent=`The OS loaded ${p[0]} into RAM and added it to the ready queue.`;drawProc();
 }
 function ptick(){
-  const q=+$('#p-q').value;
-  if(cur&&(cur.done||used>=q)){if(!cur.done)queue.push(cur);cur=null}
-  if(!cur){cur=queue.shift()||null;used=0;if(!cur){stopP();$('#p-msg').textContent='All processes have finished. Their RAM has been released.';drawProc();return}}
+  const alg=$('#p-alg').value,q=+$('#p-q').value;
+  procs.forEach(p=>{if(p.wait&&--p.wait===0)queue.push(p)});
+  if(cur){
+    if(cur.done||cur.wait)cur=null;
+    else if(alg==='rr'&&used>=q*cur.pri){queue.push(cur);cur=null}
+  }
+  if(!cur){
+    if(alg==='sjf'&&queue.length){const s=queue.reduce((a,b)=>left(b)<left(a)?b:a);queue.splice(queue.indexOf(s),1);queue.unshift(s)}
+    cur=queue.shift()||null;used=0;
+    if(!cur){
+      if(procs.some(p=>p.wait)){gantt.push('var(--line)');$('#p-msg').textContent='The CPU is idle: the only unfinished process is waiting for the printer.';drawProc();return}
+      stopP();$('#p-msg').textContent='All processes have finished. Their RAM has been released.';drawProc();return}
+  }
   cur.ran++;used++;gantt.push(cur.col);
   if(cur.ran>=cur.need){cur.done=true;$('#p-msg').textContent=`${cur.name} finished. The OS freed its ${cur.mem} MB of RAM.`}
+  else if(cur.ran===cur.io){cur.wait=3;$('#p-msg').textContent=`${cur.name} is held up waiting for the printer, so it gives up the CPU. It rejoins the back of the queue when the printer is ready.`}
   drawProc();
 }
+const left=p=>p.need-p.ran;
 function drawProc(){
-  $('#p-cur').textContent=cur&&!cur.done?cur.name:'—';$('#p-cur').style.background=cur&&!cur.done?cur.col:'transparent';$('#p-cur').style.color=cur&&!cur.done?'#fff':'';
-  $('#p-queue').innerHTML=queue.map(p=>`<span class="chip" style="background:${p.col}">${p.name}</span>`).join('')||'<span style="color:var(--muted)">empty</span>';
+  const alg=$('#p-alg').value,run=cur&&!cur.done&&!cur.wait?cur:null;
+  $('#p-cur').textContent=run?run.name:'—';$('#p-cur').style.background=run?run.col:'transparent';$('#p-cur').style.color=run?'#fff':'';
+  $('#p-queue').innerHTML=(alg==='sjf'?[...queue].sort((a,b)=>left(a)-left(b)):queue).map(p=>`<span class="chip" style="background:${p.col}">${p.name}</span>`).join('')||'<span style="color:var(--muted)">empty</span>';
   $('#gantt').innerHTML=gantt.slice(-40).map(c=>`<span style="background:${c}"></span>`).join('');
   const live=procs.filter(p=>!p.done),usedM=live.reduce((s,p)=>s+p.mem,OSMEM);
   $('#rambar').innerHTML=`<div style="flex:${OSMEM};background:#5B6874">OS</div>`+live.map(p=>`<div style="flex:${p.mem};background:${p.col}">${p.name}</div>`).join('')+`<div style="flex:${RAM-usedM};background:transparent;color:var(--muted)">free</div>`;
   $('#p-free').textContent=`${usedM} MB of ${RAM} MB in use`;
-  $('#plist').innerHTML='<tr><th>Process</th><th>State</th><th>Progress</th><th>RAM</th></tr>'+procs.map(p=>`<tr><td><span class="chip" style="background:${p.col}">${p.name}</span></td><td>${p.done?'Finished':p===cur?'<b>Running</b>':'Ready'}</td><td><div class="prog"><div style="width:${p.ran/p.need*100}%;background:${p.col}"></div></div></td><td class="mono">${p.done?'freed':p.mem+' MB'}</td></tr>`).join('');
+  $('#plist').innerHTML='<tr><th>Process</th><th>Priority</th><th>State</th><th>Progress</th><th>RAM</th></tr>'+procs.map(p=>`<tr><td><span class="chip" style="background:${p.col}">${p.name}</span></td><td>${p.pri>1?'<b>High</b>':'Normal'}</td><td>${p.done?'Finished':p.wait?'Waiting for printer':p===cur?'<b>Running</b>':'Ready'}</td><td><div class="prog"><div style="width:${p.ran/p.need*100}%;background:${p.col}"></div></div></td><td class="mono">${p.done?'freed':p.mem+' MB'}</td></tr>`).join('');
 }
 function stopP(){clearInterval(ptimer);ptimer=null;$('#p-run').textContent='Run'}
 $('#p-run').onclick=()=>{if(ptimer)stopP();else{ptimer=setInterval(ptick,550);$('#p-run').textContent='Pause'}};
 $('#p-reset').onclick=()=>{stopP();preset()};
 $('#p-q').oninput=()=>$('#p-qv').textContent=$('#p-q').value;
+function setAlg(){const a=$('#p-alg').value;$('#p-q').disabled=a!=='rr';document.querySelectorAll('#p-algs tr[data-a]').forEach(r=>r.classList.toggle('on',r.dataset.a===a));drawProc()}
+$('#p-alg').onchange=setAlg;
 $('#p-add').innerHTML=PROGS.map((p,i)=>`<option value="${i}">${p[0]} (${p[2]} MB)</option>`).join('');
 $('#p-addb').onclick=()=>start(PROGS[$('#p-add').value]);
-preset();
+preset();setAlg();
 
 /* =============== PERIPHERALS =============== */
 const devs=[['Keyboard','Input','Keyboard driver',true],['Mouse','Input','HID mouse driver',true],['Monitor','Output','Display driver',true]];
