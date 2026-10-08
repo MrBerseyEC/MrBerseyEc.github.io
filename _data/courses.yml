@@ -39,8 +39,8 @@
       pages:
         - { title: "Inputs & Outputs",      nav: "Inputs & outputs",      url: /gcse/6/inputs-outputs.html }
         - { title: "Variables & Constants", nav: "Variables & constants", url: /gcse/6/variables-constants.html }
-        - { title: "Selection",             nav: "Selection",             url: /gcse/6/selection.html }
-        - { title: "For Loops",             nav: "For loops",             url: /gcse/6/for-loops.html }
-        - { title: "While Loops",           nav: "While loops",           url: /gcse/6/while-loops.html }
-        - { title: "1D Lists",              nav: "Lists",                 url: /gcse/6/lists.html }
-        - { title: "Strings",               nav: "Strings",               url: /gcse/6/strings.html }
+        # - { title: "Selection",             nav: "Selection",             url: /gcse/6/selection.html }
+        # - { title: "For Loops",             nav: "For loops",             url: /gcse/6/for-loops.html }
+        # - { title: "While Loops",           nav: "While loops",           url: /gcse/6/while-loops.html }
+        # - { title: "1D Lists",              nav: "Lists",                 url: /gcse/6/lists.html }
+        # - { title: "Strings",               nav: "Strings",               url: /gcse/6/strings.html }
