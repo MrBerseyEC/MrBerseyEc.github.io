@@ -44,6 +44,18 @@ spec: "EDEXCEL GCSE · 3.2.1"
 .perm{font-size:.8rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--line);display:inline-block;margin-bottom:8px}
 .perm.rw{background:var(--ok);color:#fff}.perm.r{background:var(--one);color:#fff}
 .msg{min-height:1.5em;font-weight:700;margin-top:8px}
+.pm td,.pm th{text-align:center}.pm td:first-child,.pm th:first-child{text-align:left}
+/* user interface */
+.uibox{border:2px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.uibox small{display:block;color:var(--muted);margin-bottom:10px}
+.gdesk{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;min-height:190px;border:2px solid var(--line);border-radius:10px;padding:12px;background:var(--panel);margin-top:10px}
+.icon{font:600 .85rem var(--sans);width:104px;padding:8px 4px;border-radius:8px;border:2px solid transparent;background:none;color:var(--ink);cursor:pointer;text-align:center;word-break:break-word}
+.icon span{display:block;font-size:1.8rem;line-height:1.2}
+.icon small{margin:0;font-size:.72rem}
+.icon:hover{background:var(--hl-soft)}
+.icon.sel{border-color:var(--one);background:var(--one-soft)}
+.term{font:.86rem/1.55 var(--mono);background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;height:190px;overflow:auto;white-space:pre-wrap;margin-top:10px}
+.term .e{color:#FF8A80}.term .s{color:#9AA7B3}
 @media (max-width:760px){.fm{grid-template-columns:1fr}.pipe{grid-template-columns:1fr}}
 </style>
 <p class="lede">The operating system (OS) sits between the hardware, the applications and the user. It manages files, processes, peripherals and users, and provides the interface so nobody has to deal with the hardware directly.</p>
@@ -73,11 +85,18 @@ spec: "EDEXCEL GCSE · 3.2.1"
         <div class="log" id="flog"></div>
       </div>
     </div>
+    <h3 style="margin:28px 0 4px">File permissions</h3>
+    <p class="sub">File permissions control who can access a file and what they are allowed to do with it. Sally programs the robots that assemble printers. Ahmed writes the user manuals. Choose a file, set each person's permissions, then try some actions.</p>
+    <div class="row"><label class="check">File <select id="pm-file"></select></label><label class="check">Acting as <select id="pm-user"><option>Sally</option><option>Ahmed</option></select></label>
+      <button class="btn" data-pm="r">Open</button><button class="btn" data-pm="w">Edit</button><button class="btn" data-pm="x">Run</button><button class="btn" data-pm="d">Delete</button></div>
+    <div class="scroll"><table class="t pm" id="pm-t" style="max-width:620px;margin-top:10px"></table></div>
+    <p class="msg" id="pm-msg"></p>
+    <p class="note" id="pm-why"></p>
   </div>
 
   <!-- PROCESSES -->
   <div id="p-proc" class="hidden">
-    <p class="sub">A single CPU core can only run one process at a time, so the OS uses a <b>scheduling algorithm</b> to decide which process goes next. Switching between processes quickly makes them all seem to run at once (multitasking). The OS also gives each process its own area of RAM, and takes it back when the process ends.</p>
+    <p class="sub">A single CPU core can only run one process at a time, so the OS uses a <b>scheduling algorithm</b> to decide which process goes next. Switching between processes quickly makes them all seem to run at once (multitasking). The OS also gives each process its own area of RAM, and takes it back when the process ends. When RAM gets full, the OS creates an area of <b>virtual memory</b> on the hard drive and uses a <b>paging algorithm</b> to swap processes out of RAM into it, and back again when it is their turn to use the CPU.</p>
     <table class="t" id="p-algs" style="margin-bottom:14px"><tr><th>Scheduling algorithm</th><th>How it works</th></tr>
       <tr data-a="fifo"><td><b>First in, first out</b></td><td>Processes queue in the order in which they arrive. The process at the head of the queue gets to use the CPU until it is finished, or is held up waiting for another resource like a printer.</td></tr>
       <tr data-a="sjf"><td><b>Shortest job first</b></td><td>The process which is closest to finishing goes next.</td></tr>
@@ -88,6 +107,7 @@ spec: "EDEXCEL GCSE · 3.2.1"
       <label class="check">Algorithm <select id="p-alg"><option value="fifo">First in, first out</option><option value="sjf">Shortest job first</option><option value="rr" selected>Round robin</option></select></label>
       <label class="check">Time slice <input type="range" id="p-q" min="1" max="4" value="1"> <b id="p-qv">1</b></label>
       <select id="p-add"></select><button class="btn" id="p-addb">Open program</button>
+      <label class="check"><input type="checkbox" id="p-vm" checked> Virtual memory</label>
     </div>
     <div class="row" style="align-items:flex-start;gap:20px">
       <div class="cpuBox"><small style="color:var(--muted);font-weight:700">CPU IS RUNNING</small><div class="cur" id="p-cur">—</div></div>
@@ -95,8 +115,10 @@ spec: "EDEXCEL GCSE · 3.2.1"
         <b>CPU time line</b><div class="gantt" id="gantt"></div></div>
     </div>
     <div style="margin-top:14px"><b>RAM allocation</b> <small style="color:var(--muted)" id="p-free"></small><div class="rambar" id="rambar"></div></div>
+    <div style="margin-top:10px"><b>Virtual memory</b> <small style="color:var(--muted)">(an area of the hard drive, much slower than RAM)</small><div class="rambar" id="vmbar" style="border-style:dashed"></div></div>
     <table class="t plist" id="plist" style="margin-top:14px"></table>
     <p class="status" id="p-msg" style="margin-top:8px"></p>
+    <p class="note">Open the Game to fill the RAM and watch what the OS does. A striped block on the CPU time line is a turn lost while a process is swapped back in from the hard drive, which is why a computer slows down when it runs short of RAM. Untick "Virtual memory" to see what would happen without it.</p>
   </div>
 
   <!-- PERIPHERALS -->
@@ -138,6 +160,24 @@ spec: "EDEXCEL GCSE · 3.2.1"
         <div id="adminPanel" class="hidden"><h3 style="margin:16px 0 4px">Administrator: set access rights</h3><div class="scroll"><table class="t" id="ptable"></table></div></div>
       </div>
     </div>
+    <h3 style="margin:28px 0 4px">User interface</h3>
+    <p class="sub">The OS also provides and runs the user interface: the way people interact with the computer. The two interfaces below control the same folder, so a change made in one shows up in the other. Make a folder called <b>Work</b> and move <b>notes.txt</b> into it, once with each interface.</p>
+    <div class="cols2">
+      <div class="uibox"><b>Graphical user interface (GUI)</b><small>Windows, icons, menus and pointers (WIMP)</small>
+        <div class="row"><input type="text" id="g-name" value="Work" aria-label="Folder name" style="width:8em"><button class="btn" id="g-new">New folder</button></div>
+        <div class="gdesk" id="g-desk"></div>
+        <p class="status" id="g-msg"></p></div>
+      <div class="uibox"><b>Command-line interface (CLI)</b><small>Typed commands. Type <span class="mono">help</span> to see them.</small>
+        <div class="row"><span class="mono">C:\Desktop&gt;</span><input type="text" id="c-in" aria-label="Command" autocomplete="off" spellcheck="false" style="flex:1;min-width:8em;font-family:var(--mono)"><button class="btn" id="c-go">Enter</button></div>
+        <div class="term" id="term"></div></div>
+    </div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="ui-reset">Start again</button><span class="msg" id="ui-task" style="margin:0"></span></div>
+    <div class="scroll" style="margin-top:14px"><table class="t">
+      <tr><th></th><th>GUI</th><th>CLI</th></tr>
+      <tr><td><b>How you use it</b></td><td>Point at icons and menus and click</td><td>Type commands, which have to be learned and typed exactly</td></tr>
+      <tr><td><b>Good for</b></td><td>Everyday users, and visual tasks such as video editing</td><td>Technicians managing a computer such as a web server</td></tr>
+      <tr><td><b>Resources</b></td><td>Needs more memory and processing power to draw the screen</td><td>Needs very little, and commands can be combined to automate jobs</td></tr>
+    </table></div>
   </div>
 </section>
 
@@ -185,20 +225,52 @@ $('#f-go').onclick=()=>{if(!guard())return;const d=byId($('#f-mv').value);if(!d)
   const p=parentOf(sel);p.kids=p.kids.filter(k=>k!==sel);d.kids.push(sel);flog(`Moved ${sel.name} from ${pathOf(p)} to ${pathOf(d)}.`);drawFiles()};
 flog('Ready. The OS is tracking 7 files and folders.');drawFiles();
 
+/* file permissions */
+const PN={r:'Read',w:'Write',x:'Execute',d:'Delete'},PV={r:'open',w:'edit',x:'run',d:'delete'};
+const PFILES=[
+ {n:'robot_control.py',prog:true,p:{Sally:'rwx',Ahmed:''},why:'Sally writes and tests the robot programs, so she needs to read, write and execute them. Ahmed has no reason to access them at all.'},
+ {n:'printer_manual.pdf',p:{Sally:'r',Ahmed:'rw'},why:'The manual for a printer already on sale is Ahmed\'s work, so he can correct it. Sally only needs to read it.'},
+ {n:'new_printer_design.dwg',p:{Sally:'r',Ahmed:'r'},why:'Both need to see the design to do their jobs, but neither of them is a designer, so neither should be able to change or delete it.'},
+ {n:'draft_manual.docx',p:{Sally:'',Ahmed:'rwd'},why:'First drafts belong to Ahmed: he needs to read, change and delete them. Sally does not need access until the manual is finished.'}];
+PFILES.forEach(f=>{for(const u in f.p)f.p[u]=new Set(f.p[u])});
+$('#pm-file').innerHTML=PFILES.map((f,i)=>`<option value="${i}">${f.n}</option>`).join('');
+function drawPM(){const f=PFILES[$('#pm-file').value];
+  $('#pm-t').innerHTML='<tr><th>User</th>'+Object.values(PN).map(n=>`<th>${n}</th>`).join('')+'</tr>'+Object.keys(f.p).map(u=>`<tr><td><b>${u}</b></td>${Object.keys(PN).map(k=>`<td><input type="checkbox" aria-label="${u}: ${PN[k]}" data-u="${u}" data-k="${k}"${f.p[u].has(k)?' checked':''}></td>`).join('')}</tr>`).join('');
+  $('#pm-why').innerHTML='<b>A sensible starting point:</b> '+f.why+' Write permission includes read: you cannot amend a file you cannot see.'}
+$('#pm-t').onchange=e=>{const c=e.target,set=PFILES[$('#pm-file').value].p[c.dataset.u];c.checked?set.add(c.dataset.k):set.delete(c.dataset.k);
+  if(c.dataset.k==='w'&&c.checked)set.add('r');if(c.dataset.k==='r'&&!c.checked)set.delete('w');$('#pm-msg').textContent='';drawPM()};
+$('#pm-file').onchange=()=>{$('#pm-msg').textContent='';drawPM()};
+$('#p-file').addEventListener('click',e=>{const b=e.target.closest('[data-pm]');if(!b)return;const k=b.dataset.pm,f=PFILES[$('#pm-file').value],u=$('#pm-user').value;
+  $('#pm-msg').innerHTML=!f.p[u].has(k)?`<span class="badc">✖ Access denied: ${u} does not have ${PN[k].toLowerCase()} permission for ${f.n}.</span>`
+   :k==='x'&&!f.prog?`<span class="okc">✔ ${u} has execute permission, but ${f.n} is not a program, so there is nothing to run.</span>`
+   :`<span class="okc">✔ Access granted: ${u} can ${PV[k]} ${f.n}.</span>`});
+drawPM();
+
 /* =============== PROCESSES =============== */
 const RAM=1024,OSMEM=200;
 // name, CPU time needed, RAM, colour, priority (2 = high), CPU time used before it needs the printer
 const PROGS=[['Music player',4,120,'#7B4DFF',2],['Web browser',7,300,'#1F5BFF'],['Word processor',3,150,'#138A52',1,1],['Antivirus scan',5,200,'#C2362B'],['Game',6,400,'#D97706'],['Photo editor',5,250,'#0E9AA7']];
-let procs,queue,cur,used,ptimer=null,gantt;
-function preset(){procs=[];queue=[];cur=null;used=0;gantt=[];PROGS.slice(0,4).forEach(p=>start(p,true));$('#p-msg').textContent='';drawProc()}
+const SWAP='repeating-linear-gradient(45deg,var(--off) 0 4px,transparent 4px 8px)';
+let procs,queue,cur,used,ptimer=null,gantt,swapping=false;
+const inRam=()=>procs.filter(p=>!p.done&&!p.out).reduce((s,p)=>s+p.mem,OSMEM);
+// page processes out to virtual memory until mem MB is free: ones waiting for the printer first, then the back of the queue
+function makeRoom(mem,keep){
+  const v=[...procs.filter(p=>p.wait),...[...queue].reverse()].filter(p=>!p.out&&!p.done&&p!==keep&&!(p===cur&&!cur.wait));
+  let free=RAM-inRam();const out=[];
+  for(const p of v){if(free>=mem)break;out.push(p);free+=p.mem}
+  if(free<mem)return null;
+  out.forEach(p=>p.out=true);return out.map(p=>p.name);
+}
+function preset(){procs=[];queue=[];cur=null;used=0;gantt=[];swapping=false;PROGS.slice(0,4).forEach(p=>start(p,true));$('#p-msg').textContent='';drawProc()}
 function start(p,quiet){
-  const mem=procs.filter(x=>!x.done).reduce((s,x)=>s+x.mem,OSMEM);
-  if(mem+p[2]>RAM){$('#p-msg').innerHTML=`<span class="badc">✖ Not enough free RAM to load ${p[0]} (${p[2]} MB needed, ${RAM-mem} MB free). Close something, or let a process finish first.</span>`;return}
-  const pr={name:p[0],need:p[1],mem:p[2],col:p[3],pri:p[4]||1,io:p[5]||0,wait:0,ran:0,done:false};procs.push(pr);queue.push(pr);
-  if(!quiet)$('#p-msg').textContent=`The OS loaded ${p[0]} into RAM and added it to the ready queue.`;drawProc();
+  const mem=inRam();let moved=[];
+  if(mem+p[2]>RAM){moved=$('#p-vm').checked?makeRoom(p[2]):null;
+    if(!moved){$('#p-msg').innerHTML=`<span class="badc">✖ Not enough free RAM to load ${p[0]} (${p[2]} MB needed, ${RAM-mem} MB free). Close something, or let a process finish first.</span>`;return}}
+  const pr={name:p[0],need:p[1],mem:p[2],col:p[3],pri:p[4]||1,io:p[5]||0,wait:0,ran:0,done:false,out:false};procs.push(pr);queue.push(pr);
+  if(!quiet)$('#p-msg').textContent=moved.length?`RAM was full, so the OS paged ${moved.join(' and ')} out to virtual memory on the hard drive to make room for ${p[0]}.`:`The OS loaded ${p[0]} into RAM and added it to the ready queue.`;drawProc();
 }
 function ptick(){
-  const alg=$('#p-alg').value,q=+$('#p-q').value;
+  const alg=$('#p-alg').value,q=+$('#p-q').value;swapping=false;
   procs.forEach(p=>{if(p.wait&&--p.wait===0)queue.push(p)});
   if(cur){
     if(cur.done||cur.wait)cur=null;
@@ -210,6 +282,8 @@ function ptick(){
     if(!cur){
       if(procs.some(p=>p.wait)){gantt.push('var(--line)');$('#p-msg').textContent='The CPU is idle: the only unfinished process is waiting for the printer.';drawProc();return}
       stopP();$('#p-msg').textContent='All processes have finished. Their RAM has been released.';drawProc();return}
+    if(cur.out){const moved=makeRoom(cur.mem,cur)||[];cur.out=false;swapping=true;gantt.push(SWAP);
+      $('#p-msg').textContent=`${cur.name} is in virtual memory, so the OS has to swap it back into RAM before it can run${moved.length?`, paging ${moved.join(' and ')} out to make room`:''}. The hard drive is much slower than RAM, so this turn is lost.`;drawProc();return}
   }
   cur.ran++;used++;gantt.push(cur.col);
   if(cur.ran>=cur.need){cur.done=true;$('#p-msg').textContent=`${cur.name} finished. The OS freed its ${cur.mem} MB of RAM.`}
@@ -219,13 +293,14 @@ function ptick(){
 const left=p=>p.need-p.ran;
 function drawProc(){
   const alg=$('#p-alg').value,run=cur&&!cur.done&&!cur.wait?cur:null;
-  $('#p-cur').textContent=run?run.name:'—';$('#p-cur').style.background=run?run.col:'transparent';$('#p-cur').style.color=run?'#fff':'';
+  $('#p-cur').textContent=run?(swapping?'↻ swapping in '+run.name:run.name):'—';$('#p-cur').style.background=run&&!swapping?run.col:'transparent';$('#p-cur').style.color=run&&!swapping?'#fff':'';
   $('#p-queue').innerHTML=(alg==='sjf'?[...queue].sort((a,b)=>left(a)-left(b)):queue).map(p=>`<span class="chip" style="background:${p.col}">${p.name}</span>`).join('')||'<span style="color:var(--muted)">empty</span>';
   $('#gantt').innerHTML=gantt.slice(-40).map(c=>`<span style="background:${c}"></span>`).join('');
-  const live=procs.filter(p=>!p.done),usedM=live.reduce((s,p)=>s+p.mem,OSMEM);
+  const live=procs.filter(p=>!p.done&&!p.out),usedM=inRam(),outs=procs.filter(p=>!p.done&&p.out),outM=outs.reduce((s,p)=>s+p.mem,0);
+  $('#vmbar').innerHTML=outs.map(p=>`<div style="flex:${p.mem};background:${p.col}">${p.name}</div>`).join('')+`<div style="flex:${Math.max(RAM-outM,1)};background:transparent;color:var(--muted)">${outs.length?'':'empty'}</div>`;
   $('#rambar').innerHTML=`<div style="flex:${OSMEM};background:#5B6874">OS</div>`+live.map(p=>`<div style="flex:${p.mem};background:${p.col}">${p.name}</div>`).join('')+`<div style="flex:${RAM-usedM};background:transparent;color:var(--muted)">free</div>`;
   $('#p-free').textContent=`${usedM} MB of ${RAM} MB in use`;
-  $('#plist').innerHTML='<tr><th>Process</th><th>Priority</th><th>State</th><th>Progress</th><th>RAM</th></tr>'+procs.map(p=>`<tr><td><span class="chip" style="background:${p.col}">${p.name}</span></td><td>${p.pri>1?'<b>High</b>':'Normal'}</td><td>${p.done?'Finished':p.wait?'Waiting for printer':p===cur?'<b>Running</b>':'Ready'}</td><td><div class="prog"><div style="width:${p.ran/p.need*100}%;background:${p.col}"></div></div></td><td class="mono">${p.done?'freed':p.mem+' MB'}</td></tr>`).join('');
+  $('#plist').innerHTML='<tr><th>Process</th><th>Priority</th><th>State</th><th>Progress</th><th>RAM</th></tr>'+procs.map(p=>`<tr><td><span class="chip" style="background:${p.col}">${p.name}</span></td><td>${p.pri>1?'<b>High</b>':'Normal'}</td><td>${p.done?'Finished':p.wait?'Waiting for printer':p===cur?(swapping?'Swapping in':'<b>Running</b>'):'Ready'}${p.out&&!p.done?' (paged out)':''}</td><td><div class="prog"><div style="width:${p.ran/p.need*100}%;background:${p.col}"></div></div></td><td class="mono">${p.done?'freed':p.out?'on disk':p.mem+' MB'}</td></tr>`).join('');
 }
 function stopP(){clearInterval(ptimer);ptimer=null;$('#p-run').textContent='Run'}
 $('#p-run').onclick=()=>{if(ptimer)stopP();else{ptimer=setInterval(ptick,550);$('#p-run').textContent='Pause'}};
@@ -291,7 +366,44 @@ function drawPT(){$('#ptable').innerHTML='<tr><th>Folder</th><th>Student</th><th
 $('#ptable').onchange=e=>{const s=e.target;PERM[s.dataset.r][s.dataset.f]=s.value;$('#amsg').textContent=`Updated: ${s.dataset.r} accounts now have "${LBL[s.value]}" on ${s.dataset.f}. Log in as that user to check.`};
 $('#lo').onclick=()=>{me=null;$('#desk').classList.add('hidden');$('#loginArea').classList.remove('hidden')};
 
+/* user interface: one folder, two ways of controlling it */
+let ui,gsel=null;
+const same=(a,b)=>a.toLowerCase()===b.toLowerCase(), find=(list,n)=>list.find(x=>same(x,n));
+const tsay=(t,c)=>{$('#term').insertAdjacentHTML('beforeend',`<span class="${c||''}">${t.replace(/</g,'&lt;')}</span>\n`);$('#term').scrollTop=1e6};
+function uiReset(){ui={files:['notes.txt','photo.jpg','essay.docx'],dirs:{}};gsel=null;$('#term').innerHTML='';tsay('Type help and press Enter.','s');$('#g-msg').textContent='Click a file to select it, then click a folder to move it there.';uiDraw()}
+function uiDraw(){
+  $('#g-desk').innerHTML=Object.keys(ui.dirs).map(d=>`<button class="icon" data-d="${d}"><span>📁</span>${d}<small>${ui.dirs[d].join(', ')||'empty'}</small></button>`).join('')+
+    ui.files.map(f=>`<button class="icon${f===gsel?' sel':''}" data-f="${f}"><span>📄</span>${f}</button>`).join('');
+  const w=find(Object.keys(ui.dirs),'Work'),ok=w&&find(ui.dirs[w],'notes.txt');
+  $('#ui-task').innerHTML=ok?'<span class="okc">✔ Task complete: notes.txt is in the Work folder. Press Start again and try the other interface.</span>':'';
+}
+function mkdir(n){if(!/^[\w -]+$/.test(n))return 'That is not a valid folder name.';if(find(Object.keys(ui.dirs),n))return `A folder called ${n} already exists.`;ui.dirs[n]=[];return ''}
+function move(f,d){const file=find(ui.files,f),dir=find(Object.keys(ui.dirs),d);if(!file)return `Cannot find the file ${f}.`;if(!dir)return `Cannot find the folder ${d}.`;
+  ui.files=ui.files.filter(x=>x!==file);ui.dirs[dir].push(file);return ''}
+$('#g-new').onclick=()=>{const n=$('#g-name').value.trim(),e=mkdir(n);$('#g-msg').textContent=e||`Created the folder ${n}.`;uiDraw()};
+$('#g-desk').onclick=e=>{const b=e.target.closest('.icon');if(!b)return;
+  if(b.dataset.f){gsel=gsel===b.dataset.f?null:b.dataset.f;$('#g-msg').textContent=gsel?`${gsel} selected. Now click the folder to move it into.`:''}
+  else if(gsel){move(gsel,b.dataset.d);$('#g-msg').textContent=`Moved ${gsel} into ${b.dataset.d}.`;gsel=null}
+  else $('#g-msg').textContent=`${b.dataset.d} contains: ${ui.dirs[b.dataset.d].join(', ')||'nothing yet'}.`;
+  uiDraw()};
+function runCmd(){const line=$('#c-in').value.trim();$('#c-in').value='';if(!line)return;tsay('C:\\Desktop> '+line);
+  const[c,...a]=line.split(/\s+/),cmd=c.toLowerCase();let err='';
+  if(cmd==='help')tsay('dir              list the files and folders\nmkdir NAME       make a new folder\nmove FILE FOLDER move a file into a folder\ncls              clear the screen','s');
+  else if(cmd==='dir'||cmd==='ls')tsay([...Object.keys(ui.dirs).map(d=>`<DIR>  ${d}`+(ui.dirs[d].length?`  (${ui.dirs[d].join(', ')})`:'')),...ui.files.map(f=>'       '+f)].join('\n')||'(empty)');
+  else if(cmd==='mkdir'||cmd==='md')err=a.length===1?mkdir(a[0]):'Usage: mkdir NAME';
+  else if(cmd==='move'||cmd==='mv')err=a.length===2?move(a[0],a[1]):'Usage: move FILE FOLDER';
+  else if(cmd==='cls'||cmd==='clear')$('#term').innerHTML='';
+  else err=`'${c}' is not recognised as a command. Type help for a list.`;
+  if(err)tsay(err,'e');uiDraw()}
+$('#c-go').onclick=runCmd;$('#c-in').onkeydown=e=>{if(e.key==='Enter')runCmd()};
+$('#ui-reset').onclick=uiReset;uiReset();
+
 cardQuiz($('#quiz'),[
+ {q:'Moving a process out of RAM to the hard drive because memory is full.',a:'Process',why:'The OS uses virtual memory and a paging algorithm so more processes can be open than will fit in RAM.'},
+ {q:'Checking that someone has write permission before letting them change a file.',a:'File',why:'File permissions (read, write, execute, delete) control what each user may do with a file.'},
+ {q:'Providing windows, icons, menus and a pointer.',a:'User',why:'The OS provides and runs the user interface.'},
+ {q:'Which interface suits a web server that is only ever managed by technicians?',opts:['GUI','CLI'],a:'CLI',why:'A command-line interface uses few resources, and technicians know the commands.'},
+ {q:'Which interface suits a computer used for video editing?',opts:['GUI','CLI'],a:'GUI',why:'Editing video is a visual task that needs a graphical user interface.'},
  {q:'Allocating each running program its own area of RAM.',a:'Process',why:'Process management includes memory allocation so programs cannot overwrite each other.'},
  {q:'Giving each program a short turn on the CPU so they appear to run at the same time.',a:'Process',why:'Scheduling time slices is how the OS provides multitasking.'},
  {q:'Using a driver so the computer can communicate with a new webcam.',a:'Peripheral',why:'Device drivers translate between the OS and specific hardware.'},

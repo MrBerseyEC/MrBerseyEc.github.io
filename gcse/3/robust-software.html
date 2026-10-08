@@ -23,14 +23,26 @@ spec: "EDEXCEL GCSE · 3.2.3"
 .log td.d{white-space:normal;font-family:var(--sans)}
 .log tr.sus td{background:var(--bad-soft)}
 .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-@media (max-width:860px){.review{grid-template-columns:1fr}}
+.code div.auto span:last-child::after{content:"   ⚙ flagged by tool";color:var(--one);font-weight:700}
+.vc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:start}
+.hist tr{cursor:pointer}
+.hist tr:hover td{background:var(--hl-soft)}
+.hist tr.sel td{background:var(--one-soft)}
+.hist td:first-child{font:700 .9rem var(--mono)}
+.diff{font:.88rem/1.75 var(--mono);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px 0;overflow-x:auto}
+.diff div{padding:0 12px;white-space:pre;border-left:4px solid transparent}
+.diff div.add{background:var(--ok-soft);border-left-color:var(--ok)}
+.diff div.del{background:var(--bad-soft);border-left-color:var(--bad);text-decoration:line-through}
+.bug{border:2px solid var(--bad);border-radius:10px;padding:10px 14px;background:var(--bad-soft);margin:0 0 14px}
+@media (max-width:860px){.review,.vc{grid-template-columns:minmax(0,1fr)}}
 </style>
-<p class="lede">Robust software keeps working correctly, even with unexpected input or when someone deliberately tries to break it. Weaknesses in code (vulnerabilities) can be exploited by attackers, so developers look for them through code reviews, and keep audit trails to spot and investigate misuse.</p>
+<p class="lede">Robust software can handle the unexpected without crashing, giving the wrong output or revealing sensitive data. A flaw in a program that compromises security (a code vulnerability) can be exploited by an attacker, so developers look for them through code reviews, and keep an audit trail of who changed what in the code, and when.</p>
 
 <section class="block">
   <h2>Code review</h2>
-  <p class="sub">In a code review, other programmers read through code looking for bugs and vulnerabilities before it is released. This program has <b>6</b> problems. Click the lines you think are a problem, then check your review.</p>
-  <div class="row" style="margin-bottom:12px"><button class="btn pri" id="chk">Check my review</button><button class="btn" id="rst">Start again</button><span class="score" id="rscore"></span></div>
+  <p class="sub">A code review is designed to spot poor programming practice, find vulnerabilities and check efficiency before the code is released. This program has <b>6</b> problems. Click the lines you think are a problem, then check your review. You can also run an automated review to see what a tool would find.</p>
+  <div class="row" style="margin-bottom:12px"><button class="btn pri" id="chk">Check my review</button><button class="btn" id="auto">Run automated review</button><button class="btn" id="rst">Start again</button><span class="score" id="rscore"></span></div>
+  <p class="status" id="automsg"></p>
   <div class="review">
     <div class="code" id="code"></div>
     <div class="issues" id="issues"><p style="color:var(--muted);margin:0">Flagged lines appear highlighted. Explanations will appear here when you check.</p></div>
@@ -38,8 +50,38 @@ spec: "EDEXCEL GCSE · 3.2.3"
 </section>
 
 <section class="block">
+  <h2>Two types of code review</h2>
+  <div class="scroll"><table class="t">
+    <tr><th></th><th>Review by another programmer</th><th>Automated review</th></tr>
+    <tr><td><b>Who does it</b></td><td>Usually someone more senior, with more experience</td><td>A specialist piece of software</td></tr>
+    <tr><td><b>What it finds</b></td><td>Bad programming practice and vulnerabilities, including ones that depend on understanding what the program is meant to do</td><td>Common, well-known problems, such as vulnerabilities in the programming language and obvious bad practice</td></tr>
+    <tr><td><b>Drawback</b></td><td>Labour intensive and time consuming</td><td>Probably won't identify every issue</td></tr>
+  </table></div>
+  <p class="note">Often both are used. If issues are found, the original programmer is asked to improve the code, and then it is reviewed again.</p>
+</section>
+
+<section class="block">
   <h2>Audit trail</h2>
-  <p class="sub">An audit trail is a log the system keeps of who did what, and when. It can't stop an attack on its own, but it lets you detect unusual activity, investigate what happened, and hold people accountable. Something odd happened to the Year 10 mock grades. Use the log to find out what.</p>
+  <p class="sub">While software is being developed, an audit trail tracks who made which changes to the code, and when. It reduces errors and makes people accountable. If a security issue turns up, it can be traced back to the version of the code where it first appeared. Click a version to see what changed.</p>
+  <p class="bug"><b>Bug report, Friday:</b> a customer typed <span class="mono">-4</span> for the number of tickets and the machine paid them a refund. This used to be impossible. What went wrong?</p>
+  <div class="vc">
+    <div class="scroll"><table class="t hist" id="hist"></table></div>
+    <div><b id="vtitle"></b><div class="diff" id="diff" style="margin-top:6px"></div>
+      <p class="status" style="margin-top:8px"><span class="okc">Green</span> lines were added in this version. <span class="badc">Red</span> lines were removed.</p></div>
+  </div>
+  <h3 style="margin:20px 0 8px">Investigate</h3>
+  {% include quiz.html n=2 %}
+</section>
+
+<section class="block">
+  <h2>Good practice or bad practice?</h2>
+  <p class="sub">Vulnerabilities often come from bad habits, or from shortcuts taken under pressure to meet a deadline.</p>
+  {% include quiz.html n=3 %}
+</section>
+
+<section class="block">
+  <h2>Audit trail on a live system</h2>
+  <p class="sub">The same idea is used once software is running: the system keeps a log of who did what, and when. It can't stop an attack on its own, but it lets you detect unusual activity, investigate what happened, and hold people accountable. Something odd happened to the Year 10 mock grades. Use the log to find out what.</p>
   <div class="filters">
     <label class="check">User <select id="fu"><option value="">All</option></select></label>
     <label class="check">Action <select id="fa"><option value="">All</option></select></label>
@@ -80,10 +122,11 @@ const ISS={
  11:['No input validation','Typing "two" crashes the program, and a negative number gives a negative total, so a customer could get money back. Check the input is a whole number in a sensible range.'],
  17:['SQL injection','The user\'s input is pasted straight into a database query. Typing <span class="mono">\' OR \'1\'=\'1</span> as a name would return every student. Use a parameterised query.'],
  21:['Division by zero','If the list is empty, len(marks) is 0 and the program crashes. Check the list isn\'t empty first.']};
-let flags=new Set(),checked=false;
+const AUTO=[0,17,21]; /* what the automated tool recognises */
+let flags=new Set(),checked=false,auto=false;
 const hl=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/("[^"]*")/g,'<span class="str">$1</span>').replace(/\b(def|while|True|if|return)\b/g,'<span class="kw">$1</span>');
 function drawCode(){
-  $('#code').innerHTML=SRC.map((l,i)=>{let c=l.trim()?'':'blank';if(!checked&&flags.has(i))c+=' flag';
+  $('#code').innerHTML=SRC.map((l,i)=>{let c=l.trim()?'':'blank';if(!checked&&flags.has(i))c+=' flag';if(auto&&AUTO.includes(i))c+=' auto';
     if(checked){if(ISS[i])c+=flags.has(i)?' hit':' miss';else if(flags.has(i))c+=' fp'}
     return`<div class="${c}" data-i="${i}"><span class="ln">${i+1}</span><span>${hl(l)||' '}</span></div>`}).join('');
 }
@@ -91,10 +134,64 @@ $('#code').onclick=e=>{const d=e.target.closest('div[data-i]');if(!d||checked||d
 $('#chk').onclick=()=>{checked=true;drawCode();const keys=Object.keys(ISS).map(Number),hits=keys.filter(k=>flags.has(k)).length,fps=[...flags].filter(f=>!ISS[f]).length;
   $('#rscore').textContent=`Found ${hits} of ${keys.length}`+(fps?`, plus ${fps} line${fps>1?'s':''} that ${fps>1?'are':'is'} fine`:'');
   $('#issues').innerHTML=keys.map(k=>`<div class="issue ${flags.has(k)?'hit':'miss'}"><b>Line ${k+1}: ${ISS[k][0]} ${flags.has(k)?'✔':'(missed)'}</b>${ISS[k][1]}</div>`).join('')};
-$('#rst').onclick=()=>{flags.clear();checked=false;$('#rscore').textContent='';$('#issues').innerHTML='<p style="color:var(--muted);margin:0">Flagged lines appear highlighted. Explanations will appear here when you check.</p>';drawCode()};
+$('#auto').onclick=()=>{auto=true;if(!checked)AUTO.forEach(i=>flags.add(i));drawCode();
+  $('#automsg').innerHTML=`⚙ The automated review flagged <b>${AUTO.length} lines</b> almost instantly: a hard-coded password, a database query built from user input, and a possible division by zero. These are common, well-known patterns. It has not found everything: the other problems depend on understanding what the program is for, so another programmer still needs to read the code.`};
+$('#rst').onclick=()=>{flags.clear();checked=false;auto=false;$('#automsg').textContent='';$('#rscore').textContent='';$('#issues').innerHTML='<p style="color:var(--muted);margin:0">Flagged lines appear highlighted. Explanations will appear here when you check.</p>';drawCode()};
 drawCode();
 
-/* audit trail */
+/* audit trail: version history */
+const B='def buyTickets(price):',Q='    qty = int(input("How many tickets? "))',V1='    while qty < 1 or qty > 10:',V2='        qty = int(input("Enter 1 to 10: "))',
+ T='    total = qty * price',D1='    if qty >= 5:',D2='        total = total * 0.9',R='    return total';
+const VERS=[
+ ['v1','Mon 09:12','a.patel','First version of buyTickets',[B,Q,T,R]],
+ ['v2','Mon 14:40','s.jones','Only accept 1 to 10 tickets',[B,Q,V1,V2,T,R]],
+ ['v3','Tue 10:05','a.patel','Add 10% group discount for 5 or more',[B,Q,V1,V2,T,D1,D2,R]],
+ ['v4','Wed 16:58','r.kim','Quick fix so a school can book 30 tickets today',[B,Q,T,D1,D2,R]],
+ ['v5','Thu 11:20','s.jones','Rename variable total to pickles',[B,Q,'    pickles = qty * price',D1,'        pickles = pickles * 0.9','    return pickles']],
+ ['v6','Fri 08:45','a.patel','Print the amount to pay',[B,Q,'    pickles = qty * price',D1,'        pickles = pickles * 0.9','    print("Total to pay: £", pickles)','    return pickles']]];
+/* line-by-line difference between two versions (longest common subsequence) */
+function diffLines(a,b){
+  const L=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));
+  for(let i=a.length-1;i>=0;i--)for(let j=b.length-1;j>=0;j--)L[i][j]=a[i]===b[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+  const out=[];let i=0,j=0;
+  while(i<a.length||j<b.length){
+    if(i<a.length&&j<b.length&&a[i]===b[j]){out.push(['',a[i]]);i++;j++}
+    else if(i<a.length&&(j>=b.length||L[i+1][j]>=L[i][j+1]))out.push(['del',a[i++]]);
+    else out.push(['add',b[j++]])}
+  return out;
+}
+let vsel=VERS.length-1;
+function drawVers(){
+  $('#hist').innerHTML='<tr><th>Version</th><th>When</th><th>Who</th><th>What they said they changed</th></tr>'+VERS.map((v,i)=>`<tr data-i="${i}" class="${i===vsel?'sel':''}"><td>${v[0]}</td><td>${v[1]}</td><td>${v[2]}</td><td>${v[3]}</td></tr>`).join('');
+  const v=VERS[vsel],d=vsel?diffLines(VERS[vsel-1][4],v[4]):v[4].map(l=>['add',l]);
+  $('#vtitle').textContent=`${v[0]}: changed by ${v[2]} on ${v[1]}`;
+  $('#diff').innerHTML=d.map(x=>`<div class="${x[0]}">${x[0]==='add'?'+ ':x[0]==='del'?'− ':'  '}${hl(x[1])}</div>`).join('');
+}
+$('#hist').onclick=e=>{const r=e.target.closest('tr[data-i]');if(r){vsel=+r.dataset.i;drawVers()}};
+drawVers();
+const VN=VERS.map(v=>v[0]),WHO=['a.patel','s.jones','r.kim'];
+cardQuiz($('#quiz2'),[
+ {q:'In which version did the vulnerability first appear?',opts:VN,a:'v4',why:'v4 removed the two lines that checked the quantity was between 1 and 10, so negative numbers are accepted again.'},
+ {q:'Who made that change?',opts:WHO,a:'r.kim',why:'The audit trail records who made each change, so the team knows who to ask about it. This is what is meant by accountability.'},
+ {q:'Which bad programming practice caused it?',opts:['Making do with a temporary fix instead of a proper solution','Using a third-party library','Writing too many comments'],a:'Making do with a temporary fix instead of a proper solution',why:'The proper solution was to raise the limit for school bookings, not to remove the check altogether.'},
+ {q:'Which version first protected the program against negative quantities?',opts:VN,a:'v2',why:'s.jones added the validation loop in v2. The team can copy those lines back in.'},
+ {q:'Who changed the name of a variable to "pickles"?',opts:WHO,a:'s.jones',why:'v5, on Thursday at 11:20. A badly chosen name makes the code harder to read, and the audit trail shows exactly when it happened.'},
+ {q:'What does an audit trail record about each change to the code?',opts:['Who made it, what was changed and when','Only the newest version of the code','How fast the program runs'],a:'Who made it, what was changed and when',why:'That is what lets a problem be traced back to the version in which it first appeared.'},
+],null,$('#score2'),$('#qreset2'));
+
+cardQuiz($('#quiz3'),[
+ {q:'Planning the design of the program properly before writing any code.',a:'Good practice',why:'It is easier to write well-structured, robust code when it has been thought through first.'},
+ {q:'Using a third-party library module without checking it for vulnerabilities.',a:'Bad practice',why:'Ready-made code saves time, but it may contain security flaws that become part of your program.'},
+ {q:'Every programmer on the team following the same agreed coding standards.',a:'Good practice',why:'Code written in a similar style is more readable and easier to combine.'},
+ {q:'Leaving a temporary fix in place because the deadline is tomorrow.',a:'Bad practice',why:'A quick fix often hides the real problem or creates a new weakness. Time should be spent on a proper, permanent solution.'},
+ {q:'Writing one long block of code instead of splitting it into subprograms.',a:'Bad practice',why:'Properly structured code is easier to read and debug.'},
+ {q:'Testing the program with invalid and extreme inputs as well as normal ones.',a:'Good practice',why:'Without adequate testing, code is likely to be unreliable and error-prone.'},
+ {q:'Skipping testing to release the program sooner.',a:'Bad practice',why:'Untested code is likely to fail when something unexpected happens.'},
+ {q:'Having code reviewed regularly, by another programmer or an automated tool.',a:'Good practice',why:'Reviews spot poor practice and vulnerabilities before the code is released.'},
+ {q:'Choosing a programming language without considering its known vulnerabilities.',a:'Bad practice',why:'Some languages have weaknesses of their own. For example, C and C++ let programs access memory directly, which attackers can exploit.'},
+],['Good practice','Bad practice'],$('#score3'),$('#qreset3'));
+
+/* audit trail: access log on a live system */
 const LOG=[
  ['Mon 16:02','mrs.khan','LOGIN','Success','Staff room PC 2',0],
  ['Mon 16:10','mrs.khan','EDIT','Grades/Y10-mock.xlsx (entered marks)','Staff room PC 2',0],

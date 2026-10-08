@@ -1,0 +1,232 @@
+---
+layout: demo
+title: "Internet of Things"
+spec: "EDEXCEL GCSE · 3.1.3"
+---
+<style>
+.hops{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.5fr) minmax(0,1fr) minmax(0,.5fr) minmax(0,1fr) minmax(0,.5fr) minmax(0,1fr);align-items:center;margin-top:14px}
+.node{border:3px solid var(--ink);border-radius:14px;padding:12px;background:var(--bg);text-align:center;min-height:132px;transition:border-color .2s,box-shadow .2s}
+.node b{display:block}
+.node small{display:block;color:var(--muted);font-size:.78rem;line-height:1.3}
+.node .ico{font-size:1.9rem;line-height:1.3}
+.node.on,.link.on{border-color:var(--one)}
+.node.on{box-shadow:0 0 0 4px var(--one-soft)}
+.link{padding:0 6px;text-align:center}
+.link .lab{font:800 .7rem var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.link .bar{height:12px;border-radius:6px;background:var(--off);margin:4px 0;transition:background .2s}
+.link.on .bar{background:var(--one)}
+.link .val{font:600 .78rem var(--mono);min-height:1.3em}
+.appsw{font:700 .8rem var(--mono);padding:2px 10px;border-radius:999px;background:var(--line);display:inline-block;margin-top:6px}
+.appsw.lit{background:var(--hl);color:#16202B}
+.lamp{width:34px;height:34px;border-radius:50%;background:var(--off);margin:4px auto;transition:background .3s,box-shadow .3s}
+.lamp.lit{background:var(--hl);box-shadow:0 0 22px var(--hl)}
+.explain{font-size:1.06rem;min-height:3.3em;margin:14px 0 0;max-width:85ch}
+.sim{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:stretch}
+.pane{border:2px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.pane h3{margin:0 0 2px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pane .role{font-weight:800;margin:0 0 10px}
+pre.code{margin:0;font:.86rem/1.7 var(--mono);background:var(--panel);border-radius:8px;padding:8px 12px;overflow-x:auto}
+.big{font:700 1.6rem/1.2 var(--mono);margin:6px 0}
+.batt{display:flex;height:38px;border:2px solid var(--ink);border-radius:8px;overflow:hidden;margin:8px 0}
+.batt div{height:100%;color:#fff;font:700 .72rem var(--sans);display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;transition:flex .3s}
+.net{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.host{border:2px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg);font-weight:700}
+.host small{display:block;font-weight:600;color:var(--muted)}
+.host.bad{border-color:var(--bad);background:var(--bad-soft)}
+.host.leak{border-color:var(--hl);background:var(--hl-soft)}
+.alog{font:.88rem/1.6 var(--mono);background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;min-height:150px;white-space:pre-wrap}
+.alog .e{color:#FF8A80}.alog .g{color:#7CE0A6}.alog .s{color:#9AA7B3}
+@media (max-width:900px){.hops,.sim{grid-template-columns:1fr}.link{padding:8px 0}}
+</style>
+
+<p class="lede">The Internet of Things (IoT) is what you get when embedded systems are given a wireless connection to the internet. The devices collect and exchange data with little or no human involvement, and can be monitored and controlled from anywhere.</p>
+
+<section class="block">
+  <h2>Switching on a light from your phone</h2>
+  <p class="sub">The phone does not talk to the bulb directly. Step through to follow the command from the app to the light.</p>
+  <div class="row">
+    <button class="btn pri" id="step">Step ▸</button><button class="btn" id="play">Play</button><button class="btn" id="reset">Reset</button>
+  </div>
+  <div class="hops">
+    <div class="node" id="n-phone"><div class="ico">📱</div><b>Phone app</b><small>Anywhere with an internet connection</small><span class="appsw" id="appsw">Hall light: off</span></div>
+    <div class="link" id="l-1"><div class="lab">Internet</div><div class="bar"></div><div class="val"></div></div>
+    <div class="node" id="n-server"><div class="ico">🗄️</div><b>Remote server</b><small>Run by the bulb's manufacturer, in the cloud</small></div>
+    <div class="link" id="l-2"><div class="lab">Internet</div><div class="bar"></div><div class="val"></div></div>
+    <div class="node" id="n-router"><div class="ico">📶</div><b>Home router</b><small>Connects the home network to the internet</small></div>
+    <div class="link" id="l-3"><div class="lab">Wi-Fi</div><div class="bar"></div><div class="val"></div></div>
+    <div class="node" id="n-bulb"><div class="lamp" id="lamp"></div><b>Smart bulb</b><small>Microcontroller, wireless receiver and an LED</small></div>
+  </div>
+  <p class="explain" id="explain"></p>
+  <p class="note">The bulb is an embedded system. Adding wireless connectivity and a remote server is what makes it an IoT device.</p>
+</section>
+
+<section class="block">
+  <h2>Acting on its own</h2>
+  <p class="sub">An IoT device can also be programmed to act when its sensors pick up something outside the normal range, with nobody pressing anything. This room light switches itself off when no movement is detected. Each tick is one minute.</p>
+  <div class="row" style="margin-bottom:14px">
+    <button class="btn pri" id="a-run">Pause</button>
+    <label class="check"><input type="checkbox" id="a-in" checked> Someone is in the room</label>
+    <label class="check">Switch off after <input type="range" id="a-lim" min="1" max="10" value="3"> <b id="a-lv" class="mono">3 min</b></label>
+  </div>
+  <div class="sim">
+    <div class="pane"><h3>Input</h3><p class="role">Motion sensor</p><p id="a-sense"></p>
+      <h3 style="margin-top:16px">Output</h3><p class="role">Light</p><div class="lamp" id="a-lamp" style="margin:4px 0"></div></div>
+    <div class="pane"><h3>Process</h3><p class="role">Program in the microcontroller</p>
+<pre class="code">while True:
+    if motion_detected():
+        light_on()
+        quiet = 0
+    else:
+        quiet = quiet + 1
+        if quiet &gt;= LIMIT:
+            light_off()
+    upload(reading)
+    wait(1 minute)</pre></div>
+    <div class="pane"><h3>Uploaded to the server</h3><p class="role">What the app can show you</p>
+      <p>Light on for <b class="mono" id="a-on">0</b> min</p>
+      <p>Without the rule it would be <b class="mono" id="a-all">0</b> min</p>
+      <p>Energy saved: <b class="mono" id="a-save">0%</b></p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Making the battery last</h2>
+  <p class="sub">Many IoT devices sit where there is no mains power, such as a sensor on a glacier or in a field, so they run on a battery. Sending data wirelessly is the most power-hungry thing they do. See how the design choices change the battery life of a soil moisture sensor.</p>
+  <div class="row">
+    <label class="check">Send a reading every <input type="range" id="b-int" min="0" max="5" value="0"> <b id="b-iv" class="mono"></b></label>
+    <label class="check"><input type="checkbox" id="b-sleep"> Power down components between readings</label>
+  </div>
+  <p class="big" id="b-life"></p>
+  <div class="batt" id="b-bar"></div>
+  <p class="status" id="b-msg"></p>
+  <p class="note">The figures are made up to show the pattern, but the pattern is real. The programmer's choices matter as much as the battery: efficient code that does less, less often, keeps the device running for longer. Devices that must be always on, such as pacemakers, cannot simply power down, so they are designed to use very little energy all the time.</p>
+</section>
+
+<section class="block">
+  <h2>Privacy and security</h2>
+  <p class="sub">IoT devices are often shipped with weak security, and many collect personal data. An attacker only needs to find one poorly secured device to get onto the network it is connected to. Choose how this smart camera is set up, then let the attacker try.</p>
+  <div class="row">
+    <label class="check"><input type="checkbox" id="s-pw"> Default password changed</label>
+    <label class="check"><input type="checkbox" id="s-patch"> Latest software patch installed</label>
+    <label class="check"><input type="checkbox" id="s-enc"> Data encrypted all the way to the server</label>
+    <button class="btn pri" id="s-go">Attacker scans the internet</button>
+  </div>
+  <div class="net" id="net"></div>
+  <div class="alog" id="alog"></div>
+  <p class="note">The program in most IoT devices is held in flash memory, which can be rewritten. That makes it easy to install a patch that fixes a security flaw, but without proper security it is just as easy for an attacker to reprogram the device with malware.</p>
+</section>
+
+<section class="block">
+  <h2>Wireless technologies used by IoT devices</h2>
+  <div class="scroll"><table class="t">
+    <tr><th>Technology</th><th>Range</th><th>Power needed</th><th>Typical use</th></tr>
+    <tr><td><b>Wi-Fi</b></td><td>Around a building</td><td>High</td><td>Mains-powered devices that need a direct internet connection: smart speakers, cameras, bulbs</td></tr>
+    <tr><td><b>Bluetooth</b></td><td>A few metres</td><td>Low</td><td>Linking a wearable to a phone: fitness bands, smart watches, earbuds</td></tr>
+    <tr><td><b>Zigbee</b></td><td>Short, but devices pass messages on to each other (a mesh network)</td><td>Very low</td><td>Many small battery-powered sensors and switches spread around a home or building</td></tr>
+    <tr><td><b>RFID</b></td><td>Centimetres to a few metres</td><td>None in the tag: it is powered by the reader's radio signal</td><td>Contactless cards, tags on stock in shops and warehouses</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+/* ---------- phone to bulb ---------- */
+let lit=false,queue=[],timer=null;
+const cmd=()=>lit?'off':'on';
+function seq(){const c=cmd();return[
+ {hi:['n-phone'],text:`You tap <b>${c==='on'?'On':'Off'}</b> in the app. The app turns the tap into a message: which bulb, and what it should do.`},
+ {hi:['n-phone','l-1','n-server'],val:{'l-1':`hall-bulb: ${c} →`},text:'The phone sends the message over the internet to the manufacturer\'s <b>remote server</b>, using Wi-Fi or mobile data. You could be in another country.'},
+ {hi:['n-server'],text:'The server checks that your account is allowed to control this bulb, and looks up which home network the bulb is connected to.'},
+ {hi:['n-server','l-2','n-router'],val:{'l-2':`hall-bulb: ${c} →`},text:'The server passes the command on over the internet to your <b>home router</b>.'},
+ {hi:['n-router','l-3','n-bulb'],val:{'l-3':`${c} →`},text:'The router sends the command wirelessly, by <b>Wi-Fi</b>, to the bulb.'},
+ {hi:['n-bulb'],text:'The bulb\'s wireless receiver passes the message to its <b>microcontroller</b>. The program stored in the microcontroller decodes the command.'},
+ {hi:['n-bulb'],lamp:c==='on',text:`The microcontroller sends a signal to its output and the LED is switched <b>${c}</b>.`},
+ {hi:['n-bulb','l-3','n-router','l-2','n-server','l-1','n-phone'],val:{'l-3':`← now ${c}`,'l-2':`← now ${c}`,'l-1':`← now ${c}`},app:c==='on',text:`The bulb reports its new state back the same way, so the app shows that the light is now <b>${c}</b>. Press Step to send another command.`}]}
+function show(r){
+  $$('.hops .on').forEach(e=>e.classList.remove('on'));(r.hi||[]).forEach(id=>document.getElementById(id).classList.add('on'));
+  ['l-1','l-2','l-3'].forEach(id=>document.querySelector('#'+id+' .val').textContent=(r.val&&r.val[id])||'');
+  if('lamp' in r){lit=r.lamp;$('#lamp').classList.toggle('lit',lit)}
+  if('app' in r){$('#appsw').classList.toggle('lit',r.app);$('#appsw').textContent='Hall light: '+(r.app?'on':'off')}
+  $('#explain').innerHTML=r.text;
+}
+function step(){if(!queue.length)queue=seq();show(queue.shift());if(!queue.length)stop()}
+function stop(){clearInterval(timer);timer=null;$('#play').textContent='Play'}
+$('#step').onclick=()=>{stop();step()};
+$('#play').onclick=()=>{if(timer){stop();return}$('#play').textContent='Pause';step();if(queue.length)timer=setInterval(step,1900);else stop()};
+$('#reset').onclick=()=>{stop();queue=[];show({lamp:false,app:false,text:'Press <b>Step</b> to tap the switch in the app.'})};
+$('#reset').onclick();
+
+/* ---------- automatic rule ---------- */
+let quiet=0,aLit=false,onMin=0,allMin=0,everOn=false,aTimer=null;
+function aTick(){
+  const here=$('#a-in').checked,lim=+$('#a-lim').value;
+  if(here){aLit=true;everOn=true;quiet=0}else{quiet++;if(quiet>=lim)aLit=false}
+  if(aLit)onMin++;if(everOn)allMin++;aDraw();
+}
+function aDraw(){
+  const here=$('#a-in').checked;
+  $('#a-sense').innerHTML=here?'<b>Movement detected</b>':`No movement for <b>${quiet}</b> min`;
+  $('#a-lamp').classList.toggle('lit',aLit);
+  $('#a-on').textContent=onMin;$('#a-all').textContent=allMin;$('#a-save').textContent=allMin?Math.round((1-onMin/allMin)*100)+'%':'0%';
+}
+function aStart(){aTimer=setInterval(aTick,600);$('#a-run').textContent='Pause'}
+$('#a-run').onclick=()=>{if(aTimer){clearInterval(aTimer);aTimer=null;$('#a-run').textContent='Run'}else aStart()};
+$('#a-lim').oninput=()=>$('#a-lv').textContent=$('#a-lim').value+' min';
+$('#a-in').onchange=aDraw;
+aDraw();aStart();
+
+/* ---------- battery ---------- */
+const MINS=[1,2,5,15,30,60],CAP=2400,SEND=0.02,AWAKE=5,ASLEEP=0.01; /* mAh, mAh per transmission, mA, mA */
+function bDraw(){
+  const m=MINS[$('#b-int').value],sleeping=$('#b-sleep').checked;
+  const tx=60/m*SEND,idle=sleeping?ASLEEP:AWAKE,hours=CAP/(tx+idle),days=hours/24;
+  $('#b-iv').textContent=m===60?'hour':m===1?'minute':m+' minutes';
+  $('#b-life').textContent='Battery lasts about '+(days>=365?(days/365).toFixed(1)+' years':Math.round(days)+' days');
+  $('#b-bar').innerHTML=`<div style="flex:${tx};background:var(--one)">transmitting</div><div style="flex:${idle};background:${sleeping?'var(--ok)':'var(--bad)'}">${sleeping?'asleep':'switched on, waiting'}</div>`;
+  $('#b-msg').textContent=sleeping?(m<15?'Now almost all the energy goes on transmitting. Send less often to stretch the battery further.':'The device spends nearly all its time powered down and only wakes briefly to take a reading and send it.')
+    :'Most of the energy is wasted keeping everything switched on while the device is doing nothing. Sending less often barely helps.';
+}
+$('#b-int').oninput=$('#b-sleep').onchange=bDraw;bDraw();
+
+/* ---------- security ---------- */
+const HOSTS=[['cam','Smart camera','IoT device'],['bulb','Smart bulb','IoT device'],['laptop','Laptop','personal files'],['phone','Phone','personal files'],['srv','Remote server','stores the video']];
+let sBusy=false;
+function netDraw(bad=[],leak=[]){$('#net').innerHTML=HOSTS.map(h=>`<div class="host ${bad.includes(h[0])?'bad':leak.includes(h[0])?'leak':''}">${h[1]}<small>${bad.includes(h[0])?'compromised':leak.includes(h[0])?'data exposed':h[2]}</small></div>`).join('')}
+const say=(t,c)=>$('#alog').insertAdjacentHTML('beforeend',`<span class="${c||''}">${t}</span>\n`);
+$('#s-go').onclick=async()=>{
+  if(sBusy)return;sBusy=true;$('#s-go').disabled=true;$('#alog').innerHTML='';netDraw();
+  const pw=$('#s-pw').checked,patch=$('#s-patch').checked,enc=$('#s-enc').checked;let inside=false;
+  say('Scanning the internet for connected devices…','s');await sleep(900);
+  say('Found a smart camera. Trying the factory default login: admin / admin');await sleep(1000);
+  if(!pw){say('✖ Login accepted. The password was never changed.','e');inside=true}
+  else{say('✔ Login refused. The owner set their own password.','g');await sleep(900);
+    say('Looking up known flaws in this model of camera…');await sleep(1000);
+    if(!patch){say('✖ The camera is running old software with a known vulnerability. Exploit worked.','e');inside=true}
+    else say('✔ The flaw was fixed by the latest patch. Exploit failed.','g')}
+  await sleep(900);
+  if(inside){netDraw(['cam']);say('✖ The attacker controls the camera and reprograms its flash memory with malware.','e');await sleep(1100);
+    netDraw(['cam','bulb','laptop','phone']);say('✖ The camera is on the home network, so the attacker can now reach every other device on it.','e');await sleep(900)}
+  say('Listening to the data sent from the camera to the remote server…');await sleep(1000);
+  if(!enc){netDraw(inside?['cam','bulb','laptop','phone']:[],['srv',...(inside?[]:['cam'])]);say('✖ Not encrypted. The attacker can watch the video and work out when nobody is at home.','e')}
+  else say('✔ Encrypted. The intercepted data is unreadable.','g');
+  await sleep(700);
+  say(inside||!enc?'\nResult: security and privacy are at risk. Change a setting and try again.':'\nResult: the attacker gives up and moves on to an easier target.','s');
+  sBusy=false;$('#s-go').disabled=false;
+};
+netDraw();say('Waiting. The camera is connected to the internet through the home router.','s');
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'What turns an embedded system into an IoT device?',opts:['A bigger processor','A connection to the internet','A keyboard and screen'],a:'A connection to the internet',why:'Usually wireless, so it can exchange data with a remote server and other devices.'},
+ {q:'An IoT light bulb is switched on from a phone app. Where does the app send the command first?',opts:['Straight to the bulb','To a remote server','To the electricity meter'],a:'To a remote server',why:'The server passes the command on over the internet to the home router, which sends it wirelessly to the bulb\'s microcontroller.'},
+ {q:'Which part of the smart bulb decodes the command and switches the LED?',opts:['The microcontroller','The router','The remote server'],a:'The microcontroller',why:'It runs the program stored in its flash memory.'},
+ {q:'Which wireless technology links a fitness band to the phone in your pocket?',opts:['Bluetooth','RFID','Zigbee'],a:'Bluetooth',why:'Short range and low power, ideal between a wearable and a phone.'},
+ {q:'Which wireless technology is used by a contactless card with no battery?',opts:['Wi-Fi','Bluetooth','RFID'],a:'RFID',why:'The card is powered by the reader\'s radio signal.'},
+ {q:'Why is power consumption a key design consideration for many IoT devices?',opts:['They run on batteries where there is no mains power','Electricity is expensive','They overheat easily'],a:'They run on batteries where there is no mains power',why:'Gathering and transmitting data is power-intensive, and the battery may be hard to replace.'},
+ {q:'Which is one way to make an IoT device\'s battery last longer?',opts:['Power down components when they are not being used','Transmit data more often','Add a bigger screen'],a:'Power down components when they are not being used',why:'Efficient program code that does less work also saves energy.'},
+ {q:'Why is a default password that cannot be changed a security risk?',opts:['Anyone can look it up and log in','It makes the device slower','It uses more battery'],a:'Anyone can look it up and log in',why:'One poorly secured device gives an attacker a way into the whole network.'},
+ {q:'Why do IoT devices raise privacy concerns?',opts:['They collect personal data','They use wireless signals','They are small'],a:'They collect personal data',why:'Data such as your location, heart rate or when you are at home is sent to remote servers.'},
+],null,$('#score'),$('#qreset'));
+</script>

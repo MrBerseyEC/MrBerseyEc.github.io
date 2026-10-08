@@ -1,0 +1,137 @@
+---
+layout: demo
+title: "Computer systems"
+heading: "What is a computer system?"
+spec: "EDEXCEL GCSE · TOPIC 3"
+---
+<style>
+.ipo{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1.2fr) auto minmax(0,1fr);gap:10px;align-items:stretch}
+.stage{border:2px solid var(--line);border-radius:12px;padding:14px;background:var(--bg);transition:border-color .2s,box-shadow .2s}
+.stage h3{margin:0 0 2px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stage .role{font-weight:800;margin:0 0 10px}
+.stage.on{border-color:var(--one);box-shadow:0 0 0 4px var(--one-soft)}
+.stage p.txt{margin:0;min-height:4.5em}
+.arrow{align-self:center;font-size:1.6rem;color:var(--muted)}
+.ins{display:grid;gap:6px}
+.ins button{font:600 .9rem var(--sans);text-align:left;padding:8px 10px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.ins button:hover{background:var(--hl-soft)}
+.ins button.sel{border-color:var(--one);background:var(--one-soft)}
+.layers{display:grid;gap:6px;max-width:520px;margin:0 0 16px}
+.layers>div{border:2px solid var(--ink);border-radius:10px;padding:10px 12px;background:var(--bg);text-align:center;font-weight:800}
+.layers small{display:block;font-weight:600;color:var(--muted)}
+.layers .two{display:grid;grid-template-columns:1fr 1fr;gap:6px;border:0;padding:0;background:none}
+.layers .two>div{border:2px solid var(--ink);border-radius:10px;padding:10px 12px;background:var(--bg)}
+.layers .sw{border-color:var(--one)!important}
+@media (max-width:860px){.ipo{grid-template-columns:1fr}.arrow{justify-self:center;transform:rotate(90deg)}}
+</style>
+
+<p class="lede">A computer is a machine that takes an input, processes it by following a program, and produces an output. Every computer system is made of hardware (the physical parts) and software (the programs that run on them). Phones, cars, washing machines and remote controls all contain computers.</p>
+
+<section class="block">
+  <h2>Input, process, output</h2>
+  <p class="sub">Choose a device, then click one of its inputs to follow it through the computer inside.</p>
+  <div class="row" style="margin-bottom:14px"><label class="check">Device <select id="dev"></select></label></div>
+  <div class="ipo">
+    <div class="stage" id="s-in"><h3>Input</h3><p class="role">Data from the surroundings</p><div class="ins" id="ins"></div></div>
+    <div class="arrow">→</div>
+    <div class="stage" id="s-pr"><h3>Process</h3><p class="role">The program decides what to do</p><p class="txt" id="pr"></p></div>
+    <div class="arrow">→</div>
+    <div class="stage" id="s-out"><h3>Output</h3><p class="role">Something happens</p><p class="txt" id="out"></p></div>
+  </div>
+  <p class="note">The processing is the clever part. The hardware only does anything useful because a program (software) tells it exactly what to do with each input.</p>
+</section>
+
+<section class="block">
+  <h2>Input, process or output?</h2>
+  <p class="sub">A microwave oven is heating a bowl of soup.</p>
+  {% include quiz.html n=1 %}
+</section>
+
+<section class="block">
+  <h2>Hardware or software?</h2>
+  {% include quiz.html n=2 %}
+</section>
+
+<section class="block">
+  <h2>Three types of software</h2>
+  <p class="sub">The operating system sits between the hardware and everything else. Applications and utilities run on top of it, and people (sometimes called liveware) use those.</p>
+  <div class="layers">
+    <div>Users<small>liveware</small></div>
+    <div class="two"><div class="sw">Application software<small>programs for the user's own tasks</small></div><div class="sw">Utility software<small>tools that look after the computer</small></div></div>
+    <div class="sw">Operating system<small>controls the hardware and all other software</small></div>
+    <div>Hardware</div>
+  </div>
+  {% include quiz.html n=3 %}
+</section>
+<script>
+const DEV=[
+ {name:'Washing machine',ins:[
+  ['Start button is pressed','The program checks the door is locked, then begins the stored wash cycle.','The water valve opens and the drum motor starts.'],
+  ['Temperature sensor reads 28 °C','The program compares the reading with the 40 °C the wash needs. It is too cold.','The heater is switched on.'],
+  ['Water level sensor: drum is full','The program decides there is enough water for this wash.','The water valve is closed.']]},
+ {name:'Calculator',ins:[
+  ['Keys pressed: 7 × 6 =','The program multiplies the two numbers.','The display shows 42.'],
+  ['Keys pressed: 5 ÷ 0 =','The program checks the calculation and finds it cannot be done.','The display shows an error message.']]},
+ {name:'Smartphone',ins:[
+  ['Touchscreen: tap on the camera icon','The program works out which icon is at that position and loads the camera app.','The screen shows the view from the camera.'],
+  ['Microphone picks up "call home"','The program turns the sound into text and looks up "home" in the contacts.','The phone dials the number and the speaker plays the ringing tone.'],
+  ['GPS receiver reports a new position','The maps program works out where that position is on the map.','The blue dot moves on the screen.']]},
+ {name:'Car',ins:[
+  ['Wheel sensor: a wheel has stopped turning while braking','The program decides the wheel has locked and the car may skid.','The brake on that wheel is released and re-applied many times a second.'],
+  ['Rain sensor detects water on the windscreen','The program decides how heavy the rain is.','The wiper motor is switched on at a suitable speed.'],
+  ['Crash sensor detects a sudden stop','The program decides this is a collision, not just hard braking.','The air bags are fired.']]},
+ {name:'TV remote control',ins:[
+  ['The "volume up" button is pressed','The program looks up the code for that button.','An infrared LED flashes the code to the TV.']]},
+ {name:'Printer',ins:[
+  ['A document arrives from a laptop','The program works out where every dot of ink must go on the page.','The paper feed motor and print head produce the printed page.'],
+  ['Paper sensor: the tray is empty','The program decides it cannot carry on printing.','The warning light flashes and a message appears on the display.']]}];
+let busy=false;
+$('#dev').innerHTML=DEV.map((d,i)=>`<option value="${i}">${d.name}</option>`).join('');
+const lit=id=>['#s-in','#s-pr','#s-out'].forEach(s=>$(s).classList.toggle('on',s===id));
+function drawDev(){
+  const d=DEV[$('#dev').value];
+  $('#ins').innerHTML=d.ins.map((x,i)=>`<button data-i="${i}">${x[0]}</button>`).join('');
+  $('#pr').textContent='';$('#out').textContent='';lit(null);
+}
+$('#ins').onclick=async e=>{
+  const b=e.target.closest('button');if(!b||busy)return;busy=true;
+  const x=DEV[$('#dev').value].ins[b.dataset.i];
+  $$('#ins button').forEach(k=>k.classList.toggle('sel',k===b));$('#pr').textContent='';$('#out').textContent='';
+  lit('#s-in');await sleep(600);lit('#s-pr');$('#pr').textContent=x[1];await sleep(1300);lit('#s-out');$('#out').textContent=x[2];busy=false;
+};
+$('#dev').onchange=()=>{if(!busy)drawDev()};
+drawDev();
+
+cardQuiz($('#quiz1'),[
+ {q:'You press 2, 0, 0 on the keypad.',a:'Input',why:'The keypad is how data gets into the computer.'},
+ {q:'The program counts down from 2:00 to 0:00.',a:'Process',why:'Following the program\'s instructions is the processing.'},
+ {q:'The display shows the time left.',a:'Output',why:'The display presents the result of the processing.'},
+ {q:'The door sensor reports that the door is shut.',a:'Input',why:'Sensors are input devices: they tell the computer about its surroundings.'},
+ {q:'The program checks whether the door is shut before allowing the oven to start.',a:'Process',why:'A decision made by the program is part of the processing.'},
+ {q:'The beeper sounds three times.',a:'Output',why:'Sound is an output.'},
+ {q:'The part that makes the microwaves is switched on.',a:'Output',why:'Switching on another component is an output, even though there is nothing to see.'},
+],['Input','Process','Output'],$('#score1'),$('#qreset1'));
+
+cardQuiz($('#quiz2'),[
+ {q:'Keyboard',a:'Hardware',why:'A physical component you can touch.'},
+ {q:'Web browser',a:'Software',why:'A program that runs on the hardware.'},
+ {q:'Central processing unit (CPU)',a:'Hardware',why:'The physical chip that carries out the instructions.'},
+ {q:'Operating system',a:'Software',why:'A set of programs that controls the hardware.'},
+ {q:'Hard drive',a:'Hardware',why:'The physical storage device. The files saved on it are not hardware.'},
+ {q:'A game downloaded to a console',a:'Software',why:'The game is a program. The console and controller are hardware.'},
+ {q:'Temperature sensor',a:'Hardware',why:'A physical input device.'},
+ {q:'Graphics card',a:'Hardware',why:'A physical component. The driver that lets the OS use it is software.'},
+],['Hardware','Software'],$('#score2'),$('#qreset2'));
+
+cardQuiz($('#quiz3'),[
+ {q:'Android',a:'Operating system',why:'It controls a phone\'s hardware and runs the apps.'},
+ {q:'A spreadsheet',a:'Application',why:'A program designed for an end user\'s own tasks.'},
+ {q:'A disk defragmenter',a:'Utility',why:'It improves the performance of the computer itself.'},
+ {q:'A web browser',a:'Application',why:'The user runs it to view web pages.'},
+ {q:'An anti-malware scanner',a:'Utility',why:'It protects the computer rather than doing a task for the user.'},
+ {q:'Microsoft Windows',a:'Operating system',why:'It manages files, processes, peripherals and users.'},
+ {q:'A console game',a:'Application',why:'Software for the end user.'},
+ {q:'A backup tool',a:'Utility',why:'It adds a maintenance function to the system.'},
+ {q:'A file compression tool',a:'Utility',why:'It reduces file sizes to free up storage space.'},
+],['Operating system','Application','Utility'],$('#score3'),$('#qreset3'));
+</script>

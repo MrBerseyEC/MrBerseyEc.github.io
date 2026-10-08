@@ -25,6 +25,8 @@ spec: "EDEXCEL GCSE · 3.3.1 · 3.3.2"
 .stats b{color:var(--ink);font-family:var(--mono)}
 .exe{display:inline-flex;align-items:center;gap:6px;font:700 .85rem var(--mono);padding:4px 10px;border-radius:8px;border:2px dashed var(--line);color:var(--muted);margin-top:8px}
 .exe.made{border-style:solid;border-color:var(--ok);color:var(--ok)}
+.iset{font:.82rem var(--mono);color:var(--muted);margin:0 0 8px}
+.pick{display:grid;gap:6px;margin:0 0 14px}
 @media (max-width:860px){.three{grid-template-columns:1fr}.race{grid-template-columns:1fr}}
 </style>
 <p class="lede">The CPU can only execute machine code: binary instructions for its own instruction set. Everything else has to be translated into machine code first, by an assembler, a compiler or an interpreter.</p>
@@ -73,6 +75,22 @@ spec: "EDEXCEL GCSE · 3.3.1 · 3.3.2"
     <tr><td><b>Speed</b></td><td>Slower to run, as each line is translated every time</td><td>Faster to run once compiled, but compiling takes time</td></tr>
     <tr><td><b>Best for</b></td><td>Developing and debugging: quick to test small changes</td><td>Distributing finished software; the source code stays private</td></tr>
   </table></div>
+</section>
+
+<section class="block">
+  <h2>Same program, different CPU</h2>
+  <p class="sub">Different types of CPU have different instruction sets, so machine code written for one will not run on another. These two CPUs use different binary codes for the same five instructions. Choose what you give to the user, then run it on both.</p>
+  <div class="pick" id="pick">
+    <label class="check"><input type="radio" name="ship" value="A" checked> The executable file compiled for CPU A</label>
+    <label class="check"><input type="radio" name="ship" value="B"> The same source code, recompiled for CPU B</label>
+    <label class="check"><input type="radio" name="ship" value="S"> The Python source code (each computer has its own interpreter)</label>
+  </div>
+  <div class="row" style="margin-bottom:12px"><button class="btn pri" id="x-go">Run on both</button><span class="mono" id="x-what"></span></div>
+  <div class="race">
+    <div class="lane"><h3>CPU A</h3><p class="iset" id="x-setA"></p><div class="src" id="x-srcA"></div><div class="console" id="x-outA"></div></div>
+    <div class="lane"><h3>CPU B</h3><p class="iset" id="x-setB"></p><div class="src" id="x-srcB"></div><div class="console" id="x-outB"></div></div>
+  </div>
+  <p class="note">Compiled machine code is <b>machine dependent</b>: it has to be recompiled before it will run on a computer with a different architecture. High-level source code is <b>portable</b>: it can run on any computer that has a suitable compiler or interpreter.</p>
 </section>
 
 <section class="block">
@@ -146,7 +164,33 @@ $('#e1').onchange=$('#e2').onchange=fresh;
 $('#clr').onclick=()=>{if(running)return;built=null;stats={I:0,C:0};$('#I-tr').textContent=$('#C-tr').textContent='0';$('#I-t').textContent=$('#C-t').textContent='0.0 s';$('#exe').className='exe';$('#exe').textContent='📦 program.exe (not built)';$('#e1').checked=$('#e2').checked=false;fresh()};
 fresh();
 
+/* ---------- same program, different CPU ---------- */
+const SETS={A:{LOAD:1,ADD:2,STORE:4,OUT:5,HALT:0},B:{LOAD:10,ADD:6,STORE:12,OUT:3,HALT:15}};
+const XPROG=[['LOAD',5],['ADD',6],['STORE',7],['OUT',0],['HALT',0]],XDATA=[5,3,0];
+const b4=n=>n.toString(2).padStart(4,'0');
+const build=cpu=>[...XPROG.map(([o,n])=>SETS[cpu][o]*16+n),...XDATA];
+const ship=()=>document.querySelector('[name=ship]:checked').value;
+let xBusy=false;
+function xFresh(){const s=ship();
+  $('#x-what').textContent=s==='S'?'program.py':s==='A'?'program-A.exe':'program-B.exe';
+  for(const c of['A','B']){$('#x-set'+c).textContent='Instruction set: '+Object.entries(SETS[c]).map(([o,v])=>`${b4(v)} ${o}`).join(' · ');
+    $('#x-src'+c).innerHTML=(s==='S'?PY:build(s).map(w=>b4(w>>4)+' '+b4(w&15))).map(l=>`<div>${l}</div>`).join('');$('#x-out'+c).innerHTML=''}}
+async function xRun(c){const s=ship(),rows=$$('#x-src'+c+' div'),o='#x-out'+c;
+  const mark=(i,k)=>rows.forEach((r,j)=>{if(j===i)r.className=k});
+  if(s==='S'){out(o,`<span class="s">CPU ${c}'s interpreter translates each line into CPU ${c} machine code…</span>`);
+    for(let i=0;i<PY.length;i++){mark(i,'ex');await sleep(450);mark(i,'done')}out(o,'8');out(o,'<span class="s">[finished]</span>');return}
+  const names=Object.fromEntries(Object.entries(SETS[c]).map(([k,v])=>[v,k])),mem=build(s);let acc=0;
+  for(let pc=0;pc<XPROG.length;pc++){mark(pc,'ex');await sleep(550);const w=mem[pc],op=names[w>>4],n=w&15;
+    if(!op){mark(pc,'err');out(o,`<span class="e">Illegal instruction at address ${pc}: opcode ${b4(w>>4)} is not in CPU ${c}'s instruction set.\nProgram crashed.</span>`);
+      out(o,`<span class="s">This file was compiled for CPU ${s}.</span>`);return}
+    mark(pc,'done');if(op==='LOAD')acc=mem[n];else if(op==='ADD')acc+=mem[n];else if(op==='STORE')mem[n]=acc;else if(op==='OUT')out(o,String(acc));else break}
+  out(o,'<span class="s">[finished]</span>')}
+$('#x-go').onclick=async()=>{if(xBusy)return;xBusy=true;$('#x-go').disabled=true;xFresh();await Promise.all([xRun('A'),xRun('B')]);xBusy=false;$('#x-go').disabled=false};
+$('#pick').onchange=()=>{if(!xBusy)xFresh()};
+xFresh();
+
 cardQuiz($('#quiz2'),[
+ {q:'A game compiled for one type of CPU will not run on a console with a different type of CPU. Why?',opts:['The two CPUs have different instruction sets','The console has less RAM','Compiled code can only be run once'],a:'The two CPUs have different instruction sets',why:'Machine code is machine dependent. The source code must be recompiled for the other architecture.'},
  {q:'Which translator produces an executable file that can be run without the translator?',a:'Compiler',why:'The compiled machine code is saved as a standalone file.'},
  {q:'A program with an error on line 20 prints some output before stopping. Which translator was used?',a:'Interpreter',why:'An interpreter runs lines 1–19 before it reaches the error.'},
  {q:'A developer wants to sell software without giving away the source code.',a:'Compiler',why:'Customers get the executable, not the source code.'},

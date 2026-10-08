@@ -19,7 +19,20 @@ canvas{width:100%;height:220px;display:block}
 .vars{font:.85rem var(--mono);color:var(--muted);margin-top:8px}
 .vs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .vs ul{margin:6px 0 0;padding-left:1.1em}.vs li{margin:4px 0}
-@media (max-width:900px){.sim{grid-template-columns:1fr}}
+.mc{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.8fr) minmax(0,2fr) minmax(0,.8fr);gap:10px;align-items:stretch;margin-top:14px}
+.part{border:2px solid var(--line);border-radius:10px;padding:10px;background:var(--panel);cursor:pointer;transition:border-color .2s,box-shadow .2s;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.part b{display:block}
+.part small{display:block;color:var(--muted);font-size:.76rem;line-height:1.3}
+.part .v{font:600 .9rem var(--mono);min-height:1.4em;margin-top:4px}
+.part.on{border-color:var(--one);box-shadow:0 0 0 4px var(--one-soft)}
+.chipbox{border:3px solid var(--ink);border-radius:14px;padding:12px;background:var(--bg)}
+.chipbox>h3{margin:0 0 8px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}
+.chipbox .in{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.explain{font-size:1.06rem;min-height:3.3em;margin:14px 0 0;max-width:85ch}
+.info{margin:8px 0 0;font-size:.95rem;color:var(--muted);min-height:3em}
+.info b{color:var(--ink)}
+.model{margin-top:14px}
+@media (max-width:900px){.sim,.mc{grid-template-columns:1fr}}
 @media (max-width:640px){.vs{grid-template-columns:1fr}}
 </style>
 <p class="lede">An embedded system is a computer built into a larger device to do one dedicated job. Its program is fixed in ROM or flash memory, it takes inputs from sensors, and it controls outputs such as motors, heaters and displays. This one is a central heating thermostat.</p>
@@ -51,6 +64,37 @@ canvas{width:100%;height:220px;display:block}
     </div>
   </div>
   <p class="note">Things to notice: the program never ends and never changes; there is no keyboard or screen beyond what the job needs; and the processor only has to be powerful enough for this one task, so it can be cheap, tiny and use very little power.</p>
+</section>
+
+<section class="block">
+  <h2>Inside the microcontroller</h2>
+  <p class="sub">At the heart of an embedded system is a microcontroller: a CPU, memory and input/output ports, all on a single chip. Step through to follow one temperature reading through the thermostat, or click any part to see what it does.</p>
+  <div class="row"><button class="btn pri" id="m-step">Step ▸</button><button class="btn" id="m-reset">Reset</button>
+    <label class="check">Room temperature <input type="range" id="m-temp" min="12" max="26" step="0.5" value="17"> <b id="m-tv" class="mono">17.0 °C</b></label></div>
+  <div class="mc" id="mc">
+    <div class="part" id="m-sensor"><b>Sensor</b><small>Input device: measures the outside world</small><div class="v"></div></div>
+    <div class="part" id="m-adc"><b>Analogue-to-digital converter</b><small>Turns the sensor's signal into a binary number</small><div class="v"></div></div>
+    <div class="chipbox"><h3>Microcontroller (one chip)</h3>
+      <div class="in">
+        <div class="part" id="m-ram"><b>RAM</b><small>Holds data while it is being used</small><div class="v"></div></div>
+        <div class="part" id="m-flash"><b>Flash memory</b><small>Holds the program, even with the power off</small><div class="v"></div></div>
+        <div class="part" id="m-cpu"><b>CPU</b><small>Carries out the program's instructions</small><div class="v"></div></div>
+        <div class="part" id="m-io"><b>Input/output ports</b><small>Connect the chip to sensors and actuators</small><div class="v"></div></div>
+      </div>
+    </div>
+    <div class="part" id="m-act"><b>Actuator</b><small>Output device: makes something happen</small><div class="v"></div></div>
+  </div>
+  <p class="explain" id="m-explain"></p>
+  <p class="info" id="m-info"></p>
+  <p class="note">Some microcontrollers need extra components for their job: a <b>timer</b> to measure time intervals, a <b>counter</b> to record how many times something has happened, or <b>wireless connectivity</b> to talk to other devices. A thermostat that also connects to the internet is part of the <a href="iot.html">Internet of Things</a>.</p>
+</section>
+
+<section class="block">
+  <h2>Design one</h2>
+  <p class="sub">Choose a system, then decide what each component would be: an input, an output, or not needed at all.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">System <select id="d-sys"></select></label></div>
+  {% include quiz.html n=2 %}
+  <p class="note model" id="d-model"></p>
 </section>
 
 <section class="block">
@@ -121,6 +165,51 @@ $('#speed').oninput=()=>{if(timer)start()};
 $('#target').oninput=()=>{$('#tv').textContent=(+$('#target').value).toFixed(1)+' °C';show()};
 addEventListener('resize',drawChart);
 show();drawChart();start();
+
+/* ---------- inside the microcontroller ---------- */
+const MINFO={
+ 'm-sensor':'<b>Sensor</b>: an input device that measures something in the outside world, such as temperature, light, moisture, movement or pressure.',
+ 'm-adc':'<b>Analogue-to-digital converter (ADC)</b>: sensors produce analogue signals that vary smoothly. The ADC converts them into digital (binary) data that the CPU can handle.',
+ 'm-ram':'<b>RAM</b>: data received from input devices is stored here temporarily while the program works on it. It is lost when the power goes off.',
+ 'm-flash':'<b>Flash memory</b>: holds the program instructions. It is non-volatile, so the program is still there after a power cut, and it can be rewritten to install an update.',
+ 'm-cpu':'<b>CPU</b>: fetches the program instructions from flash memory and carries them out, interpreting the data and deciding what to do.',
+ 'm-io':'<b>Input/output ports</b>: the chip\'s connections to the outside world. Sensors are wired to input ports and actuators to output ports.',
+ 'm-act':'<b>Actuator</b>: an output device that makes something physical happen, such as a motor, a valve, a heater or a relay (an electrically operated switch).'};
+const MTARGET=20;let mq=[];
+const mT=()=>+$('#m-temp').value, mRaw=()=>Math.round(mT()*10);
+function mSeq(){const t=mT(),raw=mRaw(),cold=t<MTARGET-0.5,hot=t>MTARGET+0.5;return[
+ {hi:['m-sensor'],v:{'m-sensor':(0.5+t/100).toFixed(3)+' V'},text:`The temperature <b>sensor</b> produces a small voltage that depends on how warm the room is. This is an analogue signal.`},
+ {hi:['m-adc','m-io'],v:{'m-adc':raw.toString(2).padStart(8,'0')},text:`The <b>analogue-to-digital converter</b> turns the voltage into a binary number the CPU can handle: <b class="mono">${raw.toString(2).padStart(8,'0')}</b>, which is ${raw} in denary (tenths of a degree). It arrives through an input port.`},
+ {hi:['m-ram'],v:{'m-ram':'temp = '+t.toFixed(1)},text:`The reading is stored temporarily in the microcontroller's <b>RAM</b>.`},
+ {hi:['m-flash','m-cpu'],v:{'m-flash':'if temp < target…'},text:`The <b>CPU</b> fetches the next program instructions from <b>flash memory</b>. The program is always the same one.`},
+ {hi:['m-cpu','m-ram'],v:{'m-cpu':cold?'too cold':hot?'too warm':'about right'},text:`The CPU compares the reading (${t.toFixed(1)} °C) with the target (${MTARGET}.0 °C) and decides the room is <b>${cold?'too cold':hot?'too warm':'about right'}</b>.`},
+ {hi:['m-io','m-act'],v:{'m-io':cold?'signal: 1':hot?'signal: 0':'no change','m-act':cold?'Boiler ON':hot?'Boiler OFF':'unchanged'},text:cold?'A signal is sent through an output port to the <b>actuator</b>, a relay that switches the boiler <b>on</b>.':hot?'A signal is sent through an output port to the <b>actuator</b>, a relay that switches the boiler <b>off</b>.':'No action is needed, so the actuator is left as it is.'},
+ {hi:[],text:'The program waits, then starts again with a new reading. Change the room temperature and step through again.'}]}
+function mShow(r){
+  $$('#mc .on').forEach(e=>e.classList.remove('on'));(r.hi||[]).forEach(id=>document.getElementById(id).classList.add('on'));
+  for(const[id,v]of Object.entries(r.v||{}))document.querySelector('#'+id+' .v').textContent=v;
+  $('#m-explain').innerHTML=r.text;
+}
+function mReset(){mq=[];$$('#mc .v').forEach(v=>v.textContent='');mShow({text:'Press <b>Step</b> to take a temperature reading.'})}
+$('#m-step').onclick=()=>{if(!mq.length){$$('#mc .v').forEach(v=>v.textContent='');mq=mSeq()}mShow(mq.shift())};
+$('#m-reset').onclick=mReset;
+$('#m-temp').oninput=()=>{$('#m-tv').textContent=mT().toFixed(1)+' °C';mReset()};
+$('#mc').onclick=e=>{const p=e.target.closest('.part');if(p)$('#m-info').innerHTML=MINFO[p.id]};
+mReset();
+
+/* ---------- design one ---------- */
+const DOPT=['Input','Output','Not needed'];
+const SYS=[
+ {name:'Greenhouse temperature control',model:'<b>How it works:</b> the temperature sensor sends readings to the microcontroller. The program compares each reading with the temperature that has been set. If it is too cold, a signal switches the heater on; if it is too hot, a signal makes the motor open the window. The cycle repeats continuously.',
+  q:[['Temperature sensor','Input','It measures how warm the greenhouse is.'],['Heater','Output','Switched on by the microcontroller when the reading is too low.'],['Motor that opens the roof window','Output','An actuator: the microcontroller opens the window when it is too hot.'],['Keyboard and mouse','Not needed','An embedded system has only the interface its one job needs.'],['Dial to set the target temperature','Input','It tells the program what temperature to aim for.'],['Large colour monitor','Not needed','At most a small display is needed. Extra hardware adds cost and uses power.']]},
+ {name:'Washing machine',model:'<b>How it works:</b> the user chooses a programme with the dial and presses start. The microcontroller opens the water valve until the level sensor shows the drum is full, heats the water until the temperature sensor reaches the right value, then turns the drum motor for the set time and finally runs the pump to drain the water.',
+  q:[['Programme dial and start button','Input','They tell the microcontroller which wash to run.'],['Water level sensor','Input','It reports when the drum is full.'],['Drum motor','Output','An actuator controlled by the microcontroller.'],['Water inlet valve','Output','Opened and closed by the microcontroller.'],['Door lock sensor','Input','The wash must not start with the door open.'],['Webcam','Not needed','It plays no part in washing clothes.'],['Display showing the time left','Output','It presents information to the user.']]},
+ {name:'Train ticket machine',model:'<b>How it works:</b> the customer picks a destination on the touch screen and pays by cash or card. The embedded systems in the machine check the payment, then drive the printer to produce the tickets and a receipt, and the coin mechanism to give any change.',
+  q:[['Touch screen (touches)','Input','It is how the customer selects a destination.'],['Card reader','Input','It reads the customer\'s bank card.'],['Ticket printer','Output','It prints the tickets and the receipt.'],['Coin slot sensor','Input','It detects and identifies the coins put in.'],['Change dispenser','Output','A mechanism driven by the microcontroller.'],['Games controller','Not needed','The machine only sells tickets.']]}];
+$('#d-sys').innerHTML=SYS.map((x,i)=>`<option value="${i}">${x.name}</option>`).join('');
+function dDraw(){const x=SYS[$('#d-sys').value];$('#d-model').innerHTML=x.model;
+  cardQuiz($('#quiz2'),x.q.map(r=>({q:r[0],a:r[1],why:r[2]})),DOPT,$('#score2'),$('#qreset2'))}
+$('#d-sys').onchange=dDraw;dDraw();
 
 cardQuiz($('#quiz'),[
  {q:'The controller inside a washing machine',a:'Embedded',why:'It only runs wash programs, reading sensors (water level, temperature) and driving the motor and valves.'},

@@ -25,9 +25,11 @@
     - title: Topic 3 (Computers)
       label: Topic 3 demos
       pages:
+        - { title: "Computer Systems",        nav: "Computer systems",        url: /gcse/3/computer-systems.html }
         - { title: "Fetch-Decode-Execute",    nav: "Fetch-decode-execute",    url: /gcse/3/fde-cycle.html }
         - { title: "Secondary Storage",       nav: "Secondary storage",       url: /gcse/3/secondary-storage.html }
         - { title: "Embedded Systems",        nav: "Embedded systems",        url: /gcse/3/embedded-systems.html }
+        - { title: "Internet of Things",      nav: "Internet of Things",      url: /gcse/3/iot.html }
         - { title: "Operating Systems",       nav: "Operating systems",       url: /gcse/3/operating-systems.html }
         - { title: "Utility Software",        nav: "Utility software",        url: /gcse/3/utility-software.html }
         - { title: "Robust Software",         nav: "Robust software",         url: /gcse/3/robust-software.html }
