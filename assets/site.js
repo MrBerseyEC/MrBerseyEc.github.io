@@ -22,3 +22,26 @@ function cardQuiz(el,items,opts,scoreEl,resetBtn){
   }
   build();if(resetBtn)resetBtn.onclick=build;
 }
+/* binary helpers: toBin(173) gives "10101101", nibbles("10101101") gives "1010 1101" */
+const toBin=(n,w=8)=>(n>>>0).toString(2).padStart(w,'0').slice(-w), nibbles=s=>s.replace(/(?=(?:.{4})+$)(?!^)/g,' ');
+/* a row of clickable bits with a label above each. Returns {get,set}; the value is the bits read as an unsigned number */
+function bitRow(el,labels,onchange,value=0){
+  const n=labels.length;let v=value;
+  el.classList.add('bitrow');el.style.setProperty('--n',n);
+  const draw=()=>{el.innerHTML=labels.map((l,i)=>{const b=v>>(n-1-i)&1;return`<div><small>${l}</small><button class="bit" aria-pressed="${!!b}" data-i="${i}">${b}</button></div>`}).join('')};
+  el.onclick=e=>{const b=e.target.closest('.bit');if(!b)return;const i=b.dataset.i;v^=1<<(n-1-i);draw();el.querySelector(`[data-i="${i}"]`).focus();if(onchange)onchange(v)};
+  draw();
+  return{get:()=>v,set:x=>{v=x;draw()}};
+}
+/* typed-answer practice. gen() returns {q,a,why?}; a is the answer, or a list of accepted answers. Spaces and case are ignored */
+function drill(el,gen){
+  let cur,right=0,done=0;const norm=s=>String(s).replace(/[\s,]+/g,'').toLowerCase();
+  el.classList.add('drill');
+  el.innerHTML='<p class="dq"></p><div class="row"><input type="text" autocomplete="off" aria-label="Your answer"><button class="btn pri">Check</button><button class="btn">New question</button><span class="score"></span></div><p class="status"></p>';
+  const [q,inp,chk,nxt,sc,fb]=['.dq','input','.pri','.btn:not(.pri)','.score','.status'].map(s=>el.querySelector(s));
+  const next=()=>{cur=gen();q.innerHTML=cur.q;inp.value='';inp.disabled=chk.disabled=false;fb.innerHTML=''};
+  const check=()=>{if(chk.disabled||!inp.value.trim())return;const acc=[].concat(cur.a),ok=acc.map(norm).includes(norm(inp.value));done++;if(ok)right++;
+    fb.innerHTML=(ok?'<b class="okc">Correct.</b> ':`<b class="badc">Answer: ${acc[0]}.</b> `)+(cur.why||'');sc.textContent=`${right} correct out of ${done}`;inp.disabled=chk.disabled=true;nxt.focus()};
+  chk.onclick=check;nxt.onclick=()=>{next();inp.focus()};inp.onkeydown=e=>{if(e.key==='Enter')check()};next();
+  return{next};
+}

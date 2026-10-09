@@ -1,0 +1,151 @@
+---
+layout: demo
+title: "Two's complement"
+heading: "Signed integers and two's complement"
+spec: "EDEXCEL GCSE · 2.1.2 · 2.1.3"
+published: false
+---
+<style>
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:640px}
+.two>div{border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
+.two h3{margin:0 0 4px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.two b{font:700 1.6rem var(--mono);display:block}
+.two small{color:var(--muted);font-family:var(--mono)}
+.line{position:relative;height:64px;margin:18px 8px 0;max-width:900px}
+.line .axis{position:absolute;left:0;right:0;top:26px;height:4px;border-radius:2px;background:var(--off)}
+.line .neg{position:absolute;left:0;width:50%;top:26px;height:4px;border-radius:2px;background:var(--bad)}
+.line .dot{position:absolute;top:17px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--one);border:3px solid var(--panel);transition:left .2s}
+.line span{position:absolute;top:40px;transform:translateX(-50%);font:600 .78rem var(--mono);color:var(--muted)}
+.steps td,.steps th{text-align:center!important;font-family:var(--mono)}
+.steps td:first-child,.steps th:first-child{text-align:left!important;font-family:var(--sans);font-weight:700;white-space:nowrap}
+.steps tr.dim td{opacity:.25}
+.steps tr.new td{background:var(--hl-soft)}
+.steps tr.ans td{font-weight:700;color:var(--one)}
+@media (max-width:560px){.two{grid-template-columns:1fr}}
+</style>
+
+<p class="lede">An <b>unsigned</b> integer can only be zero or positive. A <b>signed</b> integer can be negative as well. Computers cannot store a minus sign, only 0s and 1s, so signed integers are stored using a system called <b>two's complement</b>, in which the most significant bit has a negative place value.</p>
+
+<section class="block">
+  <h2>One pattern, two possible values</h2>
+  <p class="sub">In 8-bit two's complement the MSB is worth −128 instead of +128. Every other place value is the same. Click the bits and compare the two interpretations.</p>
+  <div id="bits" class="nib"></div>
+  <div class="two">
+    <div><h3>Read as unsigned</h3><b id="u"></b><small id="us"></small></div>
+    <div><h3>Read as two's complement</h3><b id="s"></b><small id="ss"></small></div>
+  </div>
+  <div class="line"><div class="axis"></div><div class="neg"></div><div class="dot" id="dot"></div><span style="left:0">−128</span><span style="left:25%">−64</span><span style="left:50%">0</span><span style="left:75%">+64</span><span style="left:100%">+127</span></div>
+  <p class="note">The MSB works as a <b>sign bit</b>. If it is 0 the number is positive (or zero) and has the same value either way. If it is 1 the number is negative. You have to know which kind of number a pattern is meant to be before you can convert it.</p>
+</section>
+
+<section class="block">
+  <h2>Ranges</h2>
+  <p class="sub">Both kinds of number have the same count of patterns. Signed numbers use half of them for negative values, so the largest positive value is about half as big.</p>
+  <div class="scroll"><table class="t" style="max-width:760px">
+    <tr><th>Number of bits</th><th>Patterns</th><th>Unsigned range</th><th>Value of the MSB in two's complement</th><th>Two's complement range</th></tr>
+    <tr><td class="mono">4</td><td class="mono">16</td><td class="mono">0 to 15</td><td class="mono">−8</td><td class="mono">−8 to +7</td></tr>
+    <tr><td class="mono">8</td><td class="mono">256</td><td class="mono">0 to 255</td><td class="mono">−128</td><td class="mono">−128 to +127</td></tr>
+    <tr><td class="mono">16</td><td class="mono">65,536</td><td class="mono">0 to 65,535</td><td class="mono">−32,768</td><td class="mono">−32,768 to +32,767</td></tr>
+  </table></div>
+  <p class="note">The largest positive 8-bit value is 0111 1111 = +127. The most negative is 1000 0000 = −128. Zero counts as a positive number, which is why there is one more negative value than positive.</p>
+</section>
+
+<section class="block">
+  <h2>Negative denary to two's complement</h2>
+  <p class="sub">Write the positive version in binary, flip every bit, then add 1.</p>
+  <div class="row" style="margin-bottom:12px">
+    <label class="check">Negative number (−128 to −1) <input type="number" id="neg" min="-128" max="-1" value="-69" style="width:6em"></label>
+    <button class="btn pri" id="step">Step ▸</button><button class="btn" id="all">Show all</button><button class="btn" id="reset">Reset</button>
+  </div>
+  <div class="scroll"><table class="t steps" id="steps" style="max-width:720px"></table></div>
+  <p class="status" id="msg" style="margin-top:10px"></p>
+  <p class="note">The same three steps work in the other direction. To find out what a negative two's complement number is, flip the bits and add 1 to get the positive version.</p>
+</section>
+
+<section class="block">
+  <h2>Why two's complement?</h2>
+  <p class="sub">Because ordinary binary addition just works, with no extra circuits for negative numbers. Add a number to its own negative and the 8 bits come out as zero.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Number <input type="range" id="w" min="1" max="127" value="42"> <b class="mono" id="wv"></b></label></div>
+  <div class="scroll"><table class="t steps" id="why" style="max-width:720px"></table></div>
+  <p class="status" id="whymsg" style="margin-top:10px"></p>
+  <p class="note">An obvious alternative would be to keep the normal binary number and use the MSB only as a + or − sign. That method (sign and magnitude) gives two different patterns for zero, 0000 0000 and 1000 0000, and adding +2 to −2 gives −4. Two's complement was invented to make the arithmetic work properly.</p>
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <div class="seg" id="mode" role="group" aria-label="Type of question" style="margin-bottom:14px">
+    <button data-m="b" aria-pressed="true">Two's complement to denary</button><button data-m="d" aria-pressed="false">Denary to two's complement</button><button data-m="x" aria-pressed="false">Mixed</button>
+  </div>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+const PV=[128,64,32,16,8,4,2,1],rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const sgn=k=>k<0?'−'+(-k):k>0?'+'+k:'0', signed=v=>v>127?v-256:v;
+const sumOf=v=>[...toBin(v)].map((b,i)=>b==='1'?(i?PV[i]:'(−128)'):null).filter(x=>x!==null).join(' + ');
+
+/* ---------- two readings ---------- */
+function drawBits(v){
+  const on=PV.filter((_,i)=>toBin(v)[i]==='1'),k=signed(v);
+  $('#u').textContent=v;$('#us').textContent=on.length>1?on.join(' + '):'';
+  $('#s').textContent=sgn(k);$('#ss').textContent=on.length>1?sumOf(v):'';
+  $('#dot').style.left=(k+128)/255*100+'%';
+}
+const row=bitRow($('#bits'),['128<br>or −128',64,32,16,8,4,2,1],drawBits,0b11101101);drawBits(row.get());
+
+/* ---------- flip and add 1 ---------- */
+let shown=0;
+function drawSteps(){
+  const k=Math.floor(+$('#neg').value);
+  if(!(k>=-128&&k<=-1)){$('#steps').innerHTML='';$('#msg').textContent='Enter a whole number from −128 to −1.';return}
+  const p=-k,f=~p&255,r=f+1&255,cells=x=>[...toBin(x)].map(b=>`<td>${b}</td>`).join('');
+  const R=[[`+${p} in binary`,p],['Flip the bits',f],['Add 1',1],[`${sgn(k)} in two's complement`,r]];
+  $('#steps').innerHTML=`<tr><th>Place value</th><th>−128</th>${PV.slice(1).map(x=>`<th>${x}</th>`).join('')}</tr>`+
+    R.map((x,i)=>`<tr class="${i>=shown?'dim':i===shown-1&&shown<4?'new':''}${i===3?' ans':''}"><td>${x[0]}</td>${cells(x[1])}</tr>`).join('');
+  $('#msg').innerHTML=[`Press <b>Step</b> to begin.`,
+    `Ignore the minus sign and convert ${p} to 8-bit binary: <b class="mono">${nibbles(toBin(p))}</b>.`,
+    `Change every 0 to a 1 and every 1 to a 0: <b class="mono">${nibbles(toBin(f))}</b>.`,
+    `Add 1 to the flipped pattern, using binary addition.`,
+    `<b class="mono">${nibbles(toBin(r))}</b>. Check with the place values: ${sumOf(r)} = ${sgn(k)}.`][shown];
+  $('#step').disabled=shown===4;
+}
+$('#step').onclick=()=>{if(shown<4){shown++;drawSteps()}};
+$('#all').onclick=()=>{shown=4;drawSteps()};
+$('#reset').onclick=$('#neg').oninput=()=>{shown=0;drawSteps()};drawSteps();
+
+/* ---------- why ---------- */
+function drawWhy(){
+  const p=+$('#w').value,m=256-p,cells=x=>[...toBin(x)].map(b=>`<td>${b}</td>`).join('');
+  $('#wv').textContent=p;
+  $('#why').innerHTML=`<tr><th></th><th>carry out</th><th>−128</th>${PV.slice(1).map(x=>`<th>${x}</th>`).join('')}</tr>`+
+    `<tr><td>+${p}</td><td></td>${cells(p)}</tr><tr><td>−${p}</td><td></td>${cells(m)}</tr><tr class="ans"><td>Total</td><td class="badc">1</td>${cells(0)}</tr>`;
+  $('#whymsg').innerHTML=`The eight bits of the answer are all 0, so +${p} + −${p} = 0, as it should. There is a carry out of the left-hand column, which is ignored.`;
+}
+$('#w').oninput=drawWhy;drawWhy();
+
+/* ---------- practice ---------- */
+let mode='b';
+const d=drill($('#drill'),()=>{
+  const neg=Math.random()<.75,k=neg?-rnd(1,128):rnd(1,127),v=k&255,m=mode==='x'?(Math.random()<.5?'b':'d'):mode;
+  const why=`${sumOf(v)} = ${sgn(k)}.`;
+  return m==='b'?{q:`Convert the 8-bit two's complement number <span class="mono">${nibbles(toBin(v))}</span> to denary.`,a:[sgn(k),String(k)],why:(neg?'The MSB is 1, so it is negative. ':'The MSB is 0, so it is positive. ')+why}
+   :{q:`Convert ${sgn(k)} to 8-bit two's complement.`,a:nibbles(toBin(v)),why:neg?`${-k} is ${nibbles(toBin(-k))}. Flip the bits to get ${nibbles(toBin(~-k))}, then add 1. Check: ${why}`:`Positive numbers are the same as in ordinary binary, with a 0 in the MSB. ${why}`};
+});
+$$('#mode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('#mode button').forEach(x=>x.setAttribute('aria-pressed',x===b));d.next()});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'What is the range of an 8-bit unsigned integer?',opts:['0 to 255','−128 to +127','−127 to +128'],a:'0 to 255',why:'All 256 patterns are used for zero and positive values.'},
+ {q:'What is the range of an 8-bit two\'s complement integer?',opts:['0 to 255','−128 to +127','−127 to +128'],a:'−128 to +127',why:'Half the patterns are negative. Zero uses up one of the non-negative patterns.'},
+ {q:'A two\'s complement number has an MSB of 1. What does that tell you?',opts:['It is negative','It is positive','It is odd'],a:'It is negative',why:'The MSB has a negative place value that is bigger than all the others put together.'},
+ {q:'What is the place value of the MSB of the 4-bit two\'s complement number 1011?',opts:['−8','+8','−16'],a:'−8',why:'−2<sup>3</sup> = −8, so 1011 is −8 + 2 + 1 = −5.'},
+ {q:'What does 1111 1111 represent in 8-bit two\'s complement?',opts:['−1','−127','255'],a:'−1',why:'−128 + 127 = −1.'},
+ {q:'What are the steps for converting a negative denary number to two\'s complement?',opts:['Convert the positive number to binary, flip the bits, add 1','Convert the positive number to binary, then change the MSB to 1','Flip the bits, then subtract 1'],a:'Convert the positive number to binary, flip the bits, add 1',why:'Changing only the MSB does not work: 0110 1101 is +109 but 1110 1101 is −19.'},
+ {q:'Why do computers use two\'s complement for signed numbers?',opts:['Arithmetic works without any extra circuitry','It uses fewer bits','It can store larger numbers'],a:'Arithmetic works without any extra circuitry',why:'The same adding circuits work for positive and negative numbers.'},
+ {q:'Which number cannot be stored as an 8-bit two\'s complement integer?',opts:['−128','+127','+128'],a:'+128',why:'The largest positive value is 0111 1111 = +127.'},
+],null,$('#score'),$('#qreset'));
+</script>

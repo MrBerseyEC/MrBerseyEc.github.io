@@ -1,0 +1,147 @@
+---
+layout: demo
+title: "ASCII"
+heading: "Representing text: ASCII"
+spec: "EDEXCEL GCSE · 2.2.1"
+published: false
+---
+<style>
+.chars{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;min-height:96px}
+.chars div{border:2px solid var(--ink);border-radius:10px;padding:8px 10px;background:var(--bg);text-align:center;min-width:86px}
+.chars b{display:block;font:700 1.5rem var(--mono);min-height:1.5em;white-space:pre}
+.chars span{display:block;font:600 .85rem var(--mono)}
+.chars small{display:block;font:600 .85rem var(--mono);color:var(--one)}
+.chars div.bad{border-color:var(--bad);background:var(--bad-soft)}
+.chars div.bad small{color:var(--bad);font-family:var(--sans)}
+.stream{font:600 .9rem/1.7 var(--mono);word-break:break-word;margin:12px 0 0}
+.atab{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:4px}
+.atab button{display:grid;grid-template-columns:2.2em 1fr 4.6em;gap:6px;align-items:baseline;border:1.5px solid var(--line);border-radius:8px;padding:4px 8px;background:var(--bg);color:var(--ink);font:600 .8rem var(--mono);cursor:pointer;text-align:left}
+.atab button b{font-size:1.05rem;text-align:center}
+.atab button span{color:var(--muted)}
+.atab button.g-d{border-color:var(--hl);background:var(--hl-soft)}
+.atab button.g-u{border-color:var(--one);background:var(--one-soft)}
+.atab button.g-l{border-color:var(--ok);background:var(--ok-soft)}
+.atab button.sel{outline:3px solid var(--ink);outline-offset:1px}
+.cmp{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:center;max-width:620px}
+.cmp input{width:100%;font-family:var(--mono)}
+.cmp .op{font:700 1.8rem var(--mono)}
+</style>
+
+<p class="lede">Pressing a key sends a pattern of 1s and 0s to the processor. For computers from different manufacturers to exchange text, they have to agree on which pattern stands for which character. ASCII (the American Standard Code for Information Interchange) is one such agreement. It uses <b>7 bits</b> for each character, which gives 2<sup>7</sup> = 128 different codes.</p>
+
+<section class="block">
+  <h2>Text to binary</h2>
+  <p class="sub">Type something. Each character is stored as its own 7-bit code. The set of characters that a computer can represent is called its <b>character set</b>.</p>
+  <div class="row"><input type="text" id="txt" value="8 bits" maxlength="24" style="width:min(100%,26em);font-family:var(--mono)" aria-label="Text to encode"></div>
+  <div class="chars" id="chars"></div>
+  <p class="stream" id="stream"></p>
+  <p class="status" id="tsize"></p>
+</section>
+
+<section class="block">
+  <h2>Binary to text</h2>
+  <p class="sub">Click the 7 bits to build a code and see which character it stands for.</p>
+  <div id="bits"></div>
+  <p class="result" id="dec"></p>
+</section>
+
+<section class="block">
+  <h2>The ASCII table</h2>
+  <p class="sub">These are the printable characters, codes 32 to 126. Codes 0 to 31 and 127 are control codes, such as new line and tab. Click any character to load it into the bits above.</p>
+  <div class="toolbar" style="margin-bottom:12px"><span><b style="color:var(--hl)">■</b> digits 48 to 57</span><span><b style="color:var(--one)">■</b> upper case 65 to 90</span><span><b style="color:var(--ok)">■</b> lower case 97 to 122</span></div>
+  <div class="atab" id="atab"></div>
+  <p class="note">You do not need to memorise the table. The codes within each group run in order, so if you are given one code you can work out the others. If 'd' is 100, then 'c' is 99 and 'f' is 102. A lower-case letter is always 32 more than its upper-case version: 'A' is 65 and 'a' is 97.</p>
+</section>
+
+<section class="block">
+  <h2>Comparing characters</h2>
+  <p class="sub">Because every character is really a number, a program can compare them with relational operators such as &lt; and &gt;. Strings are compared one character at a time, from the left, until two characters differ.</p>
+  <div class="cmp"><input type="text" id="ca" value="Zebra" maxlength="12" aria-label="First string"><span class="op" id="cop"></span><input type="text" id="cb" value="apple" maxlength="12" aria-label="Second string"></div>
+  <p class="status" id="cmsg" style="margin-top:12px"></p>
+  <p class="note">All the upper-case letters have lower codes than all the lower-case letters, so "Zebra" comes before "apple". This is why programs often convert text to one case before sorting it.</p>
+</section>
+
+<section class="block">
+  <h2>The limits of ASCII</h2>
+  <p class="sub">The number of bits limits what can be represented. With 7 bits there are only 128 codes: enough for English letters, digits and punctuation, and nothing else.</p>
+  <div class="scroll"><table class="t" style="max-width:820px">
+    <tr><th>Encoding</th><th>Bits per character</th><th>Number of codes</th><th>What it can represent</th></tr>
+    <tr><td><b>ASCII</b></td><td class="mono">7</td><td class="mono">128</td><td>English letters, digits, punctuation and control codes. No é, ü, ñ or £.</td></tr>
+    <tr><td><b>Extended ASCII</b></td><td class="mono">8</td><td class="mono">256</td><td>Adds some accented letters and symbols, but still far too few for the world's languages.</td></tr>
+    <tr><td><b>Unicode</b></td><td class="mono">up to 32</td><td class="mono">over a million</td><td>Characters from almost every writing system, plus symbols and emoji. Its first 128 codes are the same as ASCII.</td></tr>
+  </table></div>
+  <p class="note">More bits per character means a bigger character set, but each character can take up more storage space.</p>
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <p class="sub">Work these out from the code you are given, without looking at the table.</p>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),esc=c=>c==='<'?'&lt;':c==='&'?'&amp;':c;
+
+/* ---------- text to binary ---------- */
+function drawTxt(){
+  const cs=[...$('#txt').value],ok=cs.filter(c=>c.codePointAt(0)<128);
+  $('#chars').innerHTML=cs.map(c=>{const k=c.codePointAt(0);return k<128?`<div><b>${c===' '?'space':esc(c)}</b><span>${k}</span><small>${toBin(k,7)}</small></div>`:`<div class="bad"><b>${c}</b><span>${k}</span><small>not in ASCII</small></div>`}).join('');
+  $('#stream').textContent=ok.map(c=>toBin(c.codePointAt(0),7)).join(' ');
+  $('#tsize').innerHTML=cs.length?`${ok.length} character${ok.length===1?'':'s'} × 7 bits = <b>${ok.length*7} bits</b>.`+(ok.length<cs.length?` <span class="badc">${cs.length-ok.length} of the characters you typed ${cs.length-ok.length===1?'has a code':'have codes'} above 127, so 7-bit ASCII cannot represent ${cs.length-ok.length===1?'it':'them'}.</span>`:''):'';
+}
+$('#txt').oninput=drawTxt;drawTxt();
+
+/* ---------- binary to text ---------- */
+const charName=k=>k===32?'a space':k===127?'the control code "delete"':k<32?'a control code'+({9:' (tab)',10:' (new line)',13:' (carriage return)'}[k]||''):`the character ${String.fromCharCode(k)}`;
+function drawDec(k){
+  $('#dec').textContent=`${toBin(k,7)} = ${k} = ${charName(k)}`;
+  $$('#atab button').forEach(b=>b.classList.toggle('sel',+b.dataset.k===k));
+}
+const row=bitRow($('#bits'),[64,32,16,8,4,2,1],drawDec,65);
+
+/* ---------- table ---------- */
+const grp=k=>k>=48&&k<=57?'g-d':k>=65&&k<=90?'g-u':k>=97&&k<=122?'g-l':'';
+$('#atab').innerHTML=Array.from({length:95},(_,i)=>i+32).map(k=>`<button class="${grp(k)}" data-k="${k}" title="${toBin(k,7)}"><span>${k}</span><b>${k===32?'␣':esc(String.fromCharCode(k))}</b><span>${toBin(k,7)}</span></button>`).join('');
+$('#atab').onclick=e=>{const b=e.target.closest('button');if(!b)return;row.set(+b.dataset.k);drawDec(+b.dataset.k)};
+drawDec(65);
+
+/* ---------- comparing ---------- */
+function drawCmp(){
+  const a=$('#ca').value,b=$('#cb').value,show=c=>`'${c===' '?'space':esc(c)}' (${c.charCodeAt(0)})`;
+  let i=0;while(i<a.length&&i<b.length&&a[i]===b[i])i++;
+  const op=a===b?'==':a<b?'<':'>';$('#cop').textContent=op;
+  $('#cmsg').innerHTML=a===b?'The two strings are identical.':i<a.length&&i<b.length?`${i?`The first ${i} character${i>1?'s':''} match. `:''}Compare ${show(a[i])} with ${show(b[i])}: ${a.charCodeAt(i)} is ${a<b?'less':'greater'} than ${b.charCodeAt(i)}, so <b class="mono">"${a.replace(/[<&]/g,esc)}" ${op==='<'?'&lt;':'&gt;'} "${b.replace(/[<&]/g,esc)}"</b> is True.`
+    :`One string is the start of the other. The shorter string comes first.`;
+}
+$('#ca').oninput=$('#cb').oninput=drawCmp;drawCmp();
+
+/* ---------- practice ---------- */
+drill($('#drill'),()=>{
+  const t=rnd(0,3),ch=String.fromCharCode;
+  if(t===0){const base=rnd(0,1)?65:97,i=rnd(0,25);let j;do{j=Math.max(0,Math.min(25,i+rnd(-6,6)))}while(j===i);
+    return{q:`The ASCII code for '${ch(base+i)}' is ${base+i}. What is the denary code for '${ch(base+j)}'?`,a:String(base+j),why:`'${ch(base+j)}' is ${Math.abs(j-i)} ${j>i?'after':'before'} '${ch(base+i)}' in the alphabet, so ${j>i?'add':'subtract'} ${Math.abs(j-i)}.`}}
+  if(t===1){const i=rnd(0,9);let j;do{j=rnd(0,9)}while(j===i);
+    return{q:`The ASCII code for the digit '${i}' is ${48+i}. What is the denary code for the digit '${j}'?`,a:String(48+j),why:`The digits run in order from '0' at 48 to '9' at 57.`}}
+  if(t===2){const i=rnd(0,25),up=rnd(0,1);
+    return{q:`The ASCII code for '${ch((up?65:97)+i)}' is ${(up?65:97)+i}. What is the denary code for '${ch((up?97:65)+i)}'?`,a:String((up?97:65)+i),why:`Lower-case letters are 32 more than their upper-case versions.`}}
+  const i=rnd(0,25),base=rnd(0,1)?65:97,j=Math.min(25,i+rnd(1,4))===i?i-1:Math.min(25,i+rnd(1,4));
+  return{q:`The letter '${ch(base+i)}' has the 7-bit ASCII code <span class="mono">${toBin(base+i,7)}</span>. What is the 7-bit binary code for '${ch(base+j)}'?`,a:toBin(base+j,7),why:`${toBin(base+i,7)} is ${base+i}. '${ch(base+j)}' is ${base+j}, which is ${toBin(base+j,7)}.`};
+});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'How many bits does ASCII use for each character?',opts:['7','8','16'],a:'7',why:'Extended ASCII uses 8, but standard ASCII is a 7-bit code.'},
+ {q:'How many different characters can 7-bit ASCII represent?',opts:['64','128','256'],a:'128',why:'2<sup>7</sup> = 128.'},
+ {q:'What is a character set?',opts:['The list of characters a computer can recognise and represent','The font used to display text','The keys on a keyboard'],a:'The list of characters a computer can recognise and represent',why:'Each character in the set has its own unique binary code.'},
+ {q:'Why can the German letters ä, ö and ü not be represented in ASCII?',opts:['There are not enough bit patterns to include them','They are too complicated to draw','German keyboards do not use binary'],a:'There are not enough bit patterns to include them',why:'All 128 patterns are already used for English letters, digits, punctuation and control codes.'},
+ {q:'The ASCII code for \'M\' is 77. What is the code for \'Q\'?',opts:['80','81','82'],a:'81',why:'Q is four letters after M, and 77 + 4 = 81.'},
+ {q:'Is <span class="mono">\'A\' &lt; \'D\'</span> true or false?',opts:['True','False'],a:'True',why:'65 is less than 68.'},
+ {q:'Is <span class="mono">\'a\' &lt; \'B\'</span> true or false?',opts:['True','False'],a:'False',why:'\'a\' is 97 and \'B\' is 66. Every lower-case letter has a higher code than every upper-case letter.'},
+ {q:'Why was Unicode developed?',opts:['To represent the characters of all the world\'s languages','To make text files smaller','To make text display faster'],a:'To represent the characters of all the world\'s languages',why:'It can use more bits per character, so it has room for a far larger character set.'},
+ {q:'In ASCII, what is stored when you type the digit 7?',opts:['The code 55','The number 7','The code 7'],a:'The code 55',why:'The character \'7\' is not the same as the number 7. Digits have the codes 48 to 57.'},
+],null,$('#score'),$('#qreset'));
+</script>

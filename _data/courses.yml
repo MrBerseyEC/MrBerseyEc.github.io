@@ -22,6 +22,20 @@
   name: GCSE Computer Science
   tag: Edexcel
   topics:
+    # - title: Topic 2 (Data)
+    #   label: Topic 2 demos
+    #   pages:
+    #     - { title: "Bits & Binary Patterns",     nav: "Why binary?",         url: /gcse/2/binary.html }
+    #     - { title: "Binary & Denary",            nav: "Binary & denary",     url: /gcse/2/binary-denary.html }
+    #     - { title: "Binary Addition & Overflow", nav: "Addition & overflow", url: /gcse/2/binary-addition.html }
+    #     - { title: "Two's Complement",           nav: "Two's complement",    url: /gcse/2/twos-complement.html }
+    #     - { title: "Binary Shifts",              nav: "Binary shifts",       url: /gcse/2/binary-shifts.html }
+    #     - { title: "Hexadecimal",                nav: "Hexadecimal",         url: /gcse/2/hexadecimal.html }
+    #     - { title: "ASCII",                      nav: "ASCII",               url: /gcse/2/ascii.html }
+    #     - { title: "Bitmap Images",              nav: "Bitmap images",       url: /gcse/2/bitmap-images.html }
+    #     - { title: "Sound",                      nav: "Sound",               url: /gcse/2/sound.html }
+    #     - { title: "Units & File Sizes",         nav: "Units & file sizes",  url: /gcse/2/units.html }
+    #     - { title: "Compression",                nav: "Compression",         url: /gcse/2/compression.html }
     - title: Topic 3 (Computers)
       label: Topic 3 demos
       pages:

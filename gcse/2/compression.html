@@ -1,0 +1,185 @@
+---
+layout: demo
+title: "Compression"
+heading: "Data compression"
+spec: "EDEXCEL GCSE · 2.3.2"
+published: false
+---
+<style>
+.why{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.why div{border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
+.why b{display:block}
+.why small{color:var(--muted)}
+textarea{width:100%;min-height:7.5em;font:.95rem/1.5 var(--mono);padding:10px;border-radius:8px;border:2px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical}
+.ll{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:18px;align-items:start;margin-top:14px}
+.ll h3{margin:0 0 6px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dict{display:grid;gap:4px;font:600 .88rem var(--mono)}
+.dict div{display:grid;grid-template-columns:2.4em 1fr auto;gap:8px;border:1.5px solid var(--line);border-radius:8px;padding:3px 8px;background:var(--bg)}
+.dict div span:last-child{color:var(--muted)}
+.tok{font:600 .9rem/2 var(--mono);word-break:break-word;white-space:pre-wrap;border:2px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg)}
+.tok b,.dict b{background:var(--one);color:#fff;border-radius:5px;padding:1px 6px;font-weight:700}
+.bars{display:grid;gap:6px;margin:14px 0 0;max-width:720px}
+.bars div{display:grid;grid-template-columns:8.5em 1fr 7em;gap:10px;align-items:center;font:600 .88rem var(--sans)}
+.bars i{display:block;height:16px;border-radius:5px;background:var(--off);min-width:2px}
+.bars i.c{background:var(--one)}
+.bars span{font-family:var(--mono)}
+.pics{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pics canvas{width:100%;height:auto;border:2px solid var(--ink);border-radius:8px;image-rendering:pixelated;display:block}
+.pics p{margin:6px 0 0;font-weight:700}
+.pics small{display:block;font:600 .88rem var(--mono);color:var(--muted)}
+@media (max-width:760px){.ll,.pics{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+<p class="lede">Compression makes a file smaller by repackaging its data or by removing some of it. There are two kinds. <b>Lossless</b> compression keeps everything, so the original file can be rebuilt exactly. <b>Lossy</b> compression permanently throws some of the data away.</p>
+
+<section class="block">
+  <h2>Why compress?</h2>
+  <div class="why">
+    <div><b>Less storage space</b><small>More photos, songs and videos fit on the same drive, phone or server.</small></div>
+    <div><b>Faster to transfer</b><small>A smaller file is quicker to upload, download or send as an attachment.</small></div>
+    <div><b>Less bandwidth</b><small>Streaming and web pages use less of the network's capacity and less of a data allowance.</small></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Lossless compression</h2>
+  <p class="sub">Lossless compression works by finding data that is repeated. In this text, every word used more than once is put into a lookup table. Each time it appears, it is replaced by a short token pointing to its place in the table. Edit the text and see how the saving changes.</p>
+  <textarea id="txt" spellcheck="false" aria-label="Text to compress">row row row your boat gently down the stream
+merrily merrily merrily merrily life is but a dream
+row row row your boat gently down the stream
+if you see a crocodile do not forget to scream</textarea>
+  <div class="row" style="margin-top:10px"><button class="btn" data-t="song">Song</button><button class="btn" data-t="rep">Very repetitive</button><button class="btn" data-t="none">Nothing repeated</button><button class="btn pri" id="unz">Decompress and compare</button></div>
+  <div class="ll">
+    <div><h3>Lookup table</h3><div class="dict" id="dict"></div></div>
+    <div><h3>Compressed text</h3><div class="tok" id="tok"></div></div>
+  </div>
+  <div class="bars" id="lbars"></div>
+  <p class="status" id="lmsg" style="margin-top:10px"></p>
+  <p class="note">The sizes assume one byte for each character and one byte for each token. The lookup table has to be stored in the file as well, so text with little repetition hardly shrinks at all. Lossless compression is essential when every bit matters, such as a text document, a spreadsheet or a program: losing words from a report or lines from a program would be a serious problem.</p>
+</section>
+
+<section class="block">
+  <h2>Lossy compression</h2>
+  <p class="sub">Lossy compression removes detail that people are unlikely to notice. A photograph contains tiny differences in colour that our eyes cannot tell apart. Here, a pixel that is nearly the same colour as the one before it is given exactly the same colour. Long runs of identical pixels can then be stored using far fewer bits. Increase the compression until you can see the damage.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Compression <input type="range" id="lv" min="0" max="6" value="2" style="width:14em"> <b id="lvv"></b></label></div>
+  <div class="pics">
+    <div><canvas id="orig" width="240" height="150"></canvas><p>Original</p><small id="osize"></small></div>
+    <div><canvas id="comp" width="240" height="150"></canvas><p>After lossy compression</p><small id="csize"></small></div>
+  </div>
+  <div class="bars" id="ybars"></div>
+  <p class="status" id="ymsg" style="margin-top:10px"></p>
+  <p class="note">The removed data is gone for good. There is no way to get the original back from the compressed file. Sound is compressed in the same way: an MP3 leaves out frequencies we cannot hear and differences in volume too small to notice.</p>
+</section>
+
+<section class="block">
+  <h2>Comparing the two</h2>
+  <div class="scroll"><table class="t">
+    <tr><th></th><th>Lossless</th><th>Lossy</th></tr>
+    <tr><td><b>How it works</b></td><td>Finds repeated (redundant) data and stores it more efficiently</td><td>Permanently removes data that is unlikely to be missed</td></tr>
+    <tr><td><b>Is any data lost?</b></td><td>No. The original can be reconstructed exactly</td><td>Yes. The original can never be fully reconstructed</td></tr>
+    <tr><td><b>Typical reduction</b></td><td>Around 50%</td><td>Up to 90%</td></tr>
+    <tr><td><b>Quality</b></td><td>Unchanged</td><td>Reduced, though often not noticeably</td></tr>
+    <tr><td><b>Used for</b></td><td>Text, program code, spreadsheets, and any file that must stay exactly as it was</td><td>Photographs, music and video, especially for streaming and the web</td></tr>
+    <tr><td><b>File formats</b></td><td>PNG (images), FLAC (audio), ZIP (archives)</td><td>JPEG (images), MP3 (audio)</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Lossy or lossless?</h2>
+  {% include quiz.html n=1 %}
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html n=2 %}
+</section>
+<script>
+const num=x=>x.toLocaleString('en-GB',{maximumFractionDigits:1}),esc=s=>s.replace(/[<&]/g,c=>c==='<'?'&lt;':'&amp;');
+const bars=(el,a,b,unit)=>el.innerHTML=`<div>Original<i style="width:100%"></i><span>${num(a)} ${unit}</span></div><div>Compressed<i class="c" style="width:${Math.min(100,b/a*100)}%"></i><span>${num(b)} ${unit}</span></div>`;
+
+/* ---------- lossless: lookup table of repeated words ---------- */
+const TEXTS={song:$('#txt').value,
+ rep:'buffalo buffalo buffalo buffalo buffalo buffalo buffalo buffalo\nbuffalo buffalo buffalo buffalo buffalo buffalo buffalo buffalo\nbuffalo buffalo buffalo buffalo buffalo buffalo buffalo buffalo',
+ none:'Sphinx of black quartz, judge my vow.\nPack eleven dozen liquor jugs quickly.'};
+let table=[],parts=[];
+function compress(){
+  const text=$('#txt').value;parts=text.match(/[A-Za-z0-9']+|[^A-Za-z0-9']+/g)||[];
+  const count=Object.create(null);parts.forEach(p=>{if(/^[A-Za-z0-9']/.test(p)&&p.length>1)count[p]=(count[p]||0)+1});
+  table=Object.keys(count).filter(w=>count[w]>1).slice(0,255);
+  const idx=Object.fromEntries(table.map((w,i)=>[w,i]));
+  $('#dict').innerHTML=table.map((w,i)=>`<div><b>${i}</b><span>${esc(w)}</span><span>× ${count[w]}</span></div>`).join('')||'<span style="color:var(--muted);font-family:var(--sans)">No word is used more than once, so there is nothing to put in the table.</span>';
+  $('#tok').innerHTML=parts.map(p=>Object.hasOwn(idx,p)?`<b>${idx[p]}</b>`:esc(p)).join('');
+  const orig=text.length,tab=table.reduce((a,w)=>a+w.length+1,0),body=parts.reduce((a,p)=>a+(Object.hasOwn(idx,p)?1:p.length),0),comp=tab+body;
+  if(!orig){$('#lbars').innerHTML='';$('#lmsg').textContent='Type some text.';return}
+  bars($('#lbars'),orig,comp,'bytes');
+  $('#lmsg').innerHTML=`Lookup table ${tab} bytes + compressed text ${body} bytes = ${comp} bytes. `+(comp<orig?`<b>${Math.round((1-comp/orig)*100)}% smaller.</b>`:`<b>No saving.</b> There is not enough repetition for the table to pay for itself.`);
+}
+$('#txt').oninput=compress;
+$$('[data-t]').forEach(b=>b.onclick=()=>{$('#txt').value=TEXTS[b.dataset.t];compress()});
+$('#unz').onclick=()=>{
+  const idx=Object.fromEntries(table.map((w,i)=>[w,i])),tokens=parts.map(p=>Object.hasOwn(idx,p)?idx[p]:p);     /* what is stored */
+  const rebuilt=tokens.map(t=>typeof t==='number'?table[t]:t).join('');                              /* decompression */
+  $('#lmsg').innerHTML=rebuilt===$('#txt').value?`<b class="okc">Decompressed: ${rebuilt.length} characters, identical to the original.</b> Every token was swapped back for its word from the table. Nothing was lost.`:'<b class="badc">The decompressed text does not match.</b>';
+};
+compress();
+
+/* ---------- lossy: merge similar colours ---------- */
+const W=240,H=150,TOL=[0,4,8,14,22,34,50],LABEL=['none','very low','low','medium','high','very high','extreme'];
+const noise=(x,y)=>{const s=Math.sin(x*12.9898+y*78.233)*43758.5453;return(s-Math.floor(s)-.5)*9};
+function scene(u,v){
+  const sun=Math.hypot((u-.76)*1.6,v-.24);
+  const far=.58+.07*Math.sin(u*7+1)+.03*Math.sin(u*17),near=.74+.09*Math.sin(u*4.2+2.4)+.02*Math.sin(u*23);
+  if(v>near){const t=(v-near)/(1-near);return[52+40*t,150-50*t,70-10*t]}
+  const tr=Math.hypot((u-.22)*1.6,v-.6);if(tr<.085)return[24,96+300*tr,52];
+  if(Math.abs(u-.22)<.008&&v>.6&&v<.8)return[92,62,40];
+  if(v>far){const t=(v-far)/(near-far);return[96-30*t,140-20*t,150-50*t]}
+  if(sun<.075)return[255,236,150];
+  const glow=Math.max(0,1-sun*2.2),t=v/far;
+  return[110+110*t+60*glow,170+60*t+30*glow,240-10*t-40*glow];
+}
+const RAW=new Uint8ClampedArray(W*H*3);
+for(let y=0;y<H;y++)for(let x=0;x<W;x++){const c=scene((x+.5)/W,(y+.5)/H),n=noise(x,y);for(let k=0;k<3;k++)RAW[(y*W+x)*3+k]=c[k]+n+noise(x+k*31,y+17)*.5}
+function show(cv,px){const g=cv.getContext('2d'),img=g.createImageData(W,H);for(let i=0;i<W*H;i++){img.data[i*4]=px[i*3];img.data[i*4+1]=px[i*3+1];img.data[i*4+2]=px[i*3+2];img.data[i*4+3]=255}g.putImageData(img,0,0)}
+/* stored size: each run of identical pixels along a row costs 4 bytes (3 for the colour, 1 for the length) */
+function packed(px){let runs=0;for(let y=0;y<H;y++){let len=0;for(let x=0;x<W;x++){const i=(y*W+x)*3,same=x>0&&len<255&&px[i]===px[i-3]&&px[i+1]===px[i-2]&&px[i+2]===px[i-1];if(same)len++;else{runs++;len=1}}}return Math.min(runs*4,W*H*3)}
+/* along each row, a pixel within the tolerance of the colour before it is given exactly that colour */
+function merge(tol){
+  const px=new Uint8ClampedArray(RAW);
+  for(let y=0;y<H;y++)for(let x=1;x<W;x++){const i=(y*W+x)*3;
+    if(Math.max(Math.abs(px[i]-px[i-3]),Math.abs(px[i+1]-px[i-2]),Math.abs(px[i+2]-px[i-1]))<=tol){px[i]=px[i-3];px[i+1]=px[i-2];px[i+2]=px[i-1]}}
+  return px;
+}
+function drawLossy(){
+  const lv=+$('#lv').value,px=merge(TOL[lv]);
+  show($('#comp'),px);
+  const o=W*H*3,c=lv?packed(px):o;let changed=0;for(let i=0;i<W*H;i++)if(px[i*3]!==RAW[i*3]||px[i*3+1]!==RAW[i*3+1]||px[i*3+2]!==RAW[i*3+2])changed++;
+  $('#lvv').textContent=LABEL[lv];
+  $('#osize').textContent=`${W} × ${H} × 24 bits = ${num(o/1024)} KiB`;$('#csize').textContent=`${num(c/1024)} KiB`;
+  bars($('#ybars'),o/1024,c/1024,'KiB');
+  $('#ymsg').innerHTML=lv?`<b>${Math.round((1-c/o)*100)}% smaller.</b> ${Math.round(changed/(W*H)*100)}% of the pixels no longer have their original colour, and that information cannot be recovered.`+(lv>=4?' The smooth sky has broken up into visible streaks of flat colour.':lv<=2?' Can you see any difference?':''):'No compression: every pixel is stored exactly, using 3 bytes each.';
+}
+show($('#orig'),RAW);$('#lv').oninput=drawLossy;drawLossy();
+
+/* ---------- quizzes ---------- */
+cardQuiz($('#quiz1'),[
+ {q:'The source code of a program is being sent to another developer.',a:'Lossless',why:'A single missing or changed character could stop the program working.'},
+ {q:'Holiday photographs are being uploaded to a social media site.',a:'Lossy',why:'Small losses of detail will not be noticed, and the much smaller files upload and display quickly.'},
+ {q:'A music streaming service sends songs to phones over mobile data.',a:'Lossy',why:'Much smaller files need less bandwidth, and the sounds removed are ones listeners are unlikely to notice.'},
+ {q:'A folder of spreadsheets is being archived as a ZIP file.',a:'Lossless',why:'The figures must be exactly the same when the files are extracted.'},
+ {q:'A hospital stores X-ray images that doctors will use for diagnosis.',a:'Lossless',why:'Any detail removed might be the detail that matters.'},
+ {q:'A video call between two laptops on a slow connection.',a:'Lossy',why:'Video is enormous. Only lossy compression gets it small enough to send in real time.'},
+ {q:'A novelist emails the text of a book to a publisher.',a:'Lossless',why:'Losing words from a document is not acceptable.'},
+ {q:'A logo with large areas of flat colour is saved as a PNG.',a:'Lossless',why:'PNG is a lossless format, and images with lots of repeated colour compress very well without losing anything.'},
+],['Lossless','Lossy'],$('#score1'),$('#qreset1'));
+
+cardQuiz($('#quiz2'),[
+ {q:'Which is a reason for reducing file sizes?',opts:['Files are quicker to upload and download','Files become more secure','Files are easier to edit'],a:'Files are quicker to upload and download',why:'They also take up less storage space and use less network bandwidth.'},
+ {q:'What is the key feature of lossless compression?',opts:['The original file can be reconstructed exactly','It always gives the smallest files','It only works on images'],a:'The original file can be reconstructed exactly',why:'No data is lost when the file is compressed and decompressed.'},
+ {q:'Apart from making files smaller, what is a characteristic of lossy compression?',opts:['Some data is permanently removed','The file can be restored exactly','It makes files more accurate'],a:'Some data is permanently removed',why:'The file can never be fully restored to its original state.'},
+ {q:'Which is a lossy file format?',opts:['JPEG','PNG','ZIP'],a:'JPEG',why:'JPEG (images) and MP3 (sound) are lossy. PNG, FLAC and ZIP are lossless.'},
+ {q:'Which is a lossless audio format?',opts:['FLAC','MP3','JPEG'],a:'FLAC',why:'FLAC keeps every sample. MP3 discards sounds that are hard to hear.'},
+ {q:'How does lossless compression reduce the size of a text file?',opts:['By storing repeated data only once and pointing to it','By deleting the least important words','By using a smaller font'],a:'By storing repeated data only once and pointing to it',why:'Recurring words go into a lookup table and are replaced in the text by short tokens.'},
+ {q:'Which type of compression generally gives the bigger reduction in file size?',opts:['Lossy','Lossless','They are always the same'],a:'Lossy',why:'Lossy can remove up to about 90%, compared with around 50% for lossless.'},
+ {q:'Why is lossy compression suitable for photographs but not for program files?',opts:['People do not notice small changes in a photo, but any change to a program could break it','Photographs are always bigger than programs','Programs cannot be compressed'],a:'People do not notice small changes in a photo, but any change to a program could break it',why:'Lossy compression relies on the limits of human sight and hearing.'},
+],null,$('#score2'),$('#qreset2'));
+</script>

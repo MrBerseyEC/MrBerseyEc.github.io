@@ -1,0 +1,124 @@
+---
+layout: demo
+title: "Binary addition and overflow"
+spec: "EDEXCEL GCSE · 2.1.4 · 2.1.5"
+published: false
+---
+<style>
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.rules div{border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
+.rules b{font:700 1.15rem var(--mono);display:block}
+.rules small{color:var(--muted)}
+.sum{border-collapse:collapse;font:700 1.15rem var(--mono)}
+.sum td,.sum th{width:54px;height:42px;text-align:center;padding:0}
+.sum th{font:600 .78rem var(--mono);color:var(--muted)}
+.sum td.lab,.sum th.lab{width:auto;text-align:left;padding-right:14px;font:600 .85rem var(--sans);color:var(--muted);white-space:nowrap}
+.sum tr.carry td{color:var(--one);font-size:.95rem;height:30px}
+.sum tr.tot td{border-top:3px solid var(--ink)}
+.sum td.cur{background:var(--hl-soft)}
+.sum td.of{color:var(--bad)}
+.sum td.in button{font:inherit;width:42px;height:34px;border-radius:8px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.sum td.in button[aria-pressed=true]{border-color:var(--one);color:var(--one)}
+.counter{display:flex;gap:6px;margin:0 0 10px}
+.counter span{font:700 1.4rem var(--mono);width:44px;height:52px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:8px;background:var(--bg)}
+.counter span.one{background:var(--one);border-color:var(--one);color:#fff}
+.counter span.lost{border-style:dashed;border-color:var(--bad);color:var(--bad);background:none}
+</style>
+
+<p class="lede">Binary numbers are added in columns from right to left, just like denary numbers. In denary you carry when a column comes to more than 9. In binary you carry when it comes to more than 1.</p>
+
+<section class="block">
+  <h2>The four rules</h2>
+  <div class="rules">
+    <div><b>0 + 0 = 0</b><small>write 0</small></div>
+    <div><b>0 + 1 = 1</b><small>write 1</small></div>
+    <div><b>1 + 1 = 10</b><small>write 0, carry 1 (this is 2 in denary)</small></div>
+    <div><b>1 + 1 + 1 = 11</b><small>write 1, carry 1 (this is 3 in denary)</small></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Adding two 8-bit numbers</h2>
+  <p class="sub">Click the bits to set the two numbers, then step through the addition one column at a time, starting from the right.</p>
+  <div class="row" style="margin-bottom:14px">
+    <button class="btn pri" id="step">Step ▸</button><button class="btn" id="all">Show all</button><button class="btn" id="reset">Reset</button><button class="btn" id="rand">Random numbers</button><button class="btn" id="ex">Overflow example</button>
+  </div>
+  <div class="scroll"><table class="sum" id="sum"></table></div>
+  <p class="status" id="msg" style="margin-top:12px"></p>
+  <p class="note hidden" id="ofnote"><b>Overflow error.</b> The answer needs 9 bits, but only 8 bits have been set aside to store it. The carry out of the left-hand column has nowhere to go, so it is lost and the stored result is wrong.</p>
+</section>
+
+<section class="block">
+  <h2>Overflow</h2>
+  <p class="sub">A computer sets aside a fixed number of bits to hold each number. An <b>overflow error</b> happens when the result of a calculation is too large to fit. This 8-bit counter stores the number of views of a video. Keep adding to it and watch what happens after 255.</p>
+  <div class="row" style="margin-bottom:14px"><button class="btn pri" id="c1">+1</button><button class="btn" id="c10">+10</button><button class="btn" id="c50">+50</button><button class="btn" id="c0">Reset</button></div>
+  <div class="counter" id="counter"></div>
+  <p class="result" id="cval"></p>
+  <p class="status" id="cmsg"></p>
+  <p class="note">This really happened. YouTube stored view counts in 32 bits as a signed number, so the largest value it could hold was 2,147,483,647. In 2014 the video for Gangnam Style passed that number, and YouTube had to change to 64 bits. Overflow errors can make programs crash or give unreliable results, so programmers have to think ahead about how much storage a value could ever need.</p>
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <p class="sub">Add the two numbers and give the answer as 8 bits. None of these overflow.</p>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Will it overflow?</h2>
+  <p class="sub">The two numbers are added and the result is stored in 8 bits.</p>
+  {% include quiz.html %}
+</section>
+<script>
+const PV=[128,64,32,16,8,4,2,1],rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+
+/* ---------- step-through adder ---------- */
+let A=0b01110010,B=0b01100011,col=0;          /* col = number of columns added so far, from the right */
+const bit=(x,i)=>x>>i&1;                        /* i = 0 is the right-hand column */
+function carryInto(i){let c=0;for(let k=0;k<i;k++)c=(bit(A,k)+bit(B,k)+c)>>1;return c}
+function draw(){
+  const cells=f=>[7,6,5,4,3,2,1,0].map(f).join(''),hl=i=>i===col-1?' cur':'';
+  const of=carryInto(8),done=col===8;
+  $('#sum').innerHTML=
+   `<tr><th class="lab">Place value</th><th></th>${PV.map(p=>`<th>${p}</th>`).join('')}<th class="lab" style="padding-left:14px">Denary</th></tr>`+
+   `<tr class="carry"><td class="lab">Carry</td><td class="of">${done&&of?1:''}</td>${cells(i=>`<td class="${hl(i)}">${i>0&&i<=col&&carryInto(i)?1:''}</td>`)}<td></td></tr>`+
+   `<tr><td class="lab">First number</td><td></td>${cells(i=>`<td class="in${hl(i)}"><button data-r="A" data-i="${i}" aria-pressed="${!!bit(A,i)}">${bit(A,i)}</button></td>`)}<td class="lab" style="padding-left:14px">${A}</td></tr>`+
+   `<tr><td class="lab">Second number</td><td>+</td>${cells(i=>`<td class="in${hl(i)}"><button data-r="B" data-i="${i}" aria-pressed="${!!bit(B,i)}">${bit(B,i)}</button></td>`)}<td class="lab" style="padding-left:14px">${B}</td></tr>`+
+   `<tr class="tot"><td class="lab">Total</td><td></td>${cells(i=>`<td class="${hl(i)}">${i<col?(bit(A,i)+bit(B,i)+carryInto(i))&1:''}</td>`)}<td class="lab" style="padding-left:14px">${done?(A+B&255)+(of?' ✖':' ✔'):''}</td></tr>`;
+  $('#step').disabled=done;$('#ofnote').classList.toggle('hidden',!(done&&of));
+  if(!col){$('#msg').innerHTML='Press <b>Step</b> to add the right-hand column.';return}
+  const i=col-1,a=bit(A,i),b=bit(B,i),c=carryInto(i),s=a+b+c;
+  let m=`${PV[7-i]}s column: ${a} + ${b}${c?' + 1 carried':''} = ${s.toString(2)}. Write ${s&1}`+(s>1?(i<7?' and carry 1 to the next column.':'. The carry of 1 has no column to go into.'):'. No carry.');
+  if(done)m+=of?` <b class="badc">${A} + ${B} should be ${A+B}, but the 8 bits hold ${A+B&255}.</b>`:` <b class="okc">Check in denary: ${A} + ${B} = ${A+B}.</b>`;
+  $('#msg').innerHTML=m;
+}
+$('#sum').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.r==='A')A^=1<<b.dataset.i;else B^=1<<b.dataset.i;col=0;draw()};
+$('#step').onclick=()=>{if(col<8){col++;draw()}};
+$('#all').onclick=()=>{col=8;draw()};
+$('#reset').onclick=()=>{col=0;draw()};
+$('#rand').onclick=()=>{A=rnd(1,255);B=rnd(1,255);col=0;draw()};
+$('#ex').onclick=()=>{A=0b11010110;B=0b10100111;col=0;draw()};
+draw();
+
+/* ---------- 8-bit counter ---------- */
+let count=250,wrapped=false;
+function drawCount(lost){
+  $('#counter').innerHTML=`<span class="lost">${lost?1:''}</span>`+[...toBin(count)].map(b=>`<span class="${b==='1'?'one':''}">${b}</span>`).join('');
+  $('#cval').textContent=`Views stored: ${count}`;
+  $('#cmsg').innerHTML=lost?'<b class="badc">Overflow.</b> The true count needed a ninth bit. That bit has been lost, so the counter has gone back round to a small number.':count===255?'Every bit is 1. This is the largest number 8 bits can hold.':wrapped?'The counter carries on from its wrong value as if nothing happened.':'';
+}
+function add(k){const t=count+k,lost=t>255;if(lost)wrapped=true;count=t&255;drawCount(lost)}
+$('#c1').onclick=()=>add(1);$('#c10').onclick=()=>add(10);$('#c50').onclick=()=>add(50);
+$('#c0').onclick=()=>{count=250;wrapped=false;drawCount()};drawCount();
+
+/* ---------- practice ---------- */
+drill($('#drill'),()=>{
+  const a=rnd(1,200),b=rnd(1,255-a);
+  return{q:`<span class="mono">${nibbles(toBin(a))} + ${nibbles(toBin(b))}</span>`,a:nibbles(toBin(a+b)),why:`In denary, ${a} + ${b} = ${a+b}.`};
+});
+
+/* ---------- quiz ---------- */
+const Q=[[0b01101101,0b11000000],[0b00011010,0b11010111],[0b00001101,0b10101010],[0b11010111,0b00101010],[0b10000000,0b10000000],[0b01111111,0b00000001],[0b11111111,0b00000001],[0b01010011,0b01001010]];
+cardQuiz($('#quiz'),Q.map(([a,b])=>{const of=a+b>255;return{q:`<span class="mono">${nibbles(toBin(a))}<br>+ ${nibbles(toBin(b))}</span>`,a:of?'Overflow':'Fits',
+  why:`${a} + ${b} = ${a+b}, which is ${of?'more than 255, so it needs a ninth bit':'no more than 255, so it fits in 8 bits'}.`}}),['Fits','Overflow'],$('#score'),$('#qreset'));
+</script>

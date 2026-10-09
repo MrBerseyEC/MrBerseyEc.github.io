@@ -1,0 +1,187 @@
+---
+layout: demo
+title: "Sound"
+heading: "Representing sound"
+spec: "EDEXCEL GCSE · 2.2.3"
+published: false
+---
+<style>
+.wave{width:100%;height:auto;display:block;background:var(--bg);border:2px solid var(--line);border-radius:10px}
+.wave text{font:600 12px var(--mono);fill:var(--muted)}
+.sl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 22px;margin:0 0 12px}
+.sl label{display:grid;gap:4px;font-weight:700}
+.sl input{width:100%}
+.sl span{font:600 .9rem var(--mono)}
+.samples{font:600 .85rem/1.7 var(--mono);word-break:break-word;margin:10px 0 0}
+.samples b{color:var(--one)}
+.key{display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;color:var(--muted);margin:8px 0 0}
+.key i{display:inline-block;width:22px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.calc{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.calc input{width:7em}
+.work td{font-family:var(--mono)}
+@media (max-width:640px){.sl{grid-template-columns:1fr}}
+</style>
+
+<p class="lede">Sound is a vibration that travels through the air as a wave. It is <b>analogue</b>: the air pressure changes smoothly and continuously. A computer can only store separate binary numbers, so to record a sound it measures the height of the wave thousands of times a second and stores each measurement. This is called <b>sampling</b>.</p>
+
+<section class="block">
+  <h2>Sound waves</h2>
+  <p class="sub">The height of the wave is its <b>amplitude</b>. The bigger the amplitude, the louder the sound. The number of waves per second is the frequency. The higher the frequency, the higher the pitch.</p>
+  <div class="sl">
+    <label>Amplitude (loudness) <input type="range" id="amp" min="5" max="100" value="70"><span id="ampv"></span></label>
+    <label>Frequency (pitch) <input type="range" id="freq" min="110" max="880" step="10" value="260"><span id="freqv"></span></label>
+  </div>
+  <svg class="wave" viewBox="0 0 800 200" id="w1" role="img" aria-label="A sound wave"></svg>
+  <div class="row" style="margin-top:12px"><button class="btn pri" id="tone">Play this sound</button><span class="status">Check your volume first.</span></div>
+</section>
+
+<section class="block">
+  <h2>Sampling</h2>
+  <p class="sub">This is one millisecond of an analogue sound. At regular intervals the amplitude is measured and rounded to the nearest level that can be stored. Change how often samples are taken and how many bits are used for each one.</p>
+  <div class="sl">
+    <label>Sample rate <input type="range" id="rate" min="4" max="48" value="12"><span id="ratev"></span></label>
+    <label>Bit depth <input type="range" id="bits" min="1" max="8" value="3"><span id="bitsv"></span></label>
+  </div>
+  <svg class="wave" viewBox="0 0 800 300" id="w2" role="img" aria-label="A sound wave being sampled"></svg>
+  <div class="key"><span><i style="background:var(--off)"></i>original analogue wave</span><span><i style="background:var(--one)"></i>what is stored and played back</span><span><i style="background:var(--hl);height:10px;width:10px;border-radius:50%"></i>one sample</span></div>
+  <p class="samples" id="samples"></p>
+  <p class="status" id="smsg"></p>
+  <p class="note">A higher sample rate catches more of the changes in the wave. A higher bit depth means each sample is rounded less. Both make the stored version closer to the original, and both make the file bigger. A digital recording can never match the analogue sound completely, because whatever happens between two samples is not recorded.</p>
+</section>
+
+<section class="block">
+  <h2>Key terms</h2>
+  <div class="scroll"><table class="t" style="max-width:860px">
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td><b>Amplitude</b></td><td>The height of the sound wave at a moment in time. This is what is measured and stored in each sample.</td></tr>
+    <tr><td><b>Sample</b></td><td>One measurement of the amplitude, stored as a binary number.</td></tr>
+    <tr><td><b>Sample rate</b></td><td>The number of samples taken each second, measured in hertz (Hz). 1 kHz is 1000 samples per second. CDs use 44,100 Hz (44.1 kHz).</td></tr>
+    <tr><td><b>Sample interval</b></td><td>The time between one sample and the next. A higher sample rate means a shorter interval.</td></tr>
+    <tr><td><b>Bit depth</b></td><td>The number of bits used to store each sample. 8 bits gives 256 different levels, and 16 bits (used on CDs) gives 65,536.</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Hear the difference</h2>
+  <p class="sub">The same short tune, sampled in different ways. Listen for the dull, muffled sound of a low sample rate and the hiss and crackle of a low bit depth.</p>
+  <div class="toolbar" style="margin-bottom:12px">
+    <label class="check">Sample rate <select id="a-rate"><option value="44100">44.1 kHz (CD)</option><option value="22050">22.05 kHz</option><option value="11025">11.025 kHz</option><option value="8000">8 kHz (telephone)</option><option value="4000">4 kHz</option><option value="2000">2 kHz</option></select></label>
+    <label class="check">Bit depth <select id="a-bits"><option value="16">16 bits (CD)</option><option value="8">8 bits</option><option value="6">6 bits</option><option value="4">4 bits</option><option value="3">3 bits</option><option value="2">2 bits</option></select></label>
+    <button class="btn pri" id="a-play">Play</button>
+  </div>
+  <p class="result" id="a-size"></p>
+  <p class="status" id="a-msg"></p>
+</section>
+
+<section class="block">
+  <h2>Calculating file size</h2>
+  <p class="sub">File size in bits = sample rate × bit depth × duration in seconds.</p>
+  <div class="calc">
+    <label class="check">Sample rate (Hz) <input type="number" id="c-rate" min="1" value="44100"></label>
+    <label class="check">Bit depth <input type="number" id="c-bits" min="1" max="64" value="16"></label>
+    <label class="check">Duration (seconds) <input type="number" id="c-secs" min="1" value="60"></label>
+  </div>
+  <div class="scroll"><table class="t work" id="work" style="max-width:760px"></table></div>
+  <p class="note">Watch the units. A sample rate given in kHz must be multiplied by 1000, and a duration given in minutes must be multiplied by 60. For example, 3 minutes at 24 kHz with 8 bits per sample is <span class="mono">24 × 1000 × 8 × 3 × 60</span> bits.</p>
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),num=x=>x.toLocaleString('en-GB',{maximumFractionDigits:2});
+let actx=null,playing=null;
+function audio(){actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();if(playing){try{playing.stop()}catch(e){}}return actx}
+
+/* ---------- sound waves ---------- */
+function drawWave(){
+  const a=+$('#amp').value,f=+$('#freq').value;let d='';
+  for(let x=0;x<=800;x+=2)d+=`${x?'L':'M'}${x} ${(100-a*.9*Math.sin(2*Math.PI*f*x/800*.02)).toFixed(1)}`;
+  $('#w1').innerHTML=`<line x1="0" y1="100" x2="800" y2="100" stroke="var(--line)" stroke-width="2"/><path d="${d}" fill="none" stroke="var(--one)" stroke-width="3"/><text x="8" y="192">20 milliseconds of sound</text>`;
+  $('#ampv').textContent=a<35?'quiet':a<70?'medium':'loud';$('#freqv').textContent=`${f} Hz (${f<300?'low':f<600?'medium':'high'} pitch)`;
+}
+$('#amp').oninput=$('#freq').oninput=drawWave;drawWave();
+$('#tone').onclick=()=>{
+  const c=audio(),o=c.createOscillator(),g=c.createGain();o.frequency.value=+$('#freq').value;
+  g.gain.setValueAtTime(0,c.currentTime);g.gain.linearRampToValueAtTime(+$('#amp').value/100*.4,c.currentTime+.03);g.gain.setValueAtTime(+$('#amp').value/100*.4,c.currentTime+.9);g.gain.linearRampToValueAtTime(0,c.currentTime+1);
+  o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+1);playing=o;
+};
+
+/* ---------- sampling ---------- */
+const sig=t=>.55*Math.sin(2*Math.PI*1.5*t)+.3*Math.sin(2*Math.PI*4*t+1)+.12*Math.sin(2*Math.PI*9*t+2);   /* t from 0 to 1, result within -1 to 1 */
+function drawSamp(){
+  const n=+$('#rate').value,b=+$('#bits').value,L=2**b,X=t=>40+t*750,Y=v=>150-v*130;
+  const q=v=>Math.round((v+1)/2*(L-1)),back=k=>k/(L-1)*2-1;
+  let g='',d='';
+  if(b<=4)for(let k=0;k<L;k++)g+=`<line x1="40" y1="${Y(back(k))}" x2="790" y2="${Y(back(k))}" stroke="var(--line)" stroke-width="1"/><text x="34" y="${Y(back(k))+4}" text-anchor="end">${b<=3?toBin(k,b):k}</text>`;
+  for(let i=0;i<=375;i++)d+=`${i?'L':'M'}${X(i/375).toFixed(1)} ${Y(sig(i/375)).toFixed(1)}`;
+  g+=`<path d="${d}" fill="none" stroke="var(--off)" stroke-width="3"/>`;
+  const lev=Array.from({length:n},(_,i)=>q(sig(i/n)));let s='';
+  lev.forEach((k,i)=>{const y=Y(back(k)).toFixed(1);s+=`${i?'L':'M'}${X(i/n).toFixed(1)} ${y}L${X((i+1)/n).toFixed(1)} ${y}`});
+  g+=`<path d="${s}" fill="none" stroke="var(--one)" stroke-width="2.5"/>`;
+  lev.forEach((k,i)=>g+=`<line x1="${X(i/n)}" y1="150" x2="${X(i/n)}" y2="${Y(back(k))}" stroke="var(--hl)" stroke-width="1.5"/><circle cx="${X(i/n)}" cy="${Y(back(k))}" r="${n>30?3:4.5}" fill="var(--hl)"/>`);
+  $('#w2').innerHTML=g+`<text x="790" y="292" text-anchor="end">time: 1 millisecond</text>`;
+  $('#ratev').textContent=`${n} kHz = ${num(n*1000)} samples per second`;
+  $('#bitsv').textContent=`${b} bit${b>1?'s':''} = ${L} level${L>1?'s':''}`;
+  const first=lev.slice(0,8).map(k=>toBin(k,b));
+  $('#samples').innerHTML=`Stored: <b>${first.join(' ')}</b>${n>8?' …':''}`;
+  $('#smsg').innerHTML=`Sample interval: 1 ÷ ${num(n*1000)} = ${num(1000/n)} microseconds. This millisecond of sound takes ${n} samples × ${b} bit${b>1?'s':''} = <b>${n*b} bits</b>.`;
+}
+$('#rate').oninput=$('#bits').oninput=drawSamp;drawSamp();
+
+/* ---------- hear the difference ---------- */
+const TUNE=[262,330,392,523,392,330,262,196,262];
+function drawASize(){
+  const r=+$('#a-rate').value,b=+$('#a-bits').value;
+  $('#a-size').textContent=`A 3 minute song would be ${num(r*b*180/8/1024/1024)} MiB`;
+  $('#a-msg').textContent=`${num(r)} × ${b} × 180 = ${num(r*b*180)} bits`;
+}
+$('#a-rate').onchange=$('#a-bits').onchange=drawASize;drawASize();
+$('#a-play').onclick=()=>{
+  const c=audio(),sr=c.sampleRate,r=Math.min(sr,+$('#a-rate').value),b=+$('#a-bits').value,L=2**b,len=.3,N=Math.floor(sr*len*TUNE.length);
+  const src=new Float32Array(N),buf=c.createBuffer(1,N,sr),out=buf.getChannelData(0);
+  for(let i=0;i<N;i++){const t=i/sr,k=Math.floor(t/len),u=t-k*len,f=TUNE[k],w=2*Math.PI*f*u,env=Math.min(1,u*60)*Math.exp(-u*5);
+    src[i]=env*(Math.sin(w)+.4*Math.sin(2*w)+.2*Math.sin(3*w))/1.6}
+  for(let i=0;i<N;i++){const v=src[Math.min(N-1,Math.floor(Math.floor(i*r/sr)*sr/r))];out[i]=(Math.round((v+1)/2*(L-1))/(L-1)*2-1)*.5}
+  const s=c.createBufferSource();s.buffer=buf;s.connect(c.destination);s.start();playing=s;
+};
+
+/* ---------- calculator ---------- */
+function drawCalc(){
+  const [r,b,s]=['c-rate','c-bits','c-secs'].map(k=>Math.floor(+$('#'+k).value));
+  if(!(r>0&&b>0&&s>0)){$('#work').innerHTML='<tr><td>Enter a sample rate, a bit depth and a duration.</td></tr>';return}
+  const bits=r*b*s;
+  $('#work').innerHTML=`<tr><th>Step</th><th>Expression</th><th>Result</th></tr>
+   <tr><td>Size in bits</td><td>${r} × ${b} × ${s}</td><td>${num(bits)} bits</td></tr>
+   <tr><td>Size in bytes</td><td>(${r} × ${b} × ${s}) ÷ 8</td><td>${num(bits/8)} bytes</td></tr>
+   <tr><td>Size in kibibytes</td><td>(${r} × ${b} × ${s}) ÷ (8 × 1024)</td><td>${num(bits/8/1024)} KiB</td></tr>
+   <tr><td>Size in mebibytes</td><td>(${r} × ${b} × ${s}) ÷ (8 × 1024 × 1024)</td><td>${num(bits/8/1024/1024)} MiB</td></tr>`;
+}
+['c-rate','c-bits','c-secs'].forEach(k=>$('#'+k).oninput=drawCalc);drawCalc();
+
+/* ---------- practice ---------- */
+drill($('#drill'),()=>{
+  const t=rnd(0,2),r=[8,16,24,32,48][rnd(0,4)],b=[8,16,24][rnd(0,2)],s=rnd(1,12)*5;
+  if(t===0){const d=rnd(2,12);return{q:`A sound is recorded with a bit depth of ${d} bits. How many different amplitude levels can be stored?`,a:String(2**d),why:`2<sup>${d}</sup> = ${2**d}.`}}
+  if(t===1)return{q:`A sound is sampled at ${r} kHz with a bit depth of ${b} bits. It lasts ${s} seconds. What is the file size in <b>bytes</b>?`,a:[String(r*1000*b*s/8),r*1000*b*s/8+'bytes'],why:`(${r} × 1000 × ${b} × ${s}) ÷ 8 = ${num(r*1000*b*s/8)} bytes.`};
+  return{q:`A sound file is ${num(r*1000*b*s)} bits in size. It was sampled at ${r} kHz with a bit depth of ${b} bits. How many <b>seconds</b> does it last?`,a:[String(s),s+'seconds',s+'s'],why:`${num(r*1000*b*s)} ÷ (${r} × 1000 × ${b}) = ${s} seconds.`};
+});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'Which aspect of the analogue signal is measured and stored in each sample?',opts:['Its amplitude','Its duration','Its frequency'],a:'Its amplitude',why:'Each sample records the height of the wave at one point in time.'},
+ {q:'What is the sample rate?',opts:['The number of samples taken per second','The number of bits used for each sample','The time between two samples'],a:'The number of samples taken per second',why:'It is measured in hertz (Hz).'},
+ {q:'What is the bit depth of a sound file?',opts:['The number of bits used to store each sample','The number of samples per second','The total size of the file'],a:'The number of bits used to store each sample',why:'More bits means more levels, so each sample is closer to the true amplitude.'},
+ {q:'The sample interval is increased. What is the effect?',opts:['Fewer samples are taken, so the recording is less accurate','More samples are taken, so the recording is more accurate','Each sample is stored in more bits'],a:'Fewer samples are taken, so the recording is less accurate',why:'A longer gap between samples means a lower sample rate, so more of the changes in the wave are missed. The file is smaller.'},
+ {q:'The bit depth is reduced. What is the effect?',opts:['Fewer amplitude levels can be stored, so the sound is less accurate','The sound gets quieter','The sound plays more slowly'],a:'Fewer amplitude levels can be stored, so the sound is less accurate',why:'Each sample is rounded to the nearest available level, and there are now fewer of them.'},
+ {q:'Why can a digital recording never be exactly the same as the analogue sound?',opts:['The wave is continuous but samples are only taken at intervals','Computers cannot store loud sounds','Microphones do not work with computers'],a:'The wave is continuous but samples are only taken at intervals',why:'What happens between the samples is lost, and each sample is rounded to the nearest level.'},
+ {q:'Which expression gives the size in bits of 3 minutes of sound sampled at 24 kHz with 8 bits per sample?',opts:['24 × 1000 × 8 × 3 × 60','24 × 8 × 3','24 × 1000 × 8 × 3'],a:'24 × 1000 × 8 × 3 × 60',why:'The rate must be in Hz and the duration in seconds.'},
+ {q:'A recording is changed from 8 bits to 16 bits per sample. What happens to the file size?',opts:['It doubles','It stays the same','It is 256 times bigger'],a:'It doubles',why:'Each sample takes twice as many bits and there are the same number of samples.'},
+],null,$('#score'),$('#qreset'));
+</script>

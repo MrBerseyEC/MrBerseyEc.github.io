@@ -1,0 +1,146 @@
+---
+layout: demo
+title: "Bits and binary patterns"
+heading: "Why binary?"
+spec: "EDEXCEL GCSE · 2.1.1"
+published: false
+---
+<style>
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.sw button{width:62px;border:2px solid var(--ink);border-radius:12px;background:var(--bg);color:var(--ink);padding:8px 0 6px;cursor:pointer;font:700 1.3rem var(--mono)}
+.sw button i{display:block;width:26px;height:26px;border-radius:50%;margin:0 auto 6px;background:var(--off);transition:background .15s,box-shadow .15s}
+.sw button small{display:block;font:600 .7rem var(--sans);color:var(--muted)}
+.sw button[aria-pressed=true]{border-color:var(--one)}
+.sw button[aria-pressed=true] i{background:var(--hl);box-shadow:0 0 14px var(--hl)}
+.pats{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.pats span{font:600 .9rem var(--mono);padding:3px 8px;border-radius:6px;border:1.5px solid var(--line);background:var(--bg)}
+.pats span.cur{background:var(--one);border-color:var(--one);color:#fff}
+.means{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.means>div{border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
+.means h3{margin:0 0 4px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.means b{font:700 1.5rem var(--mono);display:block;min-height:1.6em}
+.means small{color:var(--muted)}
+.swatch{display:block;height:2.4em;border-radius:8px;border:2px solid var(--ink)}
+</style>
+
+<p class="lede">A processor contains billions of transistors. Each one is a tiny switch with just two states: on or off. Binary has just two digits, 1 and 0, so it is the natural way to describe what is going on inside. Everything a computer stores or processes, including numbers, text, images, sound and the program instructions themselves, is held as a pattern of binary digits (bits).</p>
+
+<section class="block">
+  <h2>Switches and bits</h2>
+  <p class="sub">Each switch is one transistor. Click the switches to turn them on and off, or count up through every pattern.</p>
+  <div class="row" style="margin-bottom:14px">
+    <label class="check">Number of bits <input type="range" id="n" min="1" max="8" value="3"> <b class="mono" id="nv"></b></label>
+    <button class="btn pri" id="plus">Next pattern ▸</button><button class="btn" id="auto">Count automatically</button><button class="btn" id="zero">Reset</button>
+  </div>
+  <div class="sw" id="sw"></div>
+  <p class="result" id="pat"></p>
+  <p class="status" id="patmsg"></p>
+  <div class="pats" id="pats"></div>
+  <p class="note">Counting in binary: when every bit is 1, the next number needs one more bit on the left. After 111 comes 1000.</p>
+</section>
+
+<section class="block">
+  <h2>How many patterns?</h2>
+  <p class="sub">Every extra bit doubles the number of different patterns. With <i>n</i> bits there are 2<sup><i>n</i></sup> patterns.</p>
+  <div class="scroll"><table class="t" id="pow"></table></div>
+  <p class="note">A group of 8 bits is a <b>byte</b> (256 patterns). Half a byte, 4 bits, is a <b>nibble</b> (16 patterns). Long patterns are usually written in groups of four so they are easier to read: 1001 0111 rather than 10010111.</p>
+</section>
+
+<section class="block">
+  <h2>How many bits do I need?</h2>
+  <p class="sub">To give each item its own pattern, you need enough bits to make at least that many patterns.</p>
+  <div class="row"><label class="check">Number of different items <input type="number" id="items" min="1" max="1000000" value="34" style="width:8em"></label></div>
+  <p class="result" id="need"></p>
+  <p class="status" id="needwhy"></p>
+</section>
+
+<section class="block">
+  <h2>Same bits, different meanings</h2>
+  <p class="sub">A pattern of bits has no meaning on its own. What it represents depends on how the program has been told to interpret it. Change the bits and see five different interpretations of the same byte.</p>
+  <div id="mb" class="nib"></div>
+  <div class="means">
+    <div><h3>Unsigned integer</h3><b id="m-u"></b><small>A whole number from 0 to 255</small></div>
+    <div><h3>Signed integer</h3><b id="m-s"></b><small>Two's complement, −128 to +127</small></div>
+    <div><h3>Text</h3><b id="m-c"></b><small>A character in ASCII</small></div>
+    <div><h3>Image</h3><b><span class="swatch" id="m-g"></span></b><small>The brightness of one grey pixel</small></div>
+    <div><h3>Sound</h3><b id="m-a"></b><small>The height of a sound wave at one moment</small></div>
+  </div>
+  <p class="note">Numbers and text can be represented exactly. Images and sound can only be approximated: the more bits used, the closer the binary version gets to the original, but the more storage space it needs.</p>
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+/* ---------- switches ---------- */
+let n=3,v=0,timer=null;
+function drawSw(){
+  $('#nv').textContent=n;
+  $('#sw').innerHTML=[...toBin(v,n)].map((b,i)=>`<button aria-pressed="${b==='1'}" data-i="${i}"><i></i>${b}<small>${b==='1'?'on':'off'}</small></button>`).join('');
+  $('#pat').textContent=nibbles(toBin(v,n));
+  $('#patmsg').innerHTML=`Pattern ${v+1} of <b>${2**n}</b>. With ${n} bit${n>1?'s':''} there are 2<sup>${n}</sup> = ${2**n} different patterns.`;
+  $('#pats').innerHTML=n<=5?Array.from({length:2**n},(_,i)=>`<span class="${i===v?'cur':''}">${toBin(i,n)}</span>`).join(''):'';
+}
+function stop(){clearInterval(timer);timer=null;$('#auto').textContent='Count automatically'}
+$('#sw').onclick=e=>{const b=e.target.closest('button');if(!b)return;stop();v^=1<<(n-1-b.dataset.i);drawSw()};
+$('#n').oninput=()=>{n=+$('#n').value;v&=2**n-1;drawSw()};
+const inc=()=>{v=(v+1)%2**n;drawSw()};
+$('#plus').onclick=()=>{stop();inc()};
+$('#zero').onclick=()=>{stop();v=0;drawSw()};
+$('#auto').onclick=()=>{if(timer){stop();return}$('#auto').textContent='Pause';timer=setInterval(inc,n>5?120:500)};
+drawSw();
+
+/* ---------- powers of 2 ---------- */
+$('#pow').innerHTML='<tr><th>Number of bits</th><th>2<sup>n</sup></th><th>Number of patterns</th><th>Enough for</th></tr>'+
+ [[1,'yes or no, on or off'],[2,'the four suits in a pack of cards'],[3,'the days of the week'],[4,'the digits 0 to 9, or 16 colours'],[5,'the letters of the alphabet'],[7,'every character in ASCII'],[8,'256 shades of grey'],[16,'every level of a CD sound sample'],[24,'more colours than the eye can tell apart'],[32,'']]
+ .map(r=>`<tr><td class="mono">${r[0]}</td><td class="mono">2<sup>${r[0]}</sup></td><td class="mono">${(2**r[0]).toLocaleString('en-GB')}</td><td>${r[1]}</td></tr>`).join('');
+
+/* ---------- bits needed ---------- */
+const bitsFor=k=>Math.max(1,Math.ceil(Math.log2(k)));
+function drawNeed(){
+  const k=Math.floor(+$('#items').value);
+  if(!(k>=1&&k<=1e6)){$('#need').textContent='';$('#needwhy').textContent='Enter a whole number from 1 to 1,000,000.';return}
+  const b=bitsFor(k);
+  $('#need').textContent=`${b} bit${b>1?'s':''}`;
+  $('#needwhy').innerHTML=(b>1?`${b-1} bit${b>2?'s':''} would only give 2<sup>${b-1}</sup> = ${(2**(b-1)).toLocaleString('en-GB')} patterns, which is too few. `:'')+
+   `${b} bit${b>1?'s':''} give${b>1?'':'s'} 2<sup>${b}</sup> = ${(2**b).toLocaleString('en-GB')} patterns, which is enough for ${k.toLocaleString('en-GB')}`+(2**b>k?`, with ${(2**b-k).toLocaleString('en-GB')} left over.`:' exactly.');
+}
+$('#items').oninput=drawNeed;drawNeed();
+
+/* ---------- meanings ---------- */
+function drawMean(x){
+  $('#m-u').textContent=x;
+  $('#m-s').textContent=x>127?'−'+(256-x):'+'+x;
+  $('#m-c').textContent=x>=128?'not ASCII':x===32?'space':x<32||x===127?'control code':String.fromCharCode(x);
+  $('#m-g').style.background=`rgb(${x},${x},${x})`;
+  $('#m-a').textContent=Math.round(x/255*100)+'%';
+}
+const mb=bitRow($('#mb'),[128,64,32,16,8,4,2,1],drawMean,0b01000001);drawMean(mb.get());
+
+/* ---------- practice ---------- */
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const THINGS=['pupils in a year group','products in a shop','seats in a theatre','levels in a game','stations on a rail network','colours in an image','teams in a league','books in a library'];
+drill($('#drill'),()=>{
+  if(Math.random()<.5){const b=rnd(2,12);return{q:`How many different patterns can be made with ${b} bits?`,a:String(2**b),why:`2<sup>${b}</sup> = ${2**b}.`}}
+  let k;do{k=rnd(3,1100)}while(Number.isInteger(Math.log2(k))&&Math.random()<.7);const b=bitsFor(k);
+  return{q:`How many bits are needed to give each of ${k} ${THINGS[rnd(0,THINGS.length-1)]} a unique binary pattern?`,a:[String(b),b+'bits'],why:`2<sup>${b-1}</sup> = ${2**(b-1)} is too few, 2<sup>${b}</sup> = ${2**b} is enough.`};
+});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'Why do computers use binary?',opts:['Transistors have two states, on and off','Binary numbers are shorter than denary','Binary is easier for people to read'],a:'Transistors have two states, on and off',why:'The two states are represented by 1 and 0.'},
+ {q:'What is a bit?',opts:['A single binary digit, 1 or 0','A group of eight binary digits','A group of four binary digits'],a:'A single binary digit, 1 or 0',why:'Bit is short for binary digit.'},
+ {q:'How many bits are in a nibble?',opts:['2','4','8'],a:'4',why:'A nibble is half a byte.'},
+ {q:'How many different patterns can one byte hold?',opts:['8','128','256'],a:'256',why:'A byte is 8 bits, and 2<sup>8</sup> = 256.'},
+ {q:'Which expression shows that 4096 product codes can be represented in 12 bits?',opts:['2<sup>12</sup> = 4096','12<sup>2</sup> = 144','12 × 2 = 24'],a:'2<sup>12</sup> = 4096',why:'n bits give 2<sup>n</sup> patterns.'},
+ {q:'What comes after 0000 1111 when counting in binary?',opts:['0001 0000','0001 1111','1111 0000'],a:'0001 0000',why:'All four right-hand bits are 1, so they go back to 0 and a 1 is carried into the next place.'},
+ {q:'An encoding system is changed to use one more bit. What happens to the number of values it can represent?',opts:['It goes up by one','It doubles','It goes up by eight'],a:'It doubles',why:'Each extra bit doubles the number of patterns, but more storage space is needed.'},
+ {q:'How are program instructions stored in a computer?',opts:['As binary patterns, like all other data','As lines of text','As denary numbers'],a:'As binary patterns, like all other data',why:'Data and instructions are both represented by patterns of 1s and 0s.'},
+],null,$('#score'),$('#qreset'));
+</script>

@@ -1,0 +1,202 @@
+---
+layout: demo
+title: "Bitmap images"
+heading: "Representing bitmap images"
+spec: "EDEXCEL GCSE · 2.2.2"
+published: false
+---
+<style>
+.ed{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}
+.grid{display:grid;grid-template-columns:repeat(8,34px);gap:2px;background:var(--ink);border:2px solid var(--ink);width:max-content;touch-action:none}
+.grid button{width:34px;height:34px;border:0;padding:0;cursor:crosshair}
+.codes{display:grid;grid-template-columns:repeat(8,34px);gap:2px;width:max-content;font:600 .8rem var(--mono)}
+.codes span{height:34px;display:grid;place-items:center;border:1px solid var(--line);background:var(--bg)}
+.pal{display:flex;gap:8px;flex-wrap:wrap}
+.pal button{display:flex;align-items:center;gap:6px;font:600 .85rem var(--mono);padding:4px 10px 4px 4px;border-radius:999px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.pal button i{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink)}
+.pal button[aria-pressed=true]{border-color:var(--ink);background:var(--hl-soft)}
+.stream{font:600 .82rem/1.6 var(--mono);word-break:break-all;color:var(--muted);margin:10px 0 0;max-height:7em;overflow:auto}
+.photo{display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:22px;align-items:start}
+.photo canvas{width:100%;height:auto;border:2px solid var(--ink);border-radius:8px;image-rendering:pixelated;display:block}
+.sl{display:grid;gap:4px;margin:0 0 14px;font-weight:700}
+.sl input{width:100%}
+.sl span{font:600 .9rem var(--mono)}
+.calc{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.calc input{width:6.5em}
+.work td{font-family:var(--mono)}
+@media (max-width:820px){.ed,.photo{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+<p class="lede">A bitmap image is a grid of tiny blocks of colour called <b>pixels</b> (picture elements). Each pixel is one single colour, and that colour is stored as a binary pattern. The image file is all of those patterns, one after another.</p>
+
+<section class="block">
+  <h2>Pixels and colour depth</h2>
+  <p class="sub">The <b>colour depth</b> is the number of bits used to store the colour of each pixel. Pick a colour and click or drag on the grid to paint. Change the colour depth to get more colours, and watch what it does to the binary and the file size.</p>
+  <div class="toolbar" style="margin-bottom:12px">
+    <span>Colour depth</span>
+    <div class="seg" id="depth" role="group" aria-label="Colour depth"><button data-d="1" aria-pressed="true">1 bit</button><button data-d="2" aria-pressed="false">2 bits</button><button data-d="3" aria-pressed="false">3 bits</button></div>
+    <button class="btn" id="pic">Example picture</button><button class="btn" id="clear">Clear</button>
+  </div>
+  <div class="pal" id="pal" style="margin-bottom:14px"></div>
+  <div class="ed">
+    <div class="grid" id="grid"></div>
+    <div>
+      <div class="scroll"><div class="codes" id="codes"></div></div>
+    </div>
+  </div>
+  <p class="result" id="psize"></p>
+  <p class="status" id="pmsg"></p>
+  <p class="stream" id="stream"></p>
+  <p class="note">With a colour depth of <i>n</i> bits there are 2<sup><i>n</i></sup> possible colours. One bit gives 2 colours, which is fine for black and white. Most images today use 24 bits: 8 bits each for red, green and blue, giving 16,777,216 colours.</p>
+</section>
+
+<section class="block">
+  <h2>Quality against file size</h2>
+  <p class="sub">The same picture, stored with different numbers of pixels and different colour depths. More pixels and more bits per pixel make the picture closer to the original, but the file gets bigger.</p>
+  <div class="photo">
+    <canvas id="cv" width="480" height="300"></canvas>
+    <div>
+      <label class="sl">Image size (width × height in pixels) <input type="range" id="res" min="0" max="5" value="5"><span id="resv"></span></label>
+      <label class="sl">Colour depth <input type="range" id="cd" min="0" max="6" value="6"><span id="cdv"></span></label>
+      <p class="result" id="fsize"></p>
+      <p class="status" id="fwork"></p>
+    </div>
+  </div>
+  <p class="note">With too few pixels the image becomes <b>pixelated</b>: you can see the individual squares. With too few bits per pixel, smooth changes of colour turn into bands, because there are not enough colours to show the shades in between. There is no point going far beyond 24 bits, because the human eye cannot tell that many colours apart.</p>
+</section>
+
+<section class="block">
+  <h2>Image size and resolution</h2>
+  <div class="scroll"><table class="t" style="max-width:820px">
+    <tr><th>Term</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td><b>Pixel</b></td><td>The smallest element of a bitmap image. Each one is a single colour.</td><td></td></tr>
+    <tr><td><b>Image size</b></td><td>The width × height of the image, in pixels.</td><td>640 × 480 is 307,200 pixels</td></tr>
+    <tr><td><b>Resolution</b></td><td>The number of pixels per inch when the image is displayed. The more pixels in a given area, the more detail can be seen.</td><td>A 100 × 60 image shown in the same space as a 3390 × 2000 image has far fewer pixels per inch, so it has a lower resolution</td></tr>
+    <tr><td><b>Colour depth</b></td><td>The number of bits used to encode the colour of each pixel.</td><td>8 bits gives 256 colours</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Calculating file size</h2>
+  <p class="sub">File size in bits = width × height × colour depth. Divide by 8 for bytes, then by 1024 for kibibytes, then by 1024 again for mebibytes.</p>
+  <div class="calc">
+    <label class="check">Width <input type="number" id="w" min="1" max="20000" value="4288"></label>
+    <label class="check">Height <input type="number" id="h" min="1" max="20000" value="2848"></label>
+    <label class="check">Colour depth (bits) <input type="number" id="c" min="1" max="48" value="24"></label>
+  </div>
+  <div class="scroll"><table class="t work" id="work" style="max-width:760px"></table></div>
+  <p class="note">In the exam you are usually asked to <b>construct an expression</b> rather than work out the answer, for example <span class="mono">(640 × 480 × 24) ÷ (8 × 1024)</span> for a size in kibibytes. Images intended for the screen are nearly always compressed, so real files are smaller than this.</p>
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),num=x=>x.toLocaleString('en-GB',{maximumFractionDigits:2});
+
+/* ---------- pixel editor ---------- */
+const COL=[['white','#FFFFFF'],['black','#16202B'],['red','#E5383B'],['blue','#1F8FE5'],['yellow','#FFC533'],['green','#2FA866'],['orange','#F28C28'],['purple','#8E5BD9']];
+const HEART=['00000000','02200220','22222222','22222222','02222220','00222200','00022000','00000000'],LETTER=['00100100','00100100','00100100','00111100','00111100','00100100','00100100','00100100'];
+let depth=1,pen=1,px=LETTER.join('').split('').map(Number),down=false;
+function drawPal(){$('#pal').innerHTML=COL.slice(0,2**depth).map((c,i)=>`<button data-i="${i}" aria-pressed="${i===pen}"><i style="background:${c[1]}"></i>${toBin(i,depth)} = ${c[0]}</button>`).join('')}
+function drawPx(){
+  $('#grid').innerHTML=px.map((p,i)=>`<button data-i="${i}" style="background:${COL[p][1]}" aria-label="pixel ${i+1}: ${COL[p][0]}"></button>`).join('');
+  drawOut();
+}
+function drawOut(){
+  $('#codes').innerHTML=px.map(p=>`<span>${toBin(p,depth)}</span>`).join('');
+  $('#stream').textContent=px.map(p=>toBin(p,depth)).join(depth>1?' ':'');
+  const bits=64*depth;
+  $('#psize').textContent=`8 × 8 × ${depth} = ${bits} bits = ${bits/8} bytes`;
+  $('#pmsg').innerHTML=`64 pixels, each stored in ${depth} bit${depth>1?'s':''}. ${depth} bit${depth>1?'s give':' gives'} 2<sup>${depth}</sup> = ${2**depth} colours.`;
+}
+function paint(e){const b=e.target.closest('button');if(!b||px[b.dataset.i]===pen)return;px[b.dataset.i]=pen;b.style.background=COL[pen][1];drawOut()}
+$('#grid').onpointerdown=e=>{down=true;paint(e);e.preventDefault()};
+$('#grid').onpointerover=e=>{if(down)paint(e)};
+$('#grid').onclick=paint;
+window.addEventListener('pointerup',()=>down=false);
+$('#pal').onclick=e=>{const b=e.target.closest('button');if(!b)return;pen=+b.dataset.i;drawPal()};
+$$('#depth button').forEach(b=>b.onclick=()=>{
+  depth=+b.dataset.d;$$('#depth button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  px=px.map(p=>p<2**depth?p:1);if(pen>=2**depth)pen=1;drawPal();drawPx();
+});
+$('#pic').onclick=()=>{if(depth<2)$('[data-d="2"]').click();px=HEART.join('').split('').map(Number);drawPx()};
+$('#clear').onclick=()=>{px=px.map(()=>0);drawPx()};
+drawPal();drawPx();
+
+/* ---------- quality against file size ---------- */
+function scene(u,v){                                  /* u, v from 0 to 1. Returns [r,g,b] */
+  const sun=Math.hypot((u-.76)*1.6,v-.24);
+  const far=.58+.07*Math.sin(u*7+1)+.03*Math.sin(u*17),near=.74+.09*Math.sin(u*4.2+2.4)+.02*Math.sin(u*23);
+  if(v>near){const t=(v-near)/(1-near);return[52+40*t,150-50*t,70-10*t]}
+  const tr=Math.hypot((u-.22)*1.6,v-.6);if(tr<.085)return[24,96+300*tr,52];
+  if(Math.abs(u-.22)<.008&&v>.6&&v<.8)return[92,62,40];
+  if(v>far){const t=(v-far)/(near-far);return[96-30*t,140-20*t,150-50*t]}
+  if(sun<.075)return[255,236,150];
+  const glow=Math.max(0,1-sun*2.2),t=v/far;
+  return[110+110*t+60*glow,170+60*t+30*glow,240-10*t-40*glow];
+}
+const SIZES=[[16,10],[32,20],[64,40],[128,80],[256,160],[480,300]],DEPTHS=[[1],[1,1,1],[2,2,2],[3,3,2],[4,4,4],[5,6,5],[8,8,8]];
+const off=document.createElement('canvas');
+function drawPhoto(){
+  const [w,h]=SIZES[$('#res').value],alloc=DEPTHS[$('#cd').value],d=alloc.reduce((a,b)=>a+b,0);
+  off.width=w;off.height=h;const o=off.getContext('2d'),img=o.createImageData(w,h);
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    let c=scene((x+.5)/w,(y+.5)/h);const i=(y*w+x)*4;
+    if(d===1){const g=(.3*c[0]+.59*c[1]+.11*c[2])>150?255:0;c=[g,g,g]}
+    else c=c.map((k,j)=>{const m=2**alloc[j]-1;return Math.round(Math.min(255,k)/255*m)*255/m});
+    img.data[i]=c[0];img.data[i+1]=c[1];img.data[i+2]=c[2];img.data[i+3]=255;
+  }
+  o.putImageData(img,0,0);
+  const g=$('#cv').getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(off,0,0,480,300);
+  const bits=w*h*d;
+  $('#resv').textContent=`${w} × ${h} = ${num(w*h)} pixels`;
+  $('#cdv').innerHTML=`${d} bit${d>1?'s':''} = ${num(2**d)} colours`;
+  $('#fsize').textContent=bits<8*1024?`${num(bits/8)} bytes`:`${num(bits/8/1024)} KiB`;
+  $('#fwork').textContent=`${w} × ${h} × ${d} = ${num(bits)} bits`;
+}
+$('#res').oninput=$('#cd').oninput=drawPhoto;drawPhoto();
+
+/* ---------- calculator ---------- */
+function drawCalc(){
+  const [w,h,c]=['w','h','c'].map(k=>Math.floor(+$('#'+k).value));
+  if(!(w>0&&h>0&&c>0)){$('#work').innerHTML='<tr><td>Enter a width, a height and a colour depth.</td></tr>';return}
+  const bits=w*h*c;
+  $('#work').innerHTML=`<tr><th>Step</th><th>Expression</th><th>Result</th></tr>
+   <tr><td>Number of pixels</td><td>${w} × ${h}</td><td>${num(w*h)} pixels</td></tr>
+   <tr><td>Size in bits</td><td>${w} × ${h} × ${c}</td><td>${num(bits)} bits</td></tr>
+   <tr><td>Size in bytes</td><td>(${w} × ${h} × ${c}) ÷ 8</td><td>${num(bits/8)} bytes</td></tr>
+   <tr><td>Size in kibibytes</td><td>(${w} × ${h} × ${c}) ÷ (8 × 1024)</td><td>${num(bits/8/1024)} KiB</td></tr>
+   <tr><td>Size in mebibytes</td><td>(${w} × ${h} × ${c}) ÷ (8 × 1024 × 1024)</td><td>${num(bits/8/1024/1024)} MiB</td></tr>
+   <tr><td>Number of colours</td><td>2<sup>${c}</sup></td><td>${c<=32?num(2**c):'a very large number'}</td></tr>`;
+}
+['w','h','c'].forEach(k=>$('#'+k).oninput=drawCalc);drawCalc();
+
+/* ---------- practice ---------- */
+drill($('#drill'),()=>{
+  const t=rnd(0,3);
+  if(t===0){const d=rnd(1,10);return{q:`An image has a colour depth of ${d} bit${d>1?'s':''}. How many different colours can it contain?`,a:String(2**d),why:`2<sup>${d}</sup> = ${2**d}.`}}
+  if(t===1){const k=[3,5,10,12,16,20,30,50,64,100,200,256,500,1000][rnd(0,13)],d=Math.ceil(Math.log2(k));return{q:`An image needs to use ${k} different colours. What is the smallest colour depth, in bits, that will do?`,a:[String(d),d+'bits'],why:`2<sup>${d-1}</sup> = ${2**(d-1)} is too few, 2<sup>${d}</sup> = ${2**d} is enough.`}}
+  if(t===2){const w=rnd(2,12)*10,h=rnd(2,12)*10,d=[8,16,24][rnd(0,2)];return{q:`An image is ${w} pixels wide and ${h} pixels high, with a colour depth of ${d} bits. What is its file size in <b>bytes</b>?`,a:[String(w*h*d/8),w*h*d/8+'bytes'],why:`(${w} × ${h} × ${d}) ÷ 8 = ${num(w*h*d/8)} bytes.`}}
+  const w=rnd(2,16)*64,h=rnd(2,12)*64,d=[8,16,24][rnd(0,2)],k=w*h*d/8/1024;
+  return{q:`An image is ${w} × ${h} pixels with a colour depth of ${d} bits. What is its file size in <b>kibibytes</b>?`,a:[String(k),k+'KiB'],why:`(${w} × ${h} × ${d}) ÷ (8 × 1024) = ${num(k)} KiB.`};
+});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'What is a pixel?',opts:['The smallest element of a bitmap image, a single point of colour','The number of bits used for each colour','The width of an image'],a:'The smallest element of a bitmap image, a single point of colour',why:'Pixel is short for picture element.'},
+ {q:'What is colour depth?',opts:['The number of bits used to encode the colour of each pixel','The number of pixels in the image','How dark the image is'],a:'The number of bits used to encode the colour of each pixel',why:'More bits per pixel means more possible colours.'},
+ {q:'A black and white image is changed to use 16 colours. How many bits per pixel are needed now?',opts:['2','4','16'],a:'4',why:'2<sup>4</sup> = 16.'},
+ {q:'The colour depth of an image is increased from 8 bits to 24 bits. What happens?',opts:['More colours are available and the file gets bigger','More colours are available and the file gets smaller','The image has more pixels'],a:'More colours are available and the file gets bigger',why:'Each pixel now takes three times as many bits, so the file is three times the size.'},
+ {q:'Which expression gives the file size in bits of a bitmap image?',opts:['width × height × colour depth','width × height ÷ colour depth','width + height + colour depth'],a:'width × height × colour depth',why:'The number of pixels multiplied by the number of bits for each one.'},
+ {q:'An image looks blocky, with visible squares. What is the most likely cause?',opts:['The resolution is too low','The colour depth is too high','The file is too big'],a:'The resolution is too low',why:'There are too few pixels for the area it is displayed in. This is called pixelation.'},
+ {q:'An image has a file size of 460,800 bytes and is 640 × 480 pixels. Which expression gives its colour depth?',opts:['(460800 × 8) ÷ (640 × 480)','460800 ÷ (640 × 480 × 8)','640 × 480 × 8'],a:'(460800 × 8) ÷ (640 × 480)',why:'Convert the bytes to bits, then divide by the number of pixels. The answer is 12 bits.'},
+ {q:'Why do most images use a colour depth of no more than 24 bits?',opts:['The human eye cannot distinguish more colours than that','Screens cannot display more than 256 colours','24 is the largest number a pixel can store'],a:'The human eye cannot distinguish more colours than that',why:'Extra bits would make the file larger for no visible benefit.'},
+],null,$('#score'),$('#qreset'));
+</script>

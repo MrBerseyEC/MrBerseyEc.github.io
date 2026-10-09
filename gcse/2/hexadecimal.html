@@ -1,0 +1,139 @@
+---
+layout: demo
+title: "Hexadecimal"
+spec: "EDEXCEL GCSE · 2.1.6"
+published: false
+---
+<style>
+.digits{display:grid;grid-template-columns:repeat(16,minmax(44px,1fr));gap:4px;min-width:760px}
+.digits div{border:1.5px solid var(--line);border-radius:8px;padding:6px 0;text-align:center;background:var(--bg);font:600 .82rem var(--mono);color:var(--muted)}
+.digits b{display:block;font-size:1.3rem;color:var(--ink)}
+.digits div.on{border-color:var(--one);background:var(--one-soft)}
+.conv{display:grid;grid-template-columns:repeat(2,minmax(0,280px));gap:10px 22px;justify-items:center;text-align:center;max-width:590px}
+.conv .box{font:700 1.5rem var(--mono);border:2px solid var(--ink);border-radius:10px;padding:6px 18px;background:var(--bg);min-width:3em}
+.conv .hexd{border-color:var(--one);background:var(--one);color:#fff}
+.conv small{display:block;color:var(--muted);font:600 .78rem var(--sans)}
+.conv .arrow{color:var(--muted);font-size:1.2rem;line-height:1}
+.rgb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.rgb .sl{display:grid;grid-template-columns:4.2em 1fr 9.5em;gap:10px;align-items:center;margin:0 0 10px;font-weight:700}
+.rgb .sl span{font:600 .9rem var(--mono)}
+.sw{height:120px;border-radius:14px;border:3px solid var(--ink)}
+.len{font:600 .9rem var(--mono);word-break:break-all}
+@media (max-width:760px){.rgb{grid-template-columns:1fr}}
+</style>
+
+<p class="lede">Long strings of 1s and 0s are hard for people to read, remember and copy without making mistakes. Hexadecimal (hex) is a shorthand: a base-16 number system in which one digit stands for exactly four bits. Computers do not use hexadecimal themselves. They still work only in binary.</p>
+
+<section class="block">
+  <h2>Sixteen digits</h2>
+  <p class="sub">Hexadecimal needs 16 different digits. Denary only has ten, 0 to 9, so the letters A to F are used for the values 10 to 15.</p>
+  <div class="scroll"><div class="digits" id="digits"></div></div>
+</section>
+
+<section class="block">
+  <h2>Binary to hexadecimal</h2>
+  <p class="sub">Split the byte into two nibbles. Work out each nibble as a denary number, using the place values 8, 4, 2 and 1. Swap any value above 9 for its letter. Click the bits to try other patterns.</p>
+  <div id="bits" class="nib"></div>
+  <div class="conv">
+    <div><small>left nibble</small><div class="box" id="n1"></div></div><div><small>right nibble</small><div class="box" id="n2"></div></div>
+    <div class="arrow">↓</div><div class="arrow">↓</div>
+    <div><small>in denary</small><div class="box" id="d1"></div></div><div><small>in denary</small><div class="box" id="d2"></div></div>
+    <div class="arrow">↓</div><div class="arrow">↓</div>
+    <div><small>hex digit</small><div class="box hexd" id="h1"></div></div><div><small>hex digit</small><div class="box hexd" id="h2"></div></div>
+  </div>
+  <p class="result" id="b2h"></p>
+</section>
+
+<section class="block">
+  <h2>Hexadecimal to binary</h2>
+  <p class="sub">Go the other way. Turn each hex digit into denary, then write each one as a 4-bit binary number and join the nibbles together.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Hex number (two digits) <input type="text" id="hex" maxlength="2" value="AC" style="width:4.5em;font-family:var(--mono);text-transform:uppercase"></label></div>
+  <div class="scroll"><table class="t" id="h2b" style="max-width:520px"></table></div>
+  <p class="result" id="h2bout"></p>
+  <p class="note">Each digit must become <b>four</b> bits. The hex digit 3 is 0011, not 11. Leaving out the leading zeros in a nibble is the most common mistake.</p>
+</section>
+
+<section class="block">
+  <h2>Where you will see it: colours</h2>
+  <p class="sub">A colour on screen is stored in 24 bits: 8 bits each for the amount of red, green and blue. Typing 24 bits is asking for mistakes. In hex it is just six digits, two for each colour.</p>
+  <div class="rgb">
+    <div>
+      <div class="sl"><label for="r">Red</label><input type="range" id="r" min="0" max="255" value="255"><span id="rv"></span></div>
+      <div class="sl"><label for="g">Green</label><input type="range" id="g" min="0" max="255" value="176"><span id="gv"></span></div>
+      <div class="sl"><label for="b">Blue</label><input type="range" id="b" min="0" max="255" value="0"><span id="bv"></span></div>
+      <p class="result" id="hexcol"></p>
+      <p class="len" id="bincol"></p>
+    </div>
+    <div class="sw" id="swatch"></div>
+  </div>
+  <p class="note">The # symbol in front shows that the number is hexadecimal. Hex is also used for memory addresses, error codes and the hardware (MAC) addresses of network devices, all for the same reason: it is shorter and easier for people to work with than binary.</p>
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <div class="seg" id="mode" role="group" aria-label="Type of question" style="margin-bottom:14px">
+    <button data-m="b" aria-pressed="true">Binary to hex</button><button data-m="h" aria-pressed="false">Hex to binary</button><button data-m="x" aria-pressed="false">Mixed</button>
+  </div>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+const H='0123456789ABCDEF',hex2=v=>H[v>>4]+H[v&15],rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+
+/* ---------- digits ---------- */
+function drawDigits(hi=[]){$('#digits').innerHTML=[...H].map((h,i)=>`<div class="${hi.includes(i)?'on':''}">${i}<b>${h}</b>${toBin(i,4)}</div>`).join('')}
+
+/* ---------- binary to hex ---------- */
+function drawB(v){
+  const a=v>>4,b=v&15;
+  $('#n1').textContent=toBin(a,4);$('#n2').textContent=toBin(b,4);$('#d1').textContent=a;$('#d2').textContent=b;$('#h1').textContent=H[a];$('#h2').textContent=H[b];
+  $('#b2h').textContent=`${nibbles(toBin(v))} = ${hex2(v)} in hexadecimal`;drawDigits([a,b]);
+}
+const row=bitRow($('#bits'),[8,4,2,1,8,4,2,1],drawB,0b11100110);drawB(row.get());
+
+/* ---------- hex to binary ---------- */
+function drawH(){
+  const s=$('#hex').value.toUpperCase();
+  if(!/^[0-9A-F]{2}$/.test(s)){$('#h2b').innerHTML='';$('#h2bout').textContent='';$('#h2b').insertAdjacentHTML('beforeend','<tr><td>Enter two hex digits, using 0 to 9 and A to F.</td></tr>');return}
+  const d=[...s].map(c=>H.indexOf(c));
+  $('#h2b').innerHTML=`<tr><th>Hex digit</th><td class="mono"><b>${s[0]}</b></td><td class="mono"><b>${s[1]}</b></td></tr><tr><th>Denary</th><td class="mono">${d[0]}</td><td class="mono">${d[1]}</td></tr><tr><th>4-bit binary</th><td class="mono">${toBin(d[0],4)}</td><td class="mono">${toBin(d[1],4)}</td></tr>`;
+  $('#h2bout').textContent=`${s} = ${toBin(d[0],4)} ${toBin(d[1],4)} in binary`;
+}
+$('#hex').oninput=drawH;drawH();
+
+/* ---------- colour ---------- */
+function drawCol(){
+  const c=['r','g','b'].map(k=>+$('#'+k).value);
+  ['r','g','b'].forEach((k,i)=>$('#'+k+'v').textContent=`${String(c[i]).padStart(3,' ')} = ${hex2(c[i])}`);
+  const h='#'+c.map(hex2).join('');
+  $('#hexcol').textContent=h;$('#swatch').style.background=h;
+  $('#bincol').textContent='In binary: '+c.map(x=>nibbles(toBin(x))).join(' ');
+}
+['r','g','b'].forEach(k=>$('#'+k).oninput=drawCol);drawCol();
+
+/* ---------- practice ---------- */
+let mode='b';
+const d=drill($('#drill'),()=>{
+  const v=rnd(1,255),m=mode==='x'?(Math.random()<.5?'b':'h'):mode,a=v>>4,b=v&15;
+  const why=`${toBin(a,4)} = ${a}${a>9?' = '+H[a]:''} and ${toBin(b,4)} = ${b}${b>9?' = '+H[b]:''}.`;
+  return m==='b'?{q:`Convert the binary number <span class="mono">${nibbles(toBin(v))}</span> to hexadecimal.`,a:[hex2(v),'#'+hex2(v)],why}
+   :{q:`Convert the hexadecimal number <span class="mono">${hex2(v)}</span> to 8-bit binary.`,a:nibbles(toBin(v)),why};
+});
+$$('#mode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('#mode button').forEach(x=>x.setAttribute('aria-pressed',x===b));d.next()});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'Why is hexadecimal used?',opts:['It is easier for people to read and remember than long binary patterns','Computers process hexadecimal faster than binary','It uses less storage space than binary'],a:'It is easier for people to read and remember than long binary patterns',why:'It makes no difference to the computer, which still stores and processes everything in binary.'},
+ {q:'How many bits does one hexadecimal digit represent?',opts:['2','4','8'],a:'4',why:'One hex digit stands for one nibble, so a byte is always two hex digits.'},
+ {q:'What is the denary value of the hex digit C?',opts:['11','12','13'],a:'12',why:'A = 10, B = 11, C = 12, D = 13, E = 14, F = 15.'},
+ {q:'What is the largest value of a single hex digit?',opts:['9','15','16'],a:'15',why:'F = 15 = 1111. There are 16 digits because counting starts at 0.'},
+ {q:'How many hex digits are needed to write a 24-bit colour?',opts:['3','6','12'],a:'6',why:'24 ÷ 4 = 6, for example #FF0000 for red.'},
+ {q:'Which is the hex digit 5 written as a nibble?',opts:['101','0101','1010'],a:'0101',why:'Every hex digit becomes exactly four bits, so the leading zero is needed.'},
+ {q:'What is FF in denary?',opts:['30','255','256'],a:'255',why:'FF = 1111 1111, the largest value of a byte.'},
+ {q:'A programmer mistypes one character of a memory address. Why is this less likely in hex than in binary?',opts:['There are far fewer characters to type','Hex digits are bigger','Hex cannot contain errors'],a:'There are far fewer characters to type',why:'A 32-bit address is 32 characters in binary but only 8 in hex.'},
+],null,$('#score'),$('#qreset'));
+</script>

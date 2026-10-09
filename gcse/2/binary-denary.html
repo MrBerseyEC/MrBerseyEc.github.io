@@ -1,0 +1,140 @@
+---
+layout: demo
+title: "Binary and denary"
+heading: "Converting between binary and denary"
+spec: "EDEXCEL GCSE · 2.1.3"
+published: false
+---
+<style>
+.pv td,.pv th{text-align:center!important;font-family:var(--mono)}
+.pv td.hl{background:var(--one-soft);font-weight:700}
+.div2{max-width:520px}
+.div2 td,.div2 th{font-family:var(--mono)}
+.div2 td.rem{font-weight:700;color:var(--one)}
+.div2 tr.pad td{color:var(--muted)}
+.div2 tr.new td{background:var(--hl-soft)}
+.div2 td.tag{color:var(--muted);font:600 .78rem var(--sans)}
+</style>
+
+<p class="lede">Denary is the number system we use every day. It has ten digits, 0 to 9, and each place is worth 10 times the one to its right. Binary works in exactly the same way, but with two digits, 0 and 1, and each place is worth 2 times the one to its right.</p>
+
+<section class="block">
+  <h2>Place values</h2>
+  <p class="sub">In denary the place values are powers of 10. In binary they are powers of 2. Type a denary number to see how it is built from its place values.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Denary number <input type="number" id="den" min="0" max="9999" value="3639" style="width:7em"></label></div>
+  <div class="scroll"><table class="t pv" id="dpv" style="max-width:520px"></table></div>
+  <p class="status mono" id="dsum"></p>
+</section>
+
+<section class="block">
+  <h2>Binary to denary</h2>
+  <p class="sub">Click the bits to switch them between 0 and 1. Add up the place values of every column that contains a 1.</p>
+  <div id="b2d" class="nib"></div>
+  <p class="result" id="b2dsum"></p>
+  <div class="scroll"><table class="t pv" id="bpv" style="max-width:640px"></table></div>
+  <p class="note">The bit on the far left has the highest place value and is called the <b>most significant bit (MSB)</b>. The bit on the far right is the <b>least significant bit (LSB)</b> and is always worth 1. The MSB of an <i>n</i>-bit number is worth 2<sup><i>n</i>−1</sup>, so in a byte it is worth 2<sup>7</sup> = 128.</p>
+</section>
+
+<section class="block">
+  <h2>Denary to binary: divide by 2</h2>
+  <p class="sub">Keep dividing by 2 and writing down the remainder until you reach 0. Then read the remainders from the bottom up.</p>
+  <div class="row" style="margin-bottom:12px">
+    <label class="check">Denary number (0 to 255) <input type="number" id="d2b" min="0" max="255" value="213" style="width:6em"></label>
+    <button class="btn pri" id="dstep">Step ▸</button><button class="btn" id="dall">Show all</button><button class="btn" id="dreset">Reset</button>
+  </div>
+  <div class="scroll"><table class="t div2" id="div2"></table></div>
+  <p class="result" id="d2bout"></p>
+  <p class="status" id="d2bmsg"></p>
+  <p class="note">If the answer has to be 8 bits long, fill the empty places on the left with 0s. These <b>leading zeros</b> do not change the value: 1101 and 0000 1101 are both 13.</p>
+</section>
+
+<section class="block">
+  <h2>Denary to binary: place values</h2>
+  <p class="sub">Another way is to work from the left. If the place value fits into what is left, write a 1 and subtract it. If it does not fit, write a 0.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Denary number (0 to 255) <input type="number" id="sub" min="0" max="255" value="173" style="width:6em"></label></div>
+  <div class="scroll"><table class="t pv" id="subt" style="max-width:720px"></table></div>
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <div class="seg" id="mode" role="group" aria-label="Type of question" style="margin-bottom:14px">
+    <button data-m="b" aria-pressed="true">Binary to denary</button><button data-m="d" aria-pressed="false">Denary to binary</button><button data-m="x" aria-pressed="false">Mixed</button>
+  </div>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+const PV=[128,64,32,16,8,4,2,1];
+
+/* ---------- denary place values ---------- */
+function drawDen(){
+  const k=Math.floor(+$('#den').value);if(!(k>=0&&k<=9999)){$('#dsum').textContent='Enter a whole number from 0 to 9999.';return}
+  const d=[...String(k).padStart(4,'0')].map(Number),p=[1000,100,10,1];
+  $('#dpv').innerHTML=`<tr><th>10<sup>3</sup></th><th>10<sup>2</sup></th><th>10<sup>1</sup></th><th>10<sup>0</sup></th></tr><tr>${p.map(x=>`<td>${x}</td>`).join('')}</tr><tr>${d.map(x=>`<td class="hl">${x}</td>`).join('')}</tr><tr>${d.map((x,i)=>`<td>${x*p[i]}</td>`).join('')}</tr>`;
+  $('#dsum').textContent=d.map((x,i)=>`(${x} × ${p[i]})`).join(' + ')+' = '+k;
+}
+$('#den').oninput=drawDen;drawDen();
+
+/* ---------- binary to denary ---------- */
+function drawB2D(v){
+  const b=[...toBin(v)].map(Number),on=PV.filter((_,i)=>b[i]);
+  $('#b2dsum').textContent=(on.length>1?on.join(' + ')+' = ':'')+v;
+  $('#bpv').innerHTML=`<tr><th>Power</th>${PV.map((_,i)=>`<th>2<sup>${7-i}</sup></th>`).join('')}</tr><tr><td>Place value</td>${PV.map(x=>`<td>${x}</td>`).join('')}</tr><tr><td>Bit</td>${b.map(x=>`<td class="${x?'hl':''}">${x}</td>`).join('')}</tr><tr><td>Bit × place value</td>${b.map((x,i)=>`<td class="${x?'hl':''}">${x*PV[i]}</td>`).join('')}</tr>`;
+}
+const b2d=bitRow($('#b2d'),PV,drawB2D,0b10101101);drawB2D(b2d.get());
+
+/* ---------- divide by 2 ---------- */
+let rows=[],shown=0;
+function setup(){
+  let k=Math.floor(+$('#d2b').value);rows=[];shown=0;
+  if(!(k>=0&&k<=255)){$('#div2').innerHTML='';$('#d2bout').textContent='';$('#d2bmsg').textContent='Enter a whole number from 0 to 255.';return}
+  do{rows.push([k,k>>1,k&1]);k>>=1}while(k>0);
+  drawDiv();
+}
+function drawDiv(){
+  const done=shown===rows.length,k=rows[0][0];
+  let h='<tr><th>Number</th><th>÷ 2</th><th>Remainder</th><th></th></tr>';
+  rows.slice(0,shown).forEach((r,i)=>h+=`<tr class="${i===shown-1&&!done?'new':''}"><td>${r[0]}</td><td>${r[1]}</td><td class="rem">${r[2]}</td><td class="tag">${i===0?'LSB (read up to here)':done&&i===rows.length-1?'MSB (start reading here) ↑':''}</td></tr>`);
+  $('#div2').innerHTML=h;
+  const raw=rows.map(r=>r[2]).reverse().join('');
+  $('#d2bout').textContent=done?`${k} = ${nibbles(toBin(k))}`:'';
+  $('#d2bmsg').innerHTML=!shown?'Press <b>Step</b> to do the first division.':done?`The result of the division is 0, so stop. Reading the remainders from the bottom up gives <b class="mono">${raw}</b>.`+(raw.length<8?` Add ${8-raw.length} leading zero${raw.length<7?'s':''} to make it 8 bits.`:''):
+    `${rows[shown-1][0]} ÷ 2 = ${rows[shown-1][1]} remainder ${rows[shown-1][2]}. Now divide ${rows[shown-1][1]} by 2.`;
+  $('#dstep').disabled=done;
+}
+$('#dstep').onclick=()=>{if(shown<rows.length){shown++;drawDiv()}};
+$('#dall').onclick=()=>{shown=rows.length;drawDiv()};
+$('#dreset').onclick=$('#d2b').oninput=setup;setup();
+
+/* ---------- subtract place values ---------- */
+function drawSub(){
+  let k=Math.floor(+$('#sub').value);if(!(k>=0&&k<=255)){$('#subt').innerHTML='';return}
+  const left=[],bits=[];PV.forEach(p=>{left.push(k);const b=k>=p?1:0;bits.push(b);k-=b*p});
+  $('#subt').innerHTML=`<tr><th>Place value</th>${PV.map(x=>`<th>${x}</th>`).join('')}</tr><tr><td>Left to make</td>${left.map(x=>`<td>${x}</td>`).join('')}</tr><tr><td>Does it fit?</td>${bits.map(b=>`<td>${b?'yes':'no'}</td>`).join('')}</tr><tr><td>Bit</td>${bits.map(b=>`<td class="${b?'hl':''}">${b}</td>`).join('')}</tr>`;
+}
+$('#sub').oninput=drawSub;drawSub();
+
+/* ---------- practice ---------- */
+let mode='b';const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const d=drill($('#drill'),()=>{
+  const k=rnd(1,255),b=toBin(k),m=mode==='x'?(Math.random()<.5?'b':'d'):mode;
+  return m==='b'?{q:`Convert the binary number <span class="mono">${nibbles(b)}</span> to denary.`,a:String(k),why:PV.filter((_,i)=>b[i]==='1').join(' + ')+' = '+k+'.'}
+   :{q:`Convert the denary number ${k} to 8-bit binary.`,a:nibbles(b),why:PV.filter((_,i)=>b[i]==='1').join(' + ')+' = '+k+'. Remember the leading zeros if your answer was shorter than 8 bits.'};
+});
+$$('#mode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('#mode button').forEach(x=>x.setAttribute('aria-pressed',x===b));d.next()});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'What is the place value of the most significant bit in an 8-bit binary number?',opts:['8','128','256'],a:'128',why:'2<sup>7</sup> = 128.'},
+ {q:'What is the place value of the least significant bit?',opts:['0','1','2'],a:'1',why:'It is always 2<sup>0</sup> = 1.'},
+ {q:'What is the largest denary number that can be stored in 8 bits (unsigned)?',opts:['127','255','256'],a:'255',why:'There are 256 patterns, but the first one represents 0, so the largest is 1111 1111 = 255.'},
+ {q:'How can you tell that a binary number is odd?',opts:['The LSB is 1','The MSB is 1','It has an odd number of 1s'],a:'The LSB is 1',why:'Every other place value is even, so only the 1s column can make the total odd.'},
+ {q:'Which is 13 as an 8-bit binary number?',opts:['1101 0000','0000 1101','1101'],a:'0000 1101',why:'Leading zeros are added on the left. Adding them on the right would change the value.'},
+ {q:'In the divide by 2 method, in which order are the remainders read?',opts:['From the top down','From the bottom up','Largest first'],a:'From the bottom up',why:'The first remainder is the LSB and the last is the MSB.'},
+ {q:'What is the place value of the MSB of a 16-bit binary number?',opts:['2<sup>15</sup> = 32,768','2<sup>16</sup> = 65,536','16'],a:'2<sup>15</sup> = 32,768',why:'The MSB of an n-bit number is worth 2<sup>n−1</sup>.'},
+],null,$('#score'),$('#qreset'));
+</script>

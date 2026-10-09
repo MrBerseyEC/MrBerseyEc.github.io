@@ -1,0 +1,142 @@
+---
+layout: demo
+title: "Units and file sizes"
+heading: "Units of data storage"
+spec: "EDEXCEL GCSE · 2.3.1 · 2.3.3"
+published: false
+---
+<style>
+.ladder{display:flex;align-items:stretch;gap:0;min-width:780px}
+.ladder .u{flex:1;border:2px solid var(--ink);border-radius:12px;padding:10px 6px;background:var(--bg);text-align:center}
+.ladder .u b{display:block;font-size:1.02rem}
+.ladder .u small{display:block;font:600 .78rem var(--mono);color:var(--muted)}
+.ladder .u.from{border-color:var(--one);background:var(--one-soft)}
+.ladder .u.to{border-color:var(--hl);background:var(--hl-soft)}
+.ladder .f{display:grid;place-items:center;padding:0 6px;font:700 .8rem var(--mono);color:var(--muted);text-align:center;line-height:1.5}
+.ladder .f.on{color:var(--ink)}
+.calc{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.calc input{width:8em}
+.expr{font:600 1.05rem var(--mono);margin:8px 0 0}
+</style>
+
+<p class="lede">The smallest unit of data is the bit. Bits are grouped into bytes, and bytes are counted in binary multiples: each unit is <b>1024</b> times the one before, because 1024 is 2<sup>10</sup>. You need these units to work out file sizes and to decide whether something will fit on a storage device.</p>
+
+<section class="block">
+  <h2>The units</h2>
+  <div class="scroll"><table class="t" style="max-width:820px">
+    <tr><th>Unit</th><th>Abbreviation</th><th>Equivalent to</th><th>In bytes</th></tr>
+    <tr><td><b>bit</b></td><td></td><td>a single 1 or 0</td><td></td></tr>
+    <tr><td><b>nibble</b></td><td></td><td>4 bits</td><td></td></tr>
+    <tr><td><b>byte</b></td><td></td><td>8 bits</td><td class="mono">1</td></tr>
+    <tr><td><b>kibibyte</b></td><td class="mono">KiB</td><td>1024 bytes</td><td class="mono">2<sup>10</sup> = 1,024</td></tr>
+    <tr><td><b>mebibyte</b></td><td class="mono">MiB</td><td>1024 kibibytes</td><td class="mono">2<sup>20</sup> = 1,048,576</td></tr>
+    <tr><td><b>gibibyte</b></td><td class="mono">GiB</td><td>1024 mebibytes</td><td class="mono">2<sup>30</sup> = 1,073,741,824</td></tr>
+    <tr><td><b>tebibyte</b></td><td class="mono">TiB</td><td>1024 gibibytes</td><td class="mono">2<sup>40</sup> = 1,099,511,627,776</td></tr>
+  </table></div>
+  <p class="note">You will also see kilobyte, megabyte and gigabyte. Those prefixes strictly mean 1000, not 1024, which has caused a lot of confusion. The binary prefixes kibi, mebi, gibi and tebi were introduced to make it clear that the multiple is 1024. They are the ones to use in this course.</p>
+</section>
+
+<section class="block">
+  <h2>Converting between units</h2>
+  <p class="sub">Moving to a <b>smaller</b> unit, there will be more of them, so <b>multiply</b>. Moving to a <b>larger</b> unit, there will be fewer, so <b>divide</b>. Do one step of the ladder at a time.</p>
+  <div class="calc">
+    <input type="number" id="val" value="1.5" min="0" step="any" aria-label="Amount">
+    <select id="from" aria-label="Unit to convert from"></select><span>to</span><select id="to" aria-label="Unit to convert to"></select>
+    <button class="btn" id="swap">Swap</button>
+  </div>
+  <div class="scroll"><div class="ladder" id="ladder"></div></div>
+  <p class="expr" id="cexpr"></p>
+  <p class="result" id="cres"></p>
+</section>
+
+<section class="block">
+  <h2>How many will fit?</h2>
+  <p class="sub">To find out how many files fit on a device, put both sizes into the same unit and divide. Any part of a file left over does not count.</p>
+  <div class="calc">
+    <label class="check">Capacity <input type="number" id="cap" value="32" min="0" step="any"></label><select id="capu" aria-label="Capacity unit"></select>
+    <label class="check">Size of each file <input type="number" id="fs" value="6" min="0" step="any"></label><select id="fsu" aria-label="File size unit"></select>
+  </div>
+  <p class="expr" id="fexpr"></p>
+  <p class="result" id="fres"></p>
+</section>
+
+<section class="block">
+  <h2>Constructing expressions</h2>
+  <p class="sub">Exam questions often ask you to construct an expression and tell you not to carry out the calculation. Choose the correct expression for each one.</p>
+  {% include quiz.html n=1 %}
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html n=2 %}
+</section>
+<script>
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),num=x=>x.toLocaleString('en-GB',{maximumFractionDigits:3});
+const U=['bits','bytes','KiB','MiB','GiB','TiB'],NAME=['bit','byte','kibibyte','mebibyte','gibibyte','tebibyte'],STEP=[8,1024,1024,1024,1024];   /* STEP[i] of unit i make one of unit i+1 */
+const inBits=i=>STEP.slice(0,i).reduce((a,b)=>a*b,1);
+const opts=sel=>U.map((u,i)=>`<option value="${i}"${i===sel?' selected':''}>${u}</option>`).join('');
+
+/* ---------- converter ---------- */
+$('#from').innerHTML=opts(5);$('#to').innerHTML=opts(3);
+function path(a,b){const f=a>b?STEP.slice(b,a).reverse():STEP.slice(a,b);return{op:a>b?'×':'÷',f}}
+function drawConv(){
+  const v=+$('#val').value,a=+$('#from').value,b=+$('#to').value,lo=Math.min(a,b),hi=Math.max(a,b);
+  $('#ladder').innerHTML=U.map((u,i)=>`<div class="u ${i===a?'from':i===b?'to':''}"><b>${NAME[i]}</b><small>${i>1?U[i]:'&nbsp;'}</small></div>`+(i<5?`<div class="f ${i>=lo&&i<hi?'on':''}">${a>b?'× ':'÷ '}${STEP[i]}<br>${a>b?'←':'→'}</div>`:'')).join('');
+  if(!(v>=0)||$('#val').value===''){$('#cexpr').textContent='';$('#cres').textContent='Enter an amount.';return}
+  const p=path(a,b),r=a>b?v*p.f.reduce((x,y)=>x*y,1):v/p.f.reduce((x,y)=>x*y,1);
+  $('#cexpr').textContent=a===b?'Same unit, so nothing to do.':a>b?`${num(v)} ${p.f.map(x=>'× '+x).join(' ')}`:`${num(v)} ÷ ${p.f.length>1?'('+p.f.join(' × ')+')':p.f[0]}`;
+  $('#cres').textContent=`${num(v)} ${U[a]} = ${r<1e-3&&r>0?r.toExponential(3):r.toLocaleString('en-GB',{maximumFractionDigits:r<10?6:3})} ${U[b]}`;
+}
+['val','from','to'].forEach(k=>$('#'+k).oninput=drawConv);
+$('#swap').onclick=()=>{const a=$('#from').value;$('#from').value=$('#to').value;$('#to').value=a;drawConv()};
+drawConv();
+
+/* ---------- how many fit ---------- */
+$('#capu').innerHTML=opts(4);$('#fsu').innerHTML=opts(3);
+function drawFit(){
+  const c=+$('#cap').value,cu=+$('#capu').value,f=+$('#fs').value,fu=+$('#fsu').value;
+  if(!(c>0&&f>0)){$('#fexpr').textContent='';$('#fres').textContent='Enter a capacity and a file size.';return}
+  const n=c*inBits(cu)/(f*inBits(fu));
+  const conv=cu>fu?`(${num(c)} ${STEP.slice(fu,cu).map(x=>'× '+x).join(' ')}) ÷ ${num(f)}`:cu<fu?`${num(c)} ÷ (${num(f)} ${STEP.slice(cu,fu).map(x=>'× '+x).join(' ')})`:`${num(c)} ÷ ${num(f)}`;
+  $('#fexpr').textContent=(cu!==fu?`Convert to ${U[Math.min(cu,fu)]} first: `:'')+conv+(Number.isInteger(n)?'':` = ${num(n)}`);
+  $('#fres').textContent=`${num(Math.floor(n+1e-9))} file${Math.floor(n+1e-9)===1?'':'s'} will fit`;
+}
+['cap','capu','fs','fsu'].forEach(k=>$('#'+k).oninput=drawFit);drawFit();
+
+/* ---------- expressions ---------- */
+cardQuiz($('#quiz1'),[
+ {q:'A hard disk has a capacity of 1.5 TiB. Express this in mebibytes.',opts:['1.5 × 1024 × 1024','1.5 ÷ (1024 × 1024)','1.5 × 1024'],a:'1.5 × 1024 × 1024',why:'TiB to GiB to MiB is two steps down to a smaller unit, so multiply by 1024 twice.'},
+ {q:'An image file has a size of 363,143,213 bits. Give its size in mebibytes.',opts:['363143213 ÷ (8 × 1024 × 1024)','363143213 ÷ (1024 × 1024)','363143213 × 8 × 1024 × 1024'],a:'363143213 ÷ (8 × 1024 × 1024)',why:'Divide by 8 for bytes, by 1024 for kibibytes, and by 1024 again for mebibytes.'},
+ {q:'What is the capacity of a 32 GiB SD card in bytes?',opts:['32 × 1024 × 1024 × 1024','32 × 1024 × 1024','32 × 1000 × 1000 × 1000'],a:'32 × 1024 × 1024 × 1024',why:'GiB to MiB to KiB to bytes is three steps, so multiply by 1024 three times.'},
+ {q:'How many 13 MiB voice recordings fit on a 2 TiB memory stick?',opts:['(2 × 1024 × 1024) ÷ 13','(2 × 1024) ÷ 13','2 ÷ (13 × 1024 × 1024)'],a:'(2 × 1024 × 1024) ÷ 13',why:'Convert 2 TiB to MiB, then divide by the size of one recording.'},
+ {q:'A sound file is sampled at 96 kHz with a bit depth of 24 bits and lasts 3 minutes. Give its size in mebibytes.',opts:['(96 × 1000 × 24 × 3 × 60) ÷ (8 × 1024 × 1024)','(96 × 24 × 3) ÷ (8 × 1024 × 1024)','(96 × 1000 × 24 × 3 × 60) ÷ (1024 × 1024)'],a:'(96 × 1000 × 24 × 3 × 60) ÷ (8 × 1024 × 1024)',why:'Sample rate in Hz × bit depth × seconds gives bits. Then divide by 8 × 1024 × 1024.'},
+ {q:'A 1024 × 768 image has a colour depth of 24 bits. Give its size in kibibytes.',opts:['(1024 × 768 × 24) ÷ (8 × 1024)','(1024 × 768 × 24) ÷ 1024','(1024 × 768) ÷ (24 × 8 × 1024)'],a:'(1024 × 768 × 24) ÷ (8 × 1024)',why:'Width × height × colour depth gives bits. Then divide by 8 × 1024.'},
+],null,$('#score1'),$('#qreset1'));
+
+/* ---------- practice ---------- */
+drill($('#drill'),()=>{
+  const t=rnd(0,4);
+  if(t===0){const k=rnd(2,64);return{q:`How many bits are there in ${k} bytes?`,a:String(k*8),why:`${k} × 8 = ${k*8}.`}}
+  if(t===1){const i=rnd(1,4),k=rnd(2,16);return{q:`How many ${U[i]==='bytes'?'bytes':NAME[i]+'s'} are there in ${k} ${NAME[i+1]}s?`,a:String(k*1024),why:`${k} × 1024 = ${num(k*1024)}.`}}
+  if(t===2){const i=rnd(1,4),k=rnd(2,12);return{q:`Convert ${num(k*1024)} ${i===1?'bytes':U[i]} to ${NAME[i+1]}s.`,a:[String(k),k+U[i+1]],why:`${num(k*1024)} ÷ 1024 = ${k}.`}}
+  if(t===3){const k=rnd(1,8)*2;return{q:`How many nibbles are there in ${k} bytes?`,a:String(k*2),why:`A nibble is 4 bits, so there are 2 in every byte. ${k} × 2 = ${k*2}.`}}
+  const i=rnd(2,4),f=[2,4,8,16,32][rnd(0,4)],c=[1,2,4,8][rnd(0,3)];
+  return{q:`How many ${f} ${U[i]} files will fit on a device with a capacity of ${c} ${U[i+1]}?`,a:String(c*1024/f),why:`(${c} × 1024) ÷ ${f} = ${num(c*1024/f)}.`};
+});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz2'),[
+ {q:'Which is the largest?',opts:['1 gibibyte','1 mebibyte','1 tebibyte'],a:'1 tebibyte',why:'In ascending order: bit, nibble, byte, kibibyte, mebibyte, gibibyte, tebibyte.'},
+ {q:'Which is the smallest?',opts:['1 nibble','1 byte','1 kibibyte'],a:'1 nibble',why:'A nibble is 4 bits, half a byte.'},
+ {q:'How many bytes are there in a kibibyte?',opts:['1000','1024','8'],a:'1024',why:'1024 = 2<sup>10</sup>.'},
+ {q:'How many kibibytes are there in a gibibyte?',opts:['1024','1024 × 1024','1024 × 1024 × 1024'],a:'1024 × 1024',why:'GiB to MiB is one step and MiB to KiB is another.'},
+ {q:'To convert from bytes to mebibytes, you…',opts:['divide by 1024 twice','multiply by 1024 twice','divide by 1024 once'],a:'divide by 1024 twice',why:'Bytes to KiB, then KiB to MiB. Moving to a larger unit means dividing.'},
+ {q:'Which is larger: 2000 KiB or 2 MiB?',opts:['2000 KiB','2 MiB','They are the same'],a:'2 MiB',why:'2 MiB is 2 × 1024 = 2048 KiB.'},
+ {q:'How is 2<sup>20</sup> bytes written as a unit?',opts:['1 KiB','1 MiB','1 GiB'],a:'1 MiB',why:'2<sup>10</sup> is a kibibyte, 2<sup>20</sup> a mebibyte, 2<sup>30</sup> a gibibyte and 2<sup>40</sup> a tebibyte.'},
+],null,$('#score2'),$('#qreset2'));
+</script>

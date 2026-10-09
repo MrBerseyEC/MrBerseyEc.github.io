@@ -80,4 +80,14 @@ table.tt{border-collapse:collapse;font-size:.92rem}
 .quizbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
 .score{font-weight:800}
 
+/* ---------- bit rows and typed-answer practice (built by bitRow and drill in site.js) ---------- */
+.bitrow{display:grid;grid-template-columns:repeat(var(--n),minmax(0,64px));gap:6px;align-items:end;margin:0 0 12px}
+.bitrow>div{display:grid;gap:4px;text-align:center}
+.bitrow small{font:600 .78rem var(--mono);color:var(--muted);white-space:nowrap}
+.bitrow button.bit{min-width:0;width:100%;padding:8px 0}
+.bitrow.nib>div:nth-child(5){margin-left:8px}
+.drill .dq{font-weight:700;font-size:1.05rem;margin:0 0 10px}
+.drill input{font-family:var(--mono);width:13em}
+.result{font:700 1.5rem/1.3 var(--mono);margin:6px 0}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

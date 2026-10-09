@@ -1,0 +1,125 @@
+---
+layout: demo
+title: "Binary shifts"
+heading: "Logical and arithmetic shifts"
+spec: "EDEXCEL GCSE · 2.1.4"
+published: false
+---
+<style>
+.shift{border-collapse:separate;border-spacing:6px 4px;font:700 1.2rem var(--mono)}
+.shift td{width:50px;height:46px;text-align:center;border:2px solid var(--ink);border-radius:8px;background:var(--bg)}
+.shift td.lab{border:0;background:none;width:auto;text-align:left;font:600 .85rem var(--sans);color:var(--muted);white-space:nowrap;padding-right:8px}
+.shift td.gap{border:0;background:none;height:26px;font-size:1rem;color:var(--one)}
+.shift td.out{border-style:dashed;border-color:var(--bad);color:var(--bad);background:none}
+.shift td.fill{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.shift td.none{border:0;background:none}
+.shift td.den{border:0;background:none;width:auto;text-align:left;padding-left:10px;white-space:nowrap}
+.key{display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;color:var(--muted);margin:8px 0 0}
+.key i{display:inline-block;width:14px;height:14px;border-radius:4px;border:2px solid;vertical-align:-2px;margin-right:5px}
+</style>
+
+<p class="lede">A binary shift moves every bit in a pattern a number of places to the left or to the right. Bits that fall off the end are discarded and the empty places are filled in. Shifting is a very fast way for a processor to multiply and divide by powers of 2.</p>
+
+<section class="block">
+  <h2>Shift a pattern</h2>
+  <p class="sub">Set the bits, choose a shift and the number of places. Press <b>Apply</b> to carry on shifting from the result.</p>
+  <div id="bits" class="nib"></div>
+  <div class="toolbar" style="margin-bottom:14px">
+    <div class="seg" id="kind" role="group" aria-label="Type of shift">
+      <button data-k="lsl" aria-pressed="true">Logical left</button><button data-k="lsr" aria-pressed="false">Logical right</button><button data-k="asl" aria-pressed="false">Arithmetic left</button><button data-k="asr" aria-pressed="false">Arithmetic right</button>
+    </div>
+    <label class="check">Places <input type="range" id="n" min="1" max="4" value="2"> <b class="mono" id="nv"></b></label>
+    <button class="btn pri" id="apply">Apply</button>
+  </div>
+  <div class="scroll"><table class="shift" id="shift"></table></div>
+  <div class="key"><span><i style="border-color:var(--bad);border-style:dashed"></i>discarded</span><span><i style="border-color:var(--ok);background:var(--ok-soft)"></i>filled in</span></div>
+  <p class="status" id="how" style="margin-top:12px"></p>
+  <p class="note" id="effect"></p>
+</section>
+
+<section class="block">
+  <h2>The four shifts</h2>
+  <div class="scroll"><table class="t">
+    <tr><th>Shift</th><th>Bits move</th><th>Discarded</th><th>Empty places filled with</th><th>Effect on a number</th></tr>
+    <tr><td><b>Logical shift left</b></td><td>left</td><td>the leftmost bits</td><td>0s on the right</td><td>Multiplies an unsigned integer by 2 for each place</td></tr>
+    <tr><td><b>Logical shift right</b></td><td>right</td><td>the rightmost bits</td><td>0s on the left</td><td>Divides an unsigned integer by 2 for each place</td></tr>
+    <tr><td><b>Arithmetic shift left</b></td><td>left</td><td>the leftmost bits</td><td>0s on the right</td><td>Exactly the same as a logical shift left</td></tr>
+    <tr><td><b>Arithmetic shift right</b></td><td>right</td><td>the rightmost bits</td><td>copies of the original MSB on the left</td><td>Divides a two's complement integer by 2 for each place, keeping its sign</td></tr>
+  </table></div>
+  <p class="note">A <b>logical</b> shift treats every bit the same way, whatever the pattern represents. An <b>arithmetic</b> shift right takes account of the MSB so that a negative two's complement number stays negative. Shifting by <i>n</i> places multiplies or divides by 2<sup><i>n</i></sup>: one place is 2, two places is 4, three places is 8.</p>
+</section>
+
+<section class="block">
+  <h2>When shifting gives the wrong answer</h2>
+  <div class="scroll"><table class="t">
+    <tr><th>Problem</th><th>Example</th><th>Why</th></tr>
+    <tr><td><b>Loss of precision</b><br>shifting right</td><td class="mono">0010 0001 (33)<br>→ 0001 0000 (16)</td><td>33 ÷ 2 is 16.5, but the 1 in the rightmost place was discarded, so the result is rounded down. This happens whenever a 1 is shifted off the right-hand end.</td></tr>
+    <tr><td><b>Overflow</b><br>shifting left</td><td class="mono">1001 0000 (144)<br>→ 0010 0000 (32)</td><td>144 × 2 is 288, which does not fit in 8 bits. A 1 was shifted off the left-hand end, so the result is wrong.</td></tr>
+    <tr><td><b>Sign lost</b><br>shifting a negative number left</td><td class="mono">1011 (−5)<br>→ 0110 (+6)</td><td>A left shift does not preserve the MSB. In 4 bits, the bit worth −8 has been discarded, so the answer is +6 instead of −10. Left shifts are not used to multiply negative numbers.</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),signed=v=>v>127?v-256:v,sgn=k=>k<0?'−'+(-k):'+'+k;
+const NAMES={lsl:'logical shift left',lsr:'logical shift right',asl:'arithmetic shift left',asr:'arithmetic shift right'};
+function shifted(v,k,n){
+  if(k==='lsl'||k==='asl')return v<<n&255;
+  if(k==='lsr')return v>>n;
+  return (signed(v)>>n)&255;
+}
+
+/* ---------- shifter ---------- */
+let kind='lsl';
+function draw(){
+  const v=row.get(),n=+$('#n').value,left=kind==='lsl'||kind==='asl',arith=kind==='asr',r=shifted(v,kind,n);
+  const b=[...toBin(v)],a=[...toBin(r)],pad=Array(n).fill('<td class="none"></td>').join('');
+  $('#nv').textContent=n;
+  const val=x=>arith?sgn(signed(x)).replace('+0','0'):x;
+  const before=b.map((x,i)=>`<td class="${(left?i<n:i>=8-n)?'out':''}">${x}</td>`).join('');
+  const after=a.map((x,i)=>`<td class="${(left?i>=8-n:i<n)?'fill':''}">${x}</td>`).join('');
+  $('#shift').innerHTML=`<tr><td class="lab">Before</td>${before}<td class="den">= ${val(v)}</td></tr>`+
+    `<tr><td class="lab"></td>${Array(8).fill(`<td class="gap">${left?'↙':'↘'}</td>`).join('')}<td class="den"></td></tr>`+
+    `<tr><td class="lab">After</td>${after}<td class="den">= ${val(r)}</td></tr>`;
+  const p=`${n} place${n>1?'s':''}`,lost=left?b.slice(0,n):b.slice(8-n);
+  $('#how').innerHTML=`Move every bit ${p} to the ${left?'left':'right'}. Discard the ${left?'leftmost':'rightmost'} ${n>1?n+' bits':'bit'} (${lost.join('')}). Fill the empty ${n>1?'places':'place'} on the ${left?'right':'left'} with ${arith?`a copy of the original MSB, which is <b>${b[0]}</b>`:'<b>0</b>'}.`+(kind==='asl'?' An arithmetic shift left is exactly the same as a logical shift left.':'');
+  const f=2**n,dropped=lost.includes('1');let e;
+  if(left)e=dropped?`<b>Overflow.</b> ${v} × ${f} = ${v*f}, which needs more than 8 bits. A 1 was shifted off the left-hand end, so the result of ${r} is wrong.`:`Read as an unsigned integer, the pattern has been <b>multiplied by ${f}</b> (2<sup>${n}</sup>): ${v} × ${f} = ${r}.`;
+  else if(kind==='lsr')e=`Read as an unsigned integer, the pattern has been <b>divided by ${f}</b> (2<sup>${n}</sup>): ${v} ÷ ${f} = ${dropped?v/f+`, stored as ${r}. <b>Precision has been lost</b> because a 1 was shifted off the right-hand end.`:r+'.'}`;
+  else{const s=signed(v);e=`Read as a two's complement integer, the pattern has been <b>divided by ${f}</b> (2<sup>${n}</sup>) and has kept its sign: ${sgn(s).replace('+0','0')} ÷ ${f} = ${dropped?String(s/f).replace('-','−')+`, stored as ${val(r)}. <b>Precision has been lost</b> because a 1 was shifted off the right-hand end.`:val(r)+'.'}`+(s<0?' A logical shift right would have put a 0 in the MSB and turned it into a positive number.':'')}
+  $('#effect').innerHTML=e;
+}
+const row=bitRow($('#bits'),[128,64,32,16,8,4,2,1],draw,0b00010100);
+$$('#kind button').forEach(b=>b.onclick=()=>{kind=b.dataset.k;$$('#kind button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw()});
+$('#n').oninput=draw;
+$('#apply').onclick=()=>{row.set(shifted(row.get(),kind,+$('#n').value));draw()};
+draw();
+
+/* ---------- practice ---------- */
+drill($('#drill'),()=>{
+  const k=['lsl','lsr','asr','asr','lsl','lsr','asl'][rnd(0,6)],n=rnd(1,3);let v=rnd(1,255);if(k==='asr'&&Math.random()<.7)v|=128;
+  const r=shifted(v,k,n),left=k==='lsl'||k==='asl';
+  return{q:`Give the result of ${k[0]==='a'?'an':'a'} ${NAMES[k]} of ${n} place${n>1?'s':''} on <span class="mono">${nibbles(toBin(v))}</span>.`,a:nibbles(toBin(r)),
+    why:`The ${left?'leftmost':'rightmost'} ${n>1?n+' bits are':'bit is'} discarded and the ${left?'right':'left'} is filled with ${k==='asr'?'copies of the MSB ('+(v>>7)+')':'0s'}.`};
+});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'A logical shift left of 3 places is applied to an unsigned integer. What is the effect?',opts:['Multiplies by 3','Multiplies by 8','Divides by 8'],a:'Multiplies by 8',why:'2<sup>3</sup> = 8.'},
+ {q:'Which shift would divide an unsigned integer by 4?',opts:['Logical shift right, 2 places','Logical shift right, 4 places','Logical shift left, 2 places'],a:'Logical shift right, 2 places',why:'2<sup>2</sup> = 4, and shifting right divides.'},
+ {q:'What fills the empty places in an arithmetic shift right?',opts:['0s','1s','Copies of the original MSB'],a:'Copies of the original MSB',why:'This preserves the sign of a two\'s complement number.'},
+ {q:'Why can a right shift give an imprecise result?',opts:['1s shifted off the right-hand end are lost','The MSB changes','The pattern gets longer'],a:'1s shifted off the right-hand end are lost',why:'The discarded bits were the remainder of the division, so the result is rounded down.'},
+ {q:'Which shift should be used to divide the two\'s complement number −72 by 4?',opts:['Arithmetic shift right, 2 places','Logical shift right, 2 places','Arithmetic shift left, 2 places'],a:'Arithmetic shift right, 2 places',why:'1011 1000 becomes 1110 1110, which is −18. A logical shift would make it positive.'},
+ {q:'How does an arithmetic shift left differ from a logical shift left?',opts:['It does not: they are the same','It copies the MSB','It fills with 1s'],a:'It does not: they are the same',why:'Both discard bits on the left and fill with 0s on the right.'},
+ {q:'What is the result of a logical shift right of 2 places on 0101 1100?',opts:['0001 0111','0111 0000','1101 0111'],a:'0001 0111',why:'The two rightmost bits (00) are discarded and two 0s are added on the left. 92 ÷ 4 = 23.'},
+ {q:'An 8-bit unsigned integer is shifted left and a 1 falls off the left-hand end. What has happened?',opts:['Overflow','Loss of precision','Nothing: the result is still correct'],a:'Overflow',why:'The true answer is too large to fit in 8 bits.'},
+],null,$('#score'),$('#qreset'));
+</script>
