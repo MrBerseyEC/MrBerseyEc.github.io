@@ -1,0 +1,210 @@
+---
+layout: demo
+title: "Protocols"
+heading: "Network protocols"
+spec: "EDEXCEL GCSE · 4.1.5"
+published: false
+---
+<style>
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.pane{border:2px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.pane h3{margin:0 0 2px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pane .role{font-weight:800;margin:0 0 10px}
+.stream{font:600 .85rem/1.7 var(--mono);word-break:break-all;margin:12px 0;padding:8px 12px;border-radius:8px;background:var(--bg);border:2px dashed var(--line)}
+.got{font:700 1.5rem var(--mono);min-height:1.6em;word-break:break-all}
+.hops{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.5fr) minmax(0,1fr) minmax(0,.5fr) minmax(0,1fr) minmax(0,.5fr) minmax(0,1fr);align-items:center;margin-top:14px}
+.node{border:3px solid var(--ink);border-radius:14px;padding:10px 8px;background:var(--bg);text-align:center;min-height:118px;transition:border-color .2s,box-shadow .2s}
+.node b{display:block}
+.node small{display:block;color:var(--muted);font-size:.78rem;line-height:1.3}
+.node .ico{font-size:1.8rem;line-height:1.3}
+.node.on{border-color:var(--one);box-shadow:0 0 0 4px var(--one-soft)}
+.link{padding:0 6px;text-align:center}
+.link .lab{font:800 .8rem var(--mono);color:var(--muted);min-height:1.3em}
+.link .bar{height:10px;border-radius:5px;background:var(--off);margin:4px 0;transition:background .2s}
+.link.on .bar{background:var(--one)}
+.link.on .lab{color:var(--one)}
+.explain{font-size:1.05rem;min-height:3.4em;margin:14px 0 0;max-width:85ch}
+.boxes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+.mbox{border:2px solid var(--ink);border-radius:12px;padding:10px;background:var(--bg);min-height:150px}
+.mbox h3{margin:0 0 8px;font-size:.95rem}
+.mbox div{font-size:.86rem;border:1.5px solid var(--line);border-radius:8px;padding:4px 8px;margin:0 0 5px;background:var(--panel)}
+.mbox div.unread{font-weight:800;border-color:var(--one)}
+.mbox p{margin:0;color:var(--muted);font-size:.86rem}
+.snoop{font:.88rem/1.6 var(--mono);background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;min-height:7.5em;white-space:pre-wrap;word-break:break-all}
+.snoop .e{color:#FF8A80}.snoop .g{color:#7CE0A6}.snoop .s{color:#9AA7B3}
+@media (max-width:860px){.two,.hops,.boxes{grid-template-columns:1fr}.link{padding:6px 0}.node{min-height:0}}
+</style>
+
+<p class="lede">A <b>protocol</b> is a set of rules that governs how devices communicate. Devices made by different manufacturers, running different software, can exchange data because they all follow the same agreed rules about how it is formatted, addressed, sent and checked.</p>
+
+<section class="block">
+  <h2>Why rules are needed</h2>
+  <p class="sub">The sender turns each character into 8 bits. The receiver gets nothing but a stream of 1s and 0s. Whether it makes sense of them depends on whether it follows the same rules as the sender.</p>
+  <div class="two">
+    <div class="pane"><h3>Sender</h3><p class="role">Rule: 8 bits for each character</p><input type="text" id="msg" value="Hello" maxlength="12" style="width:100%;font-family:var(--mono)" aria-label="Message to send"></div>
+    <div class="pane"><h3>Receiver</h3><p class="role">Rule: <select id="rule"><option value="8">8 bits for each character</option><option value="7">7 bits for each character</option><option value="r">8 bits, least significant bit first</option></select></p><div class="got" id="got"></div></div>
+  </div>
+  <div class="stream" id="stream"></div>
+  <p class="status" id="pmsg"></p>
+</section>
+
+<section class="block">
+  <h2>Protocols you need to know</h2>
+  <div class="scroll"><table class="t">
+    <tr><th>Protocol</th><th>Stands for</th><th>What it does</th></tr>
+    <tr><td><b>HTTP</b></td><td>Hypertext Transfer Protocol</td><td>Defines how web pages are requested by a browser and served by a web server</td></tr>
+    <tr><td><b>HTTPS</b></td><td>Hypertext Transfer Protocol Secure</td><td>A secure version of HTTP, with encryption</td></tr>
+    <tr><td><b>FTP</b></td><td>File Transfer Protocol</td><td>Defines how files are transferred across a network</td></tr>
+    <tr><td><b>SMTP</b></td><td>Simple Mail Transfer Protocol</td><td>Defines how emails are sent, from a device to a mail server and between mail servers</td></tr>
+    <tr><td><b>POP3</b></td><td>Post Office Protocol</td><td>Retrieves email by downloading it from the mail server to one device</td></tr>
+    <tr><td><b>IMAP</b></td><td>Internet Message Access Protocol</td><td>Accesses email that stays on the mail server, so every device sees the same mailbox</td></tr>
+    <tr><td><b>TCP</b></td><td>Transmission Control Protocol</td><td>Splits data into packets, delivers them to the right recipient and reassembles them</td></tr>
+    <tr><td><b>IP</b></td><td>Internet Protocol</td><td>Adds the address the data is to be sent to, and routes it there</td></tr>
+    <tr><td><b>Ethernet</b></td><td></td><td>Sets out how data is transmitted on wired LANs</td></tr>
+    <tr><td><b>Wi-Fi</b></td><td></td><td>Sets out how data is transmitted on wireless LANs</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Sending an email</h2>
+  <p class="sub">Sending and collecting email use different protocols. Step through the journey of one message.</p>
+  <div class="row"><button class="btn pri" id="step">Step ▸</button><button class="btn" id="reset">Reset</button></div>
+  <div class="hops">
+    <div class="node" id="n0"><div class="ico">💻</div><b>Alex's laptop</b><small>Email app</small></div>
+    <div class="link" id="l0"><div class="lab"></div><div class="bar"></div></div>
+    <div class="node" id="n1"><div class="ico">🗄️</div><b>Alex's mail server</b><small>Run by her email provider</small></div>
+    <div class="link" id="l1"><div class="lab"></div><div class="bar"></div></div>
+    <div class="node" id="n2"><div class="ico">🗄️</div><b>Ben's mail server</b><small>Holds Ben's mailbox</small></div>
+    <div class="link" id="l2"><div class="lab"></div><div class="bar"></div></div>
+    <div class="node" id="n3"><div class="ico">📱</div><b>Ben's phone</b><small>Email app</small></div>
+  </div>
+  <p class="explain" id="explain"></p>
+</section>
+
+<section class="block">
+  <h2>POP3 or IMAP?</h2>
+  <p class="sub">Both collect email from a mail server, but they treat the mailbox differently. Alex reads her email on a phone and on a laptop. Check the mail on one device and then the other, with each protocol.</p>
+  <div class="toolbar">
+    <div class="seg" id="proto" role="group" aria-label="Protocol"><button data-p="pop" aria-pressed="true">POP3</button><button data-p="imap" aria-pressed="false">IMAP</button></div>
+    <button class="btn pri" data-a="phone">Check mail on the phone</button><button class="btn pri" data-a="laptop">Check mail on the laptop</button>
+    <button class="btn" data-a="read">Read an email on the phone</button><button class="btn" data-a="new">A new email arrives</button><button class="btn" data-a="reset">Reset</button>
+  </div>
+  <div class="boxes">
+    <div class="mbox"><h3>📱 Phone</h3><span id="b-phone"></span></div>
+    <div class="mbox"><h3>🗄️ Mail server</h3><span id="b-server"></span></div>
+    <div class="mbox"><h3>💻 Laptop</h3><span id="b-laptop"></span></div>
+  </div>
+  <p class="status" id="mmsg" style="margin-top:12px"></p>
+  <p class="note">With IMAP the email stays on the server and each device shows a synchronised view of it, so IMAP suits someone who uses several devices. POP3 downloads the messages and normally removes them from the server, which frees up space there and lets you read them offline, but only on that one device.</p>
+</section>
+
+<section class="block">
+  <h2>HTTP or HTTPS?</h2>
+  <p class="sub">You log in to a website from a café's public Wi-Fi. Someone at the next table is capturing the wireless traffic. This is what they see.</p>
+  <div class="row" style="margin-bottom:12px"><div class="seg" id="web" role="group" aria-label="Web protocol"><button data-h="0" aria-pressed="true">http://</button><button data-h="1" aria-pressed="false">https://</button></div></div>
+  <div class="snoop" id="snoop"></div>
+  <p class="note">HTTPS encrypts everything sent between the browser and the web server. It should always be used when personal or financial data is involved, and most websites now use it for everything.</p>
+</section>
+
+<section class="block">
+  <h2>Which protocol?</h2>
+  {% include quiz.html n=1 %}
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html n=2 %}
+</section>
+<script>
+/* ---------- why rules are needed ---------- */
+const printable=k=>k>=32&&k<127?String.fromCharCode(k):'�';
+function drawRule(){
+  const m=$('#msg').value,r=$('#rule').value,bytes=[...m].map(c=>toBin(c.charCodeAt(0)&255)),bits=bytes.join('');
+  let out;
+  if(r==='8')out=m;
+  else if(r==='7')out=(bits.match(/.{7}/g)||[]).map(b=>printable(parseInt(b,2))).join('');
+  else out=bytes.map(b=>printable(parseInt([...b].reverse().join(''),2))).join('');
+  $('#stream').textContent=bytes.join(' ')||' ';
+  $('#got').textContent=out;
+  $('#pmsg').innerHTML=!m?'Type a message.':r==='8'?'<b class="okc">Same protocol.</b> The receiver splits the stream in the same places and reads the bits in the same order, so the message arrives intact.'
+    :'<b class="badc">Different rules.</b> Every bit arrived correctly, but the receiver interprets them differently, so the result is nonsense. Nothing is wrong with the hardware: the two ends simply have not agreed on a protocol.';
+}
+$('#msg').oninput=$('#rule').onchange=drawRule;drawRule();
+
+/* ---------- sending an email ---------- */
+const STEPS=[
+ {hi:['n0'],text:'Alex writes an email to ben@example.org and presses <b>Send</b>.'},
+ {hi:['n0','l0','n1'],lab:{l0:'SMTP'},text:'Her email app uses <b>SMTP</b> to send the message to her own email provider\'s mail server.'},
+ {hi:['n1'],text:'Alex\'s mail server looks at the part of the address after the @ to find out which mail server handles Ben\'s email.'},
+ {hi:['n1','l1','n2'],lab:{l1:'SMTP'},text:'The message is passed from server to server, again using <b>SMTP</b>.'},
+ {hi:['n2'],text:'Ben\'s mail server stores the message in his mailbox. It waits there until Ben\'s device asks for it. Ben does not need to be online when it arrives.'},
+ {hi:['n2','l2','n3'],lab:{l2:'IMAP or POP3'},text:'Ben opens his email app. It uses <b>IMAP</b> or <b>POP3</b> to access the message on the server. SMTP is only for sending.'}];
+let q=[];
+function show(r){
+  $$('.hops .on').forEach(e=>e.classList.remove('on'));(r.hi||[]).forEach(id=>document.getElementById(id).classList.add('on'));
+  ['l0','l1','l2'].forEach(id=>document.querySelector('#'+id+' .lab').textContent=(r.lab&&r.lab[id])||'');
+  $('#explain').innerHTML=r.text;
+}
+$('#step').onclick=()=>{if(!q.length)q=[...STEPS];show(q.shift())};
+$('#reset').onclick=()=>{q=[];show({text:'Press <b>Step</b> to send an email.'})};
+$('#reset').onclick();
+
+/* ---------- POP3 / IMAP ---------- */
+const SUBJ=['Football practice moved','Your order has shipped','Homework for Friday','Party on Saturday?','Train tickets','Photos from the trip'];
+let proto='pop',server,phone,laptop,nextId;
+const fresh=()=>{server=[0,1,2].map(i=>({id:i,read:false}));phone=null;laptop=null;nextId=3};
+const list=a=>a===null?'<p>Mail not checked yet.</p>':a.length?a.map(m=>`<div class="${m.read?'':'unread'}">${m.read?'':'● '}${SUBJ[m.id%SUBJ.length]}</div>`).join(''):'<p>No messages.</p>';
+function drawMail(msg){
+  $('#b-phone').innerHTML=list(phone);$('#b-server').innerHTML=list(server);$('#b-laptop').innerHTML=list(laptop);
+  $('#mmsg').innerHTML=msg||'Three unread emails are waiting on the mail server.';
+}
+function mail(a){
+  if(a==='reset'){fresh();return drawMail()}
+  if(a==='new'){server.push({id:nextId++,read:false});if(proto==='imap'){if(phone)phone=server;if(laptop)laptop=server}return drawMail('A new email arrives at the mail server.'+(proto==='imap'?' Devices that are connected show it straight away.':' Neither device has it until it checks the mail.'))}
+  if(a==='read'){
+    const m=(phone||[]).find(x=>!x.read);if(!m)return drawMail(phone?'There are no unread emails on the phone.':'Check the mail on the phone first.');
+    m.read=true;return drawMail(proto==='imap'?'The email is marked as read <b>on the server</b>, so the laptop shows it as read too.':'The email is marked as read on the phone only. The server and the laptop know nothing about it.');
+  }
+  const other=a==='phone'?laptop:phone;
+  if(proto==='imap'){if(a==='phone')phone=server;else laptop=server;
+    return drawMail(`<b>IMAP.</b> The ${a} shows the mailbox that is stored on the server. The emails stay on the server, so every device sees the same messages.`)}
+  const n=server.length,mine=(a==='phone'?phone:laptop)||[];
+  if(a==='phone')phone=mine.concat(server);else laptop=mine.concat(server);server=[];
+  drawMail(n?`<b>POP3.</b> ${n} email${n>1?'s are':' is'} downloaded to the ${a} and removed from the server.`+(other===null||!other.length?` Now check the mail on the ${a==='phone'?'laptop':'phone'}.`:''):`<b>POP3.</b> There is nothing on the server to download.`+(other&&other.length?` The emails are on the ${a==='phone'?'laptop':'phone'}, and only there.`:''));
+}
+$$('[data-a]').forEach(b=>b.onclick=()=>mail(b.dataset.a));
+$$('#proto button').forEach(b=>b.onclick=()=>{proto=b.dataset.p;$$('#proto button').forEach(x=>x.setAttribute('aria-pressed',x===b));mail('reset')});
+fresh();drawMail();
+
+/* ---------- HTTP / HTTPS ---------- */
+function drawWeb(secure){
+  let junk='',s=7;for(let i=0;i<150;i++){s=(s*73+41)%251;junk+=(s%16).toString(16)+(i%2?' ':'')}
+  $('#snoop').innerHTML=secure?`<span class="s">Captured packet to 203.0.113.80 (shop.example.org)</span>\n${junk}\n<span class="g">✔ Encrypted. The eavesdropper can see which server you are talking to, but not what you sent.</span>`
+    :`<span class="s">Captured packet to 203.0.113.80 (shop.example.org)</span>\nPOST /login HTTP/1.1\nHost: shop.example.org\n\nusername=alex.m&amp;password=<span class="e">Tiger2011</span>\n<span class="e">✖ Not encrypted. The username and password can be read by anyone who intercepts the data.</span>`;
+}
+$$('#web button').forEach(b=>b.onclick=()=>{$$('#web button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawWeb(b.dataset.h==='1')});
+drawWeb(false);
+
+/* ---------- quizzes ---------- */
+cardQuiz($('#quiz1'),[
+ {q:'A browser requests a news page from a web server.',a:'HTTP',why:'HTTP defines how web pages are requested and served.'},
+ {q:'A customer types card details into an online shop.',a:'HTTPS',why:'The data must be encrypted, so the secure version of HTTP is used.'},
+ {q:'A web designer uploads the files for a new site to the web server.',a:'FTP',why:'FTP defines how files are transferred across a network.'},
+ {q:'An email app sends a message to the mail server.',a:'SMTP',why:'SMTP is the protocol for sending email.'},
+ {q:'One mail server passes an email on to another mail server.',a:'SMTP',why:'SMTP is also used between servers.'},
+ {q:'Alex wants to see the same inbox on her phone and her laptop.',a:'IMAP',why:'IMAP keeps the email on the server and synchronises every device.'},
+ {q:'Email is downloaded to a single PC and removed from the server.',a:'POP3',why:'POP3 retrieves the messages to one device.'},
+ {q:'Logging in to online banking.',a:'HTTPS',why:'Encryption stops the login details being read if they are intercepted.'},
+],['HTTP','HTTPS','FTP','SMTP','POP3','IMAP'],$('#score1'),$('#qreset1'));
+
+cardQuiz($('#quiz2'),[
+ {q:'What is the purpose of a network protocol?',opts:['To provide a set of rules for how devices communicate','To make a network faster','To connect cables together'],a:'To provide a set of rules for how devices communicate',why:'Without agreed rules, devices from different manufacturers could not exchange data.'},
+ {q:'What is the difference between HTTP and HTTPS?',opts:['HTTPS encrypts the data','HTTPS is faster','HTTPS is only for email'],a:'HTTPS encrypts the data',why:'It is the secure version of HTTP.'},
+ {q:'Which protocol would <b>not</b> be used when transferring a web page from a web server?',opts:['IMAP','TCP','HTTP'],a:'IMAP',why:'IMAP is an email protocol. HTTP, TCP and IP are all involved in fetching a web page.'},
+ {q:'Which two protocols are used to retrieve email from a mail server?',opts:['POP3 and IMAP','SMTP and FTP','HTTP and HTTPS'],a:'POP3 and IMAP',why:'SMTP is for sending.'},
+ {q:'Which protocol splits data into packets and reassembles them at the other end?',opts:['TCP','IP','FTP'],a:'TCP',why:'It also checks that the packets have arrived correctly.'},
+ {q:'Which protocol is responsible for the addresses that data is sent to?',opts:['IP','SMTP','HTTP'],a:'IP',why:'IP stands for Internet Protocol.'},
+ {q:'Which protocols set out how data is transmitted on a LAN?',opts:['Ethernet and Wi-Fi','POP3 and IMAP','HTTP and FTP'],a:'Ethernet and Wi-Fi',why:'Ethernet for wired LANs and Wi-Fi for wireless LANs.'},
+ {q:'Why is it useful that everyone uses the same standard protocols?',opts:['Hardware and software from different suppliers can work together','It makes all networks the same size','It means no cables are needed'],a:'Hardware and software from different suppliers can work together',why:'Otherwise each supplier would need its own customised system.'},
+],null,$('#score2'),$('#qreset2'));
+</script>

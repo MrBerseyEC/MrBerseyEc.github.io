@@ -1,0 +1,226 @@
+---
+layout: demo
+title: "Network topologies"
+spec: "EDEXCEL GCSE · 4.1.7"
+published: false
+---
+<style>
+.topo{width:100%;height:auto;display:block;max-width:860px;background:var(--bg);border:2px solid var(--line);border-radius:12px;margin-top:14px}
+.topo text{font:700 13px var(--sans);fill:var(--ink);pointer-events:none}
+.topo .lbl{font:600 11px var(--sans);fill:var(--muted)}
+.topo .hit{cursor:pointer}
+.busbar{height:14px;border-radius:7px;background:var(--off);margin:14px 0 6px;transition:background .15s}
+.busbar.busy{background:var(--one)}
+.busbar.crash{background:var(--bad)}
+.stations{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.stations div{border:2px solid var(--ink);border-radius:10px;padding:6px;background:var(--bg);text-align:center;font-weight:700}
+.stations div.tx{border-color:var(--one);background:var(--one-soft)}
+.stations div.hit{border-color:var(--bad);background:var(--bad-soft)}
+.stations small{display:block;font:600 .78rem var(--mono);color:var(--muted);min-height:1.3em}
+.alog{font:.88rem/1.6 var(--mono);background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;min-height:170px;white-space:pre-wrap;margin-top:12px}
+.alog .e{color:#FF8A80}.alog .g{color:#7CE0A6}.alog .s{color:#9AA7B3}
+</style>
+
+<p class="lede">Each device on a network, whether it is a phone, a printer, a router or a smart light bulb, is called a <b>node</b>. A network <b>topology</b> describes how the nodes are connected to one another. Three common topologies are bus, star and mesh.</p>
+
+<section class="block">
+  <h2>Build it and break it</h2>
+  <p class="sub">Choose a topology and send a message. Then click any device or cable to make it fail (click again to mend it) and see what still works.</p>
+  <div class="toolbar">
+    <div class="seg" id="kind" role="group" aria-label="Topology"><button data-k="bus" aria-pressed="false">Bus</button><button data-k="star" aria-pressed="true">Star</button><button data-k="full" aria-pressed="false">Mesh (fully connected)</button><button data-k="part" aria-pressed="false">Mesh (partially connected)</button></div>
+    <label class="check">From <select id="from"></select></label><label class="check">to <select id="to"></select></label>
+    <button class="btn pri" id="send">Send message</button><button class="btn" id="mend">Mend everything</button>
+  </div>
+  <svg class="topo" viewBox="0 0 760 340" id="topo" role="img" aria-label="Diagram of the network"></svg>
+  <p class="status" id="info" style="margin-top:10px"></p>
+  <p class="explain status" id="sent"></p>
+  <p class="note" id="about"></p>
+</section>
+
+<section class="block">
+  <h2>Collisions on a bus</h2>
+  <p class="sub">Only one message at a time can travel along the shared cable of a bus network. If two devices send at the same moment the signals collide, and both messages become unreadable. Bus networks deal with this using CSMA/CD: Carrier Sense, Multiple Access with Collision Detection.</p>
+  <div class="row"><button class="btn pri" id="c-one">A sends on its own</button><button class="btn pri" id="c-two">A and C send at the same time</button></div>
+  <div class="busbar" id="busbar"></div>
+  <div class="stations" id="stations"></div>
+  <div class="alog" id="clog"></div>
+  <ol style="margin:14px 0 0;padding-left:1.3em;max-width:80ch">
+    <li>Check if the bus is busy.</li>
+    <li>If it is not busy, send the message. Otherwise go back to step 1.</li>
+    <li>Listen to see if the message was received correctly.</li>
+    <li>If it was, go back to listening for messages. If it was not, go to step 5.</li>
+    <li>Wait a random amount of time, then go to step 1 to retry.</li>
+  </ol>
+  <p class="note">The wait has to be random. If both devices waited the same length of time, they would simply collide again, and again. The more devices there are on a bus, the more collisions happen and the slower the network runs.</p>
+</section>
+
+<section class="block">
+  <h2>Comparing the topologies</h2>
+  <div class="scroll"><table class="t">
+    <tr><th></th><th>Bus</th><th>Star</th><th>Mesh</th></tr>
+    <tr><td><b>How it is connected</b></td><td>Every node is attached to a single cable, the backbone, with a terminator at each end</td><td>Every node is connected directly to a central node, usually a switch</td><td>Each node is connected to several others. In a fully connected mesh, every node is connected to every other node</td></tr>
+    <tr><td><b>Fault tolerance</b></td><td>If one node fails the rest carry on, but if the backbone is cut or damaged the whole network stops</td><td>A failed node or cable affects only that node, but if the central node fails the whole network stops</td><td>Very fault tolerant. If a node fails, messages are re-routed</td></tr>
+    <tr><td><b>Security</b></td><td>Every node sees all the data traffic, which may be a risk</td><td>Data is sent only to the intended recipient, without passing through other nodes</td><td>Data may hop through other nodes on its way</td></tr>
+    <tr><td><b>Scalability</b></td><td>Easy to add devices, but each one means more collisions and a slower network</td><td>Nodes can be added and removed without taking the network offline. The capacity of the central node sets the limit</td><td>Very scalable. Any number of nodes can be added without taking the network offline</td></tr>
+    <tr><td><b>Performance</b></td><td>Gets worse as more devices are added</td><td>Depends on the capacity of the central node</td><td>Very high, because there are many routes</td></tr>
+    <tr><td><b>Cost</b></td><td>Cheap. Very little cable is needed</td><td>A wired star needs a lot of cable, so it is more difficult and expensive to set up</td><td>A fully connected wired mesh is difficult and expensive to install. This is not an issue for wireless mesh networks</td></tr>
+    <tr><td><b>Where it is used</b></td><td>Rare in computer networks now. Almost every modern car uses a bus (the CAN bus) to link its sensors and controls</td><td>The most widely used. Most home networks are a star, with the wireless router as the central node</td><td>IoT devices such as smart lighting, traffic management in smart cities, and the backbone of the internet</td></tr>
+  </table></div>
+  <p class="note">Networks with a single topology are rare. Most are hybrid, combining elements of different topologies. The internet is the ultimate hybrid network.</p>
+</section>
+
+<section class="block">
+  <h2>Bus, star or mesh?</h2>
+  {% include quiz.html n=1 %}
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html n=2 %}
+</section>
+<script>
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const DEV=['PC 1','PC 2','Printer','PC 3','Server'],IDS=DEV.map((_,i)=>'d'+i);
+const ABOUT={
+ bus:'<b>Bus.</b> Messages travel along the backbone as electrical signals, and every node sees them. The terminators absorb signals that reach the ends of the cable, so they do not bounce back and cause interference.',
+ star:'<b>Star.</b> All data traffic passes through the central node, which sends it on to its destination only.',
+ full:'<b>Fully connected mesh.</b> Every node has a direct connection to every other node. There is no central device: communication is peer-to-peer.',
+ part:'<b>Partially connected mesh.</b> Some nodes are connected to several others and some to only one or two. Data hops from node to node, and the nodes work out the shortest route.'};
+let kind='star',net,byId,deadN=new Set(),deadL=new Set(),hiN=new Set(),hiL=new Set(),run=0;
+
+function build(){
+  const nodes=[],links=[],cx=380,cy=172;
+  if(kind==='bus'){
+    const xs=[130,255,380,505,630],chain=['t0','j0','j1','j2','j3','j4','t1'];
+    nodes.push({id:'t0',x:40,y:cy,k:'t'},{id:'t1',x:720,y:cy,k:'t'});
+    xs.forEach((x,i)=>nodes.push({id:'d'+i,label:DEV[i],x,y:i%2?282:62,k:'d'},{id:'j'+i,x,y:cy,k:'j'}));
+    chain.slice(1).forEach((b,i)=>links.push({a:chain[i],b,k:'bb'}));
+    xs.forEach((_,i)=>links.push({a:'d'+i,b:'j'+i}));
+  }else{
+    DEV.forEach((label,i)=>{const t=-Math.PI/2+i*2*Math.PI/5;nodes.push({id:'d'+i,label,x:cx+280*Math.cos(t),y:cy+128*Math.sin(t),k:'d'})});
+    if(kind==='star'){nodes.push({id:'sw',label:'Switch',x:cx,y:cy,k:'s'});IDS.forEach(d=>links.push({a:d,b:'sw'}))}
+    else if(kind==='full'){for(let i=0;i<5;i++)for(let j=i+1;j<5;j++)links.push({a:'d'+i,b:'d'+j})}
+    else[[0,1],[1,2],[2,3],[3,4],[4,0],[1,4]].forEach(([i,j])=>links.push({a:'d'+i,b:'d'+j}));
+  }
+  net={nodes,links};byId=Object.fromEntries(nodes.map(n=>[n.id,n]));
+  deadN.clear();deadL.clear();hiN.clear();hiL.clear();run++;
+}
+const cut=()=>kind==='bus'&&net.links.some((l,i)=>l.k==='bb'&&deadL.has(i));
+function route(a,b){
+  if(deadN.has(a)||deadN.has(b)||cut())return null;
+  const prev=new Map([[a,null]]),todo=[a];
+  while(todo.length){const u=todo.shift();if(u===b)break;
+    net.links.forEach((l,i)=>{if(deadL.has(i))return;const v=l.a===u?l.b:l.b===u?l.a:null;if(v===null||prev.has(v)||deadN.has(v))return;prev.set(v,u);todo.push(v)})}
+  if(!prev.has(b))return null;
+  const path=[];for(let v=b;v!==null;v=prev.get(v))path.unshift(v);return path;
+}
+const linkOf=(a,b)=>net.links.findIndex(l=>(l.a===a&&l.b===b)||(l.a===b&&l.b===a));
+
+function draw(){
+  let g='';
+  net.links.forEach((l,i)=>{const a=byId[l.a],b=byId[l.b],dead=deadL.has(i),hi=hiL.has(i),bb=l.k==='bb';
+    g+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${dead?'var(--bad)':hi?'var(--one)':bb?'var(--ink)':'var(--off)'}" stroke-width="${bb?8:hi?6:4}"${dead?' stroke-dasharray="6 7"':''} stroke-linecap="round"/>`;
+    if(dead)g+=`<text x="${(a.x+b.x)/2}" y="${(a.y+b.y)/2+5}" text-anchor="middle" style="fill:var(--bad);font-size:17px">✖</text>`;
+    g+=`<line class="hit" data-l="${i}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="transparent" stroke-width="22"><title>Click to ${dead?'mend':'break'} this cable</title></line>`});
+  net.nodes.forEach(n=>{const dead=deadN.has(n.id),hi=hiN.has(n.id);
+    if(n.k==='j')g+=`<circle cx="${n.x}" cy="${n.y}" r="6" fill="var(--ink)" style="pointer-events:none"/>`;
+    else if(n.k==='t')g+=`<rect x="${n.x-9}" y="${n.y-16}" width="18" height="32" rx="4" fill="var(--ink)"/><text class="lbl" x="${n.x}" y="${n.y+34}" text-anchor="middle">terminator</text>`;
+    else g+=`<g class="hit" data-n="${n.id}"><title>Click to make this ${n.k==='s'?'switch':'device'} ${dead?'work again':'fail'}</title><rect x="${n.x-46}" y="${n.y-21}" width="92" height="42" rx="${n.k==='s'?21:9}" fill="${dead?'var(--bad-soft)':hi?'var(--one-soft)':'var(--panel)'}" stroke="${dead?'var(--bad)':hi?'var(--one)':'var(--ink)'}" stroke-width="3"/><text x="${n.x}" y="${n.y+(dead?-1:5)}" text-anchor="middle">${n.label}</text>${dead?`<text class="lbl" x="${n.x}" y="${n.y+13}" text-anchor="middle" style="fill:var(--bad)">failed</text>`:''}</g>`});
+  if(kind==='bus')g+=`<text class="lbl" x="192" y="${172-12}" text-anchor="middle">backbone</text>`;
+  $('#topo').innerHTML=g;
+  let ok=0,alive=IDS.filter(d=>!deadN.has(d)).length;
+  for(let i=0;i<5;i++)for(let j=i+1;j<5;j++)if(route(IDS[i],IDS[j]))ok++;
+  const faults=deadN.size+deadL.size,cables=net.links.length-(kind==='bus'?5:0);
+  let why;
+  if(!faults)why='Everything is working.';
+  else if(kind==='bus')why=cut()?'<span class="badc">The backbone is damaged, so the whole network has stopped working.</span>':'The backbone is intact, so the other nodes can still communicate.';
+  else if(kind==='star')why=deadN.has('sw')?'<span class="badc">The central node has failed, so the whole network has stopped working.</span>':'Only the node at the end of the fault is affected. The rest of the network carries on.';
+  else why=ok===alive*(alive-1)/2?'Every working node can still reach every other one: traffic is re-routed around the fault.':'<span class="badc">Too many connections have been lost, and some nodes are cut off.</span>';
+  $('#info').innerHTML=`${kind==='bus'?'1 backbone cable and 5 short connecting cables':cables+' cables'}. <b>${ok} of 10</b> pairs of devices can communicate. ${why}`;
+  $('#about').innerHTML=ABOUT[kind];
+}
+async function send(){
+  const a=$('#from').value,b=$('#to').value,id=++run,A=byId[a].label,B=byId[b].label;hiN.clear();hiL.clear();
+  if(a===b){draw();$('#sent').textContent='Choose two different devices.';return}
+  const path=route(a,b);
+  if(!path){draw();$('#sent').innerHTML=`<b class="badc">The message from ${A} cannot reach ${B}.</b>`;return}
+  if(kind==='bus'){
+    net.links.forEach((l,i)=>{if(!deadL.has(i)&&!deadN.has(l.a))hiL.add(i)});IDS.forEach((d,i)=>{if(!deadN.has(d)&&!deadL.has(linkOf(d,'j'+i)))hiN.add(d)});draw();
+    $('#sent').innerHTML=`<b class="okc">Delivered.</b> The signal travels along the whole backbone. Every node sees the message, but only ${B} accepts it.`;return;
+  }
+  for(let k=0;k<path.length;k++){if(id!==run)return;hiN.add(path[k]);if(k)hiL.add(linkOf(path[k-1],path[k]));draw();await sleep(380)}
+  const via=path.slice(1,-1).map(v=>byId[v].label);
+  $('#sent').innerHTML=`<b class="okc">Delivered.</b> `+(kind==='star'?`The message goes to the switch, which sends it on to ${B} only. No other node sees it.`
+    :via.length?`The message hops from ${A} to ${B} by way of ${via.join(' and ')}. `+(linkOf(a,b)<0?'There is no direct connection between them.':'The direct connection has failed, so it has been re-routed.')
+    :`${A} has a direct connection to ${B}.`);
+}
+const opts=sel=>DEV.map((d,i)=>`<option value="d${i}"${i===sel?' selected':''}>${d}</option>`).join('');
+$('#from').innerHTML=opts(0);$('#to').innerHTML=opts(4);
+$('#send').onclick=send;
+$('#mend').onclick=()=>{deadN.clear();deadL.clear();hiN.clear();hiL.clear();run++;$('#sent').textContent='';draw()};
+$('#topo').onclick=e=>{
+  const h=e.target.closest('.hit');if(!h)return;hiN.clear();hiL.clear();run++;$('#sent').textContent='';
+  if(h.dataset.n){const n=h.dataset.n;deadN.has(n)?deadN.delete(n):deadN.add(n)}else{const i=+h.dataset.l;deadL.has(i)?deadL.delete(i):deadL.add(i)}
+  draw();
+};
+$$('#kind button').forEach(b=>b.onclick=()=>{kind=b.dataset.k;$$('#kind button').forEach(x=>x.setAttribute('aria-pressed',x===b));build();$('#sent').textContent='';draw()});
+build();draw();
+
+/* ---------- CSMA/CD ---------- */
+let cBusy=false;
+const ST=['A','B','C','D'];
+function stations(state={}){$('#stations').innerHTML=ST.map(s=>`<div class="${(state[s]||[])[0]||''}">${s}<small>${(state[s]||[])[1]||'listening'}</small></div>`).join('')}
+const bus=c=>$('#busbar').className='busbar '+c;
+const say=(t,c)=>$('#clog').insertAdjacentHTML('beforeend',`<span class="${c||''}">${t}</span>\n`);
+async function csma(both){
+  if(cBusy)return;cBusy=true;$('#c-one').disabled=$('#c-two').disabled=true;$('#clog').innerHTML='';bus('');stations();
+  if(!both){
+    say('A wants to send. It checks the bus: not busy.');stations({A:['','checking']});await sleep(1100);
+    say('A sends its message.');bus('busy');stations({A:['tx','sending']});await sleep(1400);
+    bus('');stations();say('A listens. ✔ The message was received correctly.','g');
+  }else{
+    let wa=rnd(1,9),wc=rnd(1,9);while(wc===wa)wc=rnd(1,9);
+    const f=wa<wc?'A':'C',s=wa<wc?'C':'A';
+    say('A checks the bus: not busy.');say('C checks the bus at the same moment: not busy.');stations({A:['','checking'],C:['','checking']});await sleep(1300);
+    say('✖ Both send at once. COLLISION: the signals interfere and both messages are unreadable.','e');bus('crash');stations({A:['hit','sending'],C:['hit','sending']});await sleep(1600);
+    bus('');say('A and C listen, and each detects that its message was not received correctly.');await sleep(1300);
+    say(`A waits a random time: ${wa} ms.   C waits a random time: ${wc} ms.`);stations({A:['',`waiting ${wa} ms`],C:['',`waiting ${wc} ms`]});await sleep(1500);
+    say(`${f} finishes waiting first. It checks the bus: not busy. It sends again.`);bus('busy');stations({[f]:['tx','sending'],[s]:['','waiting']});await sleep(1300);
+    say(`${s} finishes waiting. It checks the bus: busy. It keeps checking.`,'s');stations({[f]:['tx','sending'],[s]:['','checking']});await sleep(1300);
+    bus('');say(`✔ The message from ${f} was received correctly.`,'g');await sleep(900);
+    say(`${s} checks the bus: not busy. It sends.`);bus('busy');stations({[s]:['tx','sending']});await sleep(1300);
+    bus('');stations();say(`✔ The message from ${s} was received correctly.`,'g');
+  }
+  cBusy=false;$('#c-one').disabled=$('#c-two').disabled=false;
+}
+$('#c-one').onclick=()=>csma(false);$('#c-two').onclick=()=>csma(true);
+stations();say('Four devices share one cable. Choose who sends.','s');
+
+/* ---------- quizzes ---------- */
+cardQuiz($('#quiz1'),[
+ {q:'Network performance degrades as more devices are added.',a:'Bus',why:'More devices means more collisions on the shared cable.'},
+ {q:'All devices are directly connected to all others.',a:'Mesh',why:'This describes a fully connected mesh.'},
+ {q:'Each node has a physical attachment to a central routing device.',a:'Star',why:'The central node is usually a switch.'},
+ {q:'A terminator is fitted at each end of the cable.',a:'Bus',why:'It absorbs signals so they do not bounce back along the backbone.'},
+ {q:'If the central node fails, the whole network stops.',a:'Star',why:'All data traffic passes through the central node.'},
+ {q:'If a node fails, messages are re-routed around it.',a:'Mesh',why:'There are several possible routes between nodes.'},
+ {q:'All nodes see all the data traffic.',a:'Bus',why:'Every message travels along the one shared cable.'},
+ {q:'Most home networks, with a wireless router in the middle.',a:'Star',why:'Every device connects to the router, which acts as the central node.'},
+ {q:'Needs the least cable, so it is cheap to install.',a:'Bus',why:'A single backbone with short connections to each node.'},
+ {q:'Communication is peer-to-peer, with no central controlling device.',a:'Mesh',why:'Data hops from node to node.'},
+ {q:'Uses CSMA/CD to deal with collisions.',a:'Bus',why:'Only one message at a time can be sent along the cable.'},
+ {q:'Smart light bulbs that pass messages on to each other.',a:'Mesh',why:'Wireless mesh networks suit large numbers of IoT devices.'},
+],['Bus','Star','Mesh'],$('#score1'),$('#qreset1'));
+
+cardQuiz($('#quiz2'),[
+ {q:'What is a node?',opts:['Any device on a network','The central switch only','A type of cable'],a:'Any device on a network',why:'A phone, a printer, a router and a smart bulb are all nodes.'},
+ {q:'What does a network topology describe?',opts:['How the nodes on a network are connected to one another','How fast the network is','Who owns the network'],a:'How the nodes on a network are connected to one another',why:'Bus, star and mesh are three common topologies.'},
+ {q:'What is a collision?',opts:['Two or more devices sending at the same time, making the messages unreadable','A cable being cut','Two devices having the same IP address'],a:'Two or more devices sending at the same time, making the messages unreadable',why:'It is a problem on a bus, where every device shares one cable.'},
+ {q:'In CSMA/CD, why do devices wait a <b>random</b> time after a collision?',opts:['So they do not both send again at the same moment','To save electricity','To let the cable cool down'],a:'So they do not both send again at the same moment',why:'Equal waits would just cause another collision.'},
+ {q:'Which is an advantage of a star network?',opts:['A damaged cable only affects the device connected to it','It needs very little cable','It has no single point of failure'],a:'A damaged cable only affects the device connected to it',why:'It also makes faults easy to locate.'},
+ {q:'Which is a disadvantage of a star network?',opts:['If the central node fails the whole network stops','All nodes see all the traffic','Collisions slow it down'],a:'If the central node fails the whole network stops',why:'A wired star also needs a lot of cabling.'},
+ {q:'Which is a disadvantage of a fully connected wired mesh?',opts:['It is difficult and expensive to install','It is not fault tolerant','It cannot be expanded'],a:'It is difficult and expensive to install',why:'Every node needs a cable to every other node. Wireless meshes avoid this.'},
+ {q:'How many cables are needed to fully connect 5 nodes in a mesh?',opts:['5','10','25'],a:'10',why:'Each of the 5 nodes connects to 4 others, and each cable is shared by two nodes: 5 × 4 ÷ 2 = 10.'},
+ {q:'Which describes the internet?',opts:['A hybrid of many networks with different topologies','One enormous bus','One enormous star'],a:'A hybrid of many networks with different topologies',why:'Its backbones are joined together as a worldwide mesh.'},
+],null,$('#score2'),$('#qreset2'));
+</script>

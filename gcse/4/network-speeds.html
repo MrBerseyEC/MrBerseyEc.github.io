@@ -1,0 +1,189 @@
+---
+layout: demo
+title: "Network speeds"
+heading: "Network speeds and transfer times"
+spec: "EDEXCEL GCSE · 4.1.4"
+published: false
+---
+<style>
+.sl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 22px;margin:14px 0 12px}
+.sl label{display:grid;gap:4px;font-weight:700}
+.sl input{width:100%}
+.sl span{font:600 .9rem var(--mono)}
+.tl{display:flex;height:40px;border:2px solid var(--ink);border-radius:8px;overflow:hidden;margin:8px 0;max-width:820px}
+.tl div{height:100%;color:#fff;font:700 .74rem var(--sans);display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;min-width:3px;transition:flex .25s}
+.call{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr);gap:12px;align-items:center;max-width:720px;margin-top:8px}
+.who{border:3px solid var(--ink);border-radius:14px;padding:12px;background:var(--bg);text-align:center;font-weight:700;transition:background .1s,border-color .1s}
+.who .ico{font-size:1.8rem;line-height:1.3}
+.who small{display:block;font:600 .85rem var(--mono);min-height:1.4em;color:var(--one)}
+.who.lit{background:var(--hl-soft);border-color:var(--hl)}
+.wire{height:10px;border-radius:5px;background:var(--off);position:relative;overflow:hidden}
+.wire i{position:absolute;top:0;left:0;height:100%;width:14%;border-radius:5px;background:var(--one);transform:translateX(-120%)}
+.calc{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.calc input{width:7em}
+.work td{font-family:var(--mono)}
+.work td:first-child{font-family:var(--sans)}
+.forms{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.forms div{border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
+.forms b{display:block;font:700 1rem var(--mono)}
+.forms small{color:var(--muted)}
+@media (max-width:640px){.sl{grid-template-columns:1fr}.call{grid-template-columns:1fr}}
+</style>
+
+<p class="lede">Two things decide how fast a network feels. <b>Bandwidth</b> is its capacity: the maximum amount of data that can be transferred each second. <b>Latency</b>, also called lag, is the delay between data being sent and it arriving, measured in milliseconds. Sometimes one matters more, sometimes the other.</p>
+
+<section class="block">
+  <h2>Bandwidth and latency</h2>
+  <p class="sub">Choose something to do on the network, then change the bandwidth and the latency. The bar shows where the time goes.</p>
+  <div class="seg" id="task" role="group" aria-label="Task"><button data-t="0" aria-pressed="true">Download a 50 MiB film clip</button><button data-t="1" aria-pressed="false">Load a 20 KiB image on a web page</button></div>
+  <div class="sl">
+    <label>Bandwidth <input type="range" id="bw" min="0" max="8" value="4"><span id="bwv"></span></label>
+    <label>Latency <input type="range" id="lat" min="5" max="800" step="5" value="200"><span id="latv"></span></label>
+  </div>
+  <div class="tl" id="tl"></div>
+  <p class="result" id="ttot"></p>
+  <p class="status" id="tmsg"></p>
+</section>
+
+<section class="block">
+  <h2>Feel the latency</h2>
+  <p class="sub">On a voice or video call the amount of data is small, but it has to arrive without a noticeable delay. This uses the latency set above. Press the button and watch how long it takes for the other person to hear you.</p>
+  <div class="row"><button class="btn pri" id="hello">Say "hello"</button></div>
+  <div class="call">
+    <div class="who" id="you"><div class="ico">🧑</div>You<small></small></div>
+    <div class="wire"><i id="blip"></i></div>
+    <div class="who" id="them"><div class="ico">🧑‍🦱</div>Your friend<small></small></div>
+  </div>
+  <p class="status" id="cmsg" style="margin-top:12px"></p>
+  <p class="note">High latency ruins anything that happens in real time. In an online game, what you see is already out of date and your moves reach the server late. For downloading a large file it hardly matters how long any one byte takes: what counts is the total time, and that depends on the bandwidth.</p>
+</section>
+
+<section class="block">
+  <h2>Units of network speed</h2>
+  <p class="sub">The <b>data transfer rate</b> is the speed at which data is transmitted from one device to another. It is measured in bits per second.</p>
+  <div class="scroll"><table class="t" style="max-width:640px">
+    <tr><th>Unit</th><th>Abbreviation</th><th>Bits per second</th></tr>
+    <tr><td>bits per second</td><td class="mono">bps</td><td class="mono">1</td></tr>
+    <tr><td>kilobits per second</td><td class="mono">Kbps</td><td class="mono">1,000</td></tr>
+    <tr><td>megabits per second</td><td class="mono">Mbps</td><td class="mono">1,000,000</td></tr>
+    <tr><td>gigabits per second</td><td class="mono">Gbps</td><td class="mono">1,000,000,000</td></tr>
+  </table></div>
+  <p class="note">Two things to watch. Network speeds go up in steps of <b>1000</b>, but file sizes (KiB, MiB, GiB) go up in steps of <b>1024</b>. And speeds are in <b>bits</b>, while file sizes are usually in bytes, so a file size has to be multiplied by 8.</p>
+</section>
+
+<section class="block">
+  <h2>How long will it take?</h2>
+  <p class="sub">Time = file size in bits ÷ transmission speed in bits per second. Get both into bits first.</p>
+  <div class="calc">
+    <label class="check">File size <input type="number" id="fs" value="50" min="0" step="any"></label><select id="fsu" aria-label="File size unit"></select>
+    <label class="check">Speed <input type="number" id="sp" value="12" min="0" step="any"></label><select id="spu" aria-label="Speed unit"></select>
+  </div>
+  <div class="scroll"><table class="t work" id="work" style="max-width:820px"></table></div>
+  <p class="result" id="tres"></p>
+  <p class="note">The answer is only theoretical. Real transmission speeds are not constant, and other things such as latency and how busy the network is affect how long a transfer takes.</p>
+</section>
+
+<section class="block">
+  <h2>Three versions of the same relationship</h2>
+  <div class="forms">
+    <div><b>time = size ÷ speed</b><small>How long will a 22 GiB video take at 54 Mbps?<br><span class="mono">(22 × 1024 × 1024 × 1024 × 8) ÷ (54 × 1000 × 1000)</span> seconds</small></div>
+    <div><b>size = speed × time</b><small>A file takes 35 seconds at 40 Mbps. How big is it in mebibytes?<br><span class="mono">(40 × 1000 × 1000 × 35) ÷ (8 × 1024 × 1024)</span> MiB</small></div>
+    <div><b>speed = size ÷ time</b><small>A 6 MiB file takes 4 seconds. What is the speed in Mbps?<br><span class="mono">(6 × 1024 × 1024 × 8) ÷ (4 × 1000 × 1000)</span> Mbps</small></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Constructing expressions</h2>
+  <p class="sub">You will usually be asked to construct an expression, without working out the answer.</p>
+  {% include quiz.html n=1 %}
+</section>
+
+<section class="block">
+  <h2>Practice</h2>
+  <div id="drill"></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html n=2 %}
+</section>
+<script>
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),num=(x,d=2)=>x.toLocaleString('en-GB',{maximumFractionDigits:d});
+const dur=s=>s<1?num(s*1000,0)+' ms':s<120?num(s)+' seconds':s<7200?num(s/60,1)+' minutes':num(s/3600,1)+' hours';
+
+/* ---------- bandwidth and latency ---------- */
+const BW=[.5,1,2,5,10,20,50,100,1000],TASK=[['film clip',50*1024*1024*8],['image',20*1024*8]];
+let task=0;
+function drawBL(){
+  const bw=BW[$('#bw').value],lat=+$('#lat').value,bits=TASK[task][1],wait=lat/1000,xfer=bits/(bw*1e6),tot=wait+xfer;
+  $('#bwv').textContent=bw>=1000?'1 Gbps':bw+' Mbps';$('#latv').textContent=lat+' ms';
+  $('#tl').innerHTML=`<div style="flex:${wait};background:var(--hl);color:#16202B">waiting ${dur(wait)}</div><div style="flex:${xfer};background:var(--one)">transferring ${dur(xfer)}</div>`;
+  $('#ttot').textContent='Total: '+dur(tot);
+  const share=Math.round(wait/tot*100);
+  $('#tmsg').innerHTML=share>=50?`<b>Latency matters most here.</b> ${share}% of the time is spent waiting for the first data to arrive. More bandwidth would make almost no difference.`
+    :share<=5?`<b>Bandwidth matters most here.</b> The delay before the data starts arriving is only ${share<1?'a tiny fraction':share+'%'} of the total. Lower latency would make almost no difference.`
+    :`Both matter here: ${share}% of the time is the delay before the data starts to arrive, and the rest is the transfer itself.`;
+  const l=+$('#lat').value;
+  $('#cmsg').innerHTML=`Latency ${l} ms. `+(l<150?'The delay is too short to notice, so the conversation feels natural.':l<400?'There is a noticeable gap. People start to talk over each other.':'A long, awkward delay. A normal conversation is very difficult.');
+}
+$$('#task button').forEach(b=>b.onclick=()=>{task=+b.dataset.t;$$('#task button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawBL()});
+$('#bw').oninput=$('#lat').oninput=drawBL;drawBL();
+
+let talking=false;
+$('#hello').onclick=async()=>{
+  if(talking)return;talking=true;const l=+$('#lat').value,b=$('#blip');
+  $('#them').classList.remove('lit');$('#them small').textContent='';$('#you').classList.add('lit');$('#you small').textContent='"hello"';
+  b.animate([{transform:'translateX(-120%)'},{transform:'translateX(720%)'}],{duration:l,easing:'linear'});
+  await sleep(l);
+  $('#you').classList.remove('lit');$('#them').classList.add('lit');$('#them small').textContent=`"hello" (${l} ms later)`;
+  await sleep(900);$('#them').classList.remove('lit');$('#you small').textContent='';talking=false;
+};
+
+/* ---------- calculator ---------- */
+const SU=[['bits',1,''],['bytes',8,' × 8'],['KiB',8*1024,' × 1024 × 8'],['MiB',8*1024**2,' × 1024 × 1024 × 8'],['GiB',8*1024**3,' × 1024 × 1024 × 1024 × 8']];
+const PU=[['bps',1,''],['Kbps',1e3,' × 1000'],['Mbps',1e6,' × 1000 × 1000'],['Gbps',1e9,' × 1000 × 1000 × 1000']];
+$('#fsu').innerHTML=SU.map((u,i)=>`<option value="${i}"${i===3?' selected':''}>${u[0]}</option>`).join('');
+$('#spu').innerHTML=PU.map((u,i)=>`<option value="${i}"${i===2?' selected':''}>${u[0]}</option>`).join('');
+function drawCalc(){
+  const f=+$('#fs').value,s=+$('#sp').value,fu=SU[$('#fsu').value],su=PU[$('#spu').value];
+  if(!(f>0&&s>0)){$('#work').innerHTML='<tr><td>Enter a file size and a speed.</td></tr>';$('#tres').textContent='';return}
+  const bits=f*fu[1],bps=s*su[1],t=bits/bps,fe=num(f,6)+fu[2],se=num(s,6)+su[2];
+  $('#work').innerHTML=`<tr><th>Step</th><th>Expression</th><th>Result</th></tr>
+   <tr><td>1. File size in bits</td><td>${fe}</td><td>${num(bits,0)} bits</td></tr>
+   <tr><td>2. Speed in bits per second</td><td>${se}</td><td>${num(bps,0)} bps</td></tr>
+   <tr><td>3. Divide bits by bits per second</td><td>${fu[2]?'('+fe+')':fe} ÷ ${su[2]?'('+se+')':se}</td><td>${num(t)} seconds</td></tr>`;
+  $('#tres').textContent='Time = '+num(t)+' seconds'+(t>=120?' ('+dur(t)+')':'');
+}
+['fs','fsu','sp','spu'].forEach(k=>$('#'+k).oninput=drawCalc);drawCalc();
+
+/* ---------- expressions ---------- */
+cardQuiz($('#quiz1'),[
+ {q:'A video has a file size of 22 GiB. How long, in seconds, will it take to transmit at 54 Mbps?',opts:['(22 × 1024 × 1024 × 1024 × 8) ÷ (54 × 1000 × 1000)','(22 × 1024 × 1024 × 1024) ÷ (54 × 1000 × 1000)','(54 × 1000 × 1000) ÷ (22 × 1024 × 1024 × 1024 × 8)'],a:'(22 × 1024 × 1024 × 1024 × 8) ÷ (54 × 1000 × 1000)',why:'File size in bits divided by speed in bits per second. Remember the × 8 to turn bytes into bits.'},
+ {q:'A file takes 35 seconds to arrive on a network that transmits at 40 Mbps. What is its size in mebibytes?',opts:['(40 × 1000 × 1000 × 35) ÷ (8 × 1024 × 1024)','(40 × 1000 × 1000) ÷ (35 × 8 × 1024 × 1024)','(40 × 1024 × 1024 × 35) ÷ (8 × 1000 × 1000)'],a:'(40 × 1000 × 1000 × 35) ÷ (8 × 1024 × 1024)',why:'Speed × time gives the size in bits. Divide by 8 for bytes, then by 1024 twice for MiB.'},
+ {q:'How long, in seconds, will a 50 MiB file take to download at 12 Mbps?',opts:['(50 × 1024 × 1024 × 8) ÷ (12 × 1000 × 1000)','(50 × 1000 × 1000 × 8) ÷ (12 × 1024 × 1024)','(50 × 1024 × 1024) ÷ 12'],a:'(50 × 1024 × 1024 × 8) ÷ (12 × 1000 × 1000)',why:'File sizes use 1024 and speeds use 1000. The answer is 34.95 seconds.'},
+ {q:'How many bits are transferred in 2 minutes at 8 Kbps?',opts:['8 × 1000 × 2 × 60','8 × 1024 × 2 × 60','8 × 1000 × 2'],a:'8 × 1000 × 2 × 60',why:'Speed in bits per second × time in seconds.'},
+ {q:'A 3 GiB file is transferred in 4 minutes. What is the speed in bits per second?',opts:['(3 × 1024 × 1024 × 1024 × 8) ÷ (4 × 60)','(3 × 1024 × 1024 × 1024) ÷ 4','(4 × 60) ÷ (3 × 1024 × 1024 × 1024 × 8)'],a:'(3 × 1024 × 1024 × 1024 × 8) ÷ (4 × 60)',why:'Size in bits divided by time in seconds.'},
+],null,$('#score1'),$('#qreset1'));
+
+/* ---------- practice ---------- */
+drill($('#drill'),()=>{
+  const t=rnd(0,4),k=[2,4,5,8,10,12,20,25,40,50][rnd(0,9)],s=rnd(2,30);
+  if(t===0){const u=rnd(1,3);return{q:`How many bits per second is ${k} ${PU[u][0]}?`,a:String(k*PU[u][1]),why:`${k}${PU[u][2]} = ${num(k*PU[u][1],0)}.`}}
+  if(t===1)return{q:`A network transmits data at ${k} Mbps. How many <b>bits</b> can it transfer in ${s} seconds?`,a:String(k*1e6*s),why:`${k} × 1000 × 1000 × ${s} = ${num(k*1e6*s,0)}.`};
+  if(t===2)return{q:`A file of ${num(k*1e6*s,0)} bits is sent across a network at ${k} Mbps. How many <b>seconds</b> does it take?`,a:[String(s),s+'s',s+'seconds'],why:`${num(k*1e6*s,0)} ÷ ${num(k*1e6,0)} = ${s}.`};
+  if(t===3)return{q:`A file of ${num(k*1e6*s,0)} bits takes ${s} seconds to transfer. What is the speed in <b>Mbps</b>?`,a:[String(k),k+'Mbps'],why:`${num(k*1e6*s,0)} ÷ ${s} = ${num(k*1e6,0)} bps, which is ${k} Mbps.`};
+  const m=rnd(1,16);return{q:`How many <b>bits</b> are there in a ${m} MiB file?`,a:String(m*8388608),why:`${m} × 1024 × 1024 × 8 = ${num(m*8388608,0)}.`};
+});
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz2'),[
+ {q:'What is bandwidth?',opts:['The maximum amount of data that can be transferred per second','The delay before data arrives','The width of the cable'],a:'The maximum amount of data that can be transferred per second',why:'It is a measure of the capacity of the network.'},
+ {q:'What is latency?',opts:['The time between data being sent and it arriving','The amount of data sent per second','The number of devices on a network'],a:'The time between data being sent and it arriving',why:'It is measured in milliseconds and is also known as lag.'},
+ {q:'Network data speeds are measured in…',opts:['bits per second','bytes per second','hertz'],a:'bits per second',why:'Bits, not bytes.'},
+ {q:'How many bits per second is 1 Mbps?',opts:['1,000','1,000,000','1,048,576'],a:'1,000,000',why:'Speed units go up in steps of 1000, unlike file sizes.'},
+ {q:'Marty plays multi-user games online. How would a high latency connection affect her?',opts:['Her actions reach the game late, so it feels laggy','The game would take up more storage','The picture would have fewer colours'],a:'Her actions reach the game late, so it feels laggy',why:'What she sees is out of date, and other players appear to react before she does.'},
+ {q:'For which activity does latency matter most?',opts:['A VoIP call','Downloading a film to watch later','Backing up files overnight'],a:'A VoIP call',why:'Voice data must arrive without a discernible lag for a normal conversation.'},
+ {q:'For which activity does bandwidth matter most?',opts:['Downloading a large film file','A voice call','Typing in a chat'],a:'Downloading a large film file',why:'What matters is the total time to transfer all of the data.'},
+ {q:'Why is a calculated transfer time only theoretical?',opts:['Transmission speeds are not constant','Computers cannot divide accurately','File sizes change during transfer'],a:'Transmission speeds are not constant',why:'Other traffic on the network and other factors affect the actual speed.'},
+],null,$('#score2'),$('#qreset2'));
+</script>

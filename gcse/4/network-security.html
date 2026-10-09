@@ -1,0 +1,121 @@
+---
+layout: demo
+title: "Network security"
+heading: "Network security and finding vulnerabilities"
+spec: "EDEXCEL GCSE · 4.2.1"
+published: false
+---
+<style>
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.three div{border:2px solid var(--ink);border-radius:12px;padding:12px;background:var(--bg)}
+.three b{display:block;font-size:1.05rem}
+.three small{color:var(--muted)}
+.tests{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.tests button.done{border-color:var(--off);color:var(--muted)}
+.alog{font:.88rem/1.6 var(--mono);background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;min-height:130px;white-space:pre-wrap}
+.alog .e{color:#FF8A80}.alog .g{color:#7CE0A6}.alog .s{color:#9AA7B3}
+.rep td{vertical-align:top}
+.rep tr.fixed td{background:var(--ok-soft)}
+.rep .btn{padding:4px 10px;font-size:.82rem;white-space:nowrap}
+</style>
+
+<p class="lede">The goal of network security is to protect a network and its data from threats, both from inside the organisation and from outside it. A security threat is any incident, malicious or unintended, that causes disruption, damage or data loss: a hacker stealing data, or simply an employee who clicks on a link in an email and downloads a virus.</p>
+
+<section class="block">
+  <h2>Three things to protect</h2>
+  <div class="three">
+    <div><b>Confidentiality</b><small>A network holds sensitive data about people, products and performance. Only people who are authorised should be able to access it.</small></div>
+    <div><b>Correctness</b><small>Data is useless if it is wrong. Access must be controlled so that only those who need to can view and edit it. Imagine an error in your health records.</small></div>
+    <div><b>Availability</b><small>A network is useless if the data cannot be reached when it is needed. Hardware fails, there are fires and floods, and criminals may try to take the network offline.</small></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Which principle is at risk?</h2>
+  {% include quiz.html n=1 %}
+</section>
+
+<section class="block">
+  <h2>Run a penetration test</h2>
+  <p class="sub">To keep a network secure, an organisation first has to find its weak spots. You are an <b>ethical hacker</b>, hired by a company to carry out simulated attacks on its own network. Run each test, then fix what you find and test again.</p>
+  <div class="tests" id="tests"></div>
+  <div class="alog" id="plog"></div>
+  <h3 style="margin:18px 0 8px;font-size:1rem">Report for the company <span class="score" id="pscore" style="margin-left:10px"></span></h3>
+  <div class="scroll"><table class="t rep" id="rep"></table></div>
+  <p class="note">Penetration testing (pen testing) looks for technical weaknesses, and also tests how security-aware the staff are, using social engineering tactics to see how easily they are tricked. When the testing is complete, the ethical hacker produces a report listing the vulnerabilities discovered and advising how to deal with each one.</p>
+</section>
+
+<section class="block">
+  <h2>Not all hackers are criminals</h2>
+  <div class="scroll"><table class="t" style="max-width:860px">
+    <tr><th></th><th>Ethical hacker (white hat)</th><th>Criminal hacker (black hat)</th></tr>
+    <tr><td><b>Permission</b></td><td>Works on behalf of the organisation, with its agreement</td><td>Has no permission</td></tr>
+    <tr><td><b>Aim</b></td><td>To find weaknesses in software and systems so that they can be fixed</td><td>To exploit weaknesses to steal or damage data, or to demand money</td></tr>
+    <tr><td><b>What happens to the findings</b></td><td>Reported to the organisation, with advice on how to address them</td><td>Kept secret, used or sold</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Two real examples</h2>
+  <div class="scroll"><table class="t">
+    <tr><th>Incident</th><th>What happened</th><th>What it shows</th></tr>
+    <tr><td><b>WannaCry</b><br>2017</td><td>A ransomware attack that spread across the internet and infected more than 230,000 computers in over 150 countries. Users were locked out and their data was encrypted. A ransom was demanded to release it. The NHS was badly affected.</td><td>An attack on <b>availability</b>. Data that cannot be reached is as bad as data that has been lost.</td></tr>
+    <tr><td><b>Heartbleed</b><br>2014</td><td>A vulnerability in OpenSSL, software used to secure network connections, caused by insufficient input validation. A security patch was released quickly, but it took time for every website to apply it, and data was stolen in the meantime.</td><td>Once a vulnerability is identified it has to be fixed <b>everywhere</b>. Systems that are not kept up to date stay vulnerable.</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html n=2 %}
+</section>
+<script>
+/* ---------- principles ---------- */
+cardQuiz($('#quiz1'),[
+ {q:'A hacker copies the customer database, including names and addresses.',a:'Confidentiality',why:'Data has been seen by someone who is not authorised to access it.'},
+ {q:'Criminals flood a company\'s web server with traffic so that customers cannot use it.',a:'Availability',why:'This is a denial of service attack: the service cannot be reached when it is needed.'},
+ {q:'A pupil gets into the school network and changes their test marks.',a:'Correctness',why:'The data is no longer accurate.'},
+ {q:'A flood destroys the server room and there is no backup.',a:'Availability',why:'Backup and recovery procedures are needed to plan for events like this.'},
+ {q:'An employee types the wrong dose into a patient\'s health record.',a:'Correctness',why:'Threats can be unintended as well as malicious.'},
+ {q:'A member of staff reads their manager\'s salary details out of curiosity.',a:'Confidentiality',why:'Threats come from inside the organisation too.'},
+ {q:'Ransomware encrypts every file on the network.',a:'Availability',why:'The data is still there, but nobody can use it.'},
+ {q:'A laptop holding unencrypted exam papers is left on a train.',a:'Confidentiality',why:'Whoever finds it can read the files.'},
+],['Confidentiality','Correctness','Availability'],$('#score1'),$('#qreset1'));
+
+/* ---------- penetration test ---------- */
+const T=[
+ {b:'Scan for open ports',run:'Scanning the company\'s servers from the internet…',bad:'The file server accepts FTP connections from anywhere on the internet.',risk:'An attacker could copy files to or from the server.',fix:'Close the ports that are not needed and add a firewall rule to block FTP from outside.',ok:'Only the ports the company needs are open.'},
+ {b:'Try default passwords',run:'Trying well-known default logins on every device…',bad:'The wireless router still has the administrator password it was shipped with.',risk:'Anyone can look the password up and take control of the router.',fix:'Change all default passwords and enforce a strong password policy.',ok:'No device accepts a default or common password.'},
+ {b:'Check software versions',run:'Comparing installed software with lists of known flaws…',bad:'The web server is running out-of-date software with a published vulnerability.',risk:'An attacker can use a ready-made exploit to break in.',fix:'Install the security patch and keep all software up to date.',ok:'All software is up to date.'},
+ {b:'Send a fake phishing email',run:'Emailing all 20 staff a fake "reset your password" link…',bad:'4 of the 20 staff clicked the link and typed in their password.',risk:'A criminal would now be able to log in as any of those four people.',fix:'Run security awareness training, and add multi-factor authentication.',ok:'Nobody entered their password, and three people reported the email to IT.'},
+ {b:'Try to walk into the server room',run:'Arriving at reception dressed as a delivery driver…',bad:'Nobody asked for ID, and the server room door was propped open.',risk:'With physical access to a server, an intruder can bypass the other security measures.',fix:'Keep the server room locked with a swipe-card lock, and make sure visitors are escorted.',ok:'Stopped at reception. The server room is locked and needs a swipe card.'},
+ {b:'Test a normal staff account',run:'Logging in as a receptionist and seeing what can be opened…',bad:'The receptionist\'s account can open and edit the payroll files.',risk:'Staff can see or change data they have no need for, by accident or on purpose.',fix:'Set file permissions so that each user has only the access their job needs.',ok:'The account can reach the booking system and nothing else.'}];
+const found=T.map(()=>false),fixed=T.map(()=>false);let pBusy=false;
+const say=(t,c)=>$('#plog').insertAdjacentHTML('beforeend',`<span class="${c||''}">${t}</span>\n`);
+function drawRep(){
+  $('#tests').innerHTML=T.map((t,i)=>`<button class="btn ${found[i]?'done':'pri'}" data-i="${i}">${t.b}</button>`).join('');
+  const rows=T.map((t,i)=>found[i]?`<tr class="${fixed[i]?'fixed':''}"><td>${t.bad}</td><td>${t.risk}</td><td>${t.fix}</td><td>${fixed[i]?'<b class="okc">Fixed</b>':`<button class="btn" data-f="${i}">Apply the fix</button>`}</td></tr>`:'').join('');
+  $('#rep').innerHTML=rows?'<tr><th>Vulnerability found</th><th>Why it matters</th><th>Recommendation</th><th></th></tr>'+rows:'<tr><td style="color:var(--muted)">Nothing found yet. Run a test.</td></tr>';
+  const n=found.filter(Boolean).length,f=fixed.filter(Boolean).length;
+  $('#pscore').textContent=n?`${n} of 6 vulnerabilities found, ${f} fixed`:'';
+}
+$('#tests').onclick=async e=>{
+  const b=e.target.closest('button');if(!b||pBusy)return;pBusy=true;const i=+b.dataset.i,t=T[i];
+  $('#plog').innerHTML='';say(t.run,'s');await sleep(1100);
+  if(fixed[i])say('✔ '+t.ok,'g');else{say('✖ '+t.bad,'e');found[i]=true}
+  pBusy=false;drawRep();
+};
+$('#rep').onclick=e=>{const b=e.target.closest('[data-f]');if(!b)return;fixed[+b.dataset.f]=true;drawRep();$('#plog').innerHTML='';say('Fix applied. Run the test again to check that the weakness has gone.','s')};
+drawRep();say('Choose a test. Everything you do has been agreed with the company in advance.','s');
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz2'),[
+ {q:'What is the goal of network security?',opts:['To protect a network and its data from disruption, damage or data loss','To make the network faster','To stop staff using the internet'],a:'To protect a network and its data from disruption, damage or data loss',why:'The threats can be internal or external, malicious or unintended.'},
+ {q:'What is penetration testing?',opts:['Carrying out simulated attacks on a network to find its vulnerabilities','Testing how fast a network is','Installing anti-malware software'],a:'Carrying out simulated attacks on a network to find its vulnerabilities',why:'So that they can be removed before a criminal exploits them.'},
+ {q:'What makes a hacker "ethical"?',opts:['They work with the organisation\'s permission to find weaknesses so they can be fixed','They only attack large companies','They do not use computers'],a:'They work with the organisation\'s permission to find weaknesses so they can be fixed',why:'They are sometimes called white hat hackers.'},
+ {q:'What does an ethical hacker produce at the end of a penetration test?',opts:['A report of the vulnerabilities found and how to address them','A list of stolen passwords to sell','A new firewall'],a:'A report of the vulnerabilities found and how to address them',why:'The organisation then takes steps to remove each weakness.'},
+ {q:'Why might a penetration tester send fake phishing emails to staff?',opts:['To test how security-aware the employees are','To install real malware','To slow the network down'],a:'To test how security-aware the employees are',why:'People can be a weak spot, as well as technology. This is social engineering.'},
+ {q:'Why must an organisation identify vulnerabilities before it can secure its network?',opts:['It cannot remove a weakness it does not know about','Identifying them removes them automatically','It is required before buying a router'],a:'It cannot remove a weakness it does not know about',why:'Once a vulnerability has been found, steps can be taken to remove it.'},
+ {q:'A security threat can be…',opts:['malicious or unintended','only deliberate','only from outside the organisation'],a:'malicious or unintended',why:'A careless employee can do as much damage as a hacker.'},
+ {q:'Which helps to protect the <b>availability</b> of data?',opts:['Effective backup and recovery procedures','A longer password','A faster processor'],a:'Effective backup and recovery procedures',why:'They allow the organisation to carry on after hardware failure, fire, flood or an attack.'},
+],null,$('#score2'),$('#qreset2'));
+</script>

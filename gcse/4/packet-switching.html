@@ -1,0 +1,179 @@
+---
+layout: demo
+title: "Packet switching"
+spec: "EDEXCEL GCSE · 4.1.2"
+published: false
+---
+<style>
+.netsvg{width:100%;height:auto;display:block;max-width:900px;background:var(--bg);border:2px solid var(--line);border-radius:12px}
+.netsvg text{font:700 13px var(--sans);fill:var(--ink)}
+.netsvg .lbl{font:600 11px var(--sans);fill:var(--muted)}
+.netsvg .hit{cursor:pointer}
+.netsvg .pk text{font:700 12px var(--mono);fill:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px}
+.chips button{font:600 .88rem var(--mono);padding:5px 9px;border-radius:8px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;white-space:pre}
+.chips button b{color:var(--one);margin-right:6px}
+.chips button.sel{border-color:var(--ink);background:var(--hl-soft)}
+.io{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:20px;align-items:start;margin-top:14px}
+.io h3{margin:0 0 8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.rx td{font-family:var(--mono);white-space:pre}
+.rx tr.bad td{background:var(--bad-soft)}
+.hdr{max-width:560px}
+.hdr td:first-child{font-weight:700;white-space:nowrap}
+.hdr td:last-child{font-family:var(--mono);white-space:pre}
+.hdr tr.sec td{background:var(--line);font:800 .72rem var(--sans);letter-spacing:.06em;text-transform:uppercase}
+@media (max-width:820px){.io{grid-template-columns:1fr}}
+</style>
+
+<p class="lede">Data is not sent across the internet in one piece. It is broken up into small <b>packets</b>. Each packet is labelled with the address it is going to and travels there independently, passed from router to router. When all the packets have arrived, they are put back together in the right order. This is called <b>packet switching</b>.</p>
+
+<section class="block">
+  <h2>Send a message</h2>
+  <p class="sub">Type a message and send it from computer A to computer B. Click any link between two routers to make it congested, and watch the routers send packets a different way.</p>
+  <div class="toolbar" style="margin-bottom:12px">
+    <label class="check">Message <input type="text" id="msg" value="Meet me at the library at four" maxlength="48" style="width:19em"></label>
+    <label class="check">Packet size <input type="range" id="size" min="3" max="12" value="5"> <b class="mono" id="sizev"></b></label>
+  </div>
+  <div class="row" style="margin-bottom:12px">
+    <button class="btn pri" id="send">Send</button><button class="btn" id="reset">Reset</button>
+    <label class="check"><input type="checkbox" id="dmg"> Damage one packet on the way</label>
+  </div>
+  <svg class="netsvg" viewBox="0 0 830 320" id="net" role="img" aria-label="A network of routers between computer A and computer B"></svg>
+  <p class="status" id="stat" style="margin-top:10px"></p>
+  <div class="io">
+    <div><h3>Computer A: packets to send</h3><div class="chips" id="out"></div><p class="status" style="font-size:.85rem;color:var(--muted)">Click a packet to see what is in it.</p></div>
+    <div><h3>Computer B: packets received, in order of arrival</h3><div class="scroll"><table class="t rx" id="rx"></table></div><p class="result" id="final"></p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Inside a packet</h2>
+  <p class="sub">The data being carried is the body of the packet. A header is attached to the front with the information needed to deliver it and to put the message back together.</p>
+  <div class="scroll"><table class="t hdr" id="hdr"></table></div>
+  <p class="note">The <b>checksum</b> is a number calculated from the data before it is sent. The receiving computer does the same calculation on the data that arrives. If the two results do not match, the packet was damaged on the way, and the destination asks for it to be sent again. In this demo the checksum is the character codes of the data added together, keeping only the last 8 bits.</p>
+</section>
+
+<section class="block">
+  <h2>What happens, step by step</h2>
+  <ol style="margin:0;padding-left:1.3em;max-width:85ch">
+    <li>Computer A splits the data into packets, following an agreed set of protocols.</li>
+    <li>A header is attached to each packet: the source and destination IP addresses, the sequence number, the total number of packets and a checksum.</li>
+    <li>A router on computer A's network forwards the packets to the ISP.</li>
+    <li>Each router that receives a packet inspects the header to find the destination address, and uses its <b>routing table</b> to decide where to send the packet next. A packet is usually forwarded several times.</li>
+    <li>Routers keep each other informed about traffic. If one route is congested, the next packet is sent a different way.</li>
+    <li>Packets from the same message can therefore take different routes, and may arrive out of sequence.</li>
+    <li>Computer B checks each packet's checksum and asks for any damaged packet to be resent.</li>
+    <li>Once every packet has arrived, computer B uses the sequence numbers to reassemble them in the correct order.</li>
+  </ol>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+const SRC='198.51.100.7',DST='203.0.113.80';
+const N={A:[45,160],R1:[165,160],R2:[300,70],R3:[300,250],R4:[430,160],R5:[560,70],R6:[560,250],R7:[690,160],B:[790,160]};
+const E=[['A','R1'],['R1','R2'],['R1','R3'],['R2','R4'],['R3','R4'],['R2','R5'],['R3','R6'],['R4','R5'],['R4','R6'],['R5','R7'],['R6','R7'],['R7','B']];
+const slow=new Set(),load=E.map(()=>0);
+const eid=(a,b)=>E.findIndex(e=>(e[0]===a&&e[1]===b)||(e[0]===b&&e[1]===a));
+const cost=i=>(slow.has(i)?7:1)+load[i]*1.6;
+const sumOf=s=>[...s].reduce((a,c)=>a+c.charCodeAt(0),0)%256;
+const vis=s=>s.replace(/[<&]/g,c=>c==='<'?'&lt;':'&amp;');
+
+/* the router at `from` works out the cheapest way to B, avoiding routers the packet has already been through */
+function nextHop(from,seen){
+  const dist={},prev={},todo=new Set(Object.keys(N).filter(k=>k===from||!seen.includes(k)));
+  todo.forEach(k=>dist[k]=Infinity);dist[from]=0;
+  while(todo.size){let u=null;todo.forEach(k=>{if(u===null||dist[k]<dist[u])u=k});todo.delete(u);
+    E.forEach((e,i)=>{const v=e[0]===u?e[1]:e[1]===u?e[0]:null;if(v&&todo.has(v)&&dist[u]+cost(i)<dist[v]){dist[v]=dist[u]+cost(i);prev[v]=u}})}
+  if(!('B' in prev))return E.map(e=>e[0]===from?e[1]:e[1]===from?e[0]:null).find(v=>v&&!seen.includes(v));
+  let v='B';while(prev[v]!==from)v=prev[v];return v;
+}
+
+/* ---------- drawing ---------- */
+function drawNet(){
+  let g='';
+  E.forEach((e,i)=>{const a=N[e[0]],b=N[e[1]],s=slow.has(i),inner=i>0&&i<E.length-1;
+    g+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${s?'var(--hl)':'var(--off)'}" stroke-width="${s?7:4}"${s?' stroke-dasharray="10 6"':''}/>`;
+    if(s)g+=`<text class="lbl" x="${(a[0]+b[0])/2}" y="${(a[1]+b[1])/2-10}" text-anchor="middle">congested</text>`;
+    if(inner)g+=`<line class="hit" data-e="${i}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="transparent" stroke-width="24"><title>Click to make this link ${s?'clear':'congested'}</title></line>`});
+  Object.entries(N).forEach(([k,p])=>{
+    if(k[0]==='R')g+=`<circle cx="${p[0]}" cy="${p[1]}" r="21" fill="var(--panel)" stroke="var(--ink)" stroke-width="3"/><text x="${p[0]}" y="${p[1]+5}" text-anchor="middle">${k}</text>`;
+    else g+=`<rect x="${p[0]-30}" y="${p[1]-24}" width="60" height="48" rx="8" fill="var(--ink)"/><text x="${p[0]}" y="${p[1]+5}" text-anchor="middle" style="fill:var(--bg)">${k}</text><text class="lbl" x="${p[0]}" y="${p[1]+42}" text-anchor="middle">${k==='A'?SRC:DST}</text>`});
+  $('#net').innerHTML=g+'<g id="pkl" class="pk"></g>';drawPk(performance.now());
+}
+function drawPk(now){
+  const l=document.getElementById('pkl');if(!l)return;
+  l.innerHTML=pk.map(p=>{const a=N[p.from],b=N[p.to],f=Math.min(1,Math.max(0,(now-p.t0)/p.dur)),x=a[0]+(b[0]-a[0])*f,y=a[1]+(b[1]-a[1])*f;
+    return`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="12" fill="${p.bad?'var(--bad)':'var(--one)'}" stroke="var(--panel)" stroke-width="2"/><text x="${x.toFixed(1)}" y="${(y+4).toFixed(1)}" text-anchor="middle">${p.seq+1}</text>`}).join('');
+}
+
+/* ---------- state ---------- */
+let parts=[],pk=[],got={},recv=[],runId=0,sending=false,spoil=-1,sel=0;
+function split(){const m=$('#msg').value||' ',n=+$('#size').value;parts=[];for(let i=0;i<m.length;i+=n)parts.push(m.slice(i,i+n));$('#sizev').textContent=n+' characters';if(sel>=parts.length)sel=0}
+function drawOut(){
+  $('#out').innerHTML=parts.map((d,i)=>`<button data-i="${i}" class="${i===sel?'sel':''}"><b>${i+1}</b>${vis(d)}</button>`).join('');
+  const d=parts[sel];
+  $('#hdr').innerHTML=`<tr class="sec"><td colspan="2">Header</td></tr><tr><td>IP address of source</td><td>${SRC}</td></tr><tr><td>IP address of destination</td><td>${DST}</td></tr><tr><td>Sequence number</td><td>${sel+1}</td></tr><tr><td>Total number of packets</td><td>${parts.length}</td></tr><tr><td>Checksum</td><td>${sumOf(d)}</td></tr><tr class="sec"><td colspan="2">Body</td></tr><tr><td>Data</td><td>"${vis(d)}"</td></tr><tr class="sec"><td colspan="2">Footer</td></tr><tr><td>End of packet flag</td><td>end</td></tr>`;
+}
+function drawRx(){
+  $('#rx').innerHTML=recv.length?'<tr><th>Sequence number</th><th>Data</th><th>Route taken</th><th>Checksum</th></tr>'+recv.map(r=>`<tr class="${r.ok?'':'bad'}"><td>${r.seq+1} of ${parts.length}</td><td>"${vis(r.data)}"</td><td>${r.route}</td><td>${r.ok?'✔ matches':'✖ does not match: resend requested'}</td></tr>`).join(''):'<tr><td style="font-family:var(--sans);color:var(--muted)">Nothing received yet.</td></tr>';
+}
+function hop(p,to){p.from=p.at;p.to=to;p.e=eid(p.from,to);load[p.e]++;p.t0=performance.now();p.dur=620*(slow.has(p.e)?2.8:1)*(.85+Math.random()*.3)}
+function launch(seq,id){
+  if(id!==runId)return;
+  const p={seq,data:parts[seq],sum:sumOf(parts[seq]),at:'A',seen:['A'],bad:false,spoil:seq===spoil};
+  if(p.spoil)spoil=-1;
+  hop(p,'R1');pk.push(p);if(!raf)raf=requestAnimationFrame(frame);
+}
+let raf=null;
+function frame(now){
+  pk.slice().forEach(p=>{
+    if(now-p.t0<p.dur)return;
+    load[p.e]--;p.at=p.to;p.seen.push(p.at);
+    if(p.at==='B'){pk.splice(pk.indexOf(p),1);arrive(p);return}
+    if(p.spoil&&p.seen.length===3){const i=Math.floor(p.data.length/2);p.data=p.data.slice(0,i)+'#'+p.data.slice(i+1);p.bad=true}
+    hop(p,nextHop(p.at,p.seen));
+  });
+  drawPk(now);raf=pk.length?requestAnimationFrame(frame):null;
+}
+function arrive(p){
+  const ok=sumOf(p.data)===p.sum,id=runId;
+  recv.push({seq:p.seq,data:p.data,ok,route:p.seen.slice(1,-1).join(' → ')});
+  if(ok)got[p.seq]=p.data;else setTimeout(()=>launch(p.seq,id),900);
+  drawRx();
+  const n=Object.keys(got).length;
+  if(n===parts.length){
+    const order=recv.filter(r=>r.ok).map(r=>r.seq+1),sorted=order.every((s,i)=>!i||s>order[i-1]),routes=new Set(recv.map(r=>r.route)).size;
+    $('#final').textContent='"'+parts.map((_,i)=>got[i]).join('')+'"';
+    $('#stat').innerHTML=`All ${parts.length} packets have arrived${sorted?'':', in the order '+order.join(', ')}. They took ${routes} different route${routes>1?'s':''}. Computer B has used the sequence numbers to put them back in the correct order.`;
+    sending=false;lock();
+  }else $('#stat').textContent=`${n} of ${parts.length} packets received correctly.`;
+}
+function lock(){$('#send').disabled=sending;$('#msg').disabled=$('#size').disabled=sending}
+function clearRun(){runId++;pk.length=0;load.fill(0);got={};recv=[];sending=false;spoil=-1;$('#final').textContent='';lock();drawRx();drawPk(0)}
+$('#send').onclick=()=>{
+  clearRun();split();drawOut();sending=true;lock();const id=runId;
+  spoil=$('#dmg').checked?Math.floor(Math.random()*parts.length):-1;
+  $('#stat').textContent=`The message has been split into ${parts.length} packets. Sending…`;
+  parts.forEach((_,i)=>setTimeout(()=>launch(i,id),i*380));
+};
+$('#reset').onclick=()=>{clearRun();slow.clear();drawNet();$('#stat').textContent='Press Send.'};
+$('#msg').oninput=$('#size').oninput=()=>{split();drawOut()};
+$('#out').onclick=e=>{const b=e.target.closest('button');if(!b)return;sel=+b.dataset.i;drawOut()};
+$('#net').onclick=e=>{const h=e.target.closest('.hit');if(!h)return;const i=+h.dataset.e;slow.has(i)?slow.delete(i):slow.add(i);drawNet()};
+split();drawOut();drawRx();drawNet();$('#stat').textContent='Press Send.';
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'What is a packet?',opts:['A small piece of the data being sent, with a header attached','A complete file','A type of router'],a:'A small piece of the data being sent, with a header attached',why:'Data is split into packets before it is transmitted.'},
+ {q:'Which of these is found in a packet header?',opts:['The destination IP address','The password of the sender','The name of the ISP'],a:'The destination IP address',why:'The header also holds the source IP address, the sequence number, the total number of packets and a checksum.'},
+ {q:'What is the sequence number used for?',opts:['Putting the packets back in the correct order','Checking the packet is not damaged','Finding the destination'],a:'Putting the packets back in the correct order',why:'Packets can arrive out of sequence because they take different routes.'},
+ {q:'What is the checksum used for?',opts:['Detecting whether the data was corrupted on the way','Choosing the fastest route','Counting the packets'],a:'Detecting whether the data was corrupted on the way',why:'The destination recalculates it and compares the result with the one sent in the header.'},
+ {q:'How does a router decide where to send a packet next?',opts:['It reads the destination address and uses its routing table','It sends it to every router it knows','It waits for the sender to tell it'],a:'It reads the destination address and uses its routing table',why:'A packet is usually forwarded by several routers before it arrives.'},
+ {q:'Why might two packets from the same message take different routes?',opts:['Routers send packets away from congested parts of the network','Each packet has a different destination','Packets must never share a cable'],a:'Routers send packets away from congested parts of the network',why:'Routers keep each other up to date about traffic conditions.'},
+ {q:'A packet arrives and its checksum does not match. What happens?',opts:['The destination requests that the packet is resent','The whole message is abandoned','The packet is used anyway'],a:'The destination requests that the packet is resent',why:'Only the damaged packet needs to be sent again, not the whole message.'},
+ {q:'Why does the header include the total number of packets?',opts:['So the destination knows when everything has arrived','So routers can choose a route','So the packet can be encrypted'],a:'So the destination knows when everything has arrived',why:'Without it, the destination could not tell whether a packet was still missing.'},
+],null,$('#score'),$('#qreset'));
+</script>

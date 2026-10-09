@@ -1,0 +1,139 @@
+---
+layout: demo
+title: "Firewalls"
+spec: "EDEXCEL GCSE · 4.2.2"
+published: false
+---
+<style>
+.fw{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:stretch;max-width:760px;margin:0 0 16px}
+.fw div{border:3px solid var(--ink);border-radius:14px;padding:12px;background:var(--bg);text-align:center;font-weight:800}
+.fw small{display:block;font-weight:600;color:var(--muted);font-size:.8rem}
+.fw .wall{background:repeating-linear-gradient(0deg,var(--bad-soft) 0 12px,var(--panel) 12px 14px);border-color:var(--bad);writing-mode:vertical-rl;padding:10px 8px;letter-spacing:.1em}
+.rules{display:grid;gap:8px;margin:0 0 14px}
+.rules label{align-items:flex-start}
+.traf td{vertical-align:top}
+.traf td.dir{font:700 1rem var(--mono);white-space:nowrap}
+.traf td.mono{white-space:nowrap}
+.traf tr.cur td{background:var(--hl-soft)}
+.traf td.res{font-weight:700;white-space:nowrap}
+.traf tr.good.pass .res,.traf tr.badt.stop .res{color:var(--ok)}
+.traf tr.good.stop .res,.traf tr.badt.pass .res{color:var(--bad)}
+.traf tr.badt.pass td,.traf tr.good.stop td{background:var(--bad-soft)}
+.lap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:640px;margin:14px 0 0}
+.lap div{border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
+.lap div.on{border-color:var(--ok);background:var(--ok-soft)}
+.lap div.off{opacity:.5}
+.lap b{display:block}
+.lap small{color:var(--muted)}
+@media (max-width:640px){.lap{grid-template-columns:1fr}}
+</style>
+
+<p class="lede">A firewall is a network security system that acts as a barrier between an organisation's internal network and the internet. It inspects the data traffic going in and out, and uses a set of rules to decide what to let through.</p>
+
+<section class="block">
+  <h2>Set the rules</h2>
+  <p class="sub">You are in charge of this company's firewall. Switch on the rules you want, then run the traffic through it. The aim is to stop every threat without getting in the way of people doing their jobs.</p>
+  <div class="fw"><div>Internet<small>untrusted</small></div><div class="wall">FIREWALL</div><div>Internal network<small>the company's computers and servers</small></div></div>
+  <div class="rules" id="rules"></div>
+  <div class="row" style="margin-bottom:12px"><button class="btn pri" id="go">Run the traffic</button><span class="score" id="fscore"></span></div>
+  <div class="scroll"><table class="t traf" id="traf"></table></div>
+  <p class="status" id="fmsg" style="margin-top:10px"></p>
+  <p class="note">The organisation that owns a firewall customises the rules to suit its own circumstances. Rules that are too loose let threats through. Rules that are too strict stop the network being useful.</p>
+</section>
+
+<section class="block">
+  <h2>What firewall rules can do</h2>
+  <div class="scroll"><table class="t">
+    <tr><th>A rule can…</th><th>Why</th></tr>
+    <tr><td><b>Stop certain protocols being used</b>, such as FTP</td><td>To prevent the organisation's data being copied to an external server</td></tr>
+    <tr><td><b>Block data coming from or going to certain network addresses</b></td><td>The addresses could be particular computers, servers or websites, or a whole range of addresses belonging to particular countries or organisations</td></tr>
+    <tr><td><b>Disallow data that matches the pattern an attacker would use</b></td><td>To stop attempts at hacking the internal network's servers</td></tr>
+    <tr><td><b>Control what insiders do</b></td><td>To prevent people downloading viruses, emailing sensitive data outside the organisation, visiting harmful or time-wasting websites, or downloading from file sharing sites</td></tr>
+  </table></div>
+  <p class="note">Firewalls also flag up suspicious activity taking place on the internal network.</p>
+</section>
+
+<section class="block">
+  <h2>Hardware and software firewalls</h2>
+  <div class="scroll"><table class="t">
+    <tr><th></th><th>Hardware firewall</th><th>Software firewall</th></tr>
+    <tr><td><b>What it is</b></td><td>A separate device placed between the internal network and the internet</td><td>A program installed on an individual computer</td></tr>
+    <tr><td><b>What it protects</b></td><td>Every device on the network behind it</td><td>Only the computer it is installed on</td></tr>
+    <tr><td><b>Strengths</b></td><td>Much more flexibility in the rules that can be applied, and faster throughput of data</td><td>Goes wherever the computer goes. Usually comes with default rules against common threats</td></tr>
+    <tr><td><b>Typical use</b></td><td>A business with a LAN and an internet connection</td><td>A home computer or a laptop</td></tr>
+  </table></div>
+  <p class="sub" style="margin-top:16px">For maximum protection an organisation uses both. See why with a company laptop.</p>
+  <div class="toolbar">
+    <div class="seg" id="where" role="group" aria-label="Where the laptop is"><button data-w="in" aria-pressed="true">In the office</button><button data-w="out" aria-pressed="false">On café Wi-Fi</button></div>
+    <label class="check"><input type="checkbox" id="soft"> Software firewall installed on the laptop</label>
+  </div>
+  <div class="lap">
+    <div id="lp-h"><b>Company's hardware firewall</b><small></small></div>
+    <div id="lp-s"><b>Laptop's software firewall</b><small></small></div>
+  </div>
+  <p class="status" id="lmsg" style="margin-top:12px"></p>
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html %}
+</section>
+<script>
+/* ---------- rules and traffic ---------- */
+const RULES=['Block the FTP protocol','Block all traffic to and from 203.0.113.66, an address known to be used by attackers','Block incoming connections that match the pattern of a hacking attempt','Block file sharing and time-wasting websites','Block outgoing email that contains files marked confidential','Block downloads that contain known viruses','Block everything'];
+const TR=[  /* direction, from, to, protocol, description, rule that stops it (-1 = legitimate) */
+ ['out','PC 4','news.example.com','HTTPS','A member of staff reads the news headlines.',-1],
+ ['in','203.0.113.66','File server','HTTPS','A known attacker\'s address tries to connect to the file server.',1],
+ ['out','PC 2','198.51.100.90','FTP','Someone copies the customer database to a server outside the company.',0],
+ ['in','192.0.2.14','Web server','HTTPS','A customer looks at the company\'s website.',-1],
+ ['in','198.51.100.200','Every PC in turn','TCP','An outsider probes each computer, looking for a way in.',2],
+ ['out','PC 5','filmshare.example','HTTPS','An employee starts downloading a film from a file sharing site.',3],
+ ['out','PC 1','Client\'s mail server','SMTP','A price list is emailed to a client.',-1],
+ ['out','PC 3','Personal email account','SMTP','An employee emails confidential design files to their home address.',4],
+ ['in','downloads.example','PC 6','HTTPS','A "free screensaver" download that contains a virus.',5],
+ ['in','Supplier\'s mail server','Mail server','SMTP','An invoice arrives by email from a supplier.',-1]];
+$('#rules').innerHTML=RULES.map((r,i)=>`<label class="check"><input type="checkbox" data-r="${i}"> ${i===6?'<b>'+r+'</b>':r}</label>`).join('');
+let results=TR.map(()=>null),cur=-1,fBusy=false;
+function drawTraf(){
+  $('#traf').innerHTML='<tr><th></th><th>From</th><th>To</th><th>Protocol</th><th>What it is</th><th>Firewall</th></tr>'+TR.map((t,i)=>{const r=results[i];
+    return`<tr class="${t[5]<0?'good':'badt'} ${r===null?'':r?'pass':'stop'} ${i===cur?'cur':''}"><td class="dir">${t[0]==='in'?'IN →':'← OUT'}</td><td class="mono">${t[1]}</td><td class="mono">${t[2]}</td><td class="mono">${t[3]}</td><td>${t[4]}</td><td class="res">${r===null?'':r?(t[5]<0?'✔ allowed':'✖ allowed'):(t[5]<0?'✖ blocked':'✔ blocked')}</td></tr>`}).join('');
+}
+$('#go').onclick=async()=>{
+  if(fBusy)return;fBusy=true;$('#go').disabled=true;results=TR.map(()=>null);$('#fscore').textContent='';$('#fmsg').textContent='';
+  const on=$$('#rules input').map(c=>c.checked);
+  for(let i=0;i<TR.length;i++){cur=i;drawTraf();await sleep(450);results[i]=!(on[6]||(TR[i][5]>=0&&on[TR[i][5]]));drawTraf();await sleep(250)}
+  cur=-1;drawTraf();
+  const threats=TR.filter(t=>t[5]>=0).length,stopped=TR.filter((t,i)=>t[5]>=0&&!results[i]).length,legit=TR.length-threats,lost=TR.filter((t,i)=>t[5]<0&&!results[i]).length;
+  $('#fscore').textContent=`${stopped} of ${threats} threats stopped. ${lost} of ${legit} legitimate items blocked.`;
+  $('#fmsg').innerHTML=on[6]?'<b class="badc">Nothing can get in or out.</b> The network is safe from the internet, but nobody can email a client, and no customer can see the website. A firewall has to let the right traffic through.'
+    :stopped===threats?'<b class="okc">Every threat stopped, and nothing legitimate was blocked.</b> Each rule dealt with one kind of threat.'
+    :`<b class="badc">${threats-stopped} threat${threats-stopped>1?'s':''} got through.</b> Look at the rows in red and switch on a rule that would have stopped each one.`;
+  fBusy=false;$('#go').disabled=false;
+};
+$('#rules').onchange=()=>{if(fBusy)return;results=TR.map(()=>null);$('#fscore').textContent='';$('#fmsg').textContent='';drawTraf()};
+drawTraf();
+
+/* ---------- laptop ---------- */
+let inside=true;
+function drawLap(){
+  const s=$('#soft').checked;
+  $('#lp-h').className=inside?'on':'off';$('#lp-h small').textContent=inside?'Protecting the laptop':'Back at the office. The laptop is not behind it';
+  $('#lp-s').className=s?'on':'off';$('#lp-s small').textContent=s?'Protecting the laptop':'Not installed';
+  $('#lmsg').innerHTML=inside?(s?'<b class="okc">Two layers of protection.</b> The hardware firewall filters traffic from the internet, and the software firewall also guards the laptop against threats from other devices inside the network.':'<b class="okc">Protected by the network\'s hardware firewall</b>, but only while it stays in the building.')
+    :(s?'<b class="okc">Still protected.</b> The software firewall travels with the laptop.':'<b class="badc">No protection at all.</b> Off site, the laptop is not behind the company\'s firewall. If it picks up malware here, it will carry it straight into the internal network when it comes back.');
+}
+$$('#where button').forEach(b=>b.onclick=()=>{inside=b.dataset.w==='in';$$('#where button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawLap()});
+$('#soft').onchange=drawLap;drawLap();
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'What is a firewall?',opts:['A security system that acts as a barrier between an internal network and the internet','A program that removes viruses from files','A wall around the server room'],a:'A security system that acts as a barrier between an internal network and the internet',why:'It inspects incoming and outgoing data traffic.'},
+ {q:'How does a firewall decide what data to allow through?',opts:['It uses a set of rules','It asks the user each time','It lets through anything that is encrypted'],a:'It uses a set of rules',why:'The rules are customised by the organisation that owns the firewall.'},
+ {q:'Which traffic does a firewall inspect?',opts:['Both incoming and outgoing','Incoming only','Outgoing only'],a:'Both incoming and outgoing',why:'Threats come from insiders as well as from outside.'},
+ {q:'Why might a firewall rule block the FTP protocol?',opts:['To prevent the organisation\'s data being copied to an external server','Because FTP is slow','To save storage space'],a:'To prevent the organisation\'s data being copied to an external server',why:'Stopping certain protocols is one of the things rules can do.'},
+ {q:'Why is a business with a LAN likely to choose a hardware firewall?',opts:['More flexible rules and faster throughput of data','It is free','It does not need rules'],a:'More flexible rules and faster throughput of data',why:'It also protects every device on the network at once.'},
+ {q:'Why should a company laptop that is taken off site have a software firewall?',opts:['Away from the office it is not protected by the network\'s hardware firewall','Software firewalls make Wi-Fi faster','Hardware firewalls only work on desktops'],a:'Away from the office it is not protected by the network\'s hardware firewall',why:'The software firewall goes wherever the laptop goes.'},
+ {q:'Which of these can a firewall prevent insiders from doing?',opts:['Visiting harmful websites','Forgetting their passwords','Unplugging a server'],a:'Visiting harmful websites',why:'It can also stop them downloading from file sharing sites or emailing sensitive data out.'},
+ {q:'A firewall is set to block everything. What is the problem?',opts:['Legitimate traffic is blocked too, so the network is no use','Hackers can get in more easily','It uses too much electricity'],a:'Legitimate traffic is blocked too, so the network is no use',why:'The rules must stop threats while letting the right data through.'},
+],null,$('#score'),$('#qreset'));
+</script>

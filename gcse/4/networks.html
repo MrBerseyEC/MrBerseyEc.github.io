@@ -1,0 +1,145 @@
+---
+layout: demo
+title: "LANs and WANs"
+heading: "Why computers are networked"
+spec: "EDEXCEL GCSE · 4.1.1"
+published: false
+---
+<style>
+.office{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:720px}
+.dev{border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--bg);text-align:center;transition:border-color .2s,box-shadow .2s,opacity .2s}
+.dev .ico{font-size:1.7rem;line-height:1.3}
+.dev b{display:block}
+.dev small{display:block;color:var(--muted);font-size:.78rem;min-height:1.3em}
+.dev.on{border-color:var(--one);box-shadow:0 0 0 4px var(--one-soft)}
+.dev.bad{border-color:var(--bad);background:var(--bad-soft)}
+.dev.dim{opacity:.35}
+.tasks{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.explain{font-size:1.04rem;min-height:3.4em;margin:14px 0 0;max-width:85ch}
+.wan{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.45fr) minmax(0,1fr) minmax(0,.45fr) minmax(0,1fr);align-items:center}
+.lan{border:3px solid var(--ink);border-radius:14px;padding:12px;background:var(--bg);min-height:150px;transition:border-color .2s,box-shadow .2s}
+.lan h3{margin:0;font-size:1rem}
+.lan .tag{font-size:.8rem;color:var(--muted);margin:0 0 8px}
+.lan ul{margin:0;padding-left:1.1em;font-size:.9rem}
+.lan.on{border-color:var(--one);box-shadow:0 0 0 4px var(--one-soft)}
+.lan.bad{border-color:var(--bad);background:var(--bad-soft)}
+.wlink{padding:0 6px;text-align:center}
+.wlink .lab{font:800 .7rem var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.wlink .bar{height:10px;border-radius:5px;background:var(--off);margin:4px 0;transition:background .2s,opacity .2s}
+.wlink.off .bar{opacity:.25;background:repeating-linear-gradient(90deg,var(--off) 0 8px,transparent 8px 16px)}
+.wlink.on .bar{background:var(--one)}
+@media (max-width:820px){.wan{grid-template-columns:1fr}.wlink{padding:8px 0}}
+</style>
+
+<p class="lede">A network is two or more computers connected together so that they can share resources and data. Desktops, laptops, phones, games consoles, shop tills and Internet of Things devices can all be linked in a network. Almost every organisation has one.</p>
+
+<section class="block">
+  <h2>What a network lets you do</h2>
+  <p class="sub">This small office has three computers, one printer and one file server. Choose a task and compare what happens with and without a network.</p>
+  <div class="row"><label class="check"><input type="checkbox" id="net" checked> The devices are connected in a network</label></div>
+  <div class="tasks" id="tasks"></div>
+  <div class="office" id="office"></div>
+  <p class="explain" id="explain"></p>
+  <p class="note">Networks also make it easier to look after the computers. Backups, software updates, security and remote help can all be run centrally by IT support, instead of visiting every machine.</p>
+</section>
+
+<section class="block">
+  <h2>LANs and WANs</h2>
+  <p class="sub">Networks are described by their reach: how big an area they cover.</p>
+  <div class="scroll"><table class="t">
+    <tr><th></th><th>Local area network (LAN)</th><th>Wide area network (WAN)</th></tr>
+    <tr><td><b>Area covered</b></td><td>A relatively small area, often a single site such as a home, a school, a hospital or a factory</td><td>A large geographical area, spanning many sites, cities or countries</td></tr>
+    <tr><td><b>What it connects</b></td><td>Computers, printers, routers and other devices</td><td>LANs to other LANs</td></tr>
+    <tr><td><b>Connected by</b></td><td>Cable or wireless</td><td>A variety of transmission media: cables, fibre optic links, satellites, microwaves</td></tr>
+    <tr><td><b>Who owns it</b></td><td>Typically a single organisation or household, which owns all the equipment</td><td>The links between sites are owned and maintained by telecommunication companies, who charge a fee to use them</td></tr>
+    <tr><td><b>Example</b></td><td>A school network, a home Wi-Fi network</td><td>A bank linking its branches. The internet is the world's largest public WAN</td></tr>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>Joining LANs to make a WAN</h2>
+  <p class="sub">A hotel chain has its head office in London and hotels across Europe. Each site has its own LAN. Try each job with the LANs separate, and then with them connected to form a WAN.</p>
+  <div class="row"><label class="check"><input type="checkbox" id="wan"> Connect the LANs together to form a WAN</label></div>
+  <div class="tasks" id="wtasks"></div>
+  <div class="wan">
+    <div class="lan" id="l-par"><h3>Paris hotel</h3><p class="tag">LAN</p><ul><li>Reception PCs</li><li>Printer</li><li>Guest Wi-Fi</li></ul></div>
+    <div class="wlink off" id="k-1"><div class="lab">Leased link</div><div class="bar"></div></div>
+    <div class="lan" id="l-lon"><h3>London head office</h3><p class="tag">LAN</p><ul><li>Loyalty card database</li><li>Room prices</li><li>IT support team</li></ul></div>
+    <div class="wlink off" id="k-2"><div class="lab">Leased link</div><div class="bar"></div></div>
+    <div class="lan" id="l-ber"><h3>Berlin hotel</h3><p class="tag">LAN</p><ul><li>Reception PCs</li><li>Printer</li><li>Guest Wi-Fi</li></ul></div>
+  </div>
+  <p class="explain" id="wexplain"></p>
+  <p class="note">A WAN lets an organisation keep its data synchronised across every site, send out software and updates easily, and avoid duplicating jobs such as IT support at each location. Staff can log in and work together wherever they are.</p>
+</section>
+
+<section class="block">
+  <h2>LAN or WAN?</h2>
+  <p class="sub">Amin works for a marketing company in Manchester. Which type of network does he use for each activity?</p>
+  {% include quiz.html n=1 %}
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html n=2 %}
+</section>
+<script>
+/* ---------- office ---------- */
+const DEVS=[['pc1','🖥️','PC 1','reception'],['pc2','🖥️','PC 2','office'],['pc3','💻','Laptop','manager'],['printer','🖨️','Printer',''],['switch','🔀','Switch','joins the devices together'],['server','🗄️','File server','shared files and backups'],['router','📶','Router','link to the internet']];
+const TASKS=[
+ ['Print from PC 2',['pc2','printer'],'PC 2 sends the document across the network to the shared printer. One printer is enough for the whole office.','PC 2 has no printer attached to it. The office would need to buy a printer for every computer, or carry the file to another machine on a USB stick.'],
+ ['Open a shared file',['pc1','pc3','server'],'The price list is stored once on the file server. PC 1 and the laptop both open the same, up-to-date copy.','Each computer has its own separate copy of the price list. When one copy is changed the others are out of date, and nobody is sure which is correct.'],
+ ['Send a message',['pc1','pc3'],'Reception sends a message to the manager and it arrives straight away. Email, chat and video calls all rely on the network.','There is no way to send a message between the computers. Someone has to walk over or pick up the phone.'],
+ ['Browse the web',['pc1','pc2','pc3','router'],'All three computers share one internet connection through the router.','Only a computer plugged directly into the internet connection could get online, and only one at a time.'],
+ ['Back up everyone\'s work',['pc1','pc2','pc3','server'],'Work saved to the file server is backed up automatically every night, from one place.','Each computer has to be backed up separately, by hand. In practice some of them will be forgotten.'],
+ ['Work on a document together',['pc2','pc3','router'],'Two people edit the same document at the same time using web-based software, and see each other\'s changes as they type.','Only one person can work on the document. They have to pass the file on before anyone else can make changes.']];
+let task=-1;
+$('#tasks').innerHTML=TASKS.map((t,i)=>`<button class="btn" data-i="${i}">${t[0]}</button>`).join('');
+function drawOffice(){
+  const on=$('#net').checked,t=TASKS[task],hi=t?t[1]:[];
+  $('#office').innerHTML=DEVS.map(d=>{const used=hi.includes(d[0])||(d[0]==='switch'&&t&&on);
+    return`<div class="dev ${d[0]==='switch'&&!on?'dim':used?(on?'on':'bad'):''}"${d[0]==='router'?' style="grid-column:2"':''}><div class="ico">${d[1]}</div><b>${d[2]}</b><small>${d[0]==='switch'&&!on?'not in use':d[3]}</small></div>`}).join('');
+  $$('#tasks button').forEach((b,i)=>b.classList.toggle('pri',i===task));
+  $('#explain').innerHTML=t?(on?'<b class="okc">With a network.</b> '+t[2]:'<b class="badc">Without a network.</b> '+t[3]):'Choose a task.';
+}
+$('#tasks').onclick=e=>{const b=e.target.closest('button');if(!b)return;task=+b.dataset.i;drawOffice()};
+$('#net').onchange=drawOffice;drawOffice();
+
+/* ---------- hotel WAN ---------- */
+const WT=[
+ ['A guest uses their loyalty card in Berlin',['l-ber','l-lon'],['k-2'],true,'The Berlin reception PC looks up the guest in the loyalty database at head office, adds the points for this stay and lets them spend points earned in Paris.','The loyalty database is in London and Berlin cannot reach it. The guest\'s points cannot be checked or updated.'],
+ ['Head office changes the room prices',['l-lon','l-par','l-ber'],['k-1','k-2'],true,'The new prices are sent to every hotel at once, so all sites are using the same data.','Somebody has to phone or post the new prices to each hotel, and each one has to type them in. Mistakes and delays are likely.'],
+ ['Paris reception prints a bill',['l-par'],[],false,'The PC and the printer are both on the Paris LAN, so this works whether or not there is a WAN.','The PC and the printer are both on the Paris LAN, so this works whether or not there is a WAN.'],
+ ['IT support fixes a PC in Paris',['l-lon','l-par'],['k-1'],true,'A technician in London takes remote control of the PC and installs the update. One IT team supports every hotel.','Nobody in London can reach the PC. Each hotel needs its own IT support, or has to wait for a technician to travel there.']];
+let wtask=-1;
+$('#wtasks').innerHTML=WT.map((t,i)=>`<button class="btn" data-i="${i}">${t[0]}</button>`).join('');
+function drawWan(){
+  const on=$('#wan').checked,t=WT[wtask];
+  ['k-1','k-2'].forEach(k=>{const e=$('#'+k);e.classList.toggle('off',!on);e.classList.toggle('on',!!(on&&t&&t[2].includes(k)))});
+  ['l-par','l-lon','l-ber'].forEach(l=>{const e=$('#'+l),used=t&&t[1].includes(l),ok=on||!t||!t[3];e.classList.toggle('on',!!(used&&ok));e.classList.toggle('bad',!!(used&&!ok))});
+  $$('#wtasks button').forEach((b,i)=>b.classList.toggle('pri',i===wtask));
+  $('#wexplain').innerHTML=!t?'Choose a job.':!t[3]?'<b class="okc">Works either way.</b> '+t[4]:on?'<b class="okc">With the WAN.</b> '+t[4]:'<b class="badc">Separate LANs.</b> '+t[5];
+}
+$('#wtasks').onclick=e=>{const b=e.target.closest('button');if(!b)return;wtask=+b.dataset.i;drawWan()};
+$('#wan').onchange=drawWan;drawWan();
+
+/* ---------- quizzes ---------- */
+cardQuiz($('#quiz1'),[
+ {q:'Reviewing marketing materials stored on a server in the basement of the building.',a:'LAN',why:'The server and his computer are on the same site.'},
+ {q:'Working collaboratively with colleagues in the USA.',a:'WAN',why:'The connection spans a large geographical area.'},
+ {q:'Printing a leaflet on the printer on the floor above his office.',a:'LAN',why:'Both devices are in the same building.'},
+ {q:'Sending an email to clients in Berlin.',a:'WAN',why:'The email travels across the internet, which is a WAN.'},
+ {q:'Saving a file to a shared folder that the person at the next desk can open.',a:'LAN',why:'It never leaves the office network.'},
+ {q:'Joining a video meeting with the company\'s London office.',a:'WAN',why:'It links two sites in different cities.'},
+ {q:'Looking something up on the World Wide Web.',a:'WAN',why:'The internet is the world\'s largest WAN.'},
+],['LAN','WAN'],$('#score1'),$('#qreset1'));
+
+cardQuiz($('#quiz2'),[
+ {q:'What is a network?',opts:['Two or more computers connected together to share resources and data','A computer with an internet connection','A very powerful computer'],a:'Two or more computers connected together to share resources and data',why:'Any type of computer can be part of one.'},
+ {q:'Which is a reason for connecting computers in a network?',opts:['To share hardware such as printers','To make each computer\'s processor faster','To stop computers needing electricity'],a:'To share hardware such as printers',why:'Others include sharing files, sharing an internet connection, communicating and central backups.'},
+ {q:'A supermarket wants to share data between head office and its 400 branches. Which type of network does it need?',opts:['A WAN','A LAN','Neither'],a:'A WAN',why:'The branches are spread over a large geographical area, which a LAN cannot cover.'},
+ {q:'Who usually owns the communication links that connect the separate parts of a WAN?',opts:['Telecommunication companies','The organisation using the WAN','Nobody'],a:'Telecommunication companies',why:'Organisations pay a fee to use them.'},
+ {q:'Who typically owns a LAN?',opts:['A single organisation or household','A telecommunication company','The government'],a:'A single organisation or household',why:'A network manager is often responsible for installing and maintaining it.'},
+ {q:'What is the internet?',opts:['A global network of interconnected networks','The same thing as the World Wide Web','A very large LAN'],a:'A global network of interconnected networks',why:'The World Wide Web is one of the services that runs on the internet.'},
+ {q:'Which is a benefit of centralised IT support on a network?',opts:['Backups and software updates can be managed from one place','Users no longer need passwords','The network never fails'],a:'Backups and software updates can be managed from one place',why:'Security and remote assistance can be managed centrally too.'},
+],null,$('#score2'),$('#qreset2'));
+</script>

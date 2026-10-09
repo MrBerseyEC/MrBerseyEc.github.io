@@ -1,0 +1,141 @@
+---
+layout: demo
+title: "TCP/IP"
+heading: "The TCP/IP model"
+spec: "EDEXCEL GCSE · 4.1.6"
+published: false
+---
+<style>
+.stacks{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.5fr) minmax(0,1fr);gap:14px;align-items:stretch;max-width:900px}
+.stack h3{margin:0 0 8px;text-align:center;font-size:1rem}
+.layer{border:3px solid var(--ink);border-radius:12px;padding:8px 12px;background:var(--bg);margin:0 0 6px;transition:border-color .2s,box-shadow .2s,opacity .2s}
+.layer b{display:block}
+.layer small{color:var(--muted);font:600 .78rem var(--mono)}
+.layer.on{border-color:var(--one);box-shadow:0 0 0 4px var(--one-soft)}
+.mid{display:grid;align-content:end;text-align:center;padding-bottom:14px}
+.mid .bar{height:10px;border-radius:5px;background:var(--off);margin:6px 0;transition:background .2s}
+.mid.on .bar{background:var(--one)}
+.mid small{font:800 .7rem var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.dir{font:700 .85rem var(--sans);color:var(--muted);text-align:center;margin:4px 0 0}
+.unit{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch;margin:14px 0 0;min-height:64px}
+.unit .p{display:flex;border:2px solid var(--ink);border-radius:8px;overflow:hidden;font:600 .82rem var(--mono)}
+.unit .p span{padding:6px 8px;display:grid;place-items:center;text-align:center;white-space:pre}
+.unit .h-ip{background:var(--hl);color:#16202B}
+.unit .h-tcp{background:var(--one);color:#fff}
+.unit .d{background:var(--panel)}
+.unit .sig{font:700 1rem var(--mono);letter-spacing:2px;color:var(--one);align-self:center;word-break:break-all}
+.explain{font-size:1.05rem;min-height:4em;margin:12px 0 0;max-width:85ch}
+.key{display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;color:var(--muted);margin:8px 0 0}
+.key i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:5px;border:1.5px solid var(--ink)}
+@media (max-width:760px){.stacks{grid-template-columns:1fr}.mid{padding:0}}
+</style>
+
+<p class="lede">TCP/IP is a collection of protocols that sets out exactly how data is formatted and transmitted across networks, including the internet. The protocols are organised into four <b>layers</b>, known as a protocol stack. Each layer has one job to do, and passes the data on to the layer next to it.</p>
+
+<section class="block">
+  <h2>Down the stack and back up</h2>
+  <p class="sub">Computer A asks for a file from computer B. Data passes down through the four layers when it is sent, and back up through them in reverse order when it is received. Step through to see what each layer adds or removes.</p>
+  <div class="row" style="margin-bottom:14px"><button class="btn pri" id="step">Step ▸</button><button class="btn" id="play">Play</button><button class="btn" id="reset">Reset</button></div>
+  <div class="stacks">
+    <div class="stack"><h3>Computer A sends</h3>
+      <div class="layer" id="a3"><b>Application layer</b><small>FTP</small></div>
+      <div class="layer" id="a2"><b>Transport layer</b><small>TCP</small></div>
+      <div class="layer" id="a1"><b>Internet layer</b><small>IP</small></div>
+      <div class="layer" id="a0"><b>Link layer</b><small>Ethernet / Wi-Fi</small></div>
+      <p class="dir">↓ down the stack</p></div>
+    <div class="mid" id="mid"><small>routed across the internet</small><div class="bar"></div></div>
+    <div class="stack"><h3>Computer B receives</h3>
+      <div class="layer" id="b3"><b>Application layer</b><small>FTP</small></div>
+      <div class="layer" id="b2"><b>Transport layer</b><small>TCP</small></div>
+      <div class="layer" id="b1"><b>Internet layer</b><small>IP</small></div>
+      <div class="layer" id="b0"><b>Link layer</b><small>Ethernet / Wi-Fi</small></div>
+      <p class="dir">↑ up the stack</p></div>
+  </div>
+  <div class="unit" id="unit"></div>
+  <div class="key"><span><i style="background:var(--panel)"></i>data</span><span><i style="background:var(--one)"></i>added by TCP</span><span><i style="background:var(--hl)"></i>added by IP</span></div>
+  <p class="explain" id="explain"></p>
+</section>
+
+<section class="block">
+  <h2>The four layers</h2>
+  <div class="scroll"><table class="t">
+    <tr><th>Layer</th><th>What it does</th><th>Protocols</th></tr>
+    <tr><td><b>Application</b></td><td>Defines how user services such as web browsers and email operate. This is the layer the user's software talks to</td><td>HTTP, HTTPS, FTP, SMTP, POP3, IMAP</td></tr>
+    <tr><td><b>Transport</b></td><td>Sets up a channel between the source and destination devices. Splits outgoing data into packets and reassembles incoming packets, checking that they are correct. It does not know what the data represents</td><td>TCP</td></tr>
+    <tr><td><b>Internet</b><br>(also called the network layer)</td><td>Adds the source and destination IP addresses to the packets it gets from the transport layer, and routes them to the recipient</td><td>IP</td></tr>
+    <tr><td><b>Link</b><br>(also called the network interface layer)</td><td>Defines how data is physically transferred from one device to the next, the whole way along the route: network card to switch, switch to router, router onwards</td><td>Ethernet (wired LANs), Wi-Fi (wireless LANs)</td></tr>
+  </table></div>
+  <p class="note">In practice the packets take different routes. The transport layer creates the impression of a single dedicated channel, and leaves the details of how packets actually travel to the layers below it.</p>
+</section>
+
+<section class="block">
+  <h2>Why use layers?</h2>
+  <ul style="margin:0;padding-left:1.2em;max-width:85ch">
+    <li>Each layer has one clear function, and only needs to know how to pass data to the layers directly above and below it.</li>
+    <li>A layer can be changed without affecting the others. Swapping a cable for Wi-Fi changes the link layer only: the browser carries on exactly as before.</li>
+    <li>Hardware and software from different suppliers work together, because they all follow the same standard. Without it each supplier would need its own customised system.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Which layer?</h2>
+  {% include quiz.html n=1 %}
+</section>
+
+<section class="block">
+  <h2>Quick check</h2>
+  {% include quiz.html n=2 %}
+</section>
+<script>
+const SRC='198.51.100.7',DST='203.0.113.80',PARTS=['GET re','port.p','df'];
+const pkt=(ip,tcp)=>PARTS.map((d,i)=>`<div class="p">${ip?`<span class="h-ip">from ${SRC}\nto ${DST}</span>`:''}${tcp?`<span class="h-tcp">${i+1} of 3</span>`:''}<span class="d">${d}</span></div>`).join('');
+const whole='<div class="p"><span class="d">GET report.pdf</span></div>',signal='<span class="sig">▁▇▁▁▇▇▁▇▁▇▇▁▁▇▁▇▇▇▁▁▇▁▇▁▁▇▇▁▇▁▁▇▇▁▇▁▁▇▁▇▇▁</span>';
+const STEPS=[
+ {hi:'a3',unit:whole,text:'<b>Application layer.</b> The user asks for a file. <b>FTP</b> defines how the file must be requested, and produces the request as data to be sent.'},
+ {hi:'a2',unit:pkt(0,1),text:'<b>Transport layer.</b> <b>TCP</b> establishes a channel between the sending and receiving devices and splits the data into packets. Each one is numbered so they can be put back in order.'},
+ {hi:'a1',unit:pkt(1,1),text:'<b>Internet layer.</b> <b>IP</b> adds a header to each packet with the source and destination IP addresses.'},
+ {hi:'a0',unit:signal,text:'<b>Link layer.</b> <b>Ethernet</b> or <b>Wi-Fi</b> converts the outgoing packets into electrical or radio signals and transmits them to the network router.'},
+ {hi:'mid',unit:signal,text:'The packets are routed across the internet, from one router to the next, until they reach computer B. Each hop along the way is handled by the link layer.'},
+ {hi:'b0',unit:pkt(1,1),text:'<b>Link layer.</b> The Ethernet or Wi-Fi protocol specifies how the incoming signals are converted back into data packets.'},
+ {hi:'b1',unit:pkt(0,1),text:'<b>Internet layer.</b> <b>IP</b> removes the packet headers that held the addresses. They have done their job.'},
+ {hi:'b2',unit:whole,text:'<b>Transport layer.</b> <b>TCP</b> checks that the packets are correct and reassembles them in the right order.'},
+ {hi:'b3',unit:whole,text:'<b>Application layer.</b> <b>FTP</b> on computer B receives the request and defines how the file will be provided. The reply travels back the same way: down B\'s stack and up A\'s.'}];
+let q=[],timer=null;
+function show(r){
+  $$('.stacks .on').forEach(e=>e.classList.remove('on'));if(r.hi)document.getElementById(r.hi).classList.add('on');
+  $('#unit').innerHTML=r.unit||'';$('#explain').innerHTML=r.text;
+}
+function halt(){clearInterval(timer);timer=null;$('#play').textContent='Play'}
+function step(){if(!q.length)q=[...STEPS];show(q.shift());if(!q.length)halt()}
+$('#step').onclick=()=>{halt();step()};
+$('#play').onclick=()=>{if(timer){halt();return}$('#play').textContent='Pause';step();if(q.length)timer=setInterval(step,2600);else halt()};
+$('#reset').onclick=()=>{halt();q=[];show({text:'Press <b>Step</b> to start at the top of computer A\'s stack.'})};
+$('#reset').onclick();
+
+const L=['Application','Transport','Internet','Link'];
+cardQuiz($('#quiz1'),[
+ {q:'HTTP',a:'Application',why:'It defines how a user service, the web, operates.'},
+ {q:'TCP',a:'Transport',why:'Transmission Control Protocol gives the transport layer half of the model\'s name.'},
+ {q:'IP',a:'Internet',why:'Internet Protocol deals with addressing and routing.'},
+ {q:'Ethernet',a:'Link',why:'It sets out how data is transmitted on a wired LAN.'},
+ {q:'SMTP',a:'Application',why:'Email is a user service.'},
+ {q:'Wi-Fi',a:'Link',why:'It sets out how data is transmitted on a wireless LAN.'},
+ {q:'Splits the data into packets.',a:'Transport',why:'And reassembles them at the other end.'},
+ {q:'Adds the source and destination IP addresses.',a:'Internet',why:'Then routes the packets to the recipient.'},
+ {q:'Converts packets into electrical or radio signals.',a:'Link',why:'This is the layer that deals with the physical connection.'},
+ {q:'A browser sends a request to a web server. Which layer handles it first?',a:'Application',why:'Data starts at the top of the stack when it is sent.'},
+ {q:'FTP',a:'Application',why:'File transfer is a user service.'},
+ {q:'Checks that the packets received are correct.',a:'Transport',why:'TCP checks and reassembles the incoming packets.'},
+],L,$('#score1'),$('#qreset1'));
+
+cardQuiz($('#quiz2'),[
+ {q:'How many layers are there in the TCP/IP model?',opts:['3','4','7'],a:'4',why:'Application, transport, internet and link.'},
+ {q:'In which order does data pass through the layers when it is being <b>sent</b>?',opts:['Application, transport, internet, link','Link, internet, transport, application','Transport, application, link, internet'],a:'Application, transport, internet, link',why:'Down the stack when sending, and back up in reverse order when receiving.'},
+ {q:'Which layer is the first to handle data arriving at the receiving computer?',opts:['Link','Application','Transport'],a:'Link',why:'Incoming signals arrive at the bottom of the stack and work their way up.'},
+ {q:'What are the two jobs that give TCP/IP its name?',opts:['IP gets the address the data is sent to, and TCP delivers it there','TCP encrypts the data and IP stores it','TCP is for wired networks and IP for wireless'],a:'IP gets the address the data is sent to, and TCP delivers it there',why:'They are two of the most common protocols in the stack.'},
+ {q:'What does IP do to a packet at the receiving computer?',opts:['Removes the packet header','Adds a sequence number','Converts it to a radio signal'],a:'Removes the packet header',why:'The addresses are no longer needed once the packet has arrived.'},
+ {q:'A laptop is moved from a cabled connection to Wi-Fi. Which layer is affected?',opts:['Link','Application','Transport'],a:'Link',why:'The other layers carry on unchanged, which is one benefit of using layers.'},
+ {q:'Which is a benefit of a layered protocol stack?',opts:['Products from different suppliers can communicate with each other','Data never gets corrupted','No protocols are needed'],a:'Products from different suppliers can communicate with each other',why:'Everyone builds to the same standard.'},
+ {q:'Which statement about the transport layer is true?',opts:['It does not know what the data represents','It decides which web page to show','It chooses the cable to use'],a:'It does not know what the data represents',why:'It simply splits, delivers and reassembles whatever it is given.'},
+],null,$('#score2'),$('#qreset2'));
+</script>

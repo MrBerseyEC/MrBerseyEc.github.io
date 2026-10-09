@@ -48,6 +48,20 @@
         - { title: "Utility Software",        nav: "Utility software",        url: /gcse/3/utility-software.html }
         - { title: "Robust Software",         nav: "Robust software",         url: /gcse/3/robust-software.html }
         - { title: "Languages & Translators", nav: "Languages & translators", url: /gcse/3/languages-translators.html }
+    # - title: Topic 4 (Networks)
+    #   label: Topic 4 demos
+    #   pages:
+    #     - { title: "LANs & WANs",          nav: "LANs & WANs",        url: /gcse/4/networks.html }
+    #     - { title: "The Internet",         nav: "The internet",       url: /gcse/4/internet.html }
+    #     - { title: "Packet Switching",     nav: "Packet switching",   url: /gcse/4/packet-switching.html }
+    #     - { title: "Wired & Wireless",     nav: "Wired & wireless",   url: /gcse/4/connectivity.html }
+    #     - { title: "Network Speeds",       nav: "Network speeds",     url: /gcse/4/network-speeds.html }
+    #     - { title: "Protocols",            nav: "Protocols",          url: /gcse/4/protocols.html }
+    #     - { title: "TCP/IP",               nav: "TCP/IP",             url: /gcse/4/tcp-ip.html }
+    #     - { title: "Network Topologies",   nav: "Topologies",         url: /gcse/4/topologies.html }
+    #     - { title: "Network Security",     nav: "Network security",   url: /gcse/4/network-security.html }
+    #     - { title: "Access Control",       nav: "Access control",     url: /gcse/4/access-control.html }
+    #     - { title: "Firewalls",            nav: "Firewalls",          url: /gcse/4/firewalls.html }
     - title: Topic 6 (Python)
       label: Topic 6 demos
       pages:
