@@ -70,11 +70,11 @@
     #     - { title: "Network Security",     nav: "Network security",   url: /gcse/4/network-security.html }
     #     - { title: "Access Control",       nav: "Access control",     url: /gcse/4/access-control.html }
     #     - { title: "Firewalls",            nav: "Firewalls",          url: /gcse/4/firewalls.html }
-    - title: Topic 6 (Python)
-      label: Topic 6 demos
-      pages:
-        - { title: "Inputs & Outputs",      nav: "Inputs & outputs",      url: /gcse/6/inputs-outputs.html }
-        - { title: "Variables & Constants", nav: "Variables & constants", url: /gcse/6/variables-constants.html }
+    # - title: Topic 6 (Python)
+    #   label: Topic 6 demos
+    #   pages:
+    #     - { title: "Inputs & Outputs",      nav: "Inputs & outputs",      url: /gcse/6/inputs-outputs.html }
+    #     - { title: "Variables & Constants", nav: "Variables & constants", url: /gcse/6/variables-constants.html }
         # - { title: "Selection",             nav: "Selection",             url: /gcse/6/selection.html }
         # - { title: "For Loops",             nav: "For loops",             url: /gcse/6/for-loops.html }
         # - { title: "While Loops",           nav: "While loops",           url: /gcse/6/while-loops.html }
