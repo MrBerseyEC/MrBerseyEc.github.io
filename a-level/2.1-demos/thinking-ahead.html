@@ -1,0 +1,285 @@
+---
+layout: demo
+title: "Thinking Ahead"
+spec: "OCR A LEVEL · 2.1.2"
+---
+<style>
+.io{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:18px;align-items:start}
+.io .cards{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.desc{background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:14px 16px;margin:0}
+.model{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:0 0 16px;font-weight:700}
+.model span{border:2px solid var(--ink);border-radius:8px;padding:8px 16px;background:var(--bg)}
+.model span.p{background:var(--ink);color:var(--bg)}
+.pre{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.specs td:first-child{font-weight:700;white-space:nowrap}
+.calls{display:grid;gap:8px;margin-top:12px}
+.call{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;border:2px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);font-size:.92rem}
+.call.ok{border-color:var(--ok);background:var(--ok-soft)}.call.bad{border-color:var(--bad);background:var(--bad-soft)}
+.call .btn{font-family:var(--mono);font-size:.82rem}
+.cache{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.pages{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.store{display:flex;gap:8px;flex-wrap:wrap;min-height:48px;align-items:center;margin:8px 0}
+.store span{font:700 .9rem var(--sans);border:2px solid var(--one);background:var(--one-soft);border-radius:8px;padding:8px 12px}
+.store span.stale{border-color:var(--bad);background:var(--bad-soft)}
+.store em{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 0}
+.stats div{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg)}
+.stats b{display:block;font:700 1.3rem var(--mono)}
+.stats small{color:var(--muted)}
+.log td{font-size:.88rem}
+.log td.mono{white-space:nowrap}
+.mono{font-variant-ligatures:none}
+.log td:first-child{font-weight:700}
+.vs ul{margin:6px 0 0;padding-left:1.1em}.vs li{margin:4px 0}
+@media (max-width:860px){.io,.pre,.cache{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<p class="lede">Thinking ahead means working out, before any code is written, what a solution will need: the data that goes in, the results that come out, the conditions that must already be true, and anything that could be reused or kept ready in advance.</p>
+
+<section class="block">
+  <h2>Inputs and outputs</h2>
+  <p class="sub">At its most abstract, every computational problem looks the same. The inputs are the information the problem needs, and the outputs are its solution. Stating exactly what they are is the first step towards solving it. A subroutine has inputs and outputs too: its parameters and the value it returns.</p>
+  <p class="model"><span>Input</span> → <span class="p">Computational problem</span> → <span>Output</span></p>
+  <p class="sub">The same skill is needed however the problem is presented. Classify each item as an input, an output or neither.</p>
+  <div class="tabs" id="iotabs" role="tablist">
+    <button role="tab" data-p="io-p" aria-selected="true">As pseudocode</button>
+    <button role="tab" data-p="io-f" aria-selected="false">As a flowchart</button>
+    <button role="tab" data-p="io-d" aria-selected="false">As a description</button>
+  </div>
+  <div id="io-p" class="io">
+    <pre class="pc" id="pcode"></pre>
+    <div>{% include quiz.html n=1 %}</div>
+  </div>
+  <div id="io-f" class="io hidden">
+    <div id="fchart" data-label="Flowchart for a car park pay machine"></div>
+    <div>{% include quiz.html n=2 %}</div>
+  </div>
+  <div id="io-d" class="io hidden">
+    <p class="desc">A library has a self-service kiosk. A member scans their membership card and then the barcode of each book they want to borrow. The kiosk looks up the member's record and checks for unpaid fines. If there are any, it displays a message asking the member to go to the desk. Otherwise it records each loan, which lasts three weeks, and prints a receipt listing the titles and the date they are due back.</p>
+    <div>{% include quiz.html n=3 %}</div>
+  </div>
+  <p class="note">In a flowchart, inputs and outputs are drawn in a parallelogram. Values that are calculated along the way, or fixed in the program, are neither: they are part of the processing.</p>
+</section>
+
+<section class="block">
+  <h2>Preconditions</h2>
+  <p class="sub">A precondition is something that must be true before a subroutine is called, if it is to work correctly. Choose a function, then try calling it. Switch between the two designs to see how the precondition changes the solution.</p>
+  <div class="toolbar" style="margin-bottom:14px">
+    <label class="check">Function <select id="fn"></select></label>
+    <div class="seg" role="radiogroup" aria-label="Design" id="design">
+      <button role="radio" data-v="A" aria-checked="true">Precondition stated</button>
+      <button role="radio" data-v="B" aria-checked="false">No precondition</button>
+    </div>
+  </div>
+  <div class="pre">
+    <div>
+      <div class="scroll"><table class="t specs" id="spec"></table></div>
+      <div class="calls" id="calls"></div>
+    </div>
+    <div>
+      <pre class="pc" id="fcode"></pre>
+      <p class="note" id="fnote"></p>
+    </div>
+  </div>
+  <h3 style="margin:22px 0 6px">Why state preconditions?</h3>
+  <ul style="margin:0;padding-left:1.2em;max-width:85ch">
+    <li>Anyone calling the subroutine knows exactly which checks they must carry out first.</li>
+    <li>If there are no preconditions, the caller can be confident that the subroutine does the checking itself, so the same checks are not coded twice. A shorter program is easier to debug and maintain.</li>
+    <li>A subroutine with clearly documented inputs, outputs and preconditions is reusable. It can be put in a library and called from any program.</li>
+    <li>A precondition can make a better solution possible. If a list is known to be sorted, it can be searched with a binary search.</li>
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Caching</h2>
+  <p class="sub">Caching is the temporary storage of data or instructions that have been used once and may be needed again soon. Fetching a web page from the server takes 300 ms here, and reading it from the cache takes 5 ms. Click pages to request them.</p>
+  <div class="toolbar">
+    <label class="check">Cache size <input type="range" id="cap" min="0" max="4" value="2"> <b class="mono" id="capv"></b></label>
+    <button class="btn" id="session">Run a typical session</button>
+    <button class="btn" id="change">Update the News page on the server</button>
+    <button class="btn" id="crst">Reset</button>
+  </div>
+  <div class="cache" style="margin-top:12px">
+    <div>
+      <b>Request a page</b>
+      <div class="pages" id="pages"></div>
+      <b>In the cache</b> <small style="color:var(--muted)">(least recently used is removed first)</small>
+      <div class="store" id="store"></div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="scroll"><table class="t log" id="clog"></table></div>
+  </div>
+  <div class="cols2 vs" style="margin-top:16px">
+    <div class="panel"><h2>Benefits</h2><ul>
+      <li>Much faster access to data that is used repeatedly</li>
+      <li>Saves bandwidth, because pages and images are not downloaded again</li>
+      <li>Reduces the load on the server or the slower storage device</li>
+      <li>The same idea is used throughout a computer: cache memory in the CPU, the disk cache and the browser cache</li>
+    </ul></div>
+    <div class="panel"><h2>Drawbacks</h2><ul>
+      <li>The cached copy can be out of date (stale) if the original has changed</li>
+      <li>The cache takes up memory or storage, and it is limited in size</li>
+      <li>Deciding what to keep and what to remove is complicated to get right</li>
+      <li>If the wrong data is cached, nothing is gained and the space is wasted</li>
+    </ul></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Reusable program components</h2>
+  <p class="sub">A well-designed component can be written once and used many times: a function or procedure, a class, or a module or library of them. Every time you call <span class="mono">print</span>, generate a random number or find a square root, you are reusing code somebody else wrote. A Windows DLL (dynamic link library) is a package of reusable components shared by many programs. Thinking ahead means spotting which parts of a solution could be reused, and designing them so that they can be.</p>
+  <div class="scroll"><table class="t">
+    <tr><th>Component</th><th>What it is</th><th>Example</th></tr>
+    <tr><td><b>Function</b></td><td>A named block of code that takes parameters and returns a value</td><td><span class="mono">sqrt(n)</span>, <span class="mono">maxInt(listInt)</span></td></tr>
+    <tr><td><b>Procedure</b></td><td>A named block of code that carries out a task without returning a value</td><td><span class="mono">drawTriangle(colour, base, height)</span></td></tr>
+    <tr><td><b>Class</b></td><td>A template for objects, with their attributes and methods</td><td>A <span class="mono">Queue</span> class reused in several programs</td></tr>
+    <tr><td><b>Module or library</b></td><td>A file or collection of related subroutines and classes that can be imported</td><td>A maths library, a graphics library, a DLL</td></tr>
+  </table></div>
+  <p class="sub" style="margin-top:16px">Is each statement a benefit or a drawback of using reusable components?</p>
+  {% include quiz.html n=4 %}
+</section>
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html n=5 %}
+</section>
+<script>
+tabs($('#iotabs'));
+const IO=['Input','Output','Neither'];
+
+/* ---------- inputs and outputs ---------- */
+listing($('#pcode'),['function calculateFare(distance, passengers)','  fare = 2.50 + distance * 1.20','  if passengers > 4 then','    fare = fare * 1.5','  endif','  return fare','endfunction','','pickup = input("Pickup postcode")','dropoff = input("Drop-off postcode")','people = int(input("Number of passengers"))','km = getDistance(pickup, dropoff)','cost = calculateFare(km, people)','print("Fare: £" + str(cost))']);
+cardQuiz($('#quiz1'),[
+ {q:'The pickup postcode',a:'Input',why:'It is entered by the user with <span class="mono">input</span>.'},
+ {q:'The number of passengers',a:'Input',why:'It is entered by the user and then converted to an integer.'},
+ {q:'The fare shown on the screen',a:'Output',why:'It is displayed with <span class="mono">print</span>. It is the solution to the problem.'},
+ {q:'The value <span class="mono">2.50</span>',a:'Neither',why:'It is a fixed value written into the program. Nobody enters it and it is not displayed.'},
+ {q:'<span class="mono">distance</span>, as far as the function <span class="mono">calculateFare</span> is concerned',a:'Input',why:'A parameter is an input to a subroutine.'},
+ {q:'The value returned by <span class="mono">calculateFare</span>',a:'Output',why:'A return value is the output of a function, passed back to the code that called it.'},
+],IO,$('#score1'),$('#qreset1'));
+
+flow($('#fchart'),480,370,[
+ {t:'term',x:110,y:40,s:'Start'},{t:'io',x:110,y:110,s:'INPUT ticketNumber'},{t:'proc',x:110,y:180,s:'Look up arrival time'},{t:'proc',x:110,y:250,s:'hours = time now|- arrival time'},{t:'proc',x:110,y:320,s:'fee = hours * 2'},
+ {t:'io',x:350,y:40,s:'OUTPUT fee'},{t:'io',x:350,y:110,s:'INPUT payment'},{t:'dec',x:350,y:185,s:'payment >= fee?'},{t:'io',x:350,y:265,s:'OUTPUT signal to|raise barrier'},{t:'term',x:350,y:335,s:'End'}],
+ [{d:'M110 62V88'},{d:'M110 132V158'},{d:'M110 202V228'},{d:'M110 272V298'},{d:'M195 320H232V40H270'},
+  {d:'M350 62V88'},{d:'M350 132V153'},{d:'M350 217V243',l:'Yes',x:368,y:234},{d:'M350 287V313'},{d:'M445 185H466V40H430',l:'No',x:456,y:176}]);
+cardQuiz($('#quiz2'),[
+ {q:'The ticket number',a:'Input',why:'It is in a parallelogram labelled INPUT.'},
+ {q:'The fee shown to the driver',a:'Output',why:'It is in a parallelogram labelled OUTPUT.'},
+ {q:'The number of hours parked',a:'Neither',why:'It is calculated in a process box from other values.'},
+ {q:'The payment',a:'Input',why:'The driver has to supply it.'},
+ {q:'The price of £2 an hour',a:'Neither',why:'It is fixed in the program.'},
+ {q:'The signal that raises the barrier',a:'Output',why:'An output does not have to be text on a screen. Here it controls a device.'},
+],IO,$('#score2'),$('#qreset2'));
+
+cardQuiz($('#quiz3'),[
+ {q:'The membership card number',a:'Input',why:'It is scanned in by the member.'},
+ {q:'The barcode of each book',a:'Input',why:'It is scanned in by the member.'},
+ {q:'The receipt',a:'Output',why:'It is printed for the member.'},
+ {q:'The loan period of three weeks',a:'Neither',why:'It is a rule built into the program.'},
+ {q:'The message about unpaid fines',a:'Output',why:'It is displayed to the member.'},
+ {q:'The member\'s record of fines',a:'Input',why:'It is read from the library\'s database, not typed in, but it is still data the program needs from outside itself.'},
+],IO,$('#score3'),$('#qreset3'));
+
+/* ---------- preconditions ---------- */
+const binSearch=(l,t)=>{let lo=0,hi=l.length-1;while(lo<=hi){const m=(lo+hi)>>1;if(l[m]===t)return true;l[m]<t?lo=m+1:hi=m-1}return false};
+const FN=[
+ {name:'maxInt: largest value in a list',
+  spec:[['Name','maxInt'],['Inputs','A list of integers, listInt'],['Outputs','An integer, the largest value in the list']],pre:'len(listInt) > 0',
+  A:{code:['function maxInt(listInt)','  maxNumber = listInt[0]','  for i = 1 to len(listInt) - 1','    if listInt[i] > maxNumber then','      maxNumber = listInt[i]','    endif','  next i','  return maxNumber','endfunction'],
+     run:l=>{if(!l.length)throw'line 2 reads listInt[0], which does not exist';return Math.max(...l)},
+     note:'The function is short, and it is correct for every list that meets the precondition. Called with an empty list it crashes, so the precondition has to be documented and the <b>caller</b> has to check it.'},
+  B:{code:['function maxInt(listInt)','  if len(listInt) == 0 then','    return "Error: empty list"','  endif','  maxNumber = listInt[0]','  for i = 1 to len(listInt) - 1','    if listInt[i] > maxNumber then','      maxNumber = listInt[i]','    endif','  next i','  return maxNumber','endfunction'],
+     run:l=>l.length?Math.max(...l):'Error: empty list',
+     note:'The function now tests for an empty list itself, so it never crashes. The cost is extra code that runs on every call, and every caller has to cope with getting an error message back in place of a number.'},
+  calls:[[[14,3,21,9],21],[[7],7],[[],null]],show:a=>`maxInt(${JSON.stringify(a).replace(/,/g,', ')})`},
+ {name:'search: is an item in a list?',
+  spec:[['Name','search'],['Inputs','A list of integers, items<br>A target integer, target'],['Outputs','A Boolean, True if target is in items']],pre:'items is sorted into ascending order',
+  A:{code:['function search(items, target)','  low = 0','  high = len(items) - 1','  while low <= high','    mid = (low + high) DIV 2','    if items[mid] == target then','      return True','    elseif items[mid] < target then','      low = mid + 1','    else','      high = mid - 1','    endif','  endwhile','  return False','endfunction'],
+     run:a=>binSearch(a[0],a[1]),
+     note:'Because the list is guaranteed to be sorted, a <b>binary search</b> can be used, which is very fast: O(log n). If the precondition is broken it does not crash. It quietly returns the wrong answer, which is worse.'},
+  B:{code:['function search(items, target)','  for i = 0 to len(items) - 1','    if items[i] == target then','      return True','    endif','  next i','  return False','endfunction'],
+     run:a=>a[0].includes(a[1]),
+     note:'With no guarantee that the list is sorted, a binary search cannot be used at all. The solution has to change to a <b>linear search</b>, which works on any list but is much slower on a long one: O(n). The precondition decided which algorithm was possible.'},
+  calls:[[[[3,8,12,19,25,31,40],31],true],[[[3,8,12,19,25,31,40],20],false],[[[19,3,40,8,31,12,25],31],true]],show:a=>`search(${JSON.stringify(a[0]).replace(/,/g,', ')}, ${a[1]})`},
+ {name:'sqrt: square root of a number',
+  spec:[['Name','sqrt'],['Inputs','An integer or floating point number, n'],['Outputs','A floating point number, the square root of n']],pre:'n >= 0',
+  A:{code:['function sqrt(n)','  guess = n / 2 + 1','  for i = 1 to 20','    guess = (guess + n / guess) / 2','  next i','  return guess','endfunction'],
+     run:n=>{if(n<0)throw'a negative number has no real square root, so the result is meaningless';return +Math.sqrt(n).toFixed(3)},
+     note:'The function assumes that it will only be given a number that has a real square root. The documentation must say so.'},
+  B:{code:['function sqrt(n)','  if n < 0 then','    return "Error: negative number"','  endif','  guess = n / 2 + 1','  for i = 1 to 20','    guess = (guess + n / guess) / 2','  next i','  return guess','endfunction'],
+     run:n=>n<0?'Error: negative number':+Math.sqrt(n).toFixed(3),
+     note:'The function checks its own input. A caller that has already validated the number is now paying for the same check twice.'},
+  calls:[[25,5],[2,1.414],[-9,null]],show:a=>`sqrt(${a})`}];
+let design='A';
+$('#fn').innerHTML=FN.map((f,i)=>`<option value="${i}">${f.name}</option>`).join('');
+const fmt=r=>r===true?'True':r===false?'False':typeof r==='string'?`"${r}"`:r;
+function fnDraw(){
+  const f=FN[$('#fn').value],d=f[design];
+  $('#spec').innerHTML=f.spec.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`<tr><td>Precondition</td><td>${design==='A'?`<span class="mono">${f.pre}</span>`:'None: the function accepts any input of the right type'}</td></tr>`;
+  listing($('#fcode'),d.code);$('#fnote').innerHTML=d.note;
+  $('#calls').innerHTML=f.calls.map((c,i)=>`<div class="call" data-i="${i}"><button class="btn">${f.show(c[0])}</button><span>Click to call it</span></div>`).join('');
+}
+$('#calls').onclick=e=>{
+  const b=e.target.closest('.btn');if(!b)return;
+  const row=b.parentNode,f=FN[$('#fn').value],[args,expect]=f.calls[row.dataset.i];let ok,msg;
+  try{const r=f[design].run(args);
+    if(r===expect){ok=true;msg=`Returns <b class="mono">${fmt(r)}</b>, which is correct.`}
+    else if(typeof r==='string'){ok=true;msg=`Returns <b class="mono">${fmt(r)}</b>. The function dealt with the problem itself.`}
+    else{ok=false;msg=`Returns <b class="mono">${fmt(r)}</b>, which is wrong. The precondition was not met.`}
+  }catch(err){ok=false;msg=`<b>Fails:</b> ${err}. The precondition was not met.`}
+  row.className='call '+(ok?'ok':'bad');row.lastElementChild.innerHTML=msg;
+};
+$('#fn').onchange=fnDraw;
+$('#design').onclick=e=>{const b=e.target.closest('button');if(!b)return;design=b.dataset.v;$$('#design button').forEach(x=>x.setAttribute('aria-checked',x===b));fnDraw()};
+fnDraw();
+
+/* ---------- caching ---------- */
+const PAGES=['Home','News','Sport','Weather','Shop','Help'],SLOW=300,FAST=5;
+let cache,ver,log,hits,reqs,time;
+function cReset(){cache=[];ver={};PAGES.forEach(p=>ver[p]=1);log=[];hits=reqs=time=0;cDraw()}
+function request(p){
+  reqs++;const i=cache.findIndex(c=>c.p===p),cap=+$('#cap').value;
+  if(i>=0){const c=cache.splice(i,1)[0];cache.push(c);hits++;time+=FAST;
+    log.unshift([p,c.v<ver[p]?'<span class="badc">Hit, but stale</span>':'<span class="okc">Hit</span>',FAST,c.v<ver[p]?'The cache returned the old copy. The user does not see the update.':'Read from the cache.'])}
+  else{time+=SLOW;let note='Fetched from the server.';
+    if(cap){cache.push({p,v:ver[p]});if(cache.length>cap){note+=` ${cache.shift().p} was removed from the cache to make room.`}else note+=' A copy was put in the cache.'}
+    log.unshift([p,'Miss',SLOW,note])}
+  cDraw();
+}
+function cDraw(){
+  const cap=+$('#cap').value;$('#capv').textContent=cap?`${cap} page${cap>1?'s':''}`:'no cache';
+  $('#pages').innerHTML=PAGES.map(p=>`<button class="btn" data-p="${p}">${p}</button>`).join('');
+  $('#store').innerHTML=cache.length?cache.map(c=>`<span class="${c.v<ver[c.p]?'stale':''}">${c.p}${c.v<ver[c.p]?' (stale)':''}</span>`).join(''):`<em>${cap?'Empty':'There is no cache'}</em>`;
+  $('#stats').innerHTML=[[reqs,'requests'],[hits,'cache hits'],[time+' ms','total wait'],[reqs*SLOW+' ms','without a cache']].map(s=>`<div><b>${s[0]}</b><small>${s[1]}</small></div>`).join('');
+  $('#clog').innerHTML='<tr><th>Page</th><th>Result</th><th>Time</th><th>What happened</th></tr>'+(log.length?log.slice(0,8).map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="mono">${r[2]&&r[2]+' ms'}</td><td>${r[3]}</td></tr>`).join(''):'<tr><td colspan="4" style="color:var(--muted)">No requests yet.</td></tr>');
+}
+$('#pages').onclick=e=>{const b=e.target.closest('[data-p]');if(b)request(b.dataset.p)};
+$('#cap').oninput=()=>{const cap=+$('#cap').value;while(cache.length>cap)cache.shift();cDraw()};
+$('#session').onclick=()=>['Home','News','Home','Sport','Home','News','Weather','Home'].forEach(request);
+$('#change').onclick=()=>{ver.News++;log.unshift(['News','Changed','','The News page was updated on the server. Any cached copy is now out of date.']);cDraw()};
+$('#crst').onclick=cReset;
+cReset();
+
+/* ---------- reusable components ---------- */
+cardQuiz($('#quiz4'),[
+ {q:'The code has already been written, so the new program takes less time to develop.',a:'Benefit',why:'Less code has to be written from scratch.'},
+ {q:'The component has already been tested and used in other programs.',a:'Benefit',why:'It is likely to be more reliable than new code, and there is less to test.'},
+ {q:'The component does not do exactly what this program needs, so it has to be adapted or worked around.',a:'Drawback',why:'A general-purpose component may be a poor fit for a particular problem.'},
+ {q:'A bug only has to be fixed in one place and every program that uses the component benefits.',a:'Benefit',why:'Maintenance is easier when there is a single copy of the code.'},
+ {q:'A general-purpose library routine may run more slowly, or take more memory, than code written for this one task.',a:'Drawback',why:'It has to handle cases that this program will never use.'},
+ {q:'The program now depends on a third-party library that could change, or stop being supported.',a:'Drawback',why:'A change to the component can break every program that relies on it.'},
+ {q:'Different programmers can work on different modules at the same time.',a:'Benefit',why:'Each component is self-contained, with a clearly defined interface.'},
+ {q:'Making a component general enough to be reused takes more time to design and document at the start.',a:'Drawback',why:'Its inputs, outputs and preconditions must be clearly specified for other people to use it.'},
+ {q:'The program is shorter and easier to read, because a long section of code is replaced by one call.',a:'Benefit',why:'The details are hidden behind a meaningful name.'},
+],['Benefit','Drawback'],$('#score4'),$('#qreset4'));
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz5'),[
+ {q:'What is a precondition?',opts:['A condition that must be true before a subroutine is called for it to work correctly','The first line of a subroutine','A condition that is tested at the end of a loop'],a:'A condition that must be true before a subroutine is called for it to work correctly',why:'For example, the list passed to a binary search must be sorted.'},
+ {q:'A function <span class="mono">average(marks)</span> returns <span class="mono">total / len(marks)</span>. Which precondition is needed?',opts:['marks is not empty','marks is sorted','marks contains no repeated values'],a:'marks is not empty',why:'With an empty list the function would divide by zero.'},
+ {q:'Which is an example of caching?',opts:['A browser keeping copies of images from a site you visited recently','A compiler translating source code into machine code','A program asking the user to type their name'],a:'A browser keeping copies of images from a site you visited recently',why:'The images are stored temporarily in case they are needed again, which saves downloading them a second time.'},
+ {q:'A shopping site caches its product pages for an hour. Which problem could this cause?',opts:['A customer sees a price that has since changed','The pages take longer to load','The server has to handle more requests'],a:'A customer sees a price that has since changed',why:'Cached data can be out of date. This is the main drawback of caching.'},
+ {q:'Which makes a subroutine easier to reuse in another program?',opts:['Passing data in through parameters, not global variables','Giving it a name such as proc1','Making it as long as possible'],a:'Passing data in through parameters, not global variables',why:'A subroutine that depends only on its parameters is self-contained, so it can be moved to another program unchanged.'},
+ {q:'A program reads a file of temperatures and prints the highest. What are its input and its output?',opts:['Input: the temperatures in the file. Output: the highest temperature','Input: the highest temperature. Output: the file','Input: the loop counter. Output: the file name'],a:'Input: the temperatures in the file. Output: the highest temperature',why:'Input does not have to come from a keyboard. Data read from a file is also input.'},
+],null,$('#score5'),$('#qreset5'));
+</script>

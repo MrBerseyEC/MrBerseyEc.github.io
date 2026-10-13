@@ -1,0 +1,275 @@
+---
+layout: demo
+title: "Thinking Abstractly"
+spec: "OCR A LEVEL · 2.1.1"
+published: false
+---
+<style>
+.metro{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:start}
+.metro svg{width:100%;height:auto;display:block;background:var(--bg);border:2px solid var(--line);border-radius:12px}
+.metro svg text{font:700 12px var(--sans);fill:var(--ink)}
+.street{stroke:var(--line);stroke-width:5}
+.bld{fill:var(--off);opacity:.55}
+.river{fill:none;stroke:var(--one-soft);stroke-width:24;stroke-linecap:round}
+.park{fill:var(--ok-soft)}
+.geo{font:600 11px var(--mono)!important;fill:var(--muted)!important}
+.track{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.stn{fill:var(--panel);stroke:var(--ink);stroke-width:3}
+.lvl{font-weight:800;margin:10px 0 2px}
+.ans td:nth-child(2){white-space:nowrap;font-weight:700}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.cols3 .panel h3,.kinds .panel h3{margin:0 0 6px;font-size:1rem}
+.cols3 .pc{margin:8px 0}
+.cols3 ul,.kinds ul{margin:6px 0 0;padding-left:1.1em;font-size:.92rem}
+.q{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:start}
+.qview{display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-height:56px;margin:10px 0}
+.qview .it,.slot{font:700 1rem var(--mono);min-width:44px;height:44px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:8px;background:var(--panel)}
+.qview .end{font:600 .78rem var(--mono);color:var(--muted)}
+.slots{display:grid;grid-template-columns:repeat(6,minmax(0,56px));gap:6px;margin:10px 0 2px}
+.slots>div{display:grid;gap:3px;text-align:center}
+.slots small{font:600 .74rem var(--mono);color:var(--muted);min-height:1.2em}
+.slot.live{background:var(--one-soft);border-color:var(--one)}
+.slot.dead{border-color:var(--line);color:var(--off)}
+.kinds{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.kinds svg{width:100%;max-width:300px;height:auto;display:block;margin:8px auto 0}
+.kinds svg path{fill:none;stroke:var(--ink);stroke-width:2.5}
+.kinds svg circle{fill:var(--panel);stroke:var(--ink);stroke-width:2.5}
+.kinds svg text{font:700 12px var(--sans);fill:var(--ink)}
+@media (max-width:860px){.metro,.q,.kinds,.cols3{grid-template-columns:minmax(0,1fr)}}
+</style>
+<p class="lede">Abstraction means removing unnecessary detail from a problem so that only the features needed to solve it are left. The result is a simplified representation of reality. Every computer model, map, simulation and data structure is an abstraction of something.</p>
+
+<section class="block">
+  <h2>From a city to a map</h2>
+  <p class="sub">Drag the slider to strip detail away from this city, one layer at a time, until only a metro map is left. The table shows which questions each version can still answer.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Reality <input type="range" id="lv" min="0" max="3" step="1" value="0" style="width:min(320px,50vw)"> Abstraction</label></div>
+  <div class="metro">
+    <div>
+      <svg id="map" viewBox="0 0 600 340" role="img" aria-label="A city with two metro lines, drawn with an adjustable amount of detail"></svg>
+      <p class="lvl" id="lname"></p>
+      <p class="sub" id="ldesc" style="margin:0"></p>
+    </div>
+    <div class="scroll"><table class="t ans" id="ans"></table></div>
+  </div>
+  <p class="note">The metro map is the better tool for planning a journey <b>because</b> so much has been left out. It is also wrong about distance, direction and the shape of every line. An abstraction is judged by whether it keeps what matters for its purpose, not by how closely it matches reality.</p>
+</section>
+
+<section class="block">
+  <h2>Why programmers rely on abstraction</h2>
+  <p class="sub">Without abstraction, a programmer would have to think about every detail of the computer at once. Each generation of programming language hid more of the machine, so that the programmer could concentrate on the problem instead. Here is the same instruction at three levels.</p>
+  <div class="cols3">
+    <div class="panel"><h3>High-level language</h3><pre class="pc" id="hl"></pre>
+      <ul><li>Reads like the problem being solved</li><li>No need to know where <span class="mono">x</span> and <span class="mono">a</span> are stored</li><li>Runs on any computer that has a translator</li></ul></div>
+    <div class="panel"><h3>Assembly language</h3><pre class="pc" id="asm"></pre>
+      <ul><li>One mnemonic for each machine instruction</li><li>The programmer manages registers and memory</li><li>Has to be rewritten for a different processor</li></ul></div>
+    <div class="panel"><h3>Machine code</h3><pre class="pc" id="mc"></pre>
+      <ul><li>The binary patterns the processor executes</li><li>Every opcode and address written by hand</li><li>Slow to write, and the errors are hard to find</li></ul></div>
+  </div>
+  <p class="note">In programming, abstraction separates <b>what</b> a program unit does from <b>how</b> it does it. This makes large programs possible: a team can design and build a solution in layers, each one using the layer below without needing to understand its insides.</p>
+</section>
+
+<section class="block">
+  <h2>Data abstraction: a queue</h2>
+  <p class="sub">A queue is an abstract data type. The programmer who uses it only needs to know its operations: items join at the rear and leave from the front. How the items are stored is hidden. Use the queue first, then reveal what is going on underneath.</p>
+  <div class="row"><button class="btn pri" id="enq">enqueue(item)</button><button class="btn" id="deq">dequeue()</button><button class="btn" id="qrst">Reset</button>
+    <label class="check"><input type="checkbox" id="impl"> Show the implementation</label></div>
+  <div class="q" style="margin-top:14px">
+    <div class="panel"><h2>What the user of the queue sees</h2>
+      <div class="qview" id="qview"></div>
+      <p class="status" id="qmsg"></p>
+    </div>
+    <div class="panel hidden" id="qimpl"><h2>What is hidden</h2>
+      <div class="slots" id="slots"></div>
+      <p class="mono" id="ptrs" style="margin:6px 0 10px;font-size:.9rem"></p>
+      <pre class="pc" id="qcode"></pre>
+    </div>
+  </div>
+  <p class="note">The implementation is a fixed-size array with two pointers that wrap round to the start. It could be replaced with a linked list and no program that uses <span class="mono">enqueue</span> and <span class="mono">dequeue</span> would need to change.</p>
+</section>
+
+<section class="block">
+  <h2>Other kinds of abstraction</h2>
+  <div class="kinds">
+    <div class="panel"><h3>Abstraction by generalisation</h3>
+      <p class="sub" style="margin:0">Grouping things by their common characteristics, giving an "is a kind of" relationship. In 1736 Euler was asked whether a walk through Königsberg could cross each of its seven bridges exactly once. He discarded the streets and buildings, drew each piece of land as a node and each bridge as an edge, and so turned the puzzle into a graph problem. Every node has an odd number of edges, so no such walk exists. The same reasoning now solves any problem of the same kind, in any city.</p>
+      <svg viewBox="0 0 300 190" role="img" aria-label="Graph of the Königsberg bridges: four nodes joined by seven edges">
+        <path d="M150 30 Q95 45 80 100"/><path d="M150 30 Q135 85 80 100"/><path d="M150 160 Q95 145 80 100"/><path d="M150 160 Q135 105 80 100"/>
+        <path d="M150 30 L230 100"/><path d="M150 160 L230 100"/><path d="M80 100 L230 100"/>
+        <circle cx="150" cy="30" r="9"/><circle cx="150" cy="160" r="9"/><circle cx="80" cy="100" r="9"/><circle cx="230" cy="100" r="9"/>
+        <text x="165" y="24">North bank</text><text x="165" y="176">South bank</text><text x="66" y="104" text-anchor="end">West island</text><text x="244" y="104">East</text>
+      </svg>
+    </div>
+    <div class="panel"><h3>Where else you have met it</h3>
+      <ul>
+        <li><b>Classes and inheritance:</b> <span class="mono">Dog</span> and <span class="mono">Cat</span> are kinds of <span class="mono">Animal</span>, so the shared attributes and methods are written once in the superclass.</li>
+        <li><b>Procedural abstraction:</b> you call <span class="mono">drawTriangle("red", 4.5, 2.0)</span> knowing what it does and what arguments it needs, but not how it draws.</li>
+        <li><b>Data types:</b> you use an integer or a real number without thinking about how its bits are laid out in memory.</li>
+        <li><b>Models and simulations:</b> a flight simulator or a climate model keeps the variables that affect the outcome and leaves out the rest.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Apply it</h2>
+  <p class="sub">Choose a scenario. For each detail of the real situation, decide whether the program needs to keep it or whether it can be removed.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Scenario <select id="sc"></select></label></div>
+  <p id="brief" style="margin:0 0 12px;max-width:85ch"></p>
+  {% include quiz.html n=2 %}
+  <p class="note" id="model"></p>
+</section>
+
+<section class="block">
+  <h2>How an abstraction differs from reality</h2>
+  <div class="scroll"><table class="t">
+    <tr><th>Abstraction</th><th>What it keeps</th><th>What it leaves out or simplifies</th><th>When the difference matters</th></tr>
+    <tr><td><b>Metro map</b></td><td>Stations, lines, the order of stops and where to change</td><td>Distances, directions, streets and the true route of the track</td><td>Deciding whether it would be quicker to walk</td></tr>
+    <tr><td><b>Sat-nav road network</b></td><td>Junctions, the roads joining them, lengths and speed limits</td><td>Buildings, scenery, the road surface and the weather</td><td>A road is closed or flooded and the data has not been updated</td></tr>
+    <tr><td><b>Bouncing ball in a game</b></td><td>Position, velocity, gravity and how elastic the ball is</td><td>Air resistance, spin and the ball changing shape</td><td>The game needs to feel realistic, as a snooker simulation does</td></tr>
+    <tr><td><b>Model of a housing estate</b></td><td>Where each house and road goes</td><td>Every house is identical, with no windows, doors or chimneys</td><td>A buyer wants to know what their own house will look like</td></tr>
+    <tr><td><b>Customer record</b></td><td>Name, address and order history</td><td>Everything else about the person</td><td>The business later needs a fact that it never stored</td></tr>
+  </table></div>
+  <p class="note">The more you simplify, the easier the model is to build and the faster it runs, but the less likely it is to behave like the real thing. Choosing what to leave out is the design decision.</p>
+</section>
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+<script>
+/* ---------- city to metro map ---------- */
+/* name, real x,y, map x,y, real label [anchor,dx,dy], map label [anchor,dx,dy] */
+const ST=[
+ ['Westfield',30,255,60,170,['start',-12,-14],['middle',0,-14]],
+ ['Market',215,205,180,170,['end',-8,-10],['middle',0,-14]],
+ ['Central',270,185,300,170,['end',-10,-8],['start',10,-12]],
+ ['Old Bridge',310,160,420,170,['start',12,10],['middle',0,-14]],
+ ['Harbour',520,90,540,170,['end',-12,-6],['middle',0,-14]],
+ ['Northgate',240,25,300,30,['start',12,4],['start',12,4]],
+ ['University',262,120,300,100,['end',-12,4],['start',12,4]],
+ ['Museum',318,182,300,240,['start',10,20],['start',12,4]],
+ ['Stadium',360,300,300,310,['start',12,4],['start',12,4]]];
+const LINES=[['var(--bad)',[0,1,2,3,4]],['var(--one)',[5,6,2,7,8]]];
+const LEVELS=[
+ ['Reality','Everything is here: streets, buildings, parks, the river and the true position of every station. Most of it is no help in planning a journey.'],
+ ['Streets and buildings removed','The stations are still in their true positions, so distance and direction can be trusted.'],
+ ['River and parks removed','Only the network is left, still drawn to scale.'],
+ ['Lines straightened and stations evenly spaced','This is the metro map. It keeps only the order of the stations and how the lines connect.']];
+const QS=[
+ ['Which line goes to Harbour?',4,''],
+ ['Where do I change to get from Westfield to Stadium?',4,''],
+ ['How many stops is it from Northgate to Museum?',4,''],
+ ['Which street is the entrance to Market station on?',1,'The streets have been removed.'],
+ ['Does the line from Central to Museum cross the river?',2,'The river has been removed.'],
+ ['How far is it from Westfield to Market?',3,'It is 1.9 km, but Central to Old Bridge is only 0.5 km. The map draws both gaps the same length.'],
+ ['Is it quicker to walk from Old Bridge to Museum?',3,'They are 200 m apart on the ground. The map suggests two trains and a change at Central.']];
+let lv=0,cur=0,raf=0;
+const clamp=x=>Math.max(0,Math.min(1,x));
+function background(){
+  let s='';
+  for(let i=-8;i<26;i++)s+=`<path class="street" d="M${i*42} 0 l80 340"/>`;
+  for(let j=0;j<9;j++)s+=`<path class="street" d="M0 ${j*46+8} l600 -70"/>`;
+  let seed=7;const rnd=()=>(seed=seed*16807%2147483647)/2147483647;
+  for(let k=0;k<70;k++)s+=`<rect class="bld" x="${(rnd()*580).toFixed(0)}" y="${(rnd()*320).toFixed(0)}" width="${(8+rnd()*12).toFixed(0)}" height="${(8+rnd()*10).toFixed(0)}"/>`;
+  return s;
+}
+$('#map').innerHTML=`<g id="g-st">${background()}<text class="geo" x="165" y="243" transform="rotate(-7 165 243)">Market Street</text></g>
+  <g id="g-nat"><ellipse class="park" cx="120" cy="105" rx="70" ry="38"/><ellipse class="park" cx="455" cy="215" rx="62" ry="34"/><path class="river" d="M0 60 C140 70 230 110 290 172 S420 260 600 250"/><text class="geo" x="470" y="262">River</text><text class="geo" x="95" y="108">Park</text></g>
+  <g id="g-net"></g>`;
+function drawMap(){
+  const t=clamp(cur-2),P=ST.map(s=>[s[1]+(s[3]-s[1])*t,s[2]+(s[4]-s[2])*t]);
+  $('#g-st').style.opacity=1-clamp(cur);$('#g-nat').style.opacity=1-clamp(cur-1);
+  $('#g-net').innerHTML=LINES.map(([c,ids])=>`<path class="track" stroke="${c}" d="M${ids.map(i=>P[i].map(v=>v.toFixed(1)).join(' ')).join('L')}"/>`).join('')
+    +ST.map((s,i)=>{const L=t>.5?s[6]:s[5];return`<circle class="stn" cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="${i===2?8:6}"/><text text-anchor="${L[0]}" x="${(P[i][0]+L[1]).toFixed(1)}" y="${(P[i][1]+L[2]).toFixed(1)}">${s[0]}</text>`}).join('');
+}
+function drawInfo(){
+  $('#lname').textContent=`Level ${lv+1} of 4: ${LEVELS[lv][0]}`;$('#ldesc').textContent=LEVELS[lv][1];
+  $('#ans').innerHTML='<tr><th>Question</th><th>Can this version answer it?</th></tr>'+QS.map(q=>lv<q[1]?`<tr><td>${q[0]}</td><td class="okc">✔ Yes</td></tr>`:`<tr><td>${q[0]}<br><small style="color:var(--muted)">${q[2]}</small></td><td class="badc">✘ No</td></tr>`).join('');
+}
+function animate(){
+  const still=matchMedia('(prefers-reduced-motion:reduce)').matches,d=lv-cur;
+  cur=still||Math.abs(d)<.02?lv:cur+d*.14;drawMap();
+  raf=cur===lv?0:requestAnimationFrame(animate);
+}
+$('#lv').oninput=e=>{lv=+e.target.value;drawInfo();if(!raf)animate()};
+drawMap();drawInfo();
+
+/* ---------- three levels of language ---------- */
+listing($('#hl'),['x = a + 5']);
+listing($('#asm'),['LDA a','ADD five','STA x']);
+listing($('#mc'),['0101 00010111','0001 00011001','0011 00011000']);
+
+/* ---------- queue ---------- */
+const N=6;let arr,front,rear,size,nextCh;
+const QCODE=['procedure enqueue(item)','  if size == maxSize then','    print("Queue full")','  else','    rear = (rear + 1) MOD maxSize','    q[rear] = item','    size = size + 1','  endif','endprocedure','','function dequeue()','  if size == 0 then','    return "Queue empty"','  endif','  item = q[front]','  front = (front + 1) MOD maxSize','  size = size - 1','  return item','endfunction'];
+listing($('#qcode'),QCODE);
+function qReset(){arr=Array(N).fill('');front=0;rear=-1;size=0;nextCh=0;qDraw('The queue is empty. Add some items.')}
+function qDraw(msg){
+  const items=[];for(let k=0;k<size;k++)items.push(arr[(front+k)%N]);
+  $('#qview').innerHTML=size?'<span class="end">front</span>'+items.map(x=>`<span class="it">${x}</span>`).join('')+'<span class="end">rear</span>':'<span class="end">(empty)</span>';
+  $('#qmsg').innerHTML=msg;
+  const live=i=>size&&((i-front+N)%N)<size;
+  $('#slots').innerHTML=arr.map((x,i)=>`<div><small>q[${i}]</small><div class="slot ${live(i)?'live':x?'dead':''}">${x}</div><small>${[i===front?'front':'',i===rear?'rear':''].filter(Boolean).join(' ')}</small></div>`).join('');
+  $('#ptrs').textContent=`front = ${front}   rear = ${rear}   size = ${size}   maxSize = ${N}`;
+}
+$('#enq').onclick=()=>{
+  if(size===N)return qDraw('<b class="badc">Queue full.</b> The user of the queue is told it is full. They do not need to know why the limit is 6.');
+  const item=String.fromCharCode(65+nextCh++%26);rear=(rear+1)%N;arr[rear]=item;size++;
+  qDraw(`<span class="mono">enqueue("${item}")</span> added ${item} at the rear.`)};
+$('#deq').onclick=()=>{
+  if(!size)return qDraw('<b class="badc">Queue empty.</b> There is nothing to remove.');
+  const item=arr[front];front=(front+1)%N;size--;
+  qDraw(`<span class="mono">dequeue()</span> returned ${item} from the front.`+(arr.some((x,i)=>x&&!(size&&((i-front+N)%N)<size))?' In the array, the old value is still in its slot. Only the pointer has moved, and the user of the queue never sees this.':''))};
+$('#qrst').onclick=qReset;
+$('#impl').onchange=e=>$('#qimpl').classList.toggle('hidden',!e.target.checked);
+qReset();
+
+/* ---------- apply it ---------- */
+const SC=[
+ {name:'Cave treasure game',brief:'A game in which the player explores a cave, collects treasure and must avoid being eaten by a monster.',
+  model:'<b>Model answer:</b> the cave can be represented as a grid of squares, each one either wall or floor. The player, the monster and each piece of treasure are reduced to a position on that grid, and the monster to a simple rule for how it moves. Leaving out the geology, the lighting and realistic anatomy means there is far less to design, program and test, the game needs less memory and processing power so it runs smoothly, and the programmers can concentrate on the features that affect how the game plays.',
+  q:[['The position of the player in the cave','Keep','The game cannot work out collisions, treasure collected or being caught without it.'],
+     ['Which parts of the cave are wall and which are open','Keep','This decides where the player and the monster are able to move.'],
+     ['The type of rock the cave is made of','Remove','It has no effect on how the game plays.'],
+     ['Where each piece of treasure is and whether it has been collected','Keep','Collecting treasure is the aim of the game.'],
+     ['The temperature and humidity in the cave','Remove','Nothing in the game depends on it.'],
+     ['The position of the monster and how fast it moves','Keep','Needed to decide whether the player is caught.'],
+     ['The player\'s heart rate and need to eat and sleep','Remove','An unnecessary detail of a real explorer, unless the game is designed around survival.'],
+     ['The player\'s score','Keep','It is how the player\'s success is measured and displayed.']]},
+ {name:'Sat-nav route planner',brief:'A program that finds the quickest route by road between two places.',
+  model:'<b>Model answer:</b> the road network can be abstracted to a weighted graph, in which each junction is a node and each road is an edge weighted by the time it takes to drive. Everything that does not affect journey time is removed. The benefit is that the problem becomes one that has already been solved: a standard shortest-path algorithm such as Dijkstra\'s can be applied. The data needed is far smaller, so a route can be calculated quickly, and the same program works for any country.',
+  q:[['Which junctions are joined by a road','Keep','This is the structure of the network: the edges of the graph.'],
+     ['The length and speed limit of each road','Keep','Together they give the time it takes to drive each road.'],
+     ['The colour of the buildings beside the road','Remove','It has no effect on the route.'],
+     ['Whether a road is one-way','Keep','It decides which directions of travel are possible.'],
+     ['The names of the shops in each town','Remove','Not needed to find a route.'],
+     ['Current traffic on each road','Keep','It changes the journey time, so it changes which route is quickest.'],
+     ['The species of tree planted along the verge','Remove','An irrelevant detail.'],
+     ['The exact curve of every bend','Remove','Only the length of the road and the time to drive it matter. The curve is needed to draw the map, but not to choose the route.']]},
+ {name:'Supermarket checkout simulation',brief:'A simulation to help a new supermarket decide how many checkouts to open at different times of day.',
+  model:'<b>Model answer:</b> each customer is reduced to an arrival time and a number of items, and each checkout to a queue and a rate of serving. The simulation can then be run thousands of times with different numbers of checkouts, which would be impossible to try in the real shop. Removing the irrelevant details makes the model quick to build and to run. The cost is that it will not predict the unusual cases that were abstracted away, such as a till breaking down.',
+  q:[['How often customers arrive at the checkouts','Keep','The arrival rate decides how quickly queues build up.'],
+     ['The number of checkouts that are open','Keep','It is the quantity the simulation is trying to choose.'],
+     ['Each customer\'s name','Remove','Customers are interchangeable in this model.'],
+     ['How many items each customer has','Keep','It decides how long each customer takes to serve.'],
+     ['Which brands are in each basket','Remove','Only the number of items affects the serving time.'],
+     ['How long it takes to scan an item and take payment','Keep','Needed to calculate the serving time.'],
+     ['The music playing in the shop','Remove','It has no effect on queueing.'],
+     ['The colour of the staff uniform','Remove','An irrelevant detail.']]}];
+$('#sc').innerHTML=SC.map((s,i)=>`<option value="${i}">${s.name}</option>`).join('');
+function scDraw(){const s=SC[$('#sc').value];$('#brief').innerHTML=`<b>${s.name}:</b> ${s.brief}`;$('#model').innerHTML=s.model;
+  cardQuiz($('#quiz2'),s.q.map(r=>({q:r[0],a:r[1],why:r[2]})),['Keep','Remove'],$('#score2'),$('#qreset2'))}
+$('#sc').onchange=scDraw;scDraw();
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'Which is the best definition of abstraction?',opts:['Removing unnecessary detail so that only what is needed to solve the problem is left','Breaking a problem into smaller sub-problems','Writing a program in a low-level language'],a:'Removing unnecessary detail so that only what is needed to solve the problem is left',why:'Breaking a problem down is decomposition, which is a different technique.'},
+ {q:'A programmer calls <span class="mono">sort(names)</span> from a library without knowing which sorting algorithm it uses. This is an example of…',opts:['Procedural abstraction','Caching','Concurrency'],a:'Procedural abstraction',why:'The programmer knows what the procedure does and how to call it. How it works is hidden.'},
+ {q:'Why is a high-level language described as an abstraction?',opts:['It hides the details of registers, memory addresses and machine instructions','It runs faster than machine code','It can only be used to write simulations'],a:'It hides the details of registers, memory addresses and machine instructions',why:'The programmer can write x = a + 5 and think about the problem, not the hardware.'},
+ {q:'A weather simulation divides the atmosphere into 10 km squares and gives each one a single temperature. How does this differ from reality?',opts:['Real temperature varies continuously inside each square','Real weather has no temperature','It does not differ: the simulation is exact'],a:'Real temperature varies continuously inside each square',why:'The variation inside each square has been removed to make the calculation possible, at the cost of some accuracy.'},
+ {q:'Which is a benefit of using abstraction when designing a program?',opts:['The program is simpler to design, write and test','The program models reality perfectly','No decisions need to be made about what to include'],a:'The program is simpler to design, write and test',why:'There are fewer things to consider. It also takes less memory and processing time.'},
+ {q:'Which is a risk of abstracting too much?',opts:['The model no longer behaves enough like the real thing to be useful','The program becomes too detailed','The program uses too much memory'],a:'The model no longer behaves enough like the real thing to be useful',why:'The more you simplify, the less likely the model is to mimic reality.'},
+ {q:'<span class="mono">Car</span>, <span class="mono">Van</span> and <span class="mono">Lorry</span> are all defined as subclasses of <span class="mono">Vehicle</span>. Which kind of abstraction is this?',opts:['Abstraction by generalisation','Data abstraction','No abstraction is involved'],a:'Abstraction by generalisation',why:'They are grouped by their common characteristics: each one "is a kind of" Vehicle.'},
+ {q:'A stack is provided with the operations <span class="mono">push</span>, <span class="mono">pop</span> and <span class="mono">isEmpty</span>. What has been hidden from the programmer who uses it?',opts:['How the items are stored, such as in an array with a pointer','What the stack is for','The order in which items are removed'],a:'How the items are stored, such as in an array with a pointer',why:'This is data abstraction. The implementation could change without affecting the programs that use the stack.'},
+],null,$('#score'),$('#qreset'));
+</script>

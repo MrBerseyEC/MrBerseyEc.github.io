@@ -17,6 +17,14 @@
         - { title: "D-Type Flip Flops",      nav: "D-type flip-flops",      url: /a-level/1.4.3-demos/d-type-flip-flop.html }
         - { title: "Half and Full Adders",   nav: "Half and full adders",   url: /a-level/1.4.3-demos/half-full-adders.html }
         - { title: "Ripple-Carry Adder",     nav: "Ripple-carry adder",     url: /a-level/1.4.3-demos/ripple-carry-adder.html }
+    - title: 2.1 Computational Thinking
+      label: 2.1 demos
+      pages:
+        # - { title: "Thinking Abstractly",    nav: "Thinking abstractly",    url: /a-level/2.1-demos/thinking-abstractly.html }
+        - { title: "Thinking Ahead",         nav: "Thinking ahead",         url: /a-level/2.1-demos/thinking-ahead.html }
+        # - { title: "Thinking Procedurally",  nav: "Thinking procedurally",  url: /a-level/2.1-demos/thinking-procedurally.html }
+        # - { title: "Thinking Logically",     nav: "Thinking logically",     url: /a-level/2.1-demos/thinking-logically.html }
+        # - { title: "Thinking Concurrently",  nav: "Thinking concurrently",  url: /a-level/2.1-demos/thinking-concurrently.html }
 
 - id: gcse
   name: GCSE Computer Science

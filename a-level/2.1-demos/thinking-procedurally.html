@@ -1,0 +1,222 @@
+---
+layout: demo
+title: "Thinking Procedurally"
+spec: "OCR A LEVEL · 2.1.3"
+published: false
+---
+<style>
+.tree{padding:4px 0 10px;min-width:max-content}
+.tree ul{display:flex;justify-content:center;list-style:none;margin:0;padding:20px 0 0;position:relative}
+.tree>ul{padding-top:0}
+.tree li{position:relative;padding:20px 5px 0;text-align:center}
+.tree li::before,.tree li::after{content:"";position:absolute;top:0;right:50%;width:50%;height:20px;border-top:2px solid var(--ink)}
+.tree li::after{right:auto;left:50%;border-left:2px solid var(--ink)}
+.tree li:only-child::before,.tree li:only-child::after{display:none}
+.tree li:only-child{padding-top:0}
+.tree li:first-child::before,.tree li:last-child::after{border:0}
+.tree li:last-child::before{border-right:2px solid var(--ink)}
+.tree ul ul::before{content:"";position:absolute;top:0;left:50%;height:20px;border-left:2px solid var(--ink);margin-left:-1px}
+.node{font:700 .82rem/1.25 var(--sans);width:118px;min-height:52px;padding:6px 8px;border:2px solid var(--ink);border-radius:8px;background:var(--bg);color:var(--ink)}
+button.node{cursor:pointer;border-style:dashed;background:var(--hl-soft)}
+button.node::after{content:" ▾";color:var(--muted)}
+button.node.open{border-style:solid;background:var(--bg)}
+button.node.open::after{content:""}
+.paint{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
+.paint .seg{flex-wrap:wrap}
+.pc span[data-c]{position:relative}
+.pc span[data-c]::after{content:attr(data-tag);position:absolute;right:10px;top:0;font:700 .8rem var(--sans)}
+.pc span[data-c="0"]{border-left-color:var(--one)}.pc span[data-c="1"]{border-left-color:var(--hl)}.pc span[data-c="2"]{border-left-color:#7B4DFF}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.why{margin:0;padding-left:1.2em}.why li{margin:5px 0}
+.estate{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:18px;align-items:start}
+.estate svg{width:100%;height:auto;max-height:420px;display:block;background:var(--bg);border:2px solid var(--line);border-radius:12px}
+.estate .toolbar{display:grid;grid-template-columns:auto 1fr auto;gap:8px 12px;margin-bottom:12px}
+.steps{display:grid;gap:6px;margin:0 0 12px;padding:0;list-style:none;max-width:640px}
+.steps li{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;border:2px solid var(--line);border-radius:10px;padding:6px 8px 6px 12px;background:var(--bg);font-weight:600}
+.steps li.ok{border-color:var(--ok);background:var(--ok-soft)}.steps li.no{border-color:var(--bad);background:var(--bad-soft)}
+.steps .btn{padding:4px 10px}
+@media (max-width:860px){.paint,.estate{grid-template-columns:minmax(0,1fr)}}
+</style>
+<p class="lede">Thinking procedurally means breaking a problem down into smaller parts, working out the order in which the steps must happen, and deciding which parts should become sub-procedures. Each part can then be designed, written and tested separately.</p>
+
+<section class="block">
+  <h2>Breaking a problem down</h2>
+  <p class="sub">In top-down design, a problem is broken into its major tasks, and each task is broken down again until every part is simple enough to be written as a single subroutine. The result is drawn as a structure chart, also called a hierarchy chart: an upside-down tree with the whole problem at the top. Click a dashed box to break it down further.</p>
+  <div class="toolbar" style="margin-bottom:14px">
+    <label class="check">Problem <select id="prob"></select></label>
+    <button class="btn" id="tall">Break everything down</button><button class="btn" id="tnone">Start again</button>
+  </div>
+  <p id="pbrief" style="margin:0 0 14px;max-width:85ch"></p>
+  <div class="scroll"><div class="tree" id="tree"></div></div>
+  <p class="note">A structure chart shows which parts make up the solution, not the order of every instruction, and it has no loops or decisions. Reading the bottom boxes from left to right gives the subroutines that need writing. Try drawing the chart on paper for each problem before you reveal it.</p>
+</section>
+
+<section class="block">
+  <h2>Finding the components in a solution</h2>
+  <p class="sub">This program takes a booking for cinema tickets. It has been written as one block, but it is made of three component parts. Choose a component, then click every line that belongs to it. Each line is tagged with the number of its component.</p>
+  <div class="paint">
+    <pre class="pc pick" id="mono"></pre>
+    <div>
+      <div class="seg" role="radiogroup" aria-label="Component" id="comp"></div>
+      <div class="row" style="margin:12px 0"><button class="btn pri" id="pchk">Check</button><button class="btn" id="prst">Start again</button></div>
+      <p class="status" id="pmsg"></p>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>From components to sub-procedures</h2>
+  <p class="sub">Each component becomes a sub-procedure with a name that says what it does. Lines 1 to 4 and lines 5 to 8 of the original did the same job with a different prompt, so they become one function that is called twice. The part that differs is passed in as a parameter.</p>
+  <div class="cols2" style="align-items:start">
+    <pre class="pc" id="refac"></pre>
+    <div>
+      <h3 style="margin:0 0 6px">Why sub-procedures matter</h3>
+      <ul class="why">
+        <li>The main program reads like a summary of the solution: four lines in place of fourteen.</li>
+        <li>Code that is needed more than once is written once and called with different arguments.</li>
+        <li>Each sub-procedure can be tested on its own, and a fault is easier to find.</li>
+        <li>A change is made in one place. Raising the limit of 10 tickets means editing only <span class="mono">getTickets</span>.</li>
+        <li>Different programmers can write different sub-procedures at the same time.</li>
+        <li>A self-contained sub-procedure can be reused in another program.</li>
+        <li>The caller needs to know only the interface: the name, the parameters and their order, and what is returned.</li>
+      </ul>
+    </div>
+  </div>
+  <h3 style="margin:20px 0 8px">Sub-procedures and parameters</h3>
+  {% include quiz.html n=2 %}
+</section>
+
+<section class="block">
+  <h2>Parameters at work</h2>
+  <p class="sub">A builder is planning a new estate. A house is a rectangle with a triangle on top, a street is a row of houses and the estate is several streets. Each level is a procedure that calls the one below it. When the builder changes their mind, no procedure is rewritten: the estate is drawn again with new arguments.</p>
+  <div class="estate">
+    <div>
+      <div class="toolbar">
+        <span>Streets</span><input type="range" id="e-s" min="1" max="4" value="2"><b class="mono" id="e-sv"></b>
+        <span>Houses per street</span><input type="range" id="e-h" min="1" max="8" value="5"><b class="mono" id="e-hv"></b>
+        <span>House width</span><input type="range" id="e-w" min="30" max="60" step="5" value="40"><b class="mono" id="e-wv"></b>
+        <span>Roof height</span><input type="range" id="e-r" min="5" max="35" step="5" value="20"><b class="mono" id="e-rv"></b>
+        <span>Wall colour</span><select id="e-c"><option>beige</option><option>red</option><option>white</option><option>blue</option></select><span></span>
+      </div>
+      <svg id="plan" role="img" aria-label="Plan of the estate"></svg>
+      <p class="status" id="e-count" style="margin-top:8px"></p>
+    </div>
+    <pre class="pc" id="ecode"></pre>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Getting the steps in the right order</h2>
+  <p class="sub">A program tests the user on a times table of their choice. It asks five questions and tells the user whether each answer is right. If it is wrong, the correct answer is shown. Use the arrows to put the steps into the right sequence.</p>
+  <ol class="steps" id="steps"></ol>
+  <div class="row"><button class="btn pri" id="schk">Check the order</button><button class="btn" id="sshow">Show the solution</button><span class="status" id="smsg"></span></div>
+  <div id="sol" class="hidden" style="margin-top:18px">
+    <p class="sub">Here is the same sequence of steps written as pseudocode and drawn as a flowchart. The loop is a <span class="mono">for</span> loop in the pseudocode. In the flowchart it is a counter, a decision and an arrow that goes back up.</p>
+    <div class="cols2" style="align-items:start">
+      <pre class="pc" id="spc"></pre>
+      <div id="sflow" data-label="Flowchart for the times table test"></div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+<script>
+/* ---------- structure charts ---------- */
+const PROBS=[
+ {name:'Calculate a gas bill',brief:'A program calculates a customer\'s gas bill from their meter reading.',
+  t:['Calculate gas bill',[['Input meter reading'],['Calculate units used',[['Get previous reading'],['Calculate this month\'s units used']]],['Calculate total bill',[['Calculate cost of units used plus standing charge'],['Add any outstanding amount owing']]],['Output bill']]]},
+ {name:'Times table test',brief:'A program asks the user which times table they would like to be tested on. It then displays five questions, gets the user\'s answer each time and tells them whether they were right or wrong. If they are wrong, the correct answer is displayed.',
+  t:['Times table test',[['Get times table'],['Ask five questions',[['Generate question'],['Display question'],['Get user\'s answer'],['Check answer',[['Display "Correct"'],['Display "Wrong" and correct answer']]]]]]]},
+ {name:'Multiple-choice quiz',brief:'A quiz program asks the user 10 random multiple-choice questions from a bank of 100 questions held in a file. A correct answer gets feedback and adds 1 to the score. A wrong answer gets feedback and the correct answer is displayed. At the end, the score out of 10 is given.',
+  t:['Quiz',[['Set up',[['Load questions from file'],['Set score to 0']]],['Ask 10 questions',[['Choose a random question'],['Display question and options'],['Get user\'s answer'],['Mark answer',[['Correct: give feedback and add 1 to score'],['Wrong: give feedback and display correct answer']]]]],['Display score out of 10']]]}];
+let opened=new Set();
+const tnode=(n,path)=>n[1]?`<li><button class="node${opened.has(path)?' open':''}" data-p="${path}">${esc(n[0])}</button>${opened.has(path)?`<ul>${n[1].map((c,i)=>tnode(c,path+'.'+i)).join('')}</ul>`:''}</li>`:`<li><div class="node">${esc(n[0])}</div></li>`;
+const allPaths=(n,path,out=[])=>{if(n[1]){out.push(path);n[1].forEach((c,i)=>allPaths(c,path+'.'+i,out))}return out};
+function treeDraw(){const p=PROBS[$('#prob').value];$('#pbrief').textContent=p.brief;$('#tree').innerHTML=`<ul>${tnode(p.t,'0')}</ul>`}
+$('#prob').innerHTML=PROBS.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
+$('#prob').onchange=()=>{opened.clear();treeDraw()};
+$('#tree').onclick=e=>{const b=e.target.closest('button.node');if(!b)return;const p=b.dataset.p;if(opened.has(p))[...opened].forEach(x=>x.startsWith(p)&&opened.delete(x));else opened.add(p);treeDraw()};
+$('#tall').onclick=()=>{opened=new Set(allPaths(PROBS[$('#prob').value].t,'0'));treeDraw()};
+$('#tnone').onclick=()=>{opened.clear();treeDraw()};
+treeDraw();
+
+/* ---------- find the components ---------- */
+const MONO=['adults = int(input("Number of adult tickets"))','while adults < 0 OR adults > 10','  adults = int(input("Enter a number from 0 to 10"))','endwhile','children = int(input("Number of child tickets"))','while children < 0 OR children > 10','  children = int(input("Enter a number from 0 to 10"))','endwhile','total = adults * 9.50 + children * 6.00','if adults + children >= 6 then','  total = total * 0.9','endif','print("Tickets: " + str(adults + children))','print("Total to pay: £" + str(total))'];
+const COMPS=['Get the number of tickets','Calculate the total','Display the booking'],CCOL=['var(--one)','var(--hl)','#7B4DFF'],ANS=[0,0,0,0,0,0,0,0,1,1,1,1,2,2];
+let comp=0,paint={},pdone=false;
+$('#comp').innerHTML=COMPS.map((c,i)=>`<button role="radio" data-c="${i}" aria-checked="${!i}"><span class="sw" style="background:${CCOL[i]}"></span>${i+1}. ${c}</button>`).join('');
+$('#mono').innerHTML=MONO.map((l,i)=>`<span data-i="${i}">${String(i+1).padStart(2)}  ${esc(l)}</span>`).join('');
+function paintDraw(){$$('#mono span').forEach((s,i)=>{const c=paint[i];s.className='';
+  if(c===undefined){delete s.dataset.c;delete s.dataset.tag;return}
+  s.dataset.c=c;s.dataset.tag=(c+1)+(pdone?(c===ANS[i]?' ✔':' ✘'):'');if(pdone)s.className=c===ANS[i]?'hit':'miss'})}
+$('#comp').onclick=e=>{const b=e.target.closest('button');if(!b)return;comp=+b.dataset.c;$$('#comp button').forEach(x=>x.setAttribute('aria-checked',x===b))};
+$('#mono').onclick=e=>{const s=e.target.closest('span[data-i]');if(!s||pdone)return;const i=+s.dataset.i;paint[i]===comp?delete paint[i]:paint[i]=comp;paintDraw()};
+$('#pchk').onclick=()=>{const n=Object.keys(paint).length;if(n<MONO.length){$('#pmsg').textContent=`You have assigned ${n} of ${MONO.length} lines. Assign every line, then check.`;return}
+  pdone=true;paintDraw();const r=ANS.filter((a,i)=>paint[i]===a).length;
+  $('#pmsg').innerHTML=`<b>${r} of ${MONO.length} lines correct.</b> Lines 1 to 8 get and validate the two inputs, lines 9 to 12 calculate the total including the group discount, and lines 13 and 14 produce the output. Each component has one clear job.`};
+$('#prst').onclick=()=>{paint={};pdone=false;$('#pmsg').textContent='';paintDraw()};
+
+/* ---------- sub-procedures ---------- */
+listing($('#refac'),['function getTickets(prompt)','  number = int(input(prompt))','  while number < 0 OR number > 10','    number = int(input("Enter a number from 0 to 10"))','  endwhile','  return number','endfunction','','function calculateTotal(adults, children)','  total = adults * 9.50 + children * 6.00','  if adults + children >= 6 then','    total = total * 0.9','  endif','  return total','endfunction','','procedure displayBooking(tickets, total)','  print("Tickets: " + str(tickets))','  print("Total to pay: £" + str(total))','endprocedure','','// main program','adults = getTickets("Number of adult tickets")','children = getTickets("Number of child tickets")','total = calculateTotal(adults, children)','displayBooking(adults + children, total)']);
+cardQuiz($('#quiz2'),[
+ {q:'Why does <span class="mono">getTickets</span> need a parameter?',opts:['The prompt is the only thing that differs between the two times it is used','A function is not allowed to have no parameters','So that it can change the variable total'],a:'The prompt is the only thing that differs between the two times it is used',why:'Everything that is the same goes inside the function. The part that changes is passed in.'},
+ {q:'Why is <span class="mono">calculateTotal</span> a function, not a procedure?',opts:['It has to pass a value back to the main program','It has two parameters','It contains an if statement'],a:'It has to pass a value back to the main program',why:'A function returns a value. A procedure carries out a task without returning one.'},
+ {q:'The cinema adds a student ticket. Which change to the main program gets the number of student tickets?',opts:['students = getTickets("Number of student tickets")','Copy the while loop out of getTickets a third time','Write a new function called getStudentTickets'],a:'students = getTickets("Number of student tickets")',why:'The validation already exists, so it is one more call with a different argument.'},
+ {q:'Which parameters would <span class="mono">calculateTotal</span> then need?',opts:['adults, children, students','prompt','total'],a:'adults, children, students',why:'A sub-procedure should be given all the data it needs through its parameters.'},
+ {q:'A program prints a line of 40 dashes in six different places. What should the programmer do?',opts:['Write a procedure printLine(length) and call it six times','Copy and paste the code six times','Use six global variables'],a:'Write a procedure printLine(length) and call it six times',why:'Repeated code is the clearest sign that a sub-procedure is needed. A parameter for the length makes it more reusable.'},
+ {q:'What does a programmer need to know in order to call <span class="mono">displayBooking</span>?',opts:['Its name, the arguments it needs and the order they go in','Every line of code inside it','The names of its local variables'],a:'Its name, the arguments it needs and the order they go in',why:'This is the procedure interface. How the procedure works inside is hidden.'},
+],null,$('#score2'),$('#qreset2'));
+
+/* ---------- estate ---------- */
+const WALL={beige:'#E8D9B5',red:'#B5533C',white:'#F4F4F0',blue:'#7FA6D9'};
+let shapes,calls;
+function drawRectangle(colour,x,y,width,height){calls.rect++;shapes.push(`<rect x="${x}" y="${y}" width="${width}" height="${height}" fill="${colour}" stroke="#16202B" stroke-width="1.5"/>`)}
+function drawTriangle(colour,x,y,base,height){calls.tri++;shapes.push(`<path d="M${x} ${y}h${base}l${-base/2} ${-height}z" fill="${colour}" stroke="#16202B" stroke-width="1.5" stroke-linejoin="round"/>`)}
+function drawHouse(x,y,width,roofHeight,colour){calls.house++;drawRectangle(colour,x,y,width,width*.8);drawTriangle('#8A4B32',x,y,width,roofHeight)}
+function drawStreet(y,houses,width,roofHeight,colour){calls.street++;for(let i=0;i<houses;i++)drawHouse(12+i*(width+12),y,width,roofHeight,colour)}
+function drawEstate(streets,houses,width,roofHeight,colour){for(let s=0;s<streets;s++)drawStreet(roofHeight+10+s*(width*.8+roofHeight+22),houses,width,roofHeight,colour)}
+function estate(){
+  const s=+$('#e-s').value,h=+$('#e-h').value,w=+$('#e-w').value,r=+$('#e-r').value,c=$('#e-c').value;
+  $('#e-sv').textContent=s;$('#e-hv').textContent=h;$('#e-wv').textContent=w;$('#e-rv').textContent=r;
+  shapes=[];calls={rect:0,tri:0,house:0,street:0};drawEstate(s,h,w,r,WALL[c]);
+  const W=Math.max(12+h*(w+12),260),H=s*(w*.8+r+22)+8;
+  $('#plan').setAttribute('viewBox',`0 0 ${W} ${H}`);$('#plan').innerHTML=shapes.join('');
+  $('#e-count').innerHTML=`One call to <span class="mono">drawEstate</span> led to <b>${calls.street}</b> call${calls.street>1?'s':''} to <span class="mono">drawStreet</span>, <b>${calls.house}</b> to <span class="mono">drawHouse</span>, and <b>${calls.rect+calls.tri}</b> shapes drawn. Without sub-procedures that would be ${calls.rect+calls.tri} separate drawing instructions, each with its own coordinates.`;
+  listing($('#ecode'),['procedure drawHouse(x, y, width, roofHeight, colour)','  drawRectangle(colour, x, y, width, width * 0.8)','  drawTriangle("brown", x, y, width, roofHeight)','endprocedure','','procedure drawStreet(y, houses, width, roofHeight, colour)','  for i = 0 to houses - 1','    drawHouse(i * (width + 12), y, width, roofHeight, colour)','  next i','endprocedure','','procedure drawEstate(streets, houses, width, roofHeight, colour)','  for s = 0 to streets - 1','    drawStreet(s * 80, houses, width, roofHeight, colour)','  next s','endprocedure','','// main program',`drawEstate(${s}, ${h}, ${w}, ${r}, "${c}")`]);
+  $('#ecode').lastElementChild.className='cur';
+}
+['#e-s','#e-h','#e-w','#e-r','#e-c'].forEach(id=>$(id).oninput=estate);estate();
+
+/* ---------- order the steps ---------- */
+const STEPS=['Ask which times table to test','Repeat five times:','Choose a random number from 1 to 12','Display the question and get the user\'s answer','Is the answer correct?','Yes: display "Correct"','No: display "Wrong" and the correct answer'],INDENT=[0,0,1,1,1,2,2];
+let order=[4,1,6,3,0,5,2],sdone=false;
+function stepsDraw(marks){$('#steps').innerHTML=order.map((s,k)=>`<li class="${marks?(marks[k]?'ok':'no'):''}"><span>${esc(STEPS[s])}</span><button class="btn" data-k="${k}" data-d="-1" aria-label="Move up"${k?'':' disabled'}>↑</button><button class="btn" data-k="${k}" data-d="1" aria-label="Move down"${k<order.length-1?'':' disabled'}>↓</button></li>`).join('')}
+$('#steps').onclick=e=>{const b=e.target.closest('button');if(!b||sdone)return;const k=+b.dataset.k,j=k+ +b.dataset.d;[order[k],order[j]]=[order[j],order[k]];stepsDraw();$('#smsg').textContent='';$(`#steps [data-k="${j}"][data-d="${b.dataset.d}"]`).focus()};
+const stepOK=(s,k)=>s===k||(s>4&&k>4); /* the last two steps can go in either order */
+function solved(){sdone=true;order=[0,1,2,3,4,5,6];$('#steps').innerHTML=order.map(s=>`<li class="ok" style="margin-left:${INDENT[s]*28}px"><span>${esc(STEPS[s])}</span></li>`).join('');$('#sol').classList.remove('hidden')}
+$('#schk').onclick=()=>{if(sdone)return;const m=order.map(stepOK),r=m.filter(Boolean).length;
+  if(r===7){solved();$('#smsg').innerHTML='<b class="okc">Correct.</b> The indentation shows which steps are repeated, and which depend on the decision.'}
+  else{stepsDraw(m);$('#smsg').textContent=`${r} of 7 steps are in the right place.`}};
+$('#sshow').onclick=()=>{solved();$('#smsg').textContent=''};
+stepsDraw();
+listing($('#spc'),['table = int(input("Which times table?"))','for q = 1 to 5','  number = random(1, 12)','  print(str(number) + " x " + str(table))','  answer = int(input("Answer"))','  if answer == number * table then','    print("Correct")','  else','    print("Wrong. The answer is " + str(number * table))','  endif','next q']);
+flow($('#sflow'),545,665,[
+ {t:'term',x:230,y:30,s:'Start'},{t:'io',x:230,y:95,s:'INPUT table'},{t:'proc',x:230,y:160,s:'q = 1'},{t:'dec',x:230,y:235,s:'q <= 5?'},{t:'term',x:450,y:235,s:'End'},
+ {t:'proc',x:230,y:310,s:'number = random(1, 12)'},{t:'io',x:230,y:375,s:'OUTPUT question|INPUT answer'},{t:'dec',x:230,y:450,s:'answer ==|number * table?'},
+ {t:'io',x:110,y:530,s:'OUTPUT "Correct"'},{t:'io',x:350,y:530,s:'OUTPUT "Wrong"|and the answer'},{t:'proc',x:230,y:605,s:'q = q + 1'}],
+ [{d:'M230 52V73'},{d:'M230 117V138'},{d:'M230 182V203'},{d:'M325 235H365',l:'No',x:344,y:227},{d:'M230 267V288',l:'Yes',x:250,y:283},{d:'M230 332V353'},{d:'M230 397V418'},
+  {d:'M135 450H110V508',l:'Yes',x:120,y:442},{d:'M325 450H350V508',l:'No',x:340,y:442},{d:'M110 552V605H145'},{d:'M350 552V605H315'},{d:'M230 627V650H12V235H135'}]);
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'What is meant by decomposition?',opts:['Breaking a problem down into smaller sub-problems','Removing unnecessary detail from a problem','Running several parts of a program at the same time'],a:'Breaking a problem down into smaller sub-problems',why:'Each sub-problem is easier to solve than the whole. Removing unnecessary detail is abstraction.'},
+ {q:'When should you stop breaking a task down in a structure chart?',opts:['When each box is simple enough to be written as one subroutine','When there are exactly three levels','When every box contains a single line of code'],a:'When each box is simple enough to be written as one subroutine',why:'A module should be small and self-contained: a few lines, and never more than a page.'},
+ {q:'Which flowchart symbol is used for a decision?',opts:['Diamond','Parallelogram','Rectangle'],a:'Diamond',why:'A diamond has one arrow in and two out, labelled Yes and No. A parallelogram is input or output, and a rectangle is a process.'},
+ {q:'A program must read a mark, work out a grade and display it. Which order is correct?',opts:['Input mark, calculate grade, output grade','Calculate grade, input mark, output grade','Output grade, input mark, calculate grade'],a:'Input mark, calculate grade, output grade',why:'A value has to exist before it can be used. The grade cannot be calculated before the mark has been entered.'},
+ {q:'Which is an advantage of decomposing a large program into modules?',opts:['Each module can be written and tested separately, by different people','The program will always run faster','The program no longer needs to be tested'],a:'Each module can be written and tested separately, by different people',why:'It also makes the program easier to maintain, because a change affects only the module concerned.'},
+ {q:'In a structure chart, what does a line between two boxes show?',opts:['The lower task is one part of the task above it','The lower task runs only if a condition is true','The two tasks run at the same time'],a:'The lower task is one part of the task above it',why:'The chart shows how the solution is built up from its parts. It does not show decisions or loops.'},
+],null,$('#score'),$('#qreset'));
+</script>

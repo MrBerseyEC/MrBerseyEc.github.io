@@ -45,3 +45,19 @@ function drill(el,gen){
   chk.onclick=check;nxt.onclick=()=>{next();inp.focus()};inp.onkeydown=e=>{if(e.key==='Enter')check()};next();
   return{next};
 }
+/* a pseudocode listing inside <pre class="pc">: one <span data-i> per line */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function listing(el,lines){el.innerHTML=lines.map((l,i)=>`<span data-i="${i}">${esc(l)||' '}</span>`).join('')}
+/* a flowchart. nodes: {id,t,x,y,s} centred on x,y, where t is term, io, dec or proc and s is the text with | for a line break.
+   arrows: {d,l,x,y} where d is an SVG path and l an optional label placed at x,y */
+function flow(el,w,h,nodes,arrows){
+  const a=85,b=22,m='ah-'+el.id;
+  const shape=({t,x,y})=>t==='term'?`<rect class="fb" x="${x-a}" y="${y-b}" width="${2*a}" height="${2*b}" rx="${b}"/>`
+    :t==='io'?`<path class="fb" d="M${x-a+14} ${y-b}H${x+a}L${x+a-14} ${y+b}H${x-a}Z"/>`
+    :t==='dec'?`<path class="fb" d="M${x} ${y-b-10}L${x+a+10} ${y}L${x} ${y+b+10}L${x-a-10} ${y}Z"/>`
+    :`<rect class="fb" x="${x-a}" y="${y-b}" width="${2*a}" height="${2*b}"/>`;
+  const text=n=>{const L=n.s.split('|');return L.map((s,i)=>`<text x="${n.x}" y="${n.y+5+(i-(L.length-1)/2)*16}">${esc(s)}</text>`).join('')};
+  el.innerHTML=`<svg class="flow" viewBox="0 0 ${w} ${h}" style="max-width:${w}px" role="img" aria-label="${el.dataset.label||'Flowchart'}"><defs><marker id="${m}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fh" d="M0 0L10 5L0 10z"/></marker></defs>`
+    +arrows.map(r=>`<path class="fa" d="${r.d}" marker-end="url(#${m})"/>`+(r.l?`<text class="fl" x="${r.x}" y="${r.y}">${r.l}</text>`:'')).join('')
+    +nodes.map(n=>`<g data-n="${n.id||''}">${shape(n)}${text(n)}</g>`).join('')+'</svg>';
+}

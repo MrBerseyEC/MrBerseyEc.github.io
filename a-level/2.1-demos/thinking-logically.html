@@ -1,0 +1,203 @@
+---
+layout: demo
+title: "Thinking Logically"
+spec: "OCR A LEVEL · 2.1.4"
+published: false
+---
+<style>
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+.issues{display:grid;gap:8px}
+.issue{border:2px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg);font-size:.92rem}
+.issue.hit{border-color:var(--ok)}.issue.miss{border-color:var(--bad)}.issue.fp{border-color:var(--off)}
+.issue b{display:block}
+.cond{font:600 1rem/2.4 var(--mono);font-variant-ligatures:none;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px 14px;margin:0 0 14px}
+.mono{font-variant-ligatures:none}
+.cond select{font:700 1rem var(--mono);font-variant-ligatures:none;padding:4px 6px;border-color:var(--ink)}
+.tests td,.tests th{text-align:center}
+.tests td.v{font-family:var(--mono)}
+.tests tr.bad td{background:var(--bad-soft)}
+.votes{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin:0 0 14px}
+.votes label{display:grid;gap:3px;font-weight:700;font-size:.88rem}
+.votes input{width:6.5em;font-family:var(--mono)}
+.out{font:700 1.05rem var(--mono);border:2px solid var(--ink);border-radius:10px;padding:10px 14px;background:var(--bg);margin:12px 0 0;min-height:2.9em}
+.paths td:first-child{font-weight:700;white-space:nowrap}
+.paths tr.new td{background:var(--hl-soft)}
+.big{font:700 2rem/1.2 var(--mono);margin:6px 0}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+</style>
+<p class="lede">Thinking logically means identifying the points in an algorithm where a decision has to be made, working out the exact condition that controls each one, and understanding how those decisions change the route taken through the program. Most logic errors are found at decision points.</p>
+
+<section class="block">
+  <h2>Where are the decisions?</h2>
+  <p class="sub">A structured program is built from only three constructs: sequence, selection and iteration. Decisions are made in selection (<span class="mono">if</span> and <span class="mono">switch</span>) and in iteration (the condition that decides whether a loop goes round again). This algorithm has <b>3</b> decision points. Click the lines where a decision is made, then check.</p>
+  <div class="row" style="margin-bottom:12px"><button class="btn pri" id="dchk">Check</button><button class="btn" id="drst">Start again</button><span class="score" id="dscore"></span></div>
+  <div class="two">
+    <pre class="pc pick" id="dcode"></pre>
+    <div class="issues" id="dfb"><p style="color:var(--muted);margin:0">Explanations will appear here when you check.</p></div>
+  </div>
+  <p class="note">A <span class="mono">for</span> loop hides a decision too: each time round, the computer tests whether the counter has passed its final value. In a flowchart every decision is drawn as a diamond with two ways out.</p>
+</section>
+
+<section class="block">
+  <h2>Writing the condition</h2>
+  <p class="sub">Once you know where a decision is, you have to state its condition exactly. Choose the operators to complete each condition. It is tested straight away against a set of test data, including the boundary values where conditions most often go wrong.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Decision <select id="sc"></select></label></div>
+  <p id="brief" style="margin:0 0 12px;max-width:85ch"></p>
+  <p class="cond" id="cond"></p>
+  <div class="two">
+    <div class="scroll"><table class="t tests" id="tests"></table></div>
+    <div><p class="status" id="cmsg"></p><p class="note hidden" id="cwhy"></p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Decisions create paths</h2>
+  <p class="sub">Every decision splits the flow of a program in two, so each one adds to the number of different routes through it. This algorithm should print the play that received the most votes. It has three decisions and <b>4</b> possible paths. Enter some votes and run it. Can you find test data for every path?</p>
+  <div class="two">
+    <div>
+      <div class="votes">
+        <label>Play A <input type="number" id="v0" value="12" min="0"></label>
+        <label>Play B <input type="number" id="v1" value="7" min="0"></label>
+        <label>Play C <input type="number" id="v2" value="5" min="0"></label>
+        <button class="btn pri" id="vrun">Run</button><button class="btn" id="vrst">Reset</button>
+      </div>
+      <pre class="pc" id="vcode"></pre>
+      <div class="out" id="vout">Output will appear here.</div>
+    </div>
+    <div>
+      <b id="pcount"></b>
+      <div class="scroll"><table class="t paths" id="paths"></table></div>
+      <p class="note hidden" id="pdone"></p>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Paths and testing</h2>
+  <p class="sub">To be confident that a program works, every path through it should be followed at least once during testing. The number of paths grows very quickly as decisions are added.</p>
+  <div class="cols2">
+    <div class="panel">
+      <h2>One decision after another</h2>
+      <label class="check">Independent <span class="mono">if</span> statements in sequence <input type="range" id="nd" min="1" max="24" value="3"> <b class="mono" id="ndv"></b></label>
+      <p class="big" id="np"></p>
+      <p class="sub" id="nt" style="margin:0"></p>
+    </div>
+    <div class="panel">
+      <h2>What this means for testing</h2>
+      <ul style="margin:0;padding-left:1.2em">
+        <li>Each decision doubles the number of paths if it is independent of the others, so a few decisions give a lot of test cases.</li>
+        <li>A loop adds a path for every possible number of times it could repeat, including zero times.</li>
+        <li>Test data should be chosen so that every branch of every decision is taken, with values on and either side of each boundary.</li>
+        <li>A path that has never been tested may hide an error, as path 2 did above.</li>
+        <li>Fewer and simpler decisions make a program easier to test. A trace table lets you follow one path by hand.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+<script>
+/* ---------- where are the decisions ---------- */
+const DC=['attempts = 0','loggedIn = false','while attempts < 3 AND loggedIn == false','  password = input("Enter password")','  if password == storedPassword then','    loggedIn = true','  else','    attempts = attempts + 1','    print("Incorrect password")','  endif','endwhile','if loggedIn == true then','  print("Welcome")','else','  print("Account locked")','endif'];
+const DEC={2:'The loop condition is tested before every repetition. It decides whether to ask again or to carry on to line 12.',4:'This decides which of two branches runs: line 6, or lines 8 and 9.',11:'This decides which of the two messages is printed.'};
+const NOT={6:'<span class="mono">else</span> does not test anything new. It marks the path taken when the condition on line 5 is false.',13:'<span class="mono">else</span> does not test anything new. It marks the path taken when the condition on line 12 is false.',3:'This is an input. The decision that uses it is on the next line.',9:'<span class="mono">endif</span> only marks the end of the selection.',10:'<span class="mono">endwhile</span> sends control back to line 3, where the decision is made.',15:'<span class="mono">endif</span> only marks the end of the selection.'};
+let dflag=new Set(),dchecked=false;
+function dDraw(){$('#dcode').innerHTML=DC.map((l,i)=>{let c='';if(!dchecked&&dflag.has(i))c='flag';if(dchecked){if(DEC[i])c=dflag.has(i)?'hit':'miss';else if(dflag.has(i))c='fp'}
+  return`<span class="${c}" data-i="${i}">${String(i+1).padStart(2)}  ${esc(l)}</span>`}).join('')}
+$('#dcode').onclick=e=>{const s=e.target.closest('span[data-i]');if(!s||dchecked)return;const i=+s.dataset.i;dflag.has(i)?dflag.delete(i):dflag.add(i);dDraw()};
+$('#dchk').onclick=()=>{dchecked=true;dDraw();const keys=Object.keys(DEC).map(Number),hits=keys.filter(k=>dflag.has(k)).length,fps=[...dflag].filter(f=>!DEC[f]).sort((a,b)=>a-b);
+  $('#dscore').textContent=`Found ${hits} of ${keys.length}`+(fps.length?`, plus ${fps.length} line${fps.length>1?'s':''} with no decision`:'');
+  $('#dfb').innerHTML=keys.map(k=>`<div class="issue ${dflag.has(k)?'hit':'miss'}"><b>Line ${k+1}: decision ${dflag.has(k)?'✔':'(missed)'}</b>${DEC[k]}</div>`).join('')
+    +fps.map(f=>`<div class="issue fp"><b>Line ${f+1}: not a decision</b>${NOT[f]||'This line is carried out in sequence. Nothing is tested here.'}</div>`).join('')};
+$('#drst').onclick=()=>{dflag.clear();dchecked=false;$('#dscore').textContent='';$('#dfb').innerHTML='<p style="color:var(--muted);margin:0">Explanations will appear here when you check.</p>';dDraw()};
+dDraw();
+
+/* ---------- writing the condition ---------- */
+const CMP=['<','<=','>','>=','==','!='],LOG=['AND','OR'];
+const op=(o,a,b)=>o==='<'?a<b:o==='<='?a<=b:o==='>'?a>b:o==='>='?a>=b:o==='=='?a===b:a!==b;
+const lg=(o,a,b)=>o==='AND'?a&&b:a||b;
+/* tmpl: text with {0}, {1}… for each gap. slots: the options for each gap. tests: [values, expected] */
+const CS=[
+ {name:'Theme park ride',brief:'A rider is allowed on the ride only if they are at least 120 cm tall and at least 8 years old.',
+  tmpl:'if height {0} 120 {1} age {2} 8 then',slots:[CMP,LOG,CMP],cols:['height','age'],res:['Allowed','Refused'],
+  ev:(v,c)=>lg(c[1],op(c[0],v[0],120),op(c[2],v[1],8)),
+  tests:[[[150,12],true],[[120,8],true],[[119,10],false],[[140,7],false],[[110,6],false]],
+  why:'"At least" means the boundary value itself is allowed, so the operator is <span class="mono">>=</span>, not <span class="mono">></span>. Both requirements must be met, so they are joined with <span class="mono">AND</span>.'},
+ {name:'Validating a mark',brief:'A mark must be from 0 to 100 inclusive. The loop must keep asking for the mark again for as long as the mark entered is not valid.',
+  tmpl:'while mark {0} 0 {1} mark {2} 100',slots:[CMP,LOG,CMP],cols:['mark'],res:['Ask again','Accept'],
+  ev:(v,c)=>lg(c[1],op(c[0],v[0],0),op(c[2],v[0],100)),
+  tests:[[[50],false],[[0],false],[[100],false],[[-1],true],[[101],true]],
+  why:'The loop continues while the mark is <b>invalid</b>, so the condition describes the invalid marks: below 0 <span class="mono">OR</span> above 100. With <span class="mono">AND</span> the condition could never be true, because no number is both below 0 and above 100, and every mark would be accepted.'},
+ {name:'Divisible by 3 or 5',brief:'A program counts how many numbers in a range are divisible by 3 or by 5. A number such as 15, which is divisible by both, must be counted only once.',
+  tmpl:'if n MOD 3 {0} 0 {1} n MOD 5 {2} 0 then',slots:[CMP,LOG,CMP],cols:['n'],res:['Counted','Not counted'],
+  ev:(v,c)=>lg(c[1],op(c[0],v[0]%3,0),op(c[2],v[0]%5,0)),
+  tests:[[[9],true],[[10],true],[[15],true],[[7],false],[[1],false]],
+  why:'A number is divisible by 3 when the remainder is zero. Using a single condition with <span class="mono">OR</span> counts 15 once. Writing two separate <span class="mono">if</span> statements, one for each test, would add 1 to the count twice for 15, which is a logic error.'},
+ {name:'Free delivery',brief:'Delivery is free for members, and for anyone who spends £50 or more. International orders never get free delivery.',
+  tmpl:'if (member == true {0} total {1} 50) {2} international == false then',slots:[LOG,CMP,LOG],cols:['member','total','international'],res:['Free','Charged'],
+  ev:(v,c)=>lg(c[2],lg(c[0],v[0],op(c[1],v[1],50)),!v[2]),
+  tests:[[[true,10,false],true],[[false,50,false],true],[[false,49,false],false],[[true,80,true],false],[[false,65,true],false]],
+  why:'Either of the first two conditions is enough, so they are joined with <span class="mono">OR</span>. The international rule applies whichever of them is true, so it is joined to the bracket with <span class="mono">AND</span>. The brackets matter: without them <span class="mono">AND</span> is evaluated before <span class="mono">OR</span>, and every member would get free delivery, wherever they live.'}];
+let pick=[];
+const show=v=>v===true?'true':v===false?'false':v;
+function condDraw(){
+  const s=CS[$('#sc').value];$('#brief').innerHTML=`<b>${s.name}:</b> ${s.brief}`;
+  $('#cond').innerHTML=esc(s.tmpl).replace(/\{(\d)\}/g,(m,k)=>`<select data-k="${k}" aria-label="Operator ${+k+1}"><option value="">?</option>${s.slots[k].map(o=>`<option${pick[k]===o?' selected':''}>${esc(o)}</option>`).join('')}</select>`);
+  const ready=s.slots.every((x,k)=>pick[k]);let pass=0;
+  $('#tests').innerHTML=`<tr>${s.cols.map(c=>`<th>${c}</th>`).join('')}<th>Should be</th><th>Your condition</th><th></th></tr>`+s.tests.map(([v,want])=>{
+    const got=ready?!!s.ev(v,pick):null,ok=got===want;if(ok)pass++;
+    return`<tr class="${ready&&!ok?'bad':''}">${v.map(x=>`<td class="v">${show(x)}</td>`).join('')}<td>${s.res[want?0:1]}</td><td>${ready?s.res[got?0:1]:'–'}</td><td>${ready?(ok?'<b class="okc">✔</b>':'<b class="badc">✘</b>'):''}</td></tr>`}).join('');
+  const all=ready&&pass===s.tests.length;
+  $('#cmsg').innerHTML=!ready?'Choose an operator for each gap.':all?`<b class="okc">All ${pass} tests pass.</b>`:`<b class="badc">${pass} of ${s.tests.length} tests pass.</b> Look at the rows that fail: which part of the condition gives the wrong result for those values?`;
+  $('#cwhy').innerHTML=s.why;$('#cwhy').classList.toggle('hidden',!all);
+}
+$('#sc').innerHTML=CS.map((s,i)=>`<option value="${i}">${s.name}</option>`).join('');
+$('#sc').onchange=()=>{pick=[];condDraw()};
+$('#cond').onchange=e=>{const k=e.target.dataset.k;pick[k]=e.target.value;condDraw();$(`#cond select[data-k="${k}"]`).focus()};
+condDraw();
+
+/* ---------- paths ---------- */
+const VC=['if totalVotes[0] > totalVotes[1] then','  if totalVotes[0] > totalVotes[2] then','    print("Play A")','  endif','else','  if totalVotes[1] > totalVotes[2] then','    print("Play B")','  else','    print("Play C")','  endif','endif'];
+const PATHS=[['A > B is true, then A > C is true',[0,1,2,3,10],'Play A'],['A > B is true, then A > C is false',[0,1,3,10],''],['A > B is false, then B > C is true',[0,4,5,6,9,10],'Play B'],['A > B is false, then B > C is false',[0,4,5,7,8,9,10],'Play C']];
+let seen={},last=-1;
+$('#vcode').innerHTML=VC.map((l,i)=>`<span data-i="${i}">${String(i+1).padStart(2,'0')}  ${esc(l)}</span>`).join('');
+function pathsDraw(){
+  const n=Object.keys(seen).length;$('#pcount').textContent=`Paths tested: ${n} of 4`;
+  $('#paths').innerHTML='<tr><th>Path</th><th>Decisions</th><th>Tested with</th><th>Result</th></tr>'+PATHS.map((p,i)=>{const s=seen[i];
+    return`<tr class="${i===last?'new':''}"><td>${i+1}</td><td>${p[0]}</td><td class="mono">${s?s.v.join(', '):'–'}</td><td>${s?(s.ok?'<span class="okc">✔ Correct</span>':'<span class="badc">✘ Wrong</span>'):'Not tested'}</td></tr>`}).join('');
+  $('#pdone').classList.toggle('hidden',n<4);
+  if(n===4)$('#pdone').innerHTML='<b>Every path has now been tested.</b> Path 2 is a logic error: when A beats B but does not beat C, nothing is printed at all, because the inner <span class="mono">if</span> on line 2 has no <span class="mono">else</span>. A tester who tried only an obvious win for each play in turn might never have followed it. Now try a tie. The algorithm has no path for one, so it cannot give the right answer.';
+}
+$('#vrun').onclick=()=>{
+  const v=[0,1,2].map(i=>Math.max(0,Math.floor(+$('#v'+i).value||0)));
+  const p=v[0]>v[1]?(v[0]>v[2]?0:1):(v[1]>v[2]?2:3),out=PATHS[p][2],max=Math.max(...v),win=[0,1,2].filter(i=>v[i]===max).map(i=>'ABC'[i]);
+  $$('#vcode span').forEach((s,i)=>s.classList.toggle('cur',PATHS[p][1].includes(i)));
+  const ok=win.length===1&&out==='Play '+win[0];
+  $('#vout').innerHTML=(out?`Output: ${out}`:'Output: (nothing is printed)')+`<br><span style="font:600 .9rem var(--sans)" class="${ok?'okc':'badc'}">`
+    +(ok?'Correct. Play '+win[0]+' has the most votes.':win.length>1?`Wrong. Plays ${win.length>2?'A, B and C':win.join(' and ')} are tied with ${max} votes each, and the algorithm has no way of saying so.`:`Wrong. Play ${win[0]} has the most votes.`)+'</span>';
+  last=p;if(!seen[p]||(seen[p].ok&&!ok))seen[p]={v,ok};pathsDraw();
+};
+$('#vrst').onclick=()=>{seen={};last=-1;$$('#vcode span').forEach(s=>s.classList.remove('cur'));$('#vout').textContent='Output will appear here.';pathsDraw()};
+pathsDraw();
+
+/* ---------- how fast paths grow ---------- */
+function grow(){const n=+$('#nd').value,p=2**n;$('#ndv').textContent=n;$('#np').textContent=p.toLocaleString('en-GB')+(p>1?' paths':' path');
+  const s=p/10,t=s<60?`${s<1?'less than a second':Math.round(s)+' seconds'}`:s<3600?`${Math.round(s/60)} minutes`:s<86400?`${Math.round(s/3600)} hours`:`${Math.round(s/86400)} days`;
+  $('#nt').textContent=`2 to the power ${n}. Running ten automated tests every second, covering every path once would take ${t}.`}
+$('#nd').oninput=grow;grow();
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'A discount is given to customers who are under 18 or over 65. Which condition is correct?',opts:['age < 18 OR age > 65','age < 18 AND age > 65','age > 18 OR age < 65'],a:'age < 18 OR age > 65',why:'Nobody can be under 18 and over 65 at the same time, so AND would never be true. The third condition is true for every age.'},
+ {q:'A password must be at least 8 characters long. Which condition detects an <b>invalid</b> password?',opts:['password.length < 8','password.length <= 8','password.length > 8'],a:'password.length < 8',why:'Exactly 8 characters is valid, so the boundary value must not be caught. Using <= would wrongly reject it.'},
+ {q:'A program contains four <span class="mono">if</span> statements, one after another, each independent of the others. How many paths are there through it?',opts:['16','8','4'],a:'16',why:'Each decision doubles the number of paths: 2 × 2 × 2 × 2 = 16.'},
+ {q:'Which of these involves a decision?',opts:['until answer == "computer"','total = total + price','print("Hello")'],a:'until answer == "computer"',why:'The condition at the end of a do … until loop decides whether the loop repeats.'},
+ {q:'<span class="mono">if x > 10 then … elseif x > 5 then … else … endif</span><br>How many different paths are there through this statement?',opts:['3','2','4'],a:'3',why:'Exactly one of the three branches is followed each time. The second condition is tested only when the first is false.'},
+ {q:'Why does adding decisions make a program harder to test?',opts:['There are more paths, and each one needs test data that makes the program follow it','The program runs more slowly','Decisions cannot be tested'],a:'There are more paths, and each one needs test data that makes the program follow it',why:'An error on a path that is never followed in testing will not be found until the program is in use.'},
+ {q:'<span class="mono">while count < 10 AND found == false</span><br>When does this loop stop?',opts:['When count reaches 10 or found becomes true','Only when count reaches 10 and found is true','When count is less than 10'],a:'When count reaches 10 or found becomes true',why:'The loop continues only while both parts are true, so it stops as soon as either of them becomes false.'},
+ {q:'A condition is <span class="mono">mark >= 40</span>. Which set of test data is best for checking it?',opts:['39, 40 and 41','10, 20 and 30','70, 80 and 90'],a:'39, 40 and 41',why:'Errors in conditions usually show up at the boundary, so test the boundary value and the values either side of it.'},
+],null,$('#score'),$('#qreset'));
+</script>

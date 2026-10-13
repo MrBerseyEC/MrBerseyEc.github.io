@@ -1,0 +1,213 @@
+---
+layout: demo
+title: "Thinking Concurrently"
+spec: "OCR A LEVEL · 2.1.5"
+published: false
+---
+<style>
+.tl{display:grid;gap:6px;margin:14px 0 8px;min-width:max-content}
+.tl .r{display:grid;grid-template-columns:150px auto;gap:10px;align-items:center}
+.tl .r>b{font-size:.88rem}
+.tl .c{display:flex;gap:2px}
+.tl i{display:grid;place-items:center;width:20px;height:26px;border-radius:4px;border:1.5px solid var(--line);font:700 .72rem var(--mono);color:var(--muted)}
+.tl i.run,.key i.run{background:var(--one);border-color:var(--one);color:#fff}
+.tl i.wait,.key i.wait{background:repeating-linear-gradient(45deg,var(--hl-soft) 0 4px,var(--panel) 4px 8px);border-color:var(--hl)}
+.tl i.ready,.key i.ready{background:var(--off);border-color:var(--off)}
+.tl i.none{border-color:transparent}
+.tl .ax i{border:0;height:auto}
+.key{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:.88rem;color:var(--muted)}
+.key span{display:inline-flex;gap:6px;align-items:center}
+.key i{display:inline-block;width:18px;height:18px;border-radius:4px;border:1.5px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0 0}
+.stats div{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg)}
+.stats b{display:block;font:700 1.3rem var(--mono)}
+.stats small{color:var(--muted)}
+.gantt{display:grid;gap:5px;margin:14px 0 6px}
+.gantt .r{display:grid;grid-template-columns:minmax(120px,230px) 1fr;gap:10px;align-items:center;font-size:.88rem}
+.gantt .r>span small{display:block;color:var(--muted);font-size:.76rem}
+.gantt .trk{position:relative;height:30px;background:var(--bg);border:1.5px solid var(--line);border-radius:6px}
+.gantt .bar{position:absolute;top:2px;bottom:2px;border-radius:4px;background:var(--one);color:#fff;font:700 .72rem var(--mono);display:grid;place-items:center;transition:left .3s,width .3s}
+.gantt .bar.w1{background:#7B4DFF}.gantt .bar.w2{background:var(--ok)}.gantt .bar.w3{background:var(--bad)}
+.race{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:start}
+.race .pc{margin:8px 0}
+.bal{text-align:center;border:3px solid var(--ink);border-radius:14px;padding:12px 18px;background:var(--bg);align-self:center}
+.bal b{display:block;font:700 2rem var(--mono)}
+.bal small{color:var(--muted)}
+.vs ul{margin:6px 0 0;padding-left:1.1em}.vs li{margin:4px 0}
+@media (max-width:860px){.race{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:minmax(0,1fr)}}
+</style>
+<p class="lede">Thinking concurrently means working out which parts of a problem can be dealt with at the same time, and which have to wait for something else to finish first. Done well, more work gets finished in the same time. It also brings problems that a program doing one thing at a time never has.</p>
+
+<section class="block">
+  <h2>Concurrent or parallel?</h2>
+  <p class="sub">Three programs need to run. Two of them spend some of their time waiting, for the user or for the network, and while they wait they do not need the processor. Compare three ways of running them.</p>
+  <div class="seg" role="radiogroup" aria-label="How the tasks are run" id="mode">
+    <button role="radio" data-m="seq" aria-checked="true">One after another</button>
+    <button role="radio" data-m="con" aria-checked="false">Concurrent: one processor</button>
+    <button role="radio" data-m="par" aria-checked="false">Parallel: three processors</button>
+  </div>
+  <div class="scroll"><div class="tl" id="tl"></div></div>
+  <p class="key"><span><i class="run"></i> Using a processor</span><span><i class="wait"></i> Waiting for input or the network</span><span><i class="ready"></i> Ready, but waiting for a processor</span></p>
+  <div class="stats" id="tstats"></div>
+  <p class="note" id="tnote"></p>
+  <div class="cols2 vs" style="margin-top:16px">
+    <div class="panel"><h2>Concurrent processing</h2><p style="margin:0">Several processes are in progress over the same period. Each is given a slice of processor time in turn, so they <b>appear</b> to run simultaneously even on a single processor. Nothing happens at exactly the same instant.</p></div>
+    <div class="panel"><h2>Parallel processing</h2><p style="margin:0">Several processors, or cores, each execute different instructions at exactly the same instant. This cannot be done with a single processor. Its aim is to speed up the computation.</p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>What can happen at the same time?</h2>
+  <p class="sub">A task can start only when everything it depends on has finished. Tasks that do not depend on each other can be carried out at the same time, if there are enough processors. Choose a problem and change the number of processors.</p>
+  <div class="toolbar">
+    <label class="check">Problem <select id="prob"></select></label>
+    <label class="check">Processors <input type="range" id="pw" min="1" max="4" value="1"> <b class="mono" id="pwv"></b></label>
+  </div>
+  <div class="gantt" id="gantt"></div>
+  <p class="status" id="gmsg"></p>
+  <p class="note" id="gnote"></p>
+  <h3 style="margin:20px 0 8px">Same time, or must wait?</h3>
+  {% include quiz.html n=2 %}
+</section>
+
+<section class="block">
+  <h2>The trade-off: shared data</h2>
+  <p class="sub">A bank account contains £100. Two processes each pay money in at the same moment: one adds £50 and the other adds £20, so the balance should end up as £170. Each process takes three steps, and the processor can switch between them at any point. Step each process in any order you like. Can you make the bank lose money?</p>
+  <div class="row" style="margin-bottom:12px"><button class="btn" id="rrst">Reset</button><label class="check"><input type="checkbox" id="lock"> Lock the record while a process is using it</label></div>
+  <div class="race">
+    <div class="panel"><h2>Process A: add £50</h2><pre class="pc" id="ra"></pre><p class="mono" id="ta" style="margin:0 0 10px"></p><button class="btn pri" id="sa">Step process A</button></div>
+    <div class="bal"><small>balance</small><b id="bal"></b></div>
+    <div class="panel"><h2>Process B: add £20</h2><pre class="pc" id="rb"></pre><p class="mono" id="tb" style="margin:0 0 10px"></p><button class="btn pri" id="sb">Step process B</button></div>
+  </div>
+  <p class="status" id="rmsg" style="margin-top:12px"></p>
+  <p class="note">Whether the result is right depends on the order in which the steps happen to be interleaved, so the error may appear only once in thousands of runs. That makes concurrent programs much harder to write, test and debug. Locking a record solves this problem, but it makes other processes wait, and two processes that are each waiting for a record the other has locked will wait for ever. That is called deadlock.</p>
+</section>
+
+<section class="block">
+  <h2>Benefits and trade-offs</h2>
+  <div class="cols2 vs">
+    <div class="panel"><h2>Benefits</h2><ul>
+      <li>More tasks are completed in a given time (greater throughput)</li>
+      <li>Time the processor would have wasted waiting for input, output or the network is used for another task</li>
+      <li>A program stays responsive: the interface still reacts while a long task carries on in the background</li>
+      <li>Many users can be served over the same period, as on a web server</li>
+      <li>With several processors, work that splits into independent parts finishes much sooner, such as rendering graphics or processing a large data set</li>
+    </ul></div>
+    <div class="panel"><h2>Trade-offs</h2><ul>
+      <li>Parts that depend on each other still have to run in order, which limits how much time can be saved</li>
+      <li>If many tasks all need a lot of processing, each of them takes longer to complete</li>
+      <li>Switching between tasks and coordinating them is an overhead. A small job can be faster on a single processor</li>
+      <li>Shared data must be protected with locks, which brings a risk of deadlock</li>
+      <li>Programs are harder to design, write, test and debug</li>
+    </ul></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Apply it</h2>
+  {% include quiz.html %}
+</section>
+<script>
+/* ---------- concurrent or parallel ---------- */
+/* each task is a list of segments: c = needs the processor, w = waiting for input or the network */
+const TASKS=[['A  Word processor',[['c',2],['w',6],['c',2]]],['B  Virus scan',[['c',8]]],['C  File download',[['c',1],['w',5],['c',2]]]];
+const TNOTE={
+ seq:'Each program runs to completion before the next one starts. While the word processor waits for the user to type, the processor does nothing at all, and the other two programs cannot even begin.',
+ con:'The processor switches between whichever programs are ready, one time slice each. The time one program spends waiting is used to run the others, so all three finish far sooner. The trade-off: the virus scan needs 8 units of processing but takes longer than that, because it has to share the processor.',
+ par:'Each program has its own processor, so nothing ever waits for a processor. This is the fastest of the three, but it needs more hardware, and for much of the time two of the processors are idle.'};
+let mode='seq';
+function sim(m){
+  const st=TASKS.map(t=>({segs:t[1].map(s=>[...s]),i:0,row:[],end:0})),cpus=m==='par'?3:1,cpu=[];let t=0,rr=0,idle=0;
+  const done=s=>s.i>=s.segs.length;
+  while(st.some(s=>!done(s))&&t<99){
+    const active=m==='seq'?[st.find(s=>!done(s))]:st.filter(s=>!done(s)),ready=active.filter(s=>s.segs[s.i][0]==='c');let run=ready;
+    if(ready.length>cpus){const ids=ready.map(s=>st.indexOf(s)),p=ids.find(i=>i>=rr)??ids[0];run=[st[p]];rr=p+1}
+    if(!run.length)idle++;cpu.push(run.length?'ABC'[st.indexOf(run[0])]:'');
+    st.forEach(s=>{
+      if(done(s))return s.row.push('none');
+      if(!active.includes(s))return s.row.push('ready');
+      const seg=s.segs[s.i];
+      if(seg[0]==='w')s.row.push('wait');else if(run.includes(s))s.row.push('run');else return s.row.push('ready');
+      if(--seg[1]===0&&++s.i>=s.segs.length)s.end=t+1});
+    t++}
+  return{st,cpu,total:t,idle};
+}
+function tlDraw(){
+  const r=sim(mode),ax=[...Array(r.total).keys()];
+  $('#tl').innerHTML=TASKS.map((t,k)=>`<div class="r"><b>${t[0]}</b><div class="c">${r.st[k].row.map(c=>`<i class="${c}"></i>`).join('')}</div></div>`).join('')
+    +(mode==='par'?'':`<div class="r"><b>Processor is running</b><div class="c">${r.cpu.map(c=>`<i class="${c?'':'none'}">${c}</i>`).join('')}</div></div>`)
+    +`<div class="r ax"><b>Time</b><div class="c">${ax.map(i=>`<i>${(i+1)%5?'':i+1}</i>`).join('')}</div></div>`;
+  $('#tstats').innerHTML=[[r.total,'time units until all three have finished'],[r.st[1].end,'time units until the virus scan has finished'],[mode==='par'?'3':'1','processor'+(mode==='par'?'s':'')+' needed']].map(s=>`<div><b>${s[0]}</b><small>${s[1]}</small></div>`).join('');
+  $('#tnote').textContent=TNOTE[mode];
+}
+$('#mode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;$$('#mode button').forEach(x=>x.setAttribute('aria-checked',x===b));tlDraw()};
+tlDraw();
+
+/* ---------- dependencies ---------- */
+const ST=['Same time','Must wait'];
+/* tasks: [name, time, list of the tasks it depends on (by position)] */
+const PROBS=[
+ {name:'Loading a web page',tasks:[['Fetch the HTML',2,[]],['Parse the HTML',1,[0]],['Download the stylesheet',2,[1]],['Download image 1',3,[1]],['Download image 2',3,[1]],['Download the script',2,[1]],['Lay out and display the page',2,[2,3,4,5]]],
+  note:'The browser cannot know which files the page needs until it has read the HTML, and it cannot display the finished page until they have all arrived. Those steps have to happen in order. The four downloads in the middle are independent of each other, so they are the part that can be done at the same time.',
+  q:[['Download image 1 and download image 2','Same time','Neither needs anything from the other.'],['Fetch the HTML and parse the HTML','Must wait','The HTML cannot be parsed until it has arrived.'],['Download the stylesheet and download the script','Same time','They are separate files, both named in the HTML.'],['Download image 2 and display the finished page','Must wait','The page cannot be laid out until the size of every image is known.']]},
+ {name:'Resizing a batch of photos',tasks:[['Read the list of files',1,[]],['Resize photo 1',3,[0]],['Resize photo 2',3,[0]],['Resize photo 3',3,[0]],['Resize photo 4',3,[0]],['Build a contact sheet of thumbnails',2,[1,2,3,4]],['Save the results',1,[5]]],
+  note:'The same calculation is repeated on separate pieces of data, which is the ideal case for parallel processing: each photo can be given to a different processor. Only the start and the end have to be done in sequence.',
+  q:[['Resize photo 1 and resize photo 3','Same time','Each photo is processed without reference to the others.'],['Resize photo 4 and build the contact sheet','Must wait','The contact sheet is made from the resized photos, so all four must be finished.'],['Read the list of files and resize photo 1','Must wait','The program does not know which files to resize until it has the list.'],['Resize photo 2 and resize photo 4','Same time','They are independent tasks.']]},
+ {name:'Online shop checkout',tasks:[['Validate the basket',1,[]],['Check the items are in stock',2,[0]],['Take payment',3,[1]],['Reduce the stock levels',1,[2]],['Send a confirmation email',2,[2]],['Create a dispatch note',2,[2]]],
+  note:'Most of this problem is a chain in which each step depends on the one before, so extra processors make little difference. Payment must not be taken for something that is out of stock, and an order must not be confirmed before it has been paid for. Only the three jobs at the end are independent.',
+  q:[['Check the stock and take payment','Must wait','Payment should be taken only when the items are known to be in stock.'],['Send the confirmation email and create the dispatch note','Same time','Both follow a successful payment, and neither needs the other.'],['Take payment and send the confirmation email','Must wait','The order cannot be confirmed until the payment has succeeded.'],['Reduce the stock levels and create the dispatch note','Same time','They are independent once payment has been taken.']]}];
+function schedule(tasks,w){
+  const start=[],end=[],who=[],free=Array(w).fill(0);let left=tasks.length,t=0;
+  while(left){
+    for(let k=0;k<w;k++){if(free[k]>t)continue;
+      const i=tasks.findIndex((x,j)=>start[j]===undefined&&x[2].every(d=>end[d]!==undefined&&end[d]<=t));if(i<0)break;
+      start[i]=t;end[i]=t+tasks[i][1];who[i]=k;free[k]=end[i];left--}
+    t++}
+  return{start,end,who,total:Math.max(...end)};
+}
+function gDraw(){
+  const p=PROBS[$('#prob').value],w=+$('#pw').value,one=p.tasks.reduce((s,x)=>s+x[1],0),r=schedule(p.tasks,w),best=schedule(p.tasks,9).total;
+  $('#pwv').textContent=w;
+  $('#gantt').innerHTML=p.tasks.map((x,i)=>`<div class="r"><span>${x[0]}<small>${x[2].length?'after: '+x[2].map(d=>p.tasks[d][0][0].toLowerCase()+p.tasks[d][0].slice(1)).join(', '):'depends on nothing'}</small></span><div class="trk"><div class="bar w${r.who[i]}" style="left:${r.start[i]/one*100}%;width:${x[1]/one*100}%">P${r.who[i]+1}</div></div></div>`).join('');
+  $('#gmsg').innerHTML=`<b>Finished after ${r.total} time units</b> with ${w} processor${w>1?'s':''}`+(w>1?`, compared with ${one} for one processor.`:'. Every task has to take its turn.')+(r.total===best&&w>1?` This is the limit: the longest chain of dependent tasks takes ${best} units, and no number of processors can shorten it.`:'');
+  $('#gnote').textContent=p.note;
+}
+function gQuiz(){cardQuiz($('#quiz2'),PROBS[$('#prob').value].q.map(r=>({q:r[0],a:r[1],why:r[2]})),ST,$('#score2'),$('#qreset2'))}
+$('#prob').innerHTML=PROBS.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
+$('#prob').onchange=()=>{gDraw();gQuiz()};$('#pw').oninput=gDraw;gDraw();gQuiz();
+
+/* ---------- shared data ---------- */
+const ADD=[50,20],NAME=['A','B'];let bal,th,holder;
+const RC=k=>['temp = balance',`temp = temp + ${ADD[k]}`,'balance = temp'];
+function rDraw(msg){
+  [['#ra','#ta','#sa'],['#rb','#tb','#sb']].forEach(([c,t,b],k)=>{listing($(c),RC(k));if(th[k].pc<3)$(c).children[th[k].pc].className='cur';
+    $(t).textContent=`temp = ${th[k].temp===null?'?':th[k].temp}`+(th[k].pc>=3?'   (finished)':'');$(b).disabled=th[k].pc>=3});
+  $('#bal').textContent='£'+bal;$('#rmsg').innerHTML=msg||'';
+}
+function rReset(){bal=100;th=[{pc:0,temp:null},{pc:0,temp:null}];holder=null;rDraw('The highlighted line is the one each process will carry out next.')}
+function rStep(k){
+  const me=th[k],locked=$('#lock').checked;let msg;
+  if(locked&&holder!==null&&holder!==k)return rDraw(`<b class="badc">Process ${NAME[k]} is blocked.</b> Process ${NAME[holder]} has locked the record, so ${NAME[k]} must wait until it has finished.`);
+  if(locked)holder=k;
+  if(me.pc===0){me.temp=bal;msg=`Process ${NAME[k]} read the balance: £${bal}.`}
+  else if(me.pc===1){me.temp+=ADD[k];msg=`Process ${NAME[k]} added £${ADD[k]} to its own copy, giving £${me.temp}. The stored balance has not changed yet.`}
+  else{bal=me.temp;msg=`Process ${NAME[k]} wrote £${bal} back to the balance.`}
+  if(++me.pc===3&&locked)holder=null;
+  if(th.every(x=>x.pc===3))msg+=bal===170?' <b class="okc">Both processes have finished and the balance is £170, which is correct.</b> Try again, switching between the two processes part of the way through.'
+    :` <b class="badc">Both processes have finished, but the balance is £${bal}, not £170.</b> Each process read the balance before the other had written its result back, so one of the updates has been overwritten and lost. Now tick the box to lock the record and try again.`;
+  rDraw(msg);
+}
+$('#sa').onclick=()=>rStep(0);$('#sb').onclick=()=>rStep(1);$('#rrst').onclick=rReset;$('#lock').onchange=rReset;rReset();
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'A computer with one single-core processor is playing music while the user types an essay. This is…',opts:['Concurrent processing','Parallel processing','Neither'],a:'Concurrent processing',why:'The processor switches between the two programs, giving each a slice of time. Parallel processing would need more than one processor or core.'},
+ {q:'A burglar alarm with a single processor continually monitors the front door, the back door and every window. This is…',opts:['Concurrent processing','Parallel processing','Batch processing'],a:'Concurrent processing',why:'One processor checks each sensor in turn, so quickly that they all appear to be monitored at once.'},
+ {q:'A graphics card renders a 3D scene using thousands of cores, each working on a different part of the image at the same instant. This is…',opts:['Parallel processing','Concurrent processing on one processor','Sequential processing'],a:'Parallel processing',why:'Many processors execute instructions at exactly the same time. Rendering suits this well, because each part of the image can be calculated independently.'},
+ {q:'At the start of a lesson, thirty students all download the same large program from the school server and it is very slow. Why?',opts:['The server and the network connection are shared between all thirty downloads','Concurrent processing makes every individual task faster','The server can deal with only one student in a lesson'],a:'The server and the network connection are shared between all thirty downloads',why:'The server handles the requests concurrently, so each one gets only a share of the processor time and the bandwidth and takes longer to complete.'},
+ {q:'A program calculates each term of a sequence from the term before it. How much would four processors speed it up?',opts:['Very little, because each step depends on the result of the previous one','It would run four times faster','It would run sixteen times faster'],a:'Very little, because each step depends on the result of the previous one',why:'Dependent steps have to be carried out in order, however many processors are available.'},
+ {q:'A word processor checks spelling in the background while the user carries on typing. What is the main benefit of doing this concurrently?',opts:['The program stays responsive, because the user does not have to wait for the check to finish','The spelling check uses no processor time','The document needs less memory'],a:'The program stays responsive, because the user does not have to wait for the check to finish',why:'The spelling check uses the time the processor would otherwise spend waiting for the next key press.'},
+ {q:'A small task is split across eight processors and runs more slowly than it did on one. What is the most likely reason?',opts:['The overhead of dividing the work and coordinating the processors outweighs the gain','Processors slow down when they are used together','Small tasks cannot be run on a computer with several processors'],a:'The overhead of dividing the work and coordinating the processors outweighs the gain',why:'Splitting up the work and combining the results takes time. For a small job this can be more than the time saved.'},
+ {q:'Two processes update the same record at the same time and one of the changes is lost. How is this prevented?',opts:['Lock the record while one process is using it','Add more processors','Make each process run faster'],a:'Lock the record while one process is using it',why:'The second process has to wait until the first has finished. The cost is the waiting, and the risk of deadlock.'},
+],null,$('#score'),$('#qreset'));
+</script>
