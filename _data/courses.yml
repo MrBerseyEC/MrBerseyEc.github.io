@@ -3,6 +3,8 @@
 #   title: the name shown on the home page
 #   nav:   the shorter name shown in the strip at the top of each demo in the same topic
 #   url:   the path to the page, starting with /
+# To hide a demo, put `published: false` in the page's own front matter. Leave its line here.
+# A topic with no published pages is left off the home page.
 
 - id: alevel
   name: A-Level Computer Science
@@ -20,30 +22,30 @@
     - title: 2.1 Computational Thinking
       label: 2.1 demos
       pages:
-        # - { title: "Thinking Abstractly",    nav: "Thinking abstractly",    url: /a-level/2.1/thinking-abstractly.html }
+        - { title: "Thinking Abstractly",    nav: "Thinking abstractly",    url: /a-level/2.1/thinking-abstractly.html }
         - { title: "Thinking Ahead",         nav: "Thinking ahead",         url: /a-level/2.1/thinking-ahead.html }
-        # - { title: "Thinking Procedurally",  nav: "Thinking procedurally",  url: /a-level/2.1/thinking-procedurally.html }
-        # - { title: "Thinking Logically",     nav: "Thinking logically",     url: /a-level/2.1/thinking-logically.html }
-        # - { title: "Thinking Concurrently",  nav: "Thinking concurrently",  url: /a-level/2.1/thinking-concurrently.html }
+        - { title: "Thinking Procedurally",  nav: "Thinking procedurally",  url: /a-level/2.1/thinking-procedurally.html }
+        - { title: "Thinking Logically",     nav: "Thinking logically",     url: /a-level/2.1/thinking-logically.html }
+        - { title: "Thinking Concurrently",  nav: "Thinking concurrently",  url: /a-level/2.1/thinking-concurrently.html }
 
 - id: gcse
   name: GCSE Computer Science
   tag: Edexcel
   topics:
-    # - title: Topic 2 (Data)
-    #   label: Topic 2 demos
-    #   pages:
-    #     - { title: "Bits & Binary Patterns",     nav: "Why binary?",         url: /gcse/2/binary.html }
-    #     - { title: "Binary & Denary",            nav: "Binary & denary",     url: /gcse/2/binary-denary.html }
-    #     - { title: "Binary Addition & Overflow", nav: "Addition & overflow", url: /gcse/2/binary-addition.html }
-    #     - { title: "Two's Complement",           nav: "Two's complement",    url: /gcse/2/twos-complement.html }
-    #     - { title: "Binary Shifts",              nav: "Binary shifts",       url: /gcse/2/binary-shifts.html }
-    #     - { title: "Hexadecimal",                nav: "Hexadecimal",         url: /gcse/2/hexadecimal.html }
-    #     - { title: "ASCII",                      nav: "ASCII",               url: /gcse/2/ascii.html }
-    #     - { title: "Bitmap Images",              nav: "Bitmap images",       url: /gcse/2/bitmap-images.html }
-    #     - { title: "Sound",                      nav: "Sound",               url: /gcse/2/sound.html }
-    #     - { title: "Units & File Sizes",         nav: "Units & file sizes",  url: /gcse/2/units.html }
-    #     - { title: "Compression",                nav: "Compression",         url: /gcse/2/compression.html }
+    - title: Topic 2 (Data)
+      label: Topic 2 demos
+      pages:
+        - { title: "Bits & Binary Patterns",     nav: "Why binary?",         url: /gcse/2/binary.html }
+        - { title: "Binary & Denary",            nav: "Binary & denary",     url: /gcse/2/binary-denary.html }
+        - { title: "Binary Addition & Overflow", nav: "Addition & overflow", url: /gcse/2/binary-addition.html }
+        - { title: "Two's Complement",           nav: "Two's complement",    url: /gcse/2/twos-complement.html }
+        - { title: "Binary Shifts",              nav: "Binary shifts",       url: /gcse/2/binary-shifts.html }
+        - { title: "Hexadecimal",                nav: "Hexadecimal",         url: /gcse/2/hexadecimal.html }
+        - { title: "ASCII",                      nav: "ASCII",               url: /gcse/2/ascii.html }
+        - { title: "Bitmap Images",              nav: "Bitmap images",       url: /gcse/2/bitmap-images.html }
+        - { title: "Sound",                      nav: "Sound",               url: /gcse/2/sound.html }
+        - { title: "Units & File Sizes",         nav: "Units & file sizes",  url: /gcse/2/units.html }
+        - { title: "Compression",                nav: "Compression",         url: /gcse/2/compression.html }
     - title: Topic 3 (Computers)
       label: Topic 3 demos
       pages:
@@ -56,27 +58,27 @@
         - { title: "Utility Software",        nav: "Utility software",        url: /gcse/3/utility-software.html }
         - { title: "Robust Software",         nav: "Robust software",         url: /gcse/3/robust-software.html }
         - { title: "Languages & Translators", nav: "Languages & translators", url: /gcse/3/languages-translators.html }
-    # - title: Topic 4 (Networks)
-    #   label: Topic 4 demos
-    #   pages:
-    #     - { title: "LANs & WANs",          nav: "LANs & WANs",        url: /gcse/4/networks.html }
-    #     - { title: "The Internet",         nav: "The internet",       url: /gcse/4/internet.html }
-    #     - { title: "Packet Switching",     nav: "Packet switching",   url: /gcse/4/packet-switching.html }
-    #     - { title: "Wired & Wireless",     nav: "Wired & wireless",   url: /gcse/4/connectivity.html }
-    #     - { title: "Network Speeds",       nav: "Network speeds",     url: /gcse/4/network-speeds.html }
-    #     - { title: "Protocols",            nav: "Protocols",          url: /gcse/4/protocols.html }
-    #     - { title: "TCP/IP",               nav: "TCP/IP",             url: /gcse/4/tcp-ip.html }
-    #     - { title: "Network Topologies",   nav: "Topologies",         url: /gcse/4/topologies.html }
-    #     - { title: "Network Security",     nav: "Network security",   url: /gcse/4/network-security.html }
-    #     - { title: "Access Control",       nav: "Access control",     url: /gcse/4/access-control.html }
-    #     - { title: "Firewalls",            nav: "Firewalls",          url: /gcse/4/firewalls.html }
-    # - title: Topic 6 (Python)
-    #   label: Topic 6 demos
-    #   pages:
-    #     - { title: "Inputs & Outputs",      nav: "Inputs & outputs",      url: /gcse/6/inputs-outputs.html }
-    #     - { title: "Variables & Constants", nav: "Variables & constants", url: /gcse/6/variables-constants.html }
-        # - { title: "Selection",             nav: "Selection",             url: /gcse/6/selection.html }
-        # - { title: "For Loops",             nav: "For loops",             url: /gcse/6/for-loops.html }
-        # - { title: "While Loops",           nav: "While loops",           url: /gcse/6/while-loops.html }
-        # - { title: "1D Lists",              nav: "Lists",                 url: /gcse/6/lists.html }
-        # - { title: "Strings",               nav: "Strings",               url: /gcse/6/strings.html }
+    - title: Topic 4 (Networks)
+      label: Topic 4 demos
+      pages:
+        - { title: "LANs & WANs",          nav: "LANs & WANs",        url: /gcse/4/networks.html }
+        - { title: "The Internet",         nav: "The internet",       url: /gcse/4/internet.html }
+        - { title: "Packet Switching",     nav: "Packet switching",   url: /gcse/4/packet-switching.html }
+        - { title: "Wired & Wireless",     nav: "Wired & wireless",   url: /gcse/4/connectivity.html }
+        - { title: "Network Speeds",       nav: "Network speeds",     url: /gcse/4/network-speeds.html }
+        - { title: "Protocols",            nav: "Protocols",          url: /gcse/4/protocols.html }
+        - { title: "TCP/IP",               nav: "TCP/IP",             url: /gcse/4/tcp-ip.html }
+        - { title: "Network Topologies",   nav: "Topologies",         url: /gcse/4/topologies.html }
+        - { title: "Network Security",     nav: "Network security",   url: /gcse/4/network-security.html }
+        - { title: "Access Control",       nav: "Access control",     url: /gcse/4/access-control.html }
+        - { title: "Firewalls",            nav: "Firewalls",          url: /gcse/4/firewalls.html }
+    - title: Topic 6 (Python)
+      label: Topic 6 demos
+      pages:
+        - { title: "Inputs & Outputs",      nav: "Inputs & outputs",      url: /gcse/6/inputs-outputs.html }
+        - { title: "Variables & Constants", nav: "Variables & constants", url: /gcse/6/variables-constants.html }
+        - { title: "Selection",             nav: "Selection",             url: /gcse/6/selection.html }
+        - { title: "For Loops",             nav: "For loops",             url: /gcse/6/for-loops.html }
+        - { title: "While Loops",           nav: "While loops",           url: /gcse/6/while-loops.html }
+        - { title: "1D Lists",              nav: "Lists",                 url: /gcse/6/lists.html }
+        - { title: "Strings",               nav: "Strings",               url: /gcse/6/strings.html }

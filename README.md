@@ -24,6 +24,10 @@ The site is built with [Jekyll](https://jekyllrb.com/), which GitHub Pages runs 
 
 The shared page shell is `_layouts/demo.html`. Shared styles and scripts are in `assets/`.
 
+## Hiding a demo
+
+Add `published: false` to the page's front matter. The page is not built, and it disappears from the home page and from the links at the top of the other demos in its topic. Leave its line in `_data/courses.yml`. Remove `published: false` to publish it.
+
 ## Previewing locally
 
 Opening the `.html` files directly no longer shows the finished pages, because Jekyll assembles them.
@@ -32,3 +36,5 @@ Opening the `.html` files directly no longer shows the finished pages, because J
 bundle install            # first time only
 bundle exec jekyll serve  # then open http://localhost:4000
 ```
+
+To preview the hidden demos as well, run `bundle exec jekyll serve --unpublished`.

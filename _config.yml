@@ -1,3 +1,10 @@
 name: HTB's Site
 title: HTB's Vibe Coded Demos
 
+
+# Files that are not part of the published site.
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor

@@ -52,7 +52,13 @@ footer{margin-top:28px;color:var(--muted);font:.78rem var(--mono)}
 
 <script>
 // The list of demos lives in _data/courses.yml. Add new demos there.
-const COURSES = {{ site.data.courses | jsonify }};
+// Pages with published: false are not built, so they are dropped here, along with any topic left empty.
+const LIVE = new Set({{ site.pages | map: "url" | jsonify }});
+const COURSES = {{ site.data.courses | jsonify }}
+  .map(c => ({...c, topics: c.topics
+    .map(t => ({...t, pages: t.pages.filter(p => LIVE.has(p.url))}))
+    .filter(t => t.pages.length)}))
+  .filter(c => c.topics.length);
 
 const main = document.getElementById("main");
 let total = 0;
