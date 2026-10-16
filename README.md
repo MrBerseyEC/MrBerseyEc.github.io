@@ -18,7 +18,7 @@ The site is built with [Jekyll](https://jekyllrb.com/), which GitHub Pages runs 
    <p class="lede">…</p>
    ```
 
-   `python: true` loads the runnable Python editors and `logic: true` loads the Boolean expression helpers. Add `heading:` if the main heading should differ from the title.
+   `python: true` loads the runnable Python editors, `logic: true` loads the Boolean expression helpers and `blocks: true` loads the MakeCode Arcade-style block editor and games console (see the comment at the top of `assets/blocks.js`). Add `heading:` if the main heading should differ from the title.
 
 2. Add one line for it to `_data/courses.yml`. The home page and the links at the top of every demo in that topic update themselves.
 

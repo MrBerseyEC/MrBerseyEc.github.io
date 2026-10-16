@@ -109,3 +109,12 @@ svg.flow{display:block;width:100%;height:auto;margin:0 auto}
 .flow text{font:600 13px var(--sans);fill:var(--ink);text-anchor:middle}
 .flow text.fl{font:700 12px var(--mono);fill:var(--muted)}
 .flow g.on .fb{fill:var(--one-soft);stroke:var(--one)}
+
+/* ---------- one block in full screen (button added by site.js) ---------- */
+.block{position:relative}
+.fs{position:absolute;top:-13px;right:14px;font:700 .72rem/1 var(--sans);padding:6px 10px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer}
+.fs:hover{color:var(--ink);border-color:var(--ink)}
+.block.full{position:fixed;inset:0;z-index:100;margin:0;border:0;border-radius:0;overflow:auto;padding:56px max(22px,calc(50vw - 590px)) 28px}
+.block.full>.fs{position:fixed;top:14px;right:22px;color:var(--ink);border-color:var(--ink)}
+html.fulling{overflow:hidden}
+@media print{.fs{display:none}}

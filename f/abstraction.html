@@ -1,0 +1,330 @@
+---
+layout: demo
+title: "Abstraction"
+spec: "F · COMPUTATIONAL THINKING"
+blocks: true
+---
+<style>
+.real{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:18px;align-items:start}
+.real canvas{width:100%;max-width:340px;height:auto;display:block;margin:0 auto;background:var(--bg);border:2px solid var(--line);border-radius:12px}
+.lvl{font-weight:800;margin:10px 0 2px}
+.facts td:last-child{white-space:nowrap;font-weight:700}
+.facts tr.gone td:first-child{text-decoration:line-through;color:var(--muted)}
+.layers{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(250px,1fr);gap:18px;align-items:start}
+.big{font:800 2.2rem/1 var(--sans);margin:0}
+.steps{margin:0;padding-left:1.3em}.steps li{margin:6px 0}
+.live{font-family:var(--mono);font-size:.9rem}
+.insp{display:grid;grid-template-columns:minmax(250px,1fr) minmax(0,1.2fr);gap:18px;align-items:start}
+.insp td,.insp th{font-family:var(--mono)}
+.kd{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+.kinds{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(250px,.9fr);gap:18px;align-items:start}
+.kinds h3{margin:0 0 4px;font-size:1rem}
+.kinds .cnt{font:800 1.6rem var(--sans);margin:0 0 10px}
+.kinds .prog{max-height:430px;overflow:auto;padding:4px}
+.tick{font-family:var(--mono);font-weight:700;margin-right:12px}
+@media (max-width:900px){.real,.layers,.insp,.kinds{grid-template-columns:minmax(0,1fr)}}
+</style>
+<p class="lede">Abstraction means hiding or removing the details you do not need, so you can concentrate on the things that matter. Every game you make in MakeCode Arcade is an abstraction: a real duck becomes a tiny picture and a few numbers, and one block can stand in for dozens of instructions that you never have to think about.</p>
+
+<section class="block">
+  <h2>From a real thing to a sprite</h2>
+  <p class="sub">Drag the slider to strip detail away, one step at a time, until only what the game needs is left. The table shows which facts survive each step.</p>
+  <div class="row" style="margin-bottom:12px">
+    <label class="check">Thing <select id="thing"></select></label>
+    <label class="check">Real <input type="range" id="lv" min="0" max="3" step="1" value="0" style="width:min(260px,50vw)"> Game</label>
+  </div>
+  <div class="real">
+    <div>
+      <canvas id="rc" width="340" height="340" role="img" aria-label="The thing drawn with less and less detail"></canvas>
+      <p class="lvl" id="lname"></p>
+      <p class="sub" id="ldesc" style="margin:0"></p>
+    </div>
+    <div class="scroll"><table class="t facts" id="facts"></table></div>
+  </div>
+  <p class="note">The game is better <b>because</b> so much is missing. A game that tracked every feather would be impossible to build and far too slow to play. All a sprite needs is a picture, a position, a speed and a kind.</p>
+</section>
+
+<section class="block">
+  <h2>Keep it or remove it?</h2>
+  <p class="sub">Choose a game. For each detail of the real thing, decide whether the game needs to keep it, or whether it can be removed.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Game <select id="sc"></select></label></div>
+  <p id="brief" style="margin:0 0 12px;max-width:85ch"></p>
+  {% include quiz.html n=2 %}
+</section>
+
+<section class="block">
+  <h2>One block hides lots of work</h2>
+  <p class="sub">The <b>move mySprite with buttons</b> block is an abstraction. You say <i>what</i> you want, and it hides <i>how</i> it is done. Step down through the layers to see what it hides. The duck on the right works the same way in every layer, so try it out each time.</p>
+  <div class="seg" id="lay" role="group" aria-label="Layer" style="margin-bottom:14px;flex-wrap:wrap">
+    <button aria-pressed="true" data-l="0">1. The block</button><button aria-pressed="false" data-l="1">2. The blocks it hides</button><button aria-pressed="false" data-l="2">3. The JavaScript inside</button><button aria-pressed="false" data-l="3">4. What the computer does</button>
+  </div>
+  <div class="layers">
+    <div>
+      <div id="lview"></div>
+      <pre class="pc hidden" id="lcode"></pre>
+      <div id="lhw" class="hidden">
+        <p style="margin:0 0 6px"><b>About 30 times every second</b>, the console:</p>
+        <ol class="steps">
+          <li>checks the electrical signal from each of the four arrow buttons</li>
+          <li>works out a new speed for every sprite that moves with the buttons</li>
+          <li>moves every sprite by its speed, and keeps it inside the screen</li>
+          <li>checks every pair of sprites to see if they are touching</li>
+          <li>colours in all 19,200 dots on the screen with the background</li>
+          <li>copies the 256 dots of every sprite's picture into the right place</li>
+          <li>sends all 19,200 colours to the screen</li>
+        </ol>
+        <p class="live" id="hwlive"></p>
+      </div>
+    </div>
+    <div>
+      <div id="lgame"></div>
+      <p class="big" id="lbig" style="margin-top:14px"></p>
+      <p class="sub" id="ltxt" style="margin:4px 0 0"></p>
+    </div>
+  </div>
+  <p class="note">Every layer does the same job. Each layer up hides more detail, so you have less to think about. That is why you can write a game in an afternoon without knowing anything about electrical signals or screen dots.</p>
+</section>
+
+<section class="block">
+  <h2>Build it with the shortcut, then without</h2>
+  <p class="sub"><b>Task:</b> make the duck move with the arrow keys. First do it <b>with</b> the move block. Then switch to <b>without</b> and do it again using only <b>forever</b>, <b>if … button is pressed</b> and <b>change … by</b>. Drag blocks in from the left, and drag them back to delete them. Press Check to test your program.</p>
+  <div class="row"><div class="seg" id="mode" role="group" aria-label="Which blocks"><button aria-pressed="true" data-m="0">With the shortcut</button><button aria-pressed="false" data-m="1">Without it</button></div>
+    <button class="btn pri" id="mchk">Check</button><button class="btn" id="mshow">Show me</button></div>
+  <div id="lab1"></div>
+  <p class="status" id="mres"></p>
+</section>
+
+<section class="block">
+  <h2>What the game really knows</h2>
+  <p class="sub">To you, this is a duck running away from a ghost to grab strawberries. To the computer, each sprite is a picture with a box around it and a few numbers. Play the game and watch the numbers change. Then switch to <b>What the computer sees</b>.</p>
+  <div class="insp">
+    <div>
+      <div class="seg" id="view" role="group" aria-label="View" style="margin-bottom:10px"><button aria-pressed="true" data-v="images">What you see</button><button aria-pressed="false" data-v="both">Both</button><button aria-pressed="false" data-v="boxes">What the computer sees</button></div>
+      <div id="igame"></div>
+      <div class="row" style="margin-top:10px"><button class="btn pri" id="irun">▶ Play</button></div>
+    </div>
+    <div>
+      <div class="scroll"><table class="t" id="itab"></table></div>
+      <p class="live" id="iscore" style="margin-top:8px"></p>
+      <p class="note">The game has no idea that a ghost is scary or that a strawberry is tasty. It only knows each sprite's <b>kind</b>: Player, Enemy or Food. You tell it what should happen when kinds meet, and it checks whether the boxes overlap.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Kinds: one rule for lots of sprites</h2>
+  <p class="sub">Grouping things by what they have in common is another kind of abstraction. Instead of thinking about strawberry 1, strawberry 2 and strawberry 3, you think about <b>Food</b>. Drag the slider to add more strawberries and compare the two programs.</p>
+  <div class="row" style="margin-bottom:14px"><label class="check">Strawberries <input type="range" id="nk" min="1" max="12" value="3"> <b class="mono" id="nkv"></b></label></div>
+  <div class="kinds">
+    <div><h3>Without kinds</h3><p class="cnt badc" id="c-no"></p><div class="prog" id="nok"></div></div>
+    <div><h3>With kinds</h3><p class="cnt okc" id="c-yes"></p><div class="prog" id="yesk"></div></div>
+    <div><div id="kgame"></div><div class="row" style="margin-top:10px"><button class="btn pri" id="krun">▶ Run</button></div></div>
+  </div>
+  <p class="note">With kinds, the rule is written once. It works for 3 strawberries or 300, and it still works for a strawberry that appears halfway through the game.</p>
+</section>
+
+<section class="block">
+  <h2>Make your own block</h2>
+  <p class="sub">This program makes three ghosts, but it does it by repeating the same three blocks three times. A <b>function</b> lets you wrap those blocks up, give them a name, and then forget how they work. <b>Task:</b> make a function called <span class="mono">spawnEnemy</span> that contains the three ghost blocks, then replace each group of three with <b>call spawnEnemy</b>. Type the name into the function block.</p>
+  <div class="row"><button class="btn pri" id="fchk">Check</button><button class="btn" id="fshow">Show me</button><button class="btn" id="frst">Start again</button></div>
+  <div id="lab2"></div>
+  <p class="status" id="fres"></p>
+  <p class="note">Once <span class="mono">spawnEnemy</span> exists, it is your own abstraction. To add a fourth ghost you add one block, not three. To make every ghost faster you change one number, not three.</p>
+</section>
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+<script>
+/* ---------- real thing to sprite ---------- */
+const THINGS=[
+ {k:'duck',name:'Duck',kind:'Player',facts:[['It weighs about 1.2 kg',1],['Its heart beats 200 times a minute',1],['It is 3 years old',1],['It had pondweed for breakfast',1],
+  ['Every one of its 12,000 feathers',2],['The colour of its eyes',2],['Its exact outline, when checking for crashes',3],
+  ['What it looks like (its picture)',4],['Where it is (x and y)',4],['How fast it is moving (vx and vy)',4],['What kind of thing it is (Player)',4]]},
+ {k:'car',name:'Racing car',kind:'Player',facts:[['Its engine has 4 cylinders',1],['Its tyres are 18 inches across',1],['It has 45 litres of petrol',1],['It was built in 2021',1],
+  ['Its number plate',2],['The shine on its paintwork',2],['Its exact outline, when checking for crashes',3],
+  ['What it looks like (its picture)',4],['Where it is (x and y)',4],['How fast it is moving (vx and vy)',4],['What kind of thing it is (Player)',4]]},
+ {k:'ghost',name:'Ghost',kind:'Enemy',facts:[['It haunts an old castle',1],['It died in 1642',1],['It moans at midnight',1],['Nobody knows what it weighs',1],
+  ['The folds in its sheet',2],['The shape of its mouth',2],['Its exact outline, when checking for crashes',3],
+  ['What it looks like (its picture)',4],['Where it is (x and y)',4],['How fast it is moving (vx and vy)',4],['What kind of thing it is (Enemy)',4]]}];
+const LV=[['The real thing','Everything is here: what it looks like, but also everything about it that you cannot see in a picture.'],
+ ['A drawing','A picture shows only what can be seen. Weight, age and what it had for breakfast are gone.'],
+ ['A 16 × 16 sprite','A MakeCode sprite is 16 dots wide and 16 dots tall: 256 dots in all. Fine details such as feathers no longer fit.'],
+ ['What the game stores','The game keeps the picture, two numbers for where it is, two for its speed, and its kind. For crashes, it treats the sprite as a square box.']];
+const rc=$('#rc'),rx=rc.getContext('2d'),EMO='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+function pix(e,n){const p=document.createElement('canvas');p.width=p.height=n;const x=p.getContext('2d');x.font=`${Math.round(n*.82)}px ${EMO}`;x.textAlign='center';x.textBaseline='middle';x.fillText(e,n/2,n*.56);return p}
+function realDraw(){
+  const T=THINGS[$('#thing').value],L=+$('#lv').value,e=BK.IMG[T.k],W=340;
+  rx.setTransform(1,0,0,1,0,0);rx.clearRect(0,0,W,W);rx.imageSmoothingEnabled=L===0;
+  if(L===0){rx.font=`230px ${EMO}`;rx.textAlign='center';rx.textBaseline='middle';rx.fillText(e,W/2,W/2+14)}
+  else if(L<3){rx.drawImage(pix(e,L===1?48:16),30,30,280,280)}
+  else{
+    const s=96,x0=(W-s)/2,y0=(W-s)/2;rx.strokeStyle=css('--line');rx.lineWidth=1;
+    for(let i=0;i<=16;i++){rx.beginPath();rx.moveTo(x0+i*6,y0);rx.lineTo(x0+i*6,y0+s);rx.moveTo(x0,y0+i*6);rx.lineTo(x0+s,y0+i*6);rx.stroke()}
+    rx.drawImage(pix(e,16),x0,y0,s,s);
+    rx.strokeStyle=css('--bad');rx.lineWidth=3;rx.setLineDash([8,6]);rx.strokeRect(x0-2,y0-2,s+4,s+4);rx.setLineDash([]);
+    rx.fillStyle=css('--ink');rx.font='700 15px "JetBrains Mono",monospace';rx.textAlign='center';
+    rx.fillText('x = 80   y = 60',W/2,y0-30);rx.fillText('vx = 50   vy = 0',W/2,y0+s+34);rx.fillText(`kind = ${T.kind}`,W/2,y0+s+58);
+    rx.strokeStyle=css('--one');rx.lineWidth=3;rx.beginPath();rx.moveTo(x0+s+12,W/2);rx.lineTo(x0+s+60,W/2);rx.lineTo(x0+s+50,W/2-8);rx.moveTo(x0+s+60,W/2);rx.lineTo(x0+s+50,W/2+8);rx.stroke();
+  }
+  $('#lname').textContent=`Step ${L+1} of 4: ${LV[L][0]}`;$('#ldesc').textContent=LV[L][1];
+  $('#facts').innerHTML='<tr><th>Fact</th><th>Still here?</th></tr>'+T.facts.map(([f,r])=>r>L?`<tr><td>${f}</td><td class="okc">✔ Kept</td></tr>`:`<tr class="gone"><td>${f}</td><td class="badc">✘ Removed</td></tr>`).join('');
+}
+$('#thing').innerHTML=THINGS.map((t,i)=>`<option value="${i}">${BK.IMG[t.k]} ${t.name}</option>`).join('');
+$('#thing').onchange=$('#lv').oninput=realDraw;realDraw();
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',realDraw);
+
+/* ---------- keep or remove ---------- */
+const SC=[
+ {name:'Racing game',brief:'The player steers a car round a track, racing against the clock.',q:[
+  ['Where the car is on the track','Keep','The game needs it to draw the car and to tell whether it has left the track.'],
+  ['How fast the car is going','Keep','It decides how far the car moves each frame.'],
+  ['Where the edges of the track are','Keep','The car must slow down or crash when it goes off the track.'],
+  ['The time for each lap','Keep','The aim of the game is to get the fastest lap.'],
+  ['The brand of the tyres','Remove','It makes no difference to how the game plays.'],
+  ['The temperature of the engine oil','Remove','Real cars care about this. The game does not.'],
+  ['The faces of the people in the crowd','Remove','The crowd can be a simple background picture, or nothing at all.'],
+  ['What the driver had for lunch','Remove','Nothing in the game depends on it.']]},
+ {name:'Fishing game',brief:'The player moves a hook up and down to catch as many fish as possible in 60 seconds.',q:[
+  ['Where the hook is','Keep','The player controls it, and it must be drawn.'],
+  ['Where each fish is and which way it is swimming','Keep','Needed to move the fish and to tell when one touches the hook.'],
+  ['Which fish have been caught','Keep','A caught fish has to disappear and add to the score.'],
+  ['How much time is left','Keep','The game ends when the time runs out.'],
+  ['The Latin name of each type of fish','Remove','It does not change what happens in the game.'],
+  ['How many scales each fish has','Remove','A 16 × 16 sprite cannot even show them.'],
+  ['The temperature of the water','Remove','Nothing in the game depends on it.'],
+  ['The make of the fishing rod','Remove','An unnecessary detail.']]},
+ {name:'Space shooter',brief:'The player flies a spaceship, shooting at asteroids that fall from the top of the screen.',q:[
+  ['Where the ship is','Keep','The player controls it, and the game checks whether asteroids hit it.'],
+  ['Where each asteroid is and how fast it falls','Keep','Needed to move the asteroids and spot crashes.'],
+  ['How many lives the player has left','Keep','The game ends when they run out.'],
+  ['The score','Keep','It is how the player knows how well they are doing.'],
+  ['What the rocket fuel is made of','Remove','The ship just moves when a button is pressed.'],
+  ['The real distance to Mars','Remove','The game only needs positions on a 160 × 120 screen.'],
+  ['How tall the astronaut is','Remove','The astronaut is never even seen.'],
+  ['What each asteroid is made of','Remove','Every asteroid behaves in the same way, so it does not matter.']]}];
+$('#sc').innerHTML=SC.map((s,i)=>`<option value="${i}">${s.name}</option>`).join('');
+function scDraw(){const s=SC[$('#sc').value];$('#brief').innerHTML=`<b>${s.name}:</b> ${s.brief}`;
+  cardQuiz($('#quiz2'),s.q.map(r=>({q:r[0],a:r[1],why:r[2]})),['Keep','Remove'],$('#score2'),$('#qreset2'))}
+$('#sc').onchange=scDraw;scDraw();
+
+/* ---------- layers ---------- */
+const DUCK=[['bg',{c:'light blue'}],['create',{v:'mySprite',i:'duck',k:'Player'}]];
+const L0=[['start',[...DUCK,{t:'move',f:{s:'mySprite',n:60},hl:1},['stay']]]];
+const L1=[['start',[...DUCK,['stay']]],{t:'forever',hl:1,b:[
+  ['ifbtn',{b:'left'},[['change',{p:'x',n:-2}]]],['ifbtn',{b:'right'},[['change',{p:'x',n:2}]]],
+  ['ifbtn',{b:'up'},[['change',{p:'y',n:-2}]]],['ifbtn',{b:'down'},[['change',{p:'y',n:2}]]]]}];
+const INSIDE=['// Inside MakeCode Arcade (simplified)','function moveSprite(sprite, vx, vy) {','    controlledSprites.push({ sprite: sprite, vx: vx, vy: vy })','}','','// this runs at the start of every frame','game.onUpdate(function () {','    for (const ctrl of controlledSprites) {','        let x = 0','        let y = 0','        if (controller.left.isPressed()) x -= ctrl.vx','        if (controller.right.isPressed()) x += ctrl.vx','        if (controller.up.isPressed()) y -= ctrl.vy','        if (controller.down.isPressed()) y += ctrl.vy','        ctrl.sprite.vx = x','        ctrl.sprite.vy = y','    }','})','','// later in the same frame, the physics engine moves each sprite','sprite.x += sprite.vx * deltaTime','sprite.y += sprite.vy * deltaTime'];
+const LAYTXT=[['1 block','You think about one thing: which sprite moves, and how fast.'],['10 blocks','A loop, four decisions and four movements. You have to get every sign right.'],[`${INSIDE.length} lines`,'A list of sprites, a loop through it, speeds and time. And this is the simplified version.'],['Millions of steps','Every second. Nobody could write a game if they had to think about this.']];
+const lview=BK.editor($('#lview'),{readOnly:true,program:L0}),lgame=BK.arcade($('#lgame'));
+listing($('#lcode'),INSIDE);
+function layer(l){
+  $$('#lay button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.l===l));
+  $('#lview').classList.toggle('hidden',l>1);$('#lcode').classList.toggle('hidden',l!==2);$('#lhw').classList.toggle('hidden',l!==3);
+  if(l<2)lview.set(l?L1:L0);
+  $('#lbig').textContent=LAYTXT[l][0];$('#ltxt').textContent=LAYTXT[l][1];
+  lgame.load(BK.prog(l===1?L1:L0));lgame.run();
+}
+$('#lay').onclick=e=>{const b=e.target.closest('button');if(b)layer(+b.dataset.l)};
+layer(0);
+setInterval(()=>{if($('#lhw').classList.contains('hidden'))return;const f=lgame.frames;
+  $('#hwlive').innerHTML=`Since this layer started: <b>${f.toLocaleString()}</b> frames, <b>${(f*4).toLocaleString()}</b> button checks and <b>${(f*19200).toLocaleString()}</b> dots coloured in.`},200);
+
+/* ---------- with and without the shortcut ---------- */
+const PAL=[['start','forever','create','move','stay','bg'],['start','forever',{t:'ifbtn',f:{b:'left'}},{t:'change',f:{n:-2}},'create','stay','bg']];
+const START1=[['start',[['bg',{c:'light blue'}],['create',{v:'mySprite',i:'duck',k:'Player'}]]]];
+const SHOW1=[L0,L1];
+let mode=0;const best=[null,null];
+const lab1=BK.lab($('#lab1'),{palette:PAL[0],program:START1,height:400});
+$('#mode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=+b.dataset.m;
+  $$('#mode button').forEach(x=>x.setAttribute('aria-pressed',x===b));lab1.setPalette(PAL[mode]);lab1.set(START1);$('#mres').textContent=''};
+function testMove(p){
+  const out={};
+  for(const d of ['left','right','up','down']){const g=BK.sim(p);g.step(3);const s=g.vars.mySprite;if(!s)return null;
+    const x0=s.x,y0=s.y;g.hold(d,true);g.step(15);const dx=s.x-x0,dy=s.y-y0;
+    out[d]=d==='left'?dx<-5:d==='right'?dx>5:d==='up'?dy<-5:dy>5}
+  return out;
+}
+$('#mchk').onclick=()=>{
+  const p=lab1.prog,r=testMove(p),n=BK.count(p);let used=false;BK.walk(p,x=>{if(x.t==='move')used=true});
+  if(!r){$('#mres').innerHTML='<b class="badc">There is no sprite called mySprite.</b> Keep the <b>set mySprite to sprite</b> block inside <b>on start</b>.';return}
+  const arrows={left:'←',right:'→',up:'↑',down:'↓'},ok=Object.values(r).every(Boolean);
+  let h=Object.keys(r).map(d=>`<span class="tick ${r[d]?'okc':'badc'}">${arrows[d]} ${r[d]?'✔':'✘'}</span>`).join('');
+  if(mode===1&&used)h+=' <b class="badc">That still uses the move block.</b> Build it without it.';
+  else if(ok){best[mode]=best[mode]===null?n:Math.min(best[mode],n);h+=` <b class="okc">The duck moves in all four directions, using ${n} blocks.</b>`;
+    if(best[0]!==null&&best[1]!==null)h+=` With the shortcut it took ${best[0]} blocks, and without it ${best[1]}. The move block hides ${best[1]-best[0]} blocks of work, and it also stops the duck sliding when you let go of a key.`;
+    else if(mode===0)h+=' Now switch to <b>Without it</b>.'}
+  else h+=' Some directions do not work yet. Run the game and try each arrow key.';
+  $('#mres').innerHTML=h;
+};
+$('#mshow').onclick=()=>{lab1.set(SHOW1[mode]);$('#mres').textContent='Here is one way to do it. Press Run, then Check.'};
+
+/* ---------- what the game knows ---------- */
+const CHASE=[
+ ['start',[['bg',{c:'teal'}],['create',{v:'mySprite',i:'duck',k:'Player'}],['move',{n:80}],['stay'],
+  ['create',{v:'enemy',i:'ghost',k:'Enemy'}],['pos',{s:'enemy',x:16,y:16}],['follow',{s:'enemy',o:'mySprite',n:22}],
+  ['create',{v:'food',i:'strawberry',k:'Food'}],['rand',{s:'food'}]]],
+ ['overlap',{k1:'Player',k2:'Food'},[['score',{n:1}],['rand',{s:'otherSprite'}]]],
+ ['overlap',{k1:'Player',k2:'Enemy'},[['over',{w:'lose'}]]]];
+const KC={Player:'#4B7BEC',Enemy:'#E03131',Food:'#20BF6B',Projectile:'#FFB000'};
+const igame=BK.arcade($('#igame'));
+const ichase=()=>{igame.load(BK.prog(CHASE));igame.run();igame.focus()};
+$('#irun').onclick=ichase;igame.load(BK.prog(CHASE));
+$('#view').onclick=e=>{const b=e.target.closest('button');if(!b)return;igame.view=b.dataset.v;$$('#view button').forEach(x=>x.setAttribute('aria-pressed',x===b));igame.draw()};
+setInterval(()=>{
+  const v=igame.vars,name=s=>Object.keys(v).find(k=>v[k]===s)||'',r=n=>Math.round(n);
+  $('#itab').innerHTML='<tr><th>Variable</th><th>Kind</th><th>x</th><th>y</th><th>vx</th><th>vy</th></tr>'+igame.sprites.map(s=>`<tr><td>${BK.IMG[s.img]} ${name(s)}</td><td><span class="kd" style="background:${KC[s.kind]}"></span>${s.kind}</td><td>${r(s.x)}</td><td>${r(s.y)}</td><td>${r(s.vx)}</td><td>${r(s.vy)}</td></tr>`).join('');
+  $('#iscore').textContent=`score = ${igame.score??0}    game state = ${igame.state==='run'?'playing':igame.state==='over'?'game over':'stopped'}`;
+},150);
+
+/* ---------- kinds ---------- */
+const nok=BK.editor($('#nok'),{readOnly:true}),yesk=BK.editor($('#yesk'),{readOnly:true}),kgame=BK.arcade($('#kgame'));
+const YES=[['overlap',{k1:'Player',k2:'Food'},[['score',{n:1}],['destroy',{s:'otherSprite'}]]]];
+function kinds(){
+  const n=+$('#nk').value;$('#nkv').textContent=n;
+  nok.set(Array.from({length:n},(_,i)=>['olapS',{a:'mySprite',b:'strawberry'+(i+1)},[['score',{n:1}],['destroy',{s:'strawberry'+(i+1)}]]]));
+  yesk.set(YES);
+  $('#c-no').textContent=`${n*3} blocks`;$('#c-yes').textContent='3 blocks';
+  kgame.load(BK.prog([['start',[['bg',{c:'green'}],['create',{v:'mySprite',i:'duck',k:'Player'}],['move',{n:80}],['stay'],['repeat',{n},[['create',{v:'food',i:'strawberry',k:'Food'}],['rand',{s:'food'}]]]]],...YES]));
+}
+$('#nk').oninput=()=>{kinds();if(kgame.state==='run')kgame.run()};
+$('#krun').onclick=()=>{kgame.run();kgame.focus()};
+kinds();
+
+/* ---------- functions ---------- */
+const GHOST=[['create',{v:'enemy',i:'ghost',k:'Enemy'}],['rand',{s:'enemy'}],['follow',{s:'enemy',o:'mySprite',n:15}]];
+const PLAYER=[['bg',{c:'purple'}],['setlife',{n:3}],['create',{v:'mySprite',i:'duck',k:'Player'}],['move',{n:80}],['stay']];
+const HIT=['overlap',{k1:'Player',k2:'Enemy'},[['life',{n:-1}],['rand',{s:'otherSprite'}],['shake']]];
+const START2=[['start',[...PLAYER,...GHOST,...GHOST,...GHOST]],HIT];
+const SOL2=[['start',[...PLAYER,['call',{n:'spawnEnemy'}],['call',{n:'spawnEnemy'}],['call',{n:'spawnEnemy'}]]],['func',{n:'spawnEnemy'},GHOST],HIT];
+const lab2=BK.lab($('#lab2'),{program:START2,height:500,palette:['start','func','call','create','rand','follow','move','stay','overlap','life','setlife','bg']});
+$('#fchk').onclick=()=>{
+  const p=lab2.prog,fn=p.find(s=>s.t==='func'&&s.f.n==='spawnEnemy');let h;
+  if(!fn)h='<b class="badc">There is no function called spawnEnemy yet.</b> Drag in a <b>function</b> block from Functions, and type <span class="mono">spawnEnemy</span> into it.';
+  else{
+    let inside=0,outside=0,calls=0,follow=false;
+    BK.walk(fn.b,n=>{if(n.t==='create'&&n.f.k==='Enemy')inside++;if(n.t==='follow')follow=true});
+    p.filter(s=>s!==fn).forEach(s=>BK.walk(s.b||[],n=>{if(n.t==='create'&&n.f.k==='Enemy')outside++;if(n.t==='call'&&n.f.n==='spawnEnemy'&&s.t!=='_loose')calls++}));
+    if(inside!==1||!follow)h='<b class="badc">Not yet.</b> The function should contain the three ghost blocks: set enemy to a ghost, move it to a random place, and make it follow mySprite.';
+    else if(outside)h=`<b class="badc">Nearly.</b> There ${outside===1?'is still 1 ghost':`are still ${outside} ghosts`} being made outside the function. Replace ${outside===1?'it':'them'} with <b>call spawnEnemy</b>.`;
+    else if(calls<3)h=`<b class="badc">Nearly.</b> The function is called ${calls} time${calls===1?'':'s'}. Call it three times from <b>on start</b> to get three ghosts.`;
+    else h=`<b class="okc">Well done.</b> The program is now ${BK.count(p)} blocks instead of ${BK.count(BK.prog(START2))}, and <b>on start</b> reads like a description of the game. Now make every ghost faster by changing one number.`;
+  }
+  $('#fres').innerHTML=h;
+};
+$('#fshow').onclick=()=>{lab2.set(SOL2);$('#fres').textContent='Here is one way to do it. Press Run to check that the three ghosts still appear.'};
+$('#frst').onclick=()=>{lab2.set(START2);$('#fres').textContent=''};
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'What does abstraction mean?',opts:['Hiding or removing details you do not need, to focus on what matters','Breaking a big problem into smaller ones','Testing a program to find mistakes'],a:'Hiding or removing details you do not need, to focus on what matters',why:'Breaking a problem into smaller ones is decomposition, which is a different skill.'},
+ {q:'Which of these does a MakeCode sprite NOT store?',opts:['How heavy the real thing is','Its x and y position','Its kind'],a:'How heavy the real thing is',why:'A sprite stores a picture, a position, a speed and a kind. Weight was abstracted away.'},
+ {q:'Why is <b>move mySprite with buttons</b> an example of abstraction?',opts:['It hides the blocks that check each button and change the position','It makes the duck a different colour','It deletes the other sprites'],a:'It hides the blocks that check each button and change the position',why:'You say what you want to happen. How it happens is hidden inside the block.'},
+ {q:'A football game shows each player as a 16 × 16 sprite. What has been removed?',opts:['Details such as their face, their height and their name','Their position on the pitch','Which team they play for'],a:'Details such as their face, their height and their name',why:'Position and team affect the game, so they are kept.'},
+ {q:'Why does a game check whether two <i>boxes</i> overlap, rather than the exact shape of the duck and the ghost?',opts:['Checking boxes is much simpler and quicker, and close enough for a game','Ducks and ghosts really are square','The computer cannot see the pictures at all'],a:'Checking boxes is much simpler and quicker, and close enough for a game',why:'The exact outline is a detail the game can do without. That is abstraction.'},
+ {q:'You make a function called <span class="mono">spawnEnemy</span>. Later you use <b>call spawnEnemy</b> without looking inside it. This is…',opts:['Abstraction: you use it without thinking about how it works','A bug in the program','Decomposition'],a:'Abstraction: you use it without thinking about how it works',why:'You only need to know what it does. Making the function in the first place, by splitting off part of the program, is decomposition.'},
+ {q:'Why is <b>on sprite of kind Player overlaps otherSprite of kind Food</b> better than one rule for each strawberry?',opts:['One rule works for every Food sprite, however many there are','It runs faster on old computers','It changes the strawberries into ducks'],a:'One rule works for every Food sprite, however many there are',why:'Grouping things by what they have in common means you write the rule once.'},
+ {q:'Which is a <b>risk</b> of removing too much detail?',opts:['The game no longer works the way it should','The game becomes too detailed','The game uses too much memory'],a:'The game no longer works the way it should',why:'If the racing game removed the edges of the track, the cars could drive anywhere. You must keep what the game needs.'},
+],null,$('#score'),$('#qreset'));
+</script>

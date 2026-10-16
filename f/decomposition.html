@@ -1,0 +1,297 @@
+---
+layout: demo
+title: "Decomposition"
+spec: "F · COMPUTATIONAL THINKING"
+blocks: true
+---
+<style>
+.tree{padding:4px 0 10px;min-width:max-content}
+.tree ul{display:flex;justify-content:center;list-style:none;margin:0;padding:20px 0 0;position:relative}
+.tree>ul{padding-top:0}
+.tree li{position:relative;padding:20px 5px 0;text-align:center}
+.tree li::before,.tree li::after{content:"";position:absolute;top:0;right:50%;width:50%;height:20px;border-top:2px solid var(--ink)}
+.tree li::after{right:auto;left:50%;border-left:2px solid var(--ink)}
+.tree li:only-child::before,.tree li:only-child::after{display:none}
+.tree li:only-child{padding-top:0}
+.tree li:first-child::before,.tree li:last-child::after{border:0}
+.tree li:last-child::before{border-right:2px solid var(--ink)}
+.tree ul ul::before{content:"";position:absolute;top:0;left:50%;height:20px;border-left:2px solid var(--ink);margin-left:-1px}
+.node{font:700 .82rem/1.25 var(--sans);width:116px;min-height:52px;padding:6px 8px;border:2px solid var(--ink);border-radius:8px;background:var(--bg);color:var(--ink)}
+button.node{cursor:pointer;border-style:dashed;background:var(--hl-soft)}
+button.node::after{content:" ▾";color:var(--muted)}
+button.node.open{border-style:solid;background:var(--bg)}
+button.node.open::after{content:""}
+.parts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.parts li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 10px;align-items:center;border:2px solid var(--line);border-radius:10px;padding:8px 10px 8px 14px;background:var(--bg)}
+.parts li.ok{border-color:var(--ok);background:var(--ok-soft)}
+.parts li.no{border-color:var(--bad);background:var(--bad-soft)}
+.parts .res{grid-column:1/-1;font-size:.88rem;margin:0}
+.parts .res:empty{display:none}
+.parts b{display:block}
+.parts span{font-size:.9rem;color:var(--muted)}
+.find{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,.8fr);gap:18px;align-items:start}
+.reqs{display:grid;gap:6px}
+.reqs button{text-align:left}
+.reqs button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.reqs button.done::after{content:" ✔";color:var(--ok)}
+.team{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:18px;align-items:start}
+.who{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 10px;align-items:center}
+.who .seg button{font-size:.85rem;padding:5px 9px}
+.gantt{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px 10px;align-items:center;font-size:.85rem}
+.gantt .bar{display:flex;height:30px;background:var(--bg);border-radius:6px;overflow:hidden}
+.gantt .bar span{display:grid;place-items:center;color:#fff;font:700 .72rem var(--sans);border-right:2px solid var(--panel);white-space:nowrap;overflow:hidden;min-width:0}
+.gantt .bar .g{background:var(--off);color:var(--ink)}
+.plan{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin:10px 0}
+.plan input{width:100%}
+@media (max-width:900px){.find,.team{grid-template-columns:minmax(0,1fr)}}
+</style>
+<p class="lede">Decomposition means breaking a big problem down into smaller parts that are each easier to solve. "Make a game" is too big to start on. "Make a duck that moves with the arrow keys" is something you can do in two blocks. In MakeCode Arcade, each part usually becomes its own event or its own function.</p>
+
+<section class="block">
+  <h2>Break a big problem down</h2>
+  <p class="sub">The whole problem is at the top. Click a dashed box to break it into smaller parts. Keep going until every part is small enough to build in a few blocks. Try to say what the parts will be before you click.</p>
+  <div class="toolbar" style="margin-bottom:14px">
+    <label class="check">Problem <select id="prob"></select></label>
+    <button class="btn" id="tall">Break everything down</button><button class="btn" id="tnone">Start again</button>
+  </div>
+  <p id="pbrief" style="margin:0 0 14px;max-width:85ch"></p>
+  <div class="scroll"><div class="tree" id="tree"></div></div>
+  <p class="note">The boxes at the bottom are the jobs you actually build. Each one can be made and tested on its own, and different people can work on different boxes at the same time.</p>
+</section>
+
+<section class="block">
+  <h2>Which part does it belong to?</h2>
+  <p class="sub">Here are some of the small jobs from a game, all mixed up. Decide which part of the game each one belongs to.</p>
+  <div class="row" style="margin-bottom:12px"><label class="check">Game <select id="wsel"></select></label></div>
+  {% include quiz.html n=2 %}
+</section>
+
+<section class="block">
+  <h2>Build Duck Dash one part at a time</h2>
+  <p class="sub">Duck Dash has been decomposed into five parts. Build them one at a time, and press <b>Check</b> after each one before you move on. A good way to keep each part separate is to put it in its own <b>function</b>, then <b>call</b> it from <b>on start</b>. The <span class="mono">on</span> switch on each event or function lets you turn a part off to test the others without it. If you get stuck, <b>Show me</b> adds that part for you.</p>
+  <ol class="parts" id="parts"></ol>
+  <div id="lab3"></div>
+  <div class="row" style="margin-top:10px"><button class="btn" id="p-rst">Start again</button></div>
+</section>
+
+<section class="block">
+  <h2>Find the bug by switching parts off</h2>
+  <p class="sub">This version of Duck Dash has a bug: <b>the game ends after 3 seconds</b>, when it should last 30. Because the game is made of separate parts, you can switch parts off one at a time and run it again. When switching a part off makes the bug go away, the bug is in that part.</p>
+  <div id="lab4"></div>
+  <p style="margin:14px 0 6px"><b>Which part has the bug in it?</b></p>
+  <div class="row" id="bugq"></div>
+  <p class="status" id="bugmsg"></p>
+</section>
+
+<section class="block">
+  <h2>One big lump, or named parts?</h2>
+  <p class="sub">Here are two programs that make exactly the same game. One is a single lump. The other is decomposed into parts with names. Choose a change, then click the block you would need to edit. Try it in both versions.</p>
+  <div class="find">
+    <div>
+      <div class="seg" id="fview" role="group" aria-label="Version" style="margin-bottom:12px"><button aria-pressed="true" data-v="0">One big lump</button><button aria-pressed="false" data-v="1">Named parts</button></div>
+      <div id="fprog"></div>
+    </div>
+    <div>
+      <p style="margin:0 0 8px"><b>Change to make</b></p>
+      <div class="reqs" id="reqs"></div>
+      <p class="status" id="fmsg" style="margin-top:12px"></p>
+    </div>
+  </div>
+  <p class="note">In the lump, you have to read every block until you find the right one. With named parts, the names tell you where to look, so you can ignore everything else. The game works the same either way. The difference is how easy it is for a person to understand and change.</p>
+</section>
+
+<section class="block">
+  <h2>Share the work</h2>
+  <p class="sub">Decomposing a game means a team can build it together. Choose who builds each part and see how long the project takes. A team has to spend 5 minutes at the start agreeing on names, such as "the duck is called <span class="mono">mySprite</span> and is of kind Player", or the parts will not fit together.</p>
+  <div class="team">
+    <div class="who" id="who"></div>
+    <div><div class="gantt" id="gantt"></div><p class="status" id="tmsg" style="margin-top:12px"></p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Plan your own game</h2>
+  <p class="sub">Think of a game. Break it down into up to six parts and give each part a short name, such as <i>make the player</i> or <i>spawn an enemy</i>. Then turn your plan into blocks: each part becomes an empty function, ready for you to fill in and test one at a time. Or load the example to see a finished space shooter built this way.</p>
+  <div class="plan" id="plan"></div>
+  <div class="row"><button class="btn pri" id="mkplan">Turn my plan into blocks</button><button class="btn" id="explan">Load the space shooter example</button><span class="status" id="planmsg"></span></div>
+  <div id="lab5"></div>
+</section>
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+<script>
+/* ---------- the tree ---------- */
+const PROBS=[
+ {name:'Duck Dash',brief:'A duck runs around the screen eating strawberries while a ghost chases it. The game lasts 30 seconds.',
+  t:['Duck Dash',[['The player',[['Make the duck sprite'],['Move it with the arrow keys'],['Keep it on the screen']]],['The food',[['Make a strawberry'],['Put it in a random place'],['When the duck touches it',[['Add 1 to the score'],['Move it somewhere new']]]]],['The enemy',[['Make a ghost'],['Start it in a corner'],['Make it chase the duck']]],['Winning and losing',[['Start a 30 second countdown'],['Game over if the ghost catches the duck']]]]]},
+ {name:'Space shooter',brief:'A spaceship at the bottom of the screen shoots at aliens falling from the top. Three hits and it is game over.',
+  t:['Space shooter',[['The ship',[['Make the ship sprite'],['Move it with the arrow keys'],['Fire when A is pressed']]],['The aliens',[['Make a new alien every second'],['Start it above the screen'],['Make it fall']]],['Hits',[['Shot hits alien',[['Destroy both'],['Add 1 to the score']]],['Alien hits ship',[['Destroy the alien'],['Lose a life'],['Shake the screen']]]]],['Ending',[['Start with 3 lives'],['Game over at 0 lives']]]]]},
+ {name:'Platformer',brief:'A character runs and jumps across platforms, collecting coins and avoiding baddies, to reach a flag at the end of the level.',
+  t:['Platformer',[['The level',[['Draw the platforms'],['Choose a background'],['Place the coins and the flag']]],['The player',[['Walk left and right'],['Jump when A is pressed'],['Fall with gravity'],['Land on platforms']]],['The baddies',[['Walk back and forth'],['Lose a life if touched']]],['Scoring and ending',[['Collect coins for points'],['Reach the flag to win'],['Game over when lives run out']]]]]},
+ {name:'Throw a birthday party',brief:'Decomposition is not just for computers. Here is a party, broken down in the same way.',
+  t:['Birthday party',[['Guests',[['Write the guest list'],['Send invitations'],['Collect replies']]],['Food',[['Plan the menu'],['Buy the ingredients'],['Make the cake',[['Bake the sponge'],['Make the icing'],['Decorate it']]]]],['The room',[['Book a room'],['Put up decorations']]],['Fun',[['Choose the music'],['Plan some games']]]]]}];
+let opened=new Set();
+const tnode=(n,path)=>n[1]?`<li><button class="node${opened.has(path)?' open':''}" data-p="${path}">${esc(n[0])}</button>${opened.has(path)?`<ul>${n[1].map((c,i)=>tnode(c,path+'.'+i)).join('')}</ul>`:''}</li>`:`<li><div class="node">${esc(n[0])}</div></li>`;
+const allPaths=(n,path,out=[])=>{if(n[1]){out.push(path);n[1].forEach((c,i)=>allPaths(c,path+'.'+i,out))}return out};
+function treeDraw(){const p=PROBS[$('#prob').value];$('#pbrief').textContent=p.brief;$('#tree').innerHTML=`<ul>${tnode(p.t,'0')}</ul>`}
+$('#prob').innerHTML=PROBS.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
+$('#prob').onchange=()=>{opened.clear();treeDraw()};
+$('#tree').onclick=e=>{const b=e.target.closest('button.node');if(!b)return;const p=b.dataset.p;if(opened.has(p))[...opened].forEach(x=>x.startsWith(p)&&opened.delete(x));else opened.add(p);treeDraw()};
+$('#tall').onclick=()=>{opened=new Set(allPaths(PROBS[$('#prob').value].t,'0'));treeDraw()};
+$('#tnone').onclick=()=>{opened.clear();treeDraw()};
+treeDraw();
+
+/* ---------- which part ---------- */
+const WHICH=[
+ {name:'Duck Dash',opts:['The player','The food','The enemy','Winning and losing'],q:[
+  ['Set mySprite to a duck sprite','The player','Making the duck is part of the player.'],
+  ['Move the duck with the arrow keys','The player','Controlling the duck is part of the player.'],
+  ['Move the strawberry to a random place','The food','Where the food appears is part of the food.'],
+  ['Add 1 to the score when the duck touches a strawberry','The food','Eating is what the food is for, so it belongs with the food.'],
+  ['Make the ghost follow the duck','The enemy','Chasing is how the enemy behaves.'],
+  ['Put the ghost in the top-left corner at the start','The enemy','Setting up the ghost is part of the enemy.'],
+  ['Start a 30 second countdown','Winning and losing','The countdown decides when the game ends.'],
+  ['Game over when the ghost touches the duck','Winning and losing','It is caused by the ghost, but its job is to end the game. You could also argue for The enemy: what matters is that the team agrees.']]},
+ {name:'Space shooter',opts:['The ship','The aliens','Score and lives'],q:[
+  ['Fire a shot when A is pressed','The ship','The ship does the firing.'],
+  ['Move the ship with the arrow keys','The ship','Controlling the ship is part of the ship.'],
+  ['Make a new alien every second','The aliens','Making aliens is part of the aliens.'],
+  ['Make each alien fall down the screen','The aliens','How the aliens move is part of the aliens.'],
+  ['Start each alien in a random place above the screen','The aliens','Setting up each alien is part of the aliens.'],
+  ['Add 1 to the score when a shot hits an alien','Score and lives','It changes the score.'],
+  ['Set life to 3 at the start','Score and lives','It sets up the lives.'],
+  ['Lose a life when an alien hits the ship','Score and lives','It changes the lives.']]}];
+$('#wsel').innerHTML=WHICH.map((w,i)=>`<option value="${i}">${w.name}</option>`).join('');
+function whichDraw(){const w=WHICH[$('#wsel').value];cardQuiz($('#quiz2'),w.q.map(r=>({q:r[0],a:r[1],why:r[2]})),w.opts,$('#score2'),$('#qreset2'))}
+$('#wsel').onchange=whichDraw;whichDraw();
+
+/* ---------- Duck Dash, part by part ---------- */
+const PL=[['create',{v:'mySprite',i:'duck',k:'Player'}],['move',{n:80}],['stay']];
+const FD=[['create',{v:'food',i:'strawberry',k:'Food'}],['rand',{s:'food'}]];
+const EN=[['create',{v:'enemy',i:'ghost',k:'Enemy'}],['pos',{s:'enemy',x:10,y:10}],['follow',{s:'enemy',o:'mySprite',n:30}]];
+const EAT=['overlap',{k1:'Player',k2:'Food'},[['score',{n:1}],['rand',{s:'otherSprite'}]]];
+const CAUGHT=['overlap',{k1:'Player',k2:'Enemy'},[['over',{w:'lose'}]]];
+const find=(g,k)=>g.sprites.find(s=>s.kind===k&&!s.dead);
+const near=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const PARTS=[
+ {name:'The player',goal:'A duck appears, moves with the arrow keys and cannot leave the screen.',add:[['func',{n:'makePlayer'},PL]],
+  test:g=>{const s=find(g,'Player');if(!s)return'There is no sprite of kind Player.';const x=s.x;g.hold('right',true);g.step(12);g.hold('right',false);
+    if(!(s.x>x+5))return'The Player sprite does not move when the right arrow is held.';g.hold('left',true);g.step(150);return s.x<0?'The duck can leave the screen.':''}},
+ {name:'The food',goal:'A strawberry appears in a random place.',add:[['func',{n:'makeFood'},FD]],
+  test:g=>find(g,'Food')?'':'There is no sprite of kind Food.'},
+ {name:'Eating',goal:'When the duck touches the strawberry, the score goes up by 1 and the strawberry moves somewhere new.',add:[EAT],
+  test:g=>{const p=find(g,'Player'),f=find(g,'Food');if(!p||!f)return'Build the player and the food first.';f.x=p.x;f.y=p.y;g.step(3);
+    if(!(g.score>0))return'The score did not go up when the duck touched the strawberry.';const f2=find(g,'Food');return f2&&near(f2,p)<13?'The strawberry stayed where it was after it was eaten.':''}},
+ {name:'The enemy',goal:'A ghost appears in a corner and chases the duck.',add:[['func',{n:'makeEnemy'},EN]],
+  test:g=>{const e=find(g,'Enemy'),p=find(g,'Player');if(!e)return'There is no sprite of kind Enemy.';if(!p)return'Build the player first.';const d=near(e,p);g.step(20);return near(e,p)<d-5?'':'The ghost is not chasing the duck. Check the order of the calls in on start: the duck has to exist before the ghost can follow it.'}},
+ {name:'Winning and losing',goal:'The game lasts 30 seconds, and it is game over if the ghost catches the duck.',add:[['func',{n:'startTimer'},[['countdown',{n:30}]]],CAUGHT],
+  test:g=>{if(g.countdown===null)return'There is no countdown.';if(g.countdown<25)return'The countdown should be 30 seconds.';const e=find(g,'Enemy'),p=find(g,'Player');if(!e||!p)return'Build the player and the enemy first.';
+    e.x=p.x;e.y=p.y;g.step(3);return g.state==='over'?'':'Nothing happened when the ghost caught the duck.'}}];
+const PAL3=['start','func','call','create','pos','rand','follow','stay','destroy','say','move','overlap','score','countdown','over','bg'];
+const START3=[['start',[['bg',{c:'teal'}]]]];
+const lab3=BK.lab($('#lab3'),{program:START3,palette:PAL3,toggles:true,height:520});
+$('#parts').innerHTML=PARTS.map((p,i)=>`<li data-i="${i}"><div><b>Part ${i+1}: ${p.name}</b><span>${p.goal}</span></div><button class="btn pri" data-a="chk">Check</button><button class="btn" data-a="show">Show me</button><p class="res"></p></li>`).join('');
+function addScripts(lab,scripts){
+  const p=BK.clone(lab.prog);let st=p.find(s=>s.t==='start');
+  if(!st){st=BK.norm(['start',[]]);p.unshift(st)}
+  scripts.forEach(s=>{const n=BK.norm(s);
+    if(n.t==='func'){if(!p.some(x=>x.t==='func'&&x.f.n===n.f.n))p.push(n);let has=false;BK.walk(st.b,x=>{if(x.t==='call'&&x.f.n===n.f.n)has=true});if(!has)st.b.push(BK.norm(['call',{n:n.f.n}]))}
+    else if(!p.some(x=>JSON.stringify({t:x.t,f:x.f})===JSON.stringify({t:n.t,f:n.f})))p.push(n)});
+  lab.set(p);
+}
+$('#parts').onclick=e=>{const b=e.target.closest('button');if(!b)return;const li=b.closest('li'),i=+li.dataset.i,res=li.querySelector('.res');
+  if(b.dataset.a==='show'){addScripts(lab3,PARTS[i].add);li.className='';res.textContent='Added. Press Run to try it, then Check.';return}
+  const g=BK.sim(lab3.prog);g.step(3);const err=PARTS[i].test(g);
+  li.className=err?'no':'ok';res.innerHTML=err?`<b>Not yet.</b> ${esc(err)}`:'<b>This part works.</b>'+(i<4?' On to the next one.':' The whole game is finished: play it!')};
+$('#p-rst').onclick=()=>{lab3.set(START3);$$('#parts li').forEach(li=>{li.className='';li.querySelector('.res').textContent=''})};
+
+/* ---------- find the bug ---------- */
+const BUGGY=[['start',[['bg',{c:'teal'}],['call',{n:'startTimer'}],['call',{n:'makePlayer'}],['call',{n:'makeFood'}],['call',{n:'makeEnemy'}]]],
+ ['func',{n:'startTimer'},[['countdown',{n:30}]]],['func',{n:'makePlayer'},PL],['func',{n:'makeFood'},[...FD,['countdown',{n:3}]]],['func',{n:'makeEnemy'},[['create',{v:'enemy',i:'ghost',k:'Enemy'}],['pos',{s:'enemy',x:10,y:10}],['follow',{s:'enemy',o:'mySprite',n:12}]]],EAT,CAUGHT];
+const lab4=BK.lab($('#lab4'),{program:BUGGY,palette:PAL3,toggles:true,height:520});
+const SUSPECTS=['startTimer','makePlayer','makeFood','makeEnemy','eating','caught'];
+$('#bugq').innerHTML=SUSPECTS.map(s=>`<button class="btn" data-s="${s}">${s==='eating'?'Player overlaps Food':s==='caught'?'Player overlaps Enemy':s}</button>`).join('')+'<button class="btn pri" data-s="fixed">I have fixed it</button>';
+$('#bugq').onclick=e=>{const b=e.target.closest('button');if(!b)return;const s=b.dataset.s,m=$('#bugmsg');
+  if(s==='fixed'){const p=lab4.prog,off=p.filter(x=>x.off).length,g=BK.sim(p);g.step(10);
+    m.innerHTML=off?'<b class="badc">Switch every part back on first.</b> The game needs all of them.':g.countdown!==null&&g.countdown>25?'<b class="okc">Fixed.</b> The game now lasts 30 seconds. Testing one part at a time found the bug much faster than reading every block.':'<b class="badc">Not yet.</b> Run the game: it still ends too soon, or has no countdown at all.';return}
+  m.innerHTML=s==='makeFood'?'<b class="okc">Yes.</b> Someone left a <b>start countdown 3 s</b> block inside <span class="mono">makeFood</span>. Because <span class="mono">makeFood</span> runs after <span class="mono">startTimer</span>, it changes the countdown to 3. Delete that block, switch everything back on, then press <b>I have fixed it</b>.'
+   :s==='startTimer'?'<b class="badc">Good guess, but no.</b> Switch <span class="mono">startTimer</span> off and run the game. It still ends after 3 seconds, so something else must be starting a countdown.'
+   :'<b class="badc">Not that one.</b> Switch it off and run the game. Does the game still end after 3 seconds? Then the bug is somewhere else.'};
+
+/* ---------- lump or parts ---------- */
+const LUMP=[['start',[['bg',{c:'teal'}],['countdown',{n:30}],['create',{v:'mySprite',i:'duck',k:'Player'}],['create',{v:'food',i:'strawberry',k:'Food'}],['move',{n:80}],['create',{v:'enemy',i:'ghost',k:'Enemy'}],['rand',{s:'food'}],['stay'],['pos',{s:'enemy',x:10,y:10}],['follow',{s:'enemy',o:'mySprite',n:30}]]],EAT,CAUGHT];
+const NAMED=[['start',[['bg',{c:'teal'}],['call',{n:'makePlayer'}],['call',{n:'makeFood'}],['call',{n:'makeEnemy'}],['call',{n:'startTimer'}]]],['func',{n:'makePlayer'},PL],['func',{n:'makeFood'},FD],['func',{n:'makeEnemy'},EN],['func',{n:'startTimer'},[['countdown',{n:30}]]],EAT,CAUGHT];
+const REQ=[['Make the ghost slower',n=>n.t==='follow','makeEnemy'],['Use a cake instead of a strawberry',n=>n.t==='create'&&n.f.k==='Food','makeFood'],['Make the game last 60 seconds',n=>n.t==='countdown','startTimer'],['Make the duck faster',n=>n.t==='move','makePlayer'],['Start the ghost in a different corner',n=>n.t==='pos','makeEnemy']];
+let fv=0,req=0;const found=REQ.map(()=>[null,null]);
+const fprog=BK.editor($('#fprog'),{readOnly:true,onPick:pick});
+$('#reqs').innerHTML=REQ.map((r,i)=>`<button class="btn" data-r="${i}">${r[0]}</button>`).join('');
+function fbtns(){$$('#reqs button').forEach((b,i)=>{b.setAttribute('aria-pressed',i===req);b.classList.toggle('done',found[i][0]!==null&&found[i][1]!==null)})}
+function fdraw(){fprog.set(fv?NAMED:LUMP);fbtns()}
+function pick(n){
+  if(n.t==='start'||n.t==='func'||n.t==='overlap')return;
+  const [what,ok,fn]=REQ[req];
+  if(!ok(n)){n.hl=2;fprog.render();setTimeout(()=>{n.hl=0;fprog.render()},600);$('#fmsg').innerHTML='<span class="badc">Not that block.</span> Keep looking.';return}
+  let read=0,stop=false;
+  if(!fv)BK.walk(fprog.prog,x=>{if(stop)return;read++;if(x===n)stop=true});
+  else{for(const s of fprog.prog){if(s.t!=='func')continue;read++;if(s.f.n===fn){read+=s.b.indexOf(n)+1;break}}}
+  found[req][fv]=read;BK.walk(fprog.prog,x=>{x.hl=0});n.hl=1;fprog.render();fbtns();
+  const [a,b]=found[req];
+  $('#fmsg').innerHTML=`<b class="okc">Found it.</b> `+(fv?`The name <span class="mono">${fn}</span> told you where to look. You read ${read} things: function names, then the blocks inside.`:`You read ${read} blocks to get to it.`)
+    +(a!==null&&b!==null?` <br><b>One big lump: ${a} blocks read. Named parts: ${b}.</b>`:` Now find it in the ${fv?'one big lump':'named parts'} version.`);
+}
+$('#fview').onclick=e=>{const b=e.target.closest('button');if(!b)return;fv=+b.dataset.v;$$('#fview button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#fmsg').textContent='';fdraw()};
+$('#reqs').onclick=e=>{const b=e.target.closest('button');if(!b)return;req=+b.dataset.r;$('#fmsg').textContent='';fdraw()};
+fdraw();
+
+/* ---------- share the work ---------- */
+const TASKS=[['The player',15],['The food and eating',20],['The enemy',20],['Winning and losing',10],['Title screen',10],['Backgrounds and effects',15]];
+const PEOPLE=['Alex','Sam','Priya'],PCOL=['#4B7BEC','#CF6A87','#20BF6B'];
+const who=[0,0,0,0,0,0];
+$('#who').innerHTML=TASKS.map((t,i)=>`<span><b>${t[0]}</b> · ${t[1]} min</span><div class="seg" role="radiogroup" aria-label="Who builds ${t[0]}" data-i="${i}">${PEOPLE.map((p,j)=>`<button role="radio" data-j="${j}">${p}</button>`).join('')}</div>`).join('');
+function team(){
+  $$('#who .seg').forEach(s=>s.querySelectorAll('button').forEach(b=>b.setAttribute('aria-checked',+b.dataset.j===who[s.dataset.i])));
+  const tot=PEOPLE.map((_,j)=>TASKS.reduce((s,t,i)=>s+(who[i]===j?t[1]:0),0)),sum=TASKS.reduce((s,t)=>s+t[1],0),scale=sum+25;
+  const used=tot.filter(Boolean).length,teamT=used>1?5+Math.max(...tot)+15:sum+10;
+  const seg=(w,txt,cls,col)=>`<span class="${cls||''}" style="width:${w/scale*100}%;${col?`background:${col}`:''}" title="${txt}">${txt}</span>`;
+  $('#gantt').innerHTML=PEOPLE.map((p,j)=>`<b>${p}</b><div class="bar">${used>1?seg(5,'Agree','g'):''}${TASKS.map((t,i)=>who[i]===j?seg(t[1],t[0],'',PCOL[j]):'').join('')}</div>`).join('')
+    +`<b>Together</b><div class="bar"><span style="width:${(teamT-15)/scale*100}%;background:none"></span>${seg(used>1?15:10,used>1?'Join and test':'Test','g')}</div>`;
+  $('#tmsg').innerHTML=used>1?`With ${used} people the game takes <b>${teamT} minutes</b>, instead of <b>${sum+10} minutes</b> for one person. Joining the parts together takes 15 minutes, because they were built separately.`
+    :`One person builds everything: <b>${sum+10} minutes</b>. Give some of the parts to the others.`;
+}
+$('#who').onclick=e=>{const b=e.target.closest('button');if(!b)return;who[b.closest('.seg').dataset.i]=+b.dataset.j;team()};
+team();
+
+/* ---------- plan your own ---------- */
+const PH=['make the player','make the food','spawn an enemy','start the timer','show the title','set up the level'];
+$('#plan').innerHTML=PH.map((p,i)=>`<input type="text" id="pl${i}" placeholder="Part ${i+1}, e.g. ${p}" aria-label="Part ${i+1}">`).join('');
+const camel=s=>{const w=s.replace(/[^A-Za-z0-9 ]/g,' ').trim().split(/\s+/).filter(Boolean);if(!w.length)return'';const c=w.map((x,i)=>i?x[0].toUpperCase()+x.slice(1).toLowerCase():x.toLowerCase()).join('');return/^\d/.test(c)?'part'+c:c};
+const SPACE=[['start',[['bg',{c:'black'}],['call',{n:'setUpShip'}],['call',{n:'setUpLives'}]]],
+ ['func',{n:'setUpShip'},[['create',{v:'mySprite',i:'rocket',k:'Player'}],['pos',{x:80,y:104}],['move',{n:90}],['stay']]],
+ ['func',{n:'setUpLives'},[['setlife',{n:3}],['setscore',{n:0}]]],
+ ['func',{n:'spawnAlien'},[['create',{v:'enemy',i:'alien',k:'Enemy'}],['rand',{s:'enemy'}],['change',{s:'enemy',p:'y',n:-120}],['vel',{s:'enemy',x:0,y:40}]]],
+ ['every',{ms:800},[['call',{n:'spawnAlien'}]]],
+ ['press',{b:'A'},[['shoot',{i:'fire',s:'mySprite',x:0,y:-100}]]],
+ ['overlap',{k1:'Projectile',k2:'Enemy'},[['destroy',{s:'sprite'}],['destroy',{s:'otherSprite'}],['score',{n:1}]]],
+ ['overlap',{k1:'Player',k2:'Enemy'},[['destroy',{s:'otherSprite'}],['life',{n:-1}],['shake']]]];
+const lab5=BK.lab($('#lab5'),{program:[],toggles:true,height:520,palette:['start','forever','repeat','pause','ifbtn','ifpos','create','pos','rand','change','vel','follow','bounce','stay','say','destroy','shoot','overlap','move','press','every','over','splash','score','setscore','life','setlife','countdown','bg','shake','func','call']});
+$('#mkplan').onclick=()=>{
+  const names=[...new Set(PH.map((_,i)=>camel($('#pl'+i).value)).filter(Boolean))];
+  if(!names.length){$('#planmsg').textContent='Type at least one part first.';return}
+  lab5.set([['start',[['bg',{c:'blue'}],...names.map(n=>['call',{n}])]],...names.map(n=>['func',{n},[]])]);
+  $('#planmsg').textContent=`${names.length} empty function${names.length>1?'s':''} made. Fill in the first one, run it, and only then move on.`};
+$('#explan').onclick=()=>{lab5.set(SPACE);$('#planmsg').textContent='Press Run. Arrow keys move, space fires. Switch parts off to see what each one does.'};
+
+/* ---------- quiz ---------- */
+cardQuiz($('#quiz'),[
+ {q:'What does decomposition mean?',opts:['Breaking a big problem down into smaller parts','Removing details you do not need','Making a program run faster'],a:'Breaking a big problem down into smaller parts',why:'Removing details you do not need is abstraction.'},
+ {q:'When should you stop breaking a part down?',opts:['When it is small enough to build in a few blocks','When there are exactly four parts','Never: keep going for ever'],a:'When it is small enough to build in a few blocks',why:'Each part at the bottom should be a job you can do and test straight away.'},
+ {q:'In MakeCode Arcade, what is a good way to keep a part of your game separate?',opts:['Put it in its own function with a clear name','Put everything in on start','Use as few blocks as possible'],a:'Put it in its own function with a clear name',why:'Events such as "on A button pressed" also keep parts separate.'},
+ {q:'Why should you check each part works before building the next one?',opts:['If something breaks, you know it was the part you just added','Because MakeCode will not let you continue','It makes the game harder'],a:'If something breaks, you know it was the part you just added',why:'Testing as you go makes bugs much easier to find.'},
+ {q:'Your game ends too early. How can decomposition help you find out why?',opts:['Switch off one part at a time until the bug goes away','Delete the whole program and start again','Add more blocks to on start'],a:'Switch off one part at a time until the bug goes away',why:'The part that makes the bug go away when it is switched off is the one with the bug in it.'},
+ {q:'Three friends build a game together. Why must they agree on names first?',opts:['So that the parts fit together, for example everyone calls the player mySprite','So that the game has a good title','So that they finish at the same time'],a:'So that the parts fit together, for example everyone calls the player mySprite',why:'If one person calls the duck "player" and another calls it "mySprite", their parts will not work together.'},
+ {q:'Which is the best name for a function that makes a ghost and sets it chasing the duck?',opts:['makeEnemy','function1','stuff'],a:'makeEnemy',why:'A good name says what the part does, so anyone can find it without reading the blocks inside.'},
+ {q:'Which of these is decomposition, rather than abstraction?',opts:['Splitting "make a game" into the player, the food and the enemy','Drawing a duck as a 16 × 16 sprite','Using the move with buttons block without knowing how it works'],a:'Splitting "make a game" into the player, the food and the enemy',why:'The other two hide detail, which is abstraction. The two skills are almost always used together.'},
+],null,$('#score'),$('#qreset'));
+</script>

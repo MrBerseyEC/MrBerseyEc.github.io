@@ -61,3 +61,13 @@ function flow(el,w,h,nodes,arrows){
     +arrows.map(r=>`<path class="fa" d="${r.d}" marker-end="url(#${m})"/>`+(r.l?`<text class="fl" x="${r.x}" y="${r.y}">${r.l}</text>`:'')).join('')
     +nodes.map(n=>`<g data-n="${n.id||''}">${shape(n)}${text(n)}</g>`).join('')+'</svg>';
 }
+/* a Full screen button on every block, so one demo can fill the display without the rest of the page. Esc or the button leaves */
+document.addEventListener('DOMContentLoaded',()=>{
+  const d=document,root=d.documentElement;let cur=null;
+  const set=(el,on)=>{el.classList.toggle('full',on);root.classList.toggle('fulling',on);el.querySelector(':scope>.fs').textContent=on?'✕ Exit full screen':'Full screen';dispatchEvent(new Event('resize'))};
+  const close=()=>{if(!cur)return;const el=cur;cur=null;set(el,false);if(d.fullscreenElement)d.exitFullscreen()};
+  const open=el=>{cur=el;set(el,true);if(root.requestFullscreen)root.requestFullscreen().catch(()=>{})};
+  $$('.wrap>.block:not(.course)').forEach(el=>{const b=d.createElement('button');b.className='fs';b.type='button';b.textContent='Full screen';b.onclick=()=>cur===el?close():open(el);el.append(b)});
+  d.addEventListener('fullscreenchange',()=>{if(!d.fullscreenElement)close()});
+  d.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+});

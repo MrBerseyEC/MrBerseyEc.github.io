@@ -82,3 +82,13 @@
         - { title: "While Loops",           nav: "While loops",           url: /gcse/6/while-loops.html }
         - { title: "1D Lists",              nav: "Lists",                 url: /gcse/6/lists.html }
         - { title: "Strings",               nav: "Strings",               url: /gcse/6/strings.html }
+
+- id: f
+  name: F
+  tag: MakeCode Arcade
+  topics:
+    - title: Computational Thinking
+      label: Computational thinking demos
+      pages:
+        - { title: "Abstraction",   nav: "Abstraction",   url: /f/abstraction.html }
+        - { title: "Decomposition", nav: "Decomposition", url: /f/decomposition.html }
