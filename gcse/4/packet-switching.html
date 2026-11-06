@@ -54,15 +54,12 @@ published: false
   <svg class="netsvg" viewBox="0 0 830 320" id="net" role="img" aria-label="A network of routers between computer A and computer B"></svg>
   <p class="status" id="stat" style="margin-top:10px"></p>
   <div class="io">
-    <div><h3>Computer A: packets to send</h3><div class="chips" id="out"></div><p class="status" style="font-size:.85rem;color:var(--muted)">Click a packet to see what is in it.</p></div>
+    <div><h3>Computer A: packets to send</h3><div class="chips" id="out"></div><p class="status" style="font-size:.85rem;color:var(--muted)">Click a packet to see what is in it.</p>
+      <h3 style="margin-top:12px" id="hdrh">Inside packet 1</h3>
+      <p class="status" style="font-size:.85rem;color:var(--muted)">The data is the body. The header in front holds what is needed to deliver it and put the message back together.</p>
+      <div class="scroll"><table class="t hdr" id="hdr"></table></div></div>
     <div><h3>Computer B: packets received, in order of arrival</h3><div class="scroll"><table class="t rx" id="rx"></table></div><p class="result" id="final"></p></div>
   </div>
-</section>
-
-<section class="block">
-  <h2>Inside a packet</h2>
-  <p class="sub">The data being carried is the body of the packet. A header is attached to the front with the information needed to deliver it and to put the message back together.</p>
-  <div class="scroll"><table class="t hdr" id="hdr"></table></div>
   <p class="note">The <b>checksum</b> is a number calculated from the data before it is sent. The receiving computer does the same calculation on the data that arrives. If the two results do not match, the packet was damaged on the way, and the destination asks for it to be sent again. In this demo the checksum is the character codes of the data added together, keeping only the last 8 bits.</p>
 </section>
 
@@ -116,7 +113,7 @@ let parts=[],pk=[],got={},recv=[],runId=0,sending=false,spoil=-1,sel=0;
 function split(){const m=$('#msg').value||' ',n=+$('#size').value;parts=[];for(let i=0;i<m.length;i+=n)parts.push(m.slice(i,i+n));$('#sizev').textContent=n+' characters';if(sel>=parts.length)sel=0}
 function drawOut(){
   $('#out').innerHTML=parts.map((d,i)=>`<button data-i="${i}" class="${i===sel?'sel':''}"><b>${i+1}</b>${vis(d)}</button>`).join('');
-  const d=parts[sel];
+  const d=parts[sel];$('#hdrh').textContent=`Inside packet ${sel+1}`;
   $('#hdr').innerHTML=`<tr class="sec"><td colspan="2">Header</td></tr><tr><td>IP address of source</td><td>${SRC}</td></tr><tr><td>IP address of destination</td><td>${DST}</td></tr><tr><td>Sequence number</td><td>${sel+1}</td></tr><tr><td>Total number of packets</td><td>${parts.length}</td></tr><tr><td>Checksum</td><td>${sumOf(d)}</td></tr><tr class="sec"><td colspan="2">Body</td></tr><tr><td>Data</td><td>"${vis(d)}"</td></tr><tr class="sec"><td colspan="2">Footer</td></tr><tr><td>End of packet flag</td><td>end</td></tr>`;
 }
 function drawRx(){
