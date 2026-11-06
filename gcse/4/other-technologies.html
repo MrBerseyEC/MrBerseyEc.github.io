@@ -195,6 +195,11 @@ svg.zig{display:block;width:100%;min-width:620px;height:auto}
   <p class="status" id="nf-msg" style="margin-top:8px"></p>
 </section>
 
+<section class="block">
+  <h2>Which technology?</h2>
+  {% include quiz.html %}
+</section>
+
 <script>
 /* ======================= BLUETOOTH ======================= */
 (()=>{
@@ -485,4 +490,15 @@ svg.zig{display:block;width:100%;min-width:620px;height:auto}
   window.addEventListener('resize',place);
   $('#nf-sc button').click();
 })();
+/* ======================= QUIZ ======================= */
+cardQuiz($('#quiz'),[
+ {q:'Connecting a wireless mouse to a laptop.',a:'Bluetooth',why:'Low power, and a range of about 10 metres is plenty.'},
+ {q:'Paying for a coffee by tapping a card on the reader.',a:'NFC',why:'It works only over a few centimetres, and the reader\'s field powers the card.'},
+ {q:'Tracking parcels as they move through a warehouse.',a:'RFID',why:'A tag on each parcel is identified as it passes a reader, with no scanning by hand.'},
+ {q:'Controlling forty smart light bulbs around a house.',a:'Zigbee',why:'It is designed for low power, and the devices pass messages on to each other in a mesh.'},
+ {q:'Streaming music from a phone to wireless earbuds.',a:'Bluetooth',why:'Two nearby devices linked directly, with no router in between.'},
+ {q:'Timing every runner as they cross the finish line of a marathon.',a:'RFID',why:'A tag on each shoe or race number is read by the mat as the runner crosses it.'},
+ {q:'Opening a hotel room door with a key card.',a:'NFC',why:'The card has to be held right next to the lock.'},
+ {q:'A door sensor that tells the hub to turn the hall light on.',a:'Zigbee',why:'The message can hop through other smart devices to reach the hub.'},
+],['Bluetooth','Zigbee','RFID','NFC'],$('#score'),$('#qreset'));
 </script>

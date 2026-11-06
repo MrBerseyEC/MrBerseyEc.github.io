@@ -6,10 +6,9 @@ spec: "EDEXCEL GCSE · 4.1.3"
 published: false
 ---
 <style>
-.media{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
-.media>div{border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
-.media>div>b{display:block}
-.media small{color:var(--muted)}
+.how{border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--bg);margin:14px 0 0}
+.how b{display:block}
+.how small{color:var(--muted)}
 .pulse{height:10px;border-radius:5px;margin:8px 0 0;background:repeating-linear-gradient(90deg,var(--c) 0 14px,transparent 14px 28px);animation:flow 1.2s linear infinite}
 @keyframes flow{to{background-position:28px 0}}
 .sim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:14px}
@@ -20,6 +19,9 @@ published: false
 .meter{display:grid;grid-template-columns:7.5em 1fr 8.5em;gap:10px;align-items:center;margin:0 0 8px;font:600 .9rem var(--sans)}
 .meter i{display:block;height:16px;border-radius:5px;background:var(--one);min-width:2px;transition:width .2s}
 .meter span{font-family:var(--mono)}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.9rem;margin:10px 0 8px}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0;font-weight:700}
 .bars{display:flex;gap:4px;align-items:flex-end;height:34px;margin:0 0 10px}
 .bars i{width:12px;border-radius:3px;background:var(--off)}
 .bars i.on{background:var(--ok)}
@@ -30,35 +32,37 @@ published: false
 .ftt .c i{display:block;height:8px;border-radius:4px;margin:4px 0}
 .ftt .fib{color:var(--one)}.ftt .fib i{background:var(--one)}
 .ftt .cop{color:#B26A00}.ftt .cop i{background:var(--hl)}
+.plan td{vertical-align:middle}
+.plan .seg button{padding:4px 10px;font-size:.85rem;white-space:nowrap}
+.plan tr.good td:last-child{color:var(--ok)}
+.plan tr.poor td:last-child{color:var(--bad)}
+.plan td.ico{font-size:1.3rem;width:2em}
+.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0 0}
+.tally div{border:2px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg)}
+.tally b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.tally span{font-weight:700}
 @media (max-width:820px){.sim{grid-template-columns:1fr}.ftt{grid-template-columns:1fr}.ftt .c{padding:6px 0}}
 </style>
 
 <p class="lede">Devices on a network are connected by a transmission medium. It can be wired, using copper or fibre optic cable, or wireless, using radio waves. The choice affects how fast, how far and how reliably data can be sent.</p>
 
 <section class="block">
-  <h2>Three ways to carry data</h2>
-  <div class="media">
-    <div><b>Copper cable</b><small>Data travels as <b>electrical pulses</b>. Unshielded twisted pair (UTP) is the most common cable in a LAN: pairs of thin copper wires twisted together to reduce interference.</small><div class="pulse" style="--c:var(--hl)"></div></div>
-    <div><b>Fibre optic cable</b><small>Data travels as <b>pulses of light</b> along very thin strands of glass. It is not affected by electrical interference.</small><div class="pulse" style="--c:var(--one);animation-duration:.5s"></div></div>
-    <div><b>Wireless (Wi-Fi)</b><small>Data travels as <b>radio waves</b>, with no physical connection. Each device has a wireless adapter and an antenna.</small><div class="pulse" style="--c:var(--ok);animation-duration:.9s;opacity:.7"></div></div>
-  </div>
-</section>
-
-<section class="block">
   <h2>How good is the connection?</h2>
   <p class="sub">Choose a transmission medium and change the conditions. Look at what happens to each one as the distance grows, and what else affects Wi-Fi.</p>
   <div class="seg" id="kind" role="group" aria-label="Transmission medium"><button data-k="cu" aria-pressed="false">Copper cable</button><button data-k="fo" aria-pressed="false">Fibre optic</button><button data-k="wf" aria-pressed="true">Wi-Fi</button></div>
+  <div class="how" id="how"></div>
   <div class="sim">
     <div>
       <label class="sl">Distance <input type="range" id="dist" min="1" max="300" value="12"><span id="distv"></span></label>
       <label class="sl" id="s-walls">Walls in the way <input type="range" id="walls" min="0" max="5" value="1"><span id="wallsv"></span></label>
       <label class="sl" id="s-devs">Devices using the network <input type="range" id="devs" min="1" max="30" value="4"><span id="devsv"></span></label>
-      <label class="check" id="s-mw"><input type="checkbox" id="mw"> A microwave oven is running nearby</label>
+      <label class="check"><input type="checkbox" id="mw"> Electrical equipment running nearby, such as a microwave oven</label>
     </div>
     <div>
       <div class="bars" id="sig" aria-hidden="true"></div>
       <div class="meter">Speed<i id="m-sp"></i><span id="v-sp"></span></div>
       <div class="meter">Latency<i id="m-la" style="background:var(--hl)"></i><span id="v-la"></span></div>
+      <dl class="facts" id="facts"></dl>
       <p class="status" id="cmsg"></p>
     </div>
   </div>
@@ -66,21 +70,8 @@ published: false
 </section>
 
 <section class="block">
-  <h2>Copper against fibre optic</h2>
-  <div class="scroll"><table class="t">
-    <tr><th></th><th>Copper (UTP CAT 6)</th><th>Fibre optic</th></tr>
-    <tr><td><b>How it works</b></td><td>Transmits data as electrical pulses</td><td>Transmits data as pulses of light</td></tr>
-    <tr><td><b>Range</b></td><td>Short: up to 100 metres</td><td>Long distances with no loss of signal strength</td></tr>
-    <tr><td><b>Speed</b></td><td>Up to 10 Gbps</td><td>High: up to 100 Gbps</td></tr>
-    <tr><td><b>Latency</b></td><td>Higher: copper is susceptible to interference, and latency increases the further the signal travels</td><td>Low: less subject to interference</td></tr>
-    <tr><td><b>Cost</b></td><td>Cheaper and easier to install</td><td>More expensive and more difficult to install</td></tr>
-    <tr><td><b>Usage</b></td><td>Connecting computers and other devices on a LAN</td><td>Connecting LANs together to form WANs, and providing broadband to homes and businesses</td></tr>
-  </table></div>
-</section>
-
-<section class="block">
   <h2>Broadband: how far does the fibre go?</h2>
-  <p class="sub">The old copper telephone network is gradually being replaced by fibre optic cable. The difference between the two common types of broadband connection is the last stretch to the building.</p>
+  <p class="sub">The old copper telephone network is gradually being replaced by fibre optic cable. The difference between the two common types of broadband connection is the last stretch to the building. Move the house further from the street cabinet.</p>
   <div class="seg" id="ftt" role="group" aria-label="Type of broadband"><button data-f="c" aria-pressed="true">Fibre to the cabinet (FTTC)</button><button data-f="p" aria-pressed="false">Fibre to the premises (FTTP)</button></div>
   <div class="ftt">
     <div class="n">Telephone exchange</div>
@@ -89,34 +80,19 @@ published: false
     <div class="c" id="last"><span></span><i></i></div>
     <div class="n">Home or business</div>
   </div>
+  <label class="sl" style="max-width:520px;margin-top:14px">Distance from the street cabinet to the building <input type="range" id="cab" min="50" max="1500" step="50" value="300"><span id="cabv"></span></label>
+  <div class="meter" style="max-width:620px">Download<i id="m-bb"></i><span id="v-bb"></span></div>
   <p class="status" id="fmsg" style="margin-top:12px"></p>
 </section>
 
 <section class="block">
-  <h2>Wired against wireless in a LAN</h2>
-  <div class="scroll"><table class="t">
-    <tr><th></th><th>Wired</th><th>Wireless</th></tr>
-    <tr><td><b>Installation</b></td><td>Laying cables is time-consuming and disruptive. Trailing cables are a trip hazard</td><td>Quicker and less disruptive. The only cables run to the wireless access points</td></tr>
-    <tr><td><b>Flexibility</b></td><td>Connection points have to be planned at the outset. Changes need more cabling</td><td>Very flexible. Any wireless device can join, and can move around while staying connected</td></tr>
-    <tr><td><b>Range</b></td><td>Can transmit over long distances and between buildings on the same site</td><td>A theoretical range of 100 metres, but walls and interference reduce it</td></tr>
-    <tr><td><b>Bandwidth</b></td><td>Fast: up to 10 Gbps for each connection</td><td>Slower, and shared by all the active wireless devices</td></tr>
-    <tr><td><b>Latency</b></td><td>Low</td><td>High</td></tr>
-    <tr><td><b>Reliability</b></td><td>A consistent speed, because cable is less susceptible to interference</td><td>Performance can be inconsistent, because signals are subject to interference</td></tr>
-    <tr><td><b>Security</b></td><td>Data can only be reached by devices physically attached to the network, so it is hard to intercept</td><td>Less secure. Data must be encrypted to prevent eavesdropping</td></tr>
-  </table></div>
+  <h2>Plan an office network</h2>
+  <p class="sub">A small company is moving into a new office. Choose a cable or Wi-Fi for each device. Watch the cost, the speeds, who can move around, and what a stranger in the car park could pick up.</p>
+  <div class="row" style="margin-bottom:10px"><label class="check"><input type="checkbox" id="wpa"> Encrypt the Wi-Fi</label><button class="btn" id="mv">Take the laptop to the meeting room</button></div>
+  <div class="scroll"><table class="t plan" id="plan"></table></div>
+  <div class="tally" id="tally"></div>
+  <p class="status" id="pmsg" style="margin-top:12px"></p>
   <p class="note">Many networks use both. Portable devices connect wirelessly, while equipment that stays put and needs a fast, steady connection, such as servers, desktop PCs and printers, is cabled.</p>
-</section>
-
-<section class="block">
-  <h2>Other wireless technologies</h2>
-  <p class="sub">Wi-Fi is not the only wireless technology. These low-power alternatives send data over a short range.</p>
-  <div class="scroll"><table class="t">
-    <tr><th>Technology</th><th>Range</th><th>How it is used</th></tr>
-    <tr><td><b>Bluetooth</b></td><td>Up to about 10 metres</td><td>Linking two nearby devices, such as a wireless mouse and a laptop, or earbuds and a phone</td></tr>
-    <tr><td><b>Zigbee</b></td><td>Up to 100 metres indoors, and further because devices pass messages on</td><td>Low-power radio that joins thousands of IoT devices in a mesh, such as smart lights and heating controls</td></tr>
-    <tr><td><b>RFID</b></td><td>Centimetres to a few metres</td><td>Identifying and tracking tags attached to objects, such as stock in a warehouse</td></tr>
-    <tr><td><b>NFC</b></td><td>A few centimetres</td><td>Contactless payment. The card has no power supply of its own: it is powered by the electromagnetic field of the reader</td></tr>
-  </table></div>
 </section>
 
 <section class="block">
@@ -132,16 +108,23 @@ published: false
 /* ---------- connection model (illustrative figures) ---------- */
 let kind='wf';
 const fmt=m=>m>=1000?(m/1000).toLocaleString('en-GB',{maximumFractionDigits:1})+' Gbps':m>=10?Math.round(m)+' Mbps':m.toFixed(1)+' Mbps';
+const HOW={
+ cu:['Copper cable (UTP CAT 6)','Data travels as <b>electrical pulses</b>. Unshielded twisted pair (UTP) is the most common cable in a LAN: pairs of thin copper wires twisted together to reduce interference.','var(--hl)','1.2s',[['Range','Up to 100 metres'],['Top speed','Up to 10 Gbps'],['Cost to install','Cheap and easy'],['Typical use','Connecting computers and devices on a LAN']]],
+ fo:['Fibre optic cable','Data travels as <b>pulses of light</b> along very thin strands of glass. It is not affected by electrical interference.','var(--one)','.5s',[['Range','Long distances, no loss of signal'],['Top speed','Up to 100 Gbps'],['Cost to install','Expensive and difficult'],['Typical use','Joining LANs into WANs, and broadband']]],
+ wf:['Wireless (Wi-Fi)','Data travels as <b>radio waves</b>, with no physical connection. Each device has a wireless adapter and an antenna.','var(--ok)','.9s',[['Range','About 100 metres in theory, less indoors'],['Bandwidth','Shared by every active device'],['Cost to install','Cheap: just access points'],['Typical use','Phones, laptops and tablets']]]};
 function drawConn(){
   const d=+$('#dist').value,w=+$('#walls').value,n=+$('#devs').value,mw=$('#mw').checked,wifi=kind==='wf';
   $('#distv').textContent=d+' m';$('#wallsv').textContent=w;$('#devsv').textContent=n;
-  ['s-walls','s-devs','s-mw'].forEach(id=>$('#'+id).classList.toggle('off',!wifi));
-  ['walls','devs','mw'].forEach(id=>$('#'+id).disabled=!wifi);
+  ['s-walls','s-devs'].forEach(id=>$('#'+id).classList.toggle('off',!wifi));
+  ['walls','devs'].forEach(id=>$('#'+id).disabled=!wifi);
+  const h=HOW[kind];
+  $('#how').innerHTML=`<b>${h[0]}</b><small>${h[1]}</small><div class="pulse" style="--c:${h[2]};animation-duration:${h[3]}"></div>`;
+  $('#facts').innerHTML=h[4].map(f=>`<dt>${f[0]}</dt><dd>${f[1]}</dd>`).join('');
   let speed,lat,sig=4,msg;
   if(kind==='cu'){
-    if(d<=100){speed=1000;lat=1+d*.03;msg='A steady 1 Gbps to this device, whatever else is happening on the network. Copper is reliable up to 100 metres.'}
+    if(d<=100){speed=1000;lat=1+d*.03+(mw?3:0);msg='A steady 1 Gbps to this device, whatever else is happening on the network. Copper is reliable up to 100 metres.'+(mw?' The electrical equipment adds a little interference, so latency rises slightly. The twisted pairs keep most of it out.':'')}
     else{speed=0;lat=0;sig=0;msg='<b class="badc">Too far.</b> The electrical signal weakens as it travels. Beyond 100 metres a copper cable cannot carry it reliably.'}
-  }else if(kind==='fo'){speed=10000;lat=.5;msg='Light pulses travel long distances along the glass with no loss of signal strength, so the distance makes no difference here. Fibre gives the highest speed and the lowest latency, but is the most expensive to install.'}
+  }else if(kind==='fo'){speed=10000;lat=.5;msg='Light pulses travel long distances along the glass with no loss of signal strength, so the distance makes no difference here.'+(mw?' Electrical interference has no effect on light.':'')+' Fibre gives the highest speed and the lowest latency, but is the most expensive to install.'}
   else{
     const s=Math.max(0,100-d*.9-w*14-(mw?15:0));sig=s<=5?0:Math.ceil(s/25);
     speed=s<=5?0:1200*(s/100)**2/n;lat=6+(100-s)*.6+(mw?25:0);
@@ -156,24 +139,56 @@ $$('#kind button').forEach(b=>b.onclick=()=>{kind=b.dataset.k;$$('#kind button')
 ['dist','walls','devs','mw'].forEach(id=>$('#'+id).oninput=drawConn);drawConn();
 
 /* ---------- FTTC / FTTP ---------- */
-function drawFtt(p){
-  $('#last').className='c '+(p?'fib':'cop');$('#last span').textContent=p?'fibre optic':'copper cable';
-  $('#fmsg').innerHTML=p?'<b>Fibre to the premises.</b> Fibre optic cable runs the whole way from the exchange into the building. Cutting out copper altogether gives a much faster connection.'
-    :'<b>Fibre to the cabinet.</b> Fibre runs from the exchange to a cabinet in the street, but the final stretch into the building is the old copper cable. The copper limits the speed, and the further the building is from the cabinet the slower the connection.';
+let fttp=false;
+function drawFtt(){
+  const d=+$('#cab').value,sp=fttp?900:Math.max(4,80*Math.exp(-(d-50)/600));
+  $('#cabv').textContent=d+' m';
+  $('#last').className='c '+(fttp?'fib':'cop');$('#last span').textContent=fttp?'fibre optic':'copper cable';
+  $('#m-bb').style.width=Math.max(2,Math.log10(sp+1)/3*100)+'%';$('#v-bb').textContent=fmt(sp);
+  $('#fmsg').innerHTML=fttp?'<b>Fibre to the premises.</b> Fibre optic cable runs the whole way from the exchange into the building. There is no copper to slow it down, so the distance from the cabinet makes no difference.'
+    :`<b>Fibre to the cabinet.</b> Fibre runs from the exchange to the street cabinet, but the last ${d} m into the building is the old copper cable. `+(d>800?'<span class="badc">That is a long stretch of copper, and the signal has weakened a lot.</span>':'The copper limits the speed, and the further the building is from the cabinet the slower the connection.');
 }
-$$('#ftt button').forEach(b=>b.onclick=()=>{$$('#ftt button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawFtt(b.dataset.f==='p')});
-drawFtt(false);
+$$('#ftt button').forEach(b=>b.onclick=()=>{$$('#ftt button').forEach(x=>x.setAttribute('aria-pressed',x===b));fttp=b.dataset.f==='p';drawFtt()});
+$('#cab').oninput=drawFtt;drawFtt();
+
+/* ---------- plan an office ---------- */
+/* best: what suits it ('c' cable, 'w' wifi, 'e' either). moves: carried around the building */
+const OFF=[
+ {ico:'🗄️',n:'File server',best:'c',moves:false,why:{c:'Everyone\'s files come through it, so it needs the fastest, most consistent connection.',w:'Every user\'s files would come through a shared, inconsistent wireless link.'}},
+ {ico:'🖥️',n:'Desktop PC 1',best:'c',moves:false,why:{c:'It never moves, so a cable gives it a fast, steady connection.',w:'It never moves, so it gains nothing from Wi-Fi and takes a share of the bandwidth.'}},
+ {ico:'🖥️',n:'Desktop PC 2',best:'c',moves:false,why:{c:'It never moves, so a cable gives it a fast, steady connection.',w:'It never moves, so it gains nothing from Wi-Fi and takes a share of the bandwidth.'}},
+ {ico:'🖨️',n:'Printer',best:'e',moves:false,why:{c:'It stays put, so a cable is reliable.',w:'Fine: it sends little data, and it can go anywhere there is a socket.'}},
+ {ico:'💻',n:'Manager\'s laptop',best:'e',moves:true,why:{c:'Fast and steady at the desk, but only at the desk.',w:'Can be carried to meetings and stay connected.'}},
+ {ico:'📱',n:'Sales team tablets',best:'w',moves:true,why:{c:'A tablet on a cable cannot be carried around, which is the point of a tablet.',w:'The tablets move around the building and stay connected.'}},
+ {ico:'🤳',n:'Visitors\' phones',best:'w',moves:true,why:{c:'Visitors\' phones have no network socket, and nobody wants trailing cables in reception.',w:'Visitors can join without anyone laying a cable.'}}];
+const pick=OFF.map(o=>o.best==='w'?'w':'c');let moved=false;
+function drawPlan(msg){
+  const nw=pick.filter(p=>p==='w').length,nc=pick.length-nw,wpa=$('#wpa').checked,share=nw?Math.round(600/nw):0;
+  $('#plan').innerHTML='<tr><th></th><th>Device</th><th>Connection</th><th>Speed</th><th>Verdict</th></tr>'+OFF.map((o,i)=>{const p=pick[i],good=o.best==='e'||o.best===p;
+    return `<tr class="${good?'good':'poor'}"><td class="ico">${o.ico}</td><td><b>${o.n}</b></td><td><div class="seg" role="group" aria-label="${o.n}"><button data-i="${i}" data-p="c" aria-pressed="${p==='c'}">Cable</button><button data-i="${i}" data-p="w" aria-pressed="${p==='w'}">Wi-Fi</button></div></td>`+
+      `<td class="mono">${p==='c'?'1 Gbps, steady':'~'+share+' Mbps, varies'}</td><td>${good?'✔':'✖'} ${o.why[p]}</td></tr>`}).join('');
+  const sniff=OFF.filter((o,i)=>pick[i]==='w').map(o=>o.n);
+  $('#tally').innerHTML=
+    `<div><b>Installation</b><span>${nc} cable run${nc===1?'':'s'} through walls and ceilings</span><br><small>${nc>3?'Time-consuming and disruptive, and every socket has to be planned now.':'Quick: the only other cable goes to the wireless access point.'}</small></div>`+
+    `<div><b>Wi-Fi bandwidth</b><span>${nw?`Shared by ${nw} device${nw>1?'s':''}`:'Not used'}</span><br><small>${nw?`About ${share} Mbps each, less through walls or near interference.`:'Every device has its own cable.'}</small></div>`+
+    `<div><b>Flexibility</b><span>${OFF.filter((o,i)=>o.moves&&pick[i]==='w').length} of ${OFF.filter(o=>o.moves).length} portable devices can move</span><br><small>A cabled device works only where its socket is.</small></div>`+
+    `<div><b>Stranger in the car park</b><span class="${sniff.length&&!wpa?'badc':'okc'}">${!sniff.length?'Can pick up nothing':wpa?'Picks up only scrambled data':'Can read traffic from '+sniff.length+' device'+(sniff.length>1?'s':'')}</span><br><small>${!sniff.length?'Data on a cable can only be reached by a device plugged into the network.':wpa?'The radio waves still leave the building, but they are encrypted.':'Radio waves do not stop at the walls. Wireless data must be encrypted to prevent eavesdropping.'}</small></div>`;
+  const ok=OFF.filter((o,i)=>o.best==='e'||o.best===pick[i]).length;
+  $('#pmsg').innerHTML=msg||(ok===OFF.length?`<b class="okc">A good plan.</b> Fixed equipment is cabled and portable devices use Wi-Fi.`+(wpa||!nw?'':' Now encrypt the Wi-Fi.'):`${ok} of ${OFF.length} devices are well connected. Look at the rows marked ✖.`);
+}
+$('#plan').onclick=e=>{const b=e.target.closest('button[data-i]');if(!b)return;pick[+b.dataset.i]=b.dataset.p;drawPlan()};
+$('#wpa').onchange=()=>drawPlan();
+$('#mv').onclick=()=>{const i=4;drawPlan(pick[i]==='w'?'<b class="okc">The laptop stays connected</b> as the manager walks to the meeting room, then shows the sales figures on the big screen.':'<b class="badc">The laptop loses its connection</b> as soon as the cable is unplugged. There is no socket in the meeting room, so nobody planned for it.')};
+drawPlan();
 
 /* ---------- quizzes ---------- */
 cardQuiz($('#quiz1'),[
  {q:'Connecting the desktop PCs in a school computer room to the network.',opts:['Copper cable','Fibre optic','Wi-Fi'],a:'Copper cable',why:'The PCs do not move, the distances are short, and UTP cable gives each one a fast, consistent connection cheaply.'},
  {q:'Linking two continents under the ocean.',opts:['Copper cable','Fibre optic','Wi-Fi'],a:'Fibre optic',why:'Only fibre carries huge amounts of data over thousands of kilometres.'},
  {q:'Customers using their own phones and laptops in a café.',opts:['Copper cable','Fibre optic','Wi-Fi'],a:'Wi-Fi',why:'Portable devices need a connection with no cable, and customers can sit anywhere.'},
- {q:'Paying for a coffee by tapping a card on the reader.',opts:['NFC','Bluetooth','Wi-Fi'],a:'NFC',why:'It works only over a few centimetres, and the reader\'s field powers the card.'},
- {q:'Connecting a wireless mouse to a laptop.',opts:['Bluetooth','NFC','Fibre optic'],a:'Bluetooth',why:'Low power, and a range of about 10 metres is plenty.'},
- {q:'Linking the head office LAN of a bank to its branch LANs across the country.',opts:['Copper cable','Fibre optic','Bluetooth'],a:'Fibre optic',why:'Fibre is used to connect LANs together to form WANs.'},
- {q:'Tracking parcels as they move through a warehouse.',opts:['RFID','Wi-Fi','Copper cable'],a:'RFID',why:'A tag on each parcel is identified as it passes a reader.'},
- {q:'Controlling forty smart light bulbs around a house.',opts:['Zigbee','NFC','Fibre optic'],a:'Zigbee',why:'It is designed for low power and for meshing many devices together.'},
+ {q:'Linking the head office LAN of a bank to its branch LANs across the country.',opts:['Copper cable','Fibre optic','Wi-Fi'],a:'Fibre optic',why:'Fibre is used to connect LANs together to form WANs.'},
+ {q:'Connecting the main file server in a school server room.',opts:['Copper cable','Fibre optic','Wi-Fi'],a:'Copper cable',why:'It never moves and needs a fast, steady connection. Fibre would also work but costs more than needed inside one room.'},
+ {q:'Nurses on a hospital ward updating records on tablets as they move between beds.',opts:['Copper cable','Fibre optic','Wi-Fi'],a:'Wi-Fi',why:'The tablets have to stay connected as they are carried around.'},
 ],null,$('#score1'),$('#qreset1'));
 
 cardQuiz($('#quiz2'),[
