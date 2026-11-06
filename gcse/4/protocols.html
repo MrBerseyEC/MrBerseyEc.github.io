@@ -32,6 +32,14 @@ published: false
 .mbox p{margin:0;color:var(--muted);font-size:.86rem}
 .snoop{font:.88rem/1.6 var(--mono);background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;min-height:7.5em;white-space:pre-wrap;word-break:break-all}
 .snoop .e{color:#FF8A80}.snoop .g{color:#7CE0A6}.snoop .s{color:#9AA7B3}
+.tasks{display:flex;gap:8px;flex-wrap:wrap}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.chips div{border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);opacity:.4;transition:opacity .2s,border-color .2s,box-shadow .2s}
+.chips div.on{opacity:1;border-color:var(--one);box-shadow:0 0 0 4px var(--one-soft)}
+.chips b{font:800 1.05rem var(--mono)}
+.chips em{display:block;font-style:normal;font-size:.8rem;color:var(--muted)}
+.chips small{display:block;font-size:.85rem;margin-top:4px}
+.chips .job{color:var(--one);font-weight:700}
 @media (max-width:860px){.two,.hops,.boxes{grid-template-columns:1fr}.link{padding:6px 0}.node{min-height:0}}
 </style>
 
@@ -49,20 +57,14 @@ published: false
 </section>
 
 <section class="block">
-  <h2>Protocols you need to know</h2>
-  <div class="scroll"><table class="t">
-    <tr><th>Protocol</th><th>Stands for</th><th>What it does</th></tr>
-    <tr><td><b>HTTP</b></td><td>Hypertext Transfer Protocol</td><td>Defines how web pages are requested by a browser and served by a web server</td></tr>
-    <tr><td><b>HTTPS</b></td><td>Hypertext Transfer Protocol Secure</td><td>A secure version of HTTP, with encryption</td></tr>
-    <tr><td><b>FTP</b></td><td>File Transfer Protocol</td><td>Defines how files are transferred across a network</td></tr>
-    <tr><td><b>SMTP</b></td><td>Simple Mail Transfer Protocol</td><td>Defines how emails are sent, from a device to a mail server and between mail servers</td></tr>
-    <tr><td><b>POP3</b></td><td>Post Office Protocol</td><td>Retrieves email by downloading it from the mail server to one device</td></tr>
-    <tr><td><b>IMAP</b></td><td>Internet Message Access Protocol</td><td>Accesses email that stays on the mail server, so every device sees the same mailbox</td></tr>
-    <tr><td><b>TCP</b></td><td>Transmission Control Protocol</td><td>Splits data into packets, delivers them to the right recipient and reassembles them</td></tr>
-    <tr><td><b>IP</b></td><td>Internet Protocol</td><td>Adds the address the data is to be sent to, and routes it there</td></tr>
-    <tr><td><b>Ethernet</b></td><td></td><td>Sets out how data is transmitted on wired LANs</td></tr>
-    <tr><td><b>Wi-Fi</b></td><td></td><td>Sets out how data is transmitted on wireless LANs</td></tr>
-  </table></div>
+  <h2>Which protocols are working?</h2>
+  <p class="sub">Doing one thing on a network uses several protocols at once, each with its own job. Choose a task and how the device is connected, and see which protocols light up.</p>
+  <div class="toolbar" style="margin-bottom:14px">
+    <div class="tasks" id="ptask"></div>
+    <div class="seg" id="pconn" role="group" aria-label="Connection"><button data-c="eth" aria-pressed="false">Cable</button><button data-c="wifi" aria-pressed="true">Wi-Fi</button></div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <p class="status" id="pwmsg" style="margin-top:12px"></p>
 </section>
 
 <section class="block">
@@ -130,6 +132,29 @@ function drawRule(){
     :'<b class="badc">Different rules.</b> Every bit arrived correctly, but the receiver interprets them differently, so the result is nonsense. Nothing is wrong with the hardware: the two ends simply have not agreed on a protocol.';
 }
 $('#msg').oninput=$('#rule').onchange=drawRule;drawRule();
+
+/* ---------- which protocols are working ---------- */
+const PR=[['HTTP','Hypertext Transfer Protocol','How web pages are requested by a browser and served by a web server'],['HTTPS','Hypertext Transfer Protocol Secure','A secure version of HTTP, with encryption'],['FTP','File Transfer Protocol','How files are transferred across a network'],['SMTP','Simple Mail Transfer Protocol','How emails are sent, to a mail server and between mail servers'],['POP3','Post Office Protocol','Retrieves email by downloading it from the mail server to one device'],['IMAP','Internet Message Access Protocol','Accesses email that stays on the mail server, so every device sees the same mailbox'],['TCP','Transmission Control Protocol','Splits data into packets, delivers them and reassembles them'],['IP','Internet Protocol','Adds the address the data is sent to, and routes it there'],['Ethernet','','How data is transmitted on wired LANs'],['Wi-Fi','','How data is transmitted on wireless LANs']];
+const PT=[
+ ['Read a news website',{HTTP:'requests the page from the web server'}],
+ ['Log in to online banking',{HTTPS:'encrypts the login details on the way'}],
+ ['Upload a website\'s files',{FTP:'transfers the files to the web server'}],
+ ['Send an email',{SMTP:'passes the email to the mail server'}],
+ ['Read email on phone and laptop',{IMAP:'shows the mailbox kept on the server'}],
+ ['Download email to one PC',{POP3:'downloads the emails and removes them from the server'}]];
+let pt=0,pc='wifi';
+$('#ptask').innerHTML=PT.map((t,i)=>`<button class="btn" data-i="${i}">${t[0]}</button>`).join('');
+function drawPW(){
+  const t=PT[pt],job={...t[1],TCP:'splits the data into packets and puts them back together',IP:'addresses each packet and routes it'};
+  job[pc==='eth'?'Ethernet':'Wi-Fi']=pc==='eth'?'sends the packets along the cable':'sends the packets as radio waves';
+  $$('#ptask button').forEach((b,i)=>b.classList.toggle('pri',i===pt));
+  $('#chips').innerHTML=PR.map(p=>`<div class="${job[p[0]]?'on':''}"><b>${p[0]}</b>${p[1]?`<em>${p[1]}</em>`:''}<small>${job[p[0]]?`<span class="job">Here it ${job[p[0]]}.</span>`:p[2]}</small></div>`).join('');
+  const app=Object.keys(t[1])[0];
+  $('#pwmsg').innerHTML=`<b>${t[0]}:</b> four protocols at work. <b>${app}</b> is the one that depends on the task. <b>TCP</b> and <b>IP</b> are used for everything, and <b>${pc==='eth'?'Ethernet':'Wi-Fi'}</b> depends only on how the device is connected.`;
+}
+$('#ptask').onclick=e=>{const b=e.target.closest('button');if(!b)return;pt=+b.dataset.i;drawPW()};
+$$('#pconn button').forEach(b=>b.onclick=()=>{pc=b.dataset.c;$$('#pconn button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawPW()});
+drawPW();
 
 /* ---------- sending an email ---------- */
 const STEPS=[
