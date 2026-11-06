@@ -37,7 +37,13 @@ published: false
 .devs button.conn{border-color:var(--one)}
 .devs button.wait{border-color:var(--bad);background:var(--bad-soft)}
 .devs button span{font:600 .82rem var(--mono)}
-@media (max-width:900px){.hops,.dhcp{grid-template-columns:1fr}.link{padding:6px 0}.node{min-height:0}}
+.ph{font-size:.8rem;color:var(--muted);margin:8px 0 4px}
+.dns{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,.6fr) minmax(0,1.4fr) minmax(0,.6fr) minmax(0,.8fr);align-items:center;max-width:980px}
+.recs{border-collapse:collapse;margin:6px auto 0;font:600 .74rem var(--mono)}
+.recs td{padding:2px 6px;border-bottom:1px solid var(--line);text-align:left}
+.recs tr.hit td{background:var(--ok-soft);color:var(--ok)}
+.recs tr.miss td{color:var(--bad)}
+@media (max-width:900px){.dns,.hops,.dhcp{grid-template-columns:1fr}.link{padding:6px 0}.node{min-height:0}}
 </style>
 
 <p class="lede">The word internet is short for <b>inter</b>connected <b>net</b>work. It is a network of networks, large and small, some privately owned and some public, that together link billions of devices around the world. No single organisation or government owns it.</p>
@@ -80,23 +86,24 @@ published: false
   <p class="sub">The router gets one public IP address from the ISP. It then gives each device on its own network a <b>local</b> IP address, which is only visible inside that network. This router has a pool of five addresses to hand out. Click devices to connect and disconnect them.</p>
   <div class="dhcp">
     <div><h3>Devices</h3><div class="devs" id="devs"></div></div>
-    <div><h3>Addresses on the home network</h3><div class="pool" id="pool"></div></div>
+    <div><h3>Addresses on the home network</h3><p class="ph">Static addresses: set once, never change</p><div class="pool" id="pool-s"></div><p class="ph">Dynamic addresses: handed out from a pool</p><div class="pool" id="pool"></div></div>
   </div>
   <p class="status" id="dmsg" style="margin-top:12px"></p>
-  <div class="scroll"><table class="t" style="max-width:860px">
-    <tr><th></th><th>Static IP address</th><th>Dynamic IP address</th></tr>
-    <tr><td><b>Does it change?</b></td><td>Never</td><td>Assigned by the network each time the device connects</td></tr>
-    <tr><td><b>Used for</b></td><td>Devices that need constant access and must always be found at the same address, such as routers and servers</td><td>Most other devices: phones, laptops, tablets</td></tr>
-    <tr><td><b>Why</b></td><td>Other devices need to know exactly where to find it</td><td>An address that is no longer needed goes back into the pool, so a limited number of addresses can be shared by many devices</td></tr>
-  </table></div>
+  <p class="note">A <b>static</b> address never changes, so it suits devices that need constant access and must always be found in the same place, such as routers and servers. A <b>dynamic</b> address is assigned each time a device connects and goes back into the pool when it leaves, so a limited number of addresses can be shared by many devices.</p>
 </section>
 
 <section class="block">
   <h2>Domain names</h2>
-  <p class="sub">People are better at remembering words than numbers. The Domain Name System (DNS) lets you type a name, and looks up the IP address that belongs to it.</p>
-  <div class="row"><label class="check">Domain name <select id="dom"></select></label><button class="btn pri" id="look">Look up</button></div>
-  <p class="result" id="dres"></p>
-  <p class="status" id="dnsmsg"></p>
+  <p class="sub">People are better at remembering words than numbers. The Domain Name System (DNS) lets you type a name, and looks up the IP address that belongs to it. Type an address, or pick one, and watch the lookup.</p>
+  <div class="row" style="margin-bottom:12px"><input type="text" id="dom" value="www.example.com" aria-label="Domain name" style="font-family:var(--mono);width:16em"><button class="btn pri" id="look">Go</button><span id="picks"></span></div>
+  <div class="dns">
+    <div class="node" id="d0"><div class="ico">💻</div><b>Browser</b><small id="d0s">Needs an IP address</small></div>
+    <div class="link" id="dl0"><div class="val"></div><div class="bar"></div></div>
+    <div class="node" id="d1"><div class="ico">📒</div><b>DNS server</b><table class="recs" id="recs"></table></div>
+    <div class="link" id="dl1"><div class="val"></div><div class="bar"></div></div>
+    <div class="node" id="d2"><div class="ico">🗄️</div><b>Web server</b><small id="d2s">Waiting</small></div>
+  </div>
+  <p class="status" id="dnsmsg" style="margin-top:12px"></p>
 </section>
 
 <section class="block">
@@ -144,13 +151,13 @@ function give(){while(waiting.length){const free=POOL.find(a=>!lease[a]);if(!fre
 function drawPool(msg){
   const addr=d=>POOL.find(a=>lease[a]===d);
   $('#devs').innerHTML=NAMES.map(d=>`<button data-d="${d}" class="${addr(d)?'conn':waiting.includes(d)?'wait':''}">${d}<span>${addr(d)||(waiting.includes(d)?'waiting for an address':'not connected')}</span></button>`).join('');
-  $('#pool').innerHTML=`<div class="fixed"><span>192.168.1.1</span><span>Router (static)</span></div><div class="fixed"><span>192.168.1.2</span><span>Printer (static)</span></div>`+
-    POOL.map(a=>`<div class="${lease[a]?'used':''}"><span>${a}</span><span>${lease[a]||'free'}</span></div>`).join('');
+  $('#pool-s').innerHTML=`<div class="fixed"><span>192.168.1.1</span><span>Router</span></div><div class="fixed"><span>192.168.1.2</span><span>Printer</span></div>`;
+  $('#pool').innerHTML=POOL.map(a=>`<div class="${lease[a]?'used':''}"><span>${a}</span><span>${lease[a]||'free'}</span></div>`).join('');
   $('#dmsg').innerHTML=msg||'The router and the printer have static addresses, so they can always be found in the same place.';
 }
 $('#devs').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;const d=b.dataset.d,a=POOL.find(x=>lease[x]===d);let msg;
-  if(a){delete lease[a];const next=waiting[0];give();msg=`${d} disconnects. <b class="mono">${a}</b> goes back into the pool`+(next?` and is given straight to ${next}, which was waiting.`:', ready for another device to use.')}
+  if(a){delete lease[a];const next=waiting[0];give();msg=`${d} disconnects. <b class="mono">${a}</b> goes back into the pool`+(next?` and is given straight to ${next}, which was waiting.`:'. If it reconnects later it may be given a different address.')}
   else if(waiting.includes(d)){waiting=waiting.filter(x=>x!==d);msg=`${d} gives up waiting.`}
   else{waiting.push(d);give();const got=POOL.find(x=>lease[x]===d);msg=got?`${d} connects and is given the dynamic address <b class="mono">${got}</b>.`:`<span class="badc">${d} wants to connect, but all five addresses in the pool are in use. It has to wait until another device disconnects.</span>`}
   drawPool(msg);
@@ -159,10 +166,31 @@ $('#devs').onclick=e=>{
 
 /* ---------- DNS ---------- */
 const DNS=[['www.example.com','203.0.113.80'],['www.school.example','198.51.100.24'],['shop.example.org','203.0.113.151'],['mail.example.net','192.0.2.45']];
-$('#dom').innerHTML=DNS.map((d,i)=>`<option value="${i}">${d[0]}</option>`).join('');
-$('#look').onclick=()=>{const d=DNS[$('#dom').value];$('#dres').textContent=`${d[0]} → ${d[1]}`;
-  $('#dnsmsg').innerHTML=`The browser asks a DNS server for the address of <b>${d[0]}</b>. The server finds the name in its records and sends back <b class="mono">${d[1]}</b>. The browser can now address its request to that IP address.`};
-$('#dom').onchange=()=>{$('#dres').textContent='';$('#dnsmsg').textContent=''};
+let dBusy=false;
+$('#picks').innerHTML=[...DNS.map(d=>d[0]),'www.exmaple.com'].map(n=>`<button class="btn" data-n="${n}" style="padding:4px 10px;font-size:.82rem">${n}</button>`).join(' ');
+function dnsReset(){
+  ['d0','d1','d2','dl0','dl1'].forEach(id=>$('#'+id).classList.remove('on'));
+  $$('.dns .val').forEach(v=>v.textContent='');$('#d0s').textContent='Needs an IP address';$('#d2s').textContent='Waiting';
+  $('#recs').innerHTML=DNS.map(d=>`<tr><td>${d[0]}</td><td>${d[1]}</td></tr>`).join('');
+}
+async function lookup(){
+  if(dBusy)return;dBusy=true;dnsReset();
+  const name=$('#dom').value.trim().toLowerCase(),i=DNS.findIndex(d=>d[0]===name),on=id=>$('#'+id).classList.add('on'),off=id=>$('#'+id).classList.remove('on'),val=(id,t)=>$('#'+id+' .val').textContent=t;
+  on('d0');$('#dnsmsg').innerHTML=`You typed <b class="mono">${name||'(nothing)'}</b>. The browser cannot use a name to address a packet: it needs an IP address.`;await sleep(1100);
+  on('dl0');on('d1');val('dl0',`IP of ${name}? →`);$('#dnsmsg').innerHTML='The browser sends a request to a <b>DNS server</b>, asking for the IP address that belongs to the name.';await sleep(1300);
+  const rows=$$('#recs tr');
+  for(let k=0;k<rows.length;k++){rows[k].classList.add(k===i?'hit':'miss');await sleep(320);if(k===i)break;rows[k].classList.remove('miss')}
+  if(i<0){val('dl0','← not found');off('d1');$('#d0s').textContent='"Can\'t find this site"';
+    $('#dnsmsg').innerHTML=`<b class="badc">Not found.</b> The DNS server has no record for <b class="mono">${name}</b>, so there is no IP address to send the request to. The browser shows an error. One wrong letter in a domain name is enough.`;dBusy=false;return}
+  const ip=DNS[i][1];val('dl0','← '+ip);$('#d0s').textContent='Got '+ip;
+  $('#dnsmsg').innerHTML=`The DNS server finds the name in its records and replies with <b class="mono">${ip}</b>.`;await sleep(1300);
+  off('dl0');off('d1');on('dl1');on('d2');val('dl1','GET page → '+ip);$('#d2s').textContent=ip;
+  $('#dnsmsg').innerHTML=`<b class="okc">Connected.</b> The browser can now address its request for the page to <b class="mono">${ip}</b>. The DNS server is not involved in fetching the page itself.`;
+  dBusy=false;
+}
+$('#look').onclick=lookup;$('#dom').onkeydown=e=>{if(e.key==='Enter')lookup()};
+$('#picks').onclick=e=>{const b=e.target.closest('button');if(!b)return;$('#dom').value=b.dataset.n;lookup()};
+dnsReset();$('#dnsmsg').textContent='Press Go.';
 
 /* ---------- quiz ---------- */
 cardQuiz($('#quiz'),[
