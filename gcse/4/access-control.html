@@ -26,6 +26,8 @@ published: false
 .cards-row{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
 .alog{font:.88rem/1.6 var(--mono);background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;min-height:120px;white-space:pre-wrap}
 .alog .e{color:#FF8A80}.alog .g{color:#7CE0A6}.alog .s{color:#9AA7B3}
+.pkey{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:.86rem;color:var(--muted);margin:10px 0 0}
+.pkey i{font:700 .78rem var(--mono);font-style:normal;padding:1px 6px;border-radius:6px;border:1.5px solid var(--one);background:var(--one-soft);color:var(--ink);margin-right:6px}
 @media (max-width:760px){.mfa{grid-template-columns:1fr}}
 </style>
 
@@ -66,29 +68,22 @@ published: false
   <div class="row" style="margin-bottom:12px"><label class="check">Logged in as <select id="user"></select></label></div>
   <div class="scroll"><table class="t perm" id="perm"></table></div>
   <p class="status" id="pmsg" style="margin-top:10px"></p>
-  <div class="scroll"><table class="t" style="max-width:760px">
-    <tr><th>Permission</th><th>What the user can do</th></tr>
-    <tr><td><b>Read-only</b></td><td>Open the file and read its contents, but not modify or delete it</td></tr>
-    <tr><td><b>Read and write</b></td><td>Read and modify the file, but not delete it</td></tr>
-    <tr><td><b>Execute</b></td><td>Run a program file</td></tr>
-    <tr><td><b>Delete</b></td><td>Delete the file</td></tr>
-  </table></div>
+  <div class="pkey"><span><i>r</i>Read-only: open and read the file, but not modify or delete it</span><span><i>w</i>Write: modify the file</span><span><i>x</i>Execute: run a program file</span><span><i>d</i>Delete the file</span></div>
   <p class="note">The <b>principle of least privilege</b>: give each user only the permissions and administrative rights they need to do their job. A receptionist needs the booking system, but not the revenue forecasts. Access controls are set up by the organisation's system administrator.</p>
 </section>
 
 <section class="block">
   <h2>Physical security</h2>
-  <p class="sub">Anyone with physical access to a server, and enough technical skill, could bypass the authentication and access control systems altogether, then copy, change or delete data or install malware. So the servers are kept in a locked server room. Swipe a card to try the door.</p>
+  <p class="sub">Anyone with physical access to a server, and enough technical skill, could bypass the authentication and access control systems altogether, then copy, change or delete data or install malware. So the servers are kept in a locked server room. Try the door with each kind of lock.</p>
+  <div class="toolbar" style="margin-bottom:12px">
+    <div class="seg" id="lock" role="group" aria-label="Kind of lock"><button data-l="card" aria-pressed="true">Swipe-card lock</button><button data-l="key" aria-pressed="false">Traditional key</button></div>
+    <label class="check"><input type="checkbox" id="cctv"> CCTV and a burglar alarm</label>
+  </div>
   <div class="cards-row" id="swipes"></div>
+  <div class="row" style="margin-bottom:12px"><button class="btn" id="lost">The technician reports their card lost</button><button class="btn" id="dclear">Clear the log</button></div>
   <div class="alog" id="door"></div>
-  <div class="scroll"><table class="t" style="margin-top:14px">
-    <tr><th>Measure</th><th>How it helps</th></tr>
-    <tr><td><b>Locked server room</b></td><td>Only authorised people, such as network technicians and the system administrator, can get to the critical equipment</td></tr>
-    <tr><td><b>Electronic locks</b><br>swipe cards, key fobs, keypads</td><td>Entry and exit times are recorded, and an individual card can be deactivated if it is lost or when an employee leaves. A traditional key cannot do either</td></tr>
-    <tr><td><b>Burglar alarms and CCTV</b></td><td>Deter intruders and record what happens</td></tr>
-    <tr><td><b>Security tags and locking down equipment</b></td><td>Protect against the theft of computers and other devices</td></tr>
-    <tr><td><b>Locked doors and windows</b></td><td>Stop people simply walking in</td></tr>
-  </table></div>
+  <p class="status" id="dmsg2" style="margin-top:10px"></p>
+  <p class="note">Other physical measures include locked doors and windows to stop people simply walking in, and security tags or locking equipment down to protect against theft.</p>
 </section>
 
 <section class="block">
@@ -137,7 +132,7 @@ $('#user').innerHTML=USERS.map((u,i)=>`<option value="${i}"${i===1?' selected':'
 function drawPerm(){
   const u=USERS[$('#user').value];
   $('#perm').innerHTML='<tr><th>File</th><th>Permissions for this user</th><th>Try to…</th></tr>'+FILES.map((f,i)=>`<tr><td><b class="mono">${f[0]}</b><br><small style="color:var(--muted)">${f[1]}</small></td><td><div class="chips">${ACT.map(a=>`<i class="${u[1][i].includes(a[0])?'on':''}" title="${a[1]}">${a[0]}</i>`).join('')}</div></td><td><div class="row" style="gap:6px">${ACT.map(a=>`<button class="btn" data-f="${i}" data-a="${a[0]}">${a[1]}</button>`).join('')}</div></td></tr>`).join('');
-  $('#pmsg').innerHTML=`r = read, w = write, x = execute, d = delete. `+(u[0]==='System administrator'?'A super user can access the most sensitive data on the system.':'');
+  $('#pmsg').innerHTML=`The principle of least privilege: this user has only what their job needs. `+(u[0]==='System administrator'?'A super user can access the most sensitive data on the system.':'');
 }
 $('#perm').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;const u=USERS[$('#user').value],f=FILES[b.dataset.f],a=ACT.find(x=>x[0]===b.dataset.a);
@@ -148,15 +143,43 @@ $('#perm').onclick=e=>{
 $('#user').onchange=drawPerm;drawPerm();
 
 /* ---------- server room door ---------- */
-const CARDS=[['Network technician',true,''],['System administrator',true,''],['Receptionist',false,'This card is not authorised for the server room.'],['Card reported lost last week',false,'This card has been deactivated.'],['Employee who left last month',false,'This card was deactivated when they left.']];
-let clock=9*60+2;
-$('#swipes').innerHTML=CARDS.map((c,i)=>`<button class="btn" data-i="${i}">${c[0]}</button>`).join('');
-$('#swipes').onclick=e=>{
-  const b=e.target.closest('button');if(!b)return;const c=CARDS[b.dataset.i];clock+=3+Math.floor(Math.random()*40);
+const PEOPLE=[['Network technician','tech'],['System administrator','admin'],['Receptionist','rec'],['Someone who found the technician\'s lost '+'card','find'],['Employee who left last month','left']];
+let lock='card',lost=false,clock=9*60+2;
+function drawDoor(){
+  $('#swipes').innerHTML=PEOPLE.map((p,i)=>`<button class="btn" data-i="${i}">${p[0].replace('card',lock==='card'?'card':'key')}</button>`).join('');
+  $('#lost').textContent=`The technician reports their ${lock==='card'?'card':'key'} lost`;
+}
+function logDoor(who,ok,why){
+  clock+=3+Math.floor(Math.random()*40);
   const t=String(Math.floor(clock/60)%24).padStart(2,'0')+':'+String(clock%60).padStart(2,'0');
-  $('#door').insertAdjacentHTML('beforeend',`<span class="s">${t}</span>  ${c[0].padEnd(30)} <span class="${c[1]?'g':'e'}">${c[1]?'✔ door unlocked':'✖ entry refused. '+c[2]}</span>\n`);
+  const name=lock==='card'?who.padEnd(26):'(no record of who)'.padEnd(26);
+  let line=`<span class="s">${t}</span>  ${name} <span class="${ok?'g':'e'}">${ok?'✔ door unlocked':'✖ entry refused'}</span>${why?` <span class="s">${why}</span>`:''}`;
+  $('#door').insertAdjacentHTML('beforeend',line+'\n');
+}
+$('#swipes').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;const [n,k]=PEOPLE[b.dataset.i],cctv=$('#cctv').checked,card=lock==='card';
+  let ok,why,msg,intruder=false;
+  if(k==='tech'||k==='admin'){ok=true;msg=card?'Authorised. The card system records exactly who went in and when.':'Authorised, but a key leaves no record of who opened the door or when.'}
+  else if(k==='rec'){ok=false;why=card?'not authorised for this room':'has no key';msg='The receptionist\'s job does not need the server room.'}
+  else if(k==='find'){intruder=true;
+    if(card&&lost){ok=false;why='card deactivated';msg='<b class="okc">Refused.</b> The lost card was switched off as soon as it was reported. Nothing else had to change.'}
+    else if(card){ok=true;why='but it is not the technician';msg='<b class="badc">The finder gets in.</b> The card has not been reported lost yet, so it still works. Report it and try again.'}
+    else{ok=true;msg='<b class="badc">The finder gets in.</b> A lost key cannot be cancelled. The only fix is to change the lock and give everyone a new key.'}}
+  else{intruder=!card;
+    if(card){ok=false;why='card deactivated when they left';msg='<b class="okc">Refused.</b> Their card was switched off on their last day.'}
+    else{ok=true;msg='<b class="badc">They get in.</b> They had a copy of the key cut before they left, and there is no way to tell.'}}
+  logDoor(k==='find'?'Network technician':k==='left'?'Former employee':n,ok,why);
+  if(cctv&&(intruder||!ok))$('#door').insertAdjacentHTML('beforeend',`<span class="s">        📹 recorded on CCTV${ok&&intruder?'. 🔔 Alarm raised: unauthorised person in the server room':''}</span>\n`);
+  $('#dmsg2').innerHTML=msg+(cctv&&ok&&intruder?' The CCTV and alarm deter intruders and record what happens, but they do not stop the door opening.':'');
 };
-$('#door').innerHTML='<span class="s">Entry log for the server room door</span>\n';
+$('#lost').onclick=()=>{
+  if(lock==='card'){lost=true;$('#door').insertAdjacentHTML('beforeend','<span class="s">        Technician\'s card deactivated. A new card is issued.</span>\n');$('#dmsg2').innerHTML='<b class="okc">Card deactivated.</b> Try the lost card again.'}
+  else $('#dmsg2').innerHTML='<b class="badc">There is nothing to switch off.</b> Whoever has the key can still use it until the lock is changed.';
+};
+$$('#lock button').forEach(b=>b.onclick=()=>{lock=b.dataset.l;$$('#lock button').forEach(x=>x.setAttribute('aria-pressed',x===b));lost=false;drawDoor();
+  $('#door').innerHTML=`<span class="s">Entry log for the server room door (${lock==='card'?'swipe-card lock':'traditional key'})</span>\n`;$('#dmsg2').textContent=''});
+$('#dclear').onclick=()=>{$('#door').innerHTML=`<span class="s">Entry log for the server room door (${lock==='card'?'swipe-card lock':'traditional key'})</span>\n`};
+drawDoor();$('#dclear').onclick();
 
 /* ---------- quizzes ---------- */
 cardQuiz($('#quiz1'),[
