@@ -89,6 +89,12 @@ table.tt{border-collapse:collapse;font-size:.92rem}
 .drill .dq{font-weight:700;font-size:1.05rem;margin:0 0 10px}
 .drill input{font-family:var(--mono);width:13em}
 .result{font:700 1.5rem/1.3 var(--mono);margin:6px 0}
+/* a reference table kept for revision, closed by default so the demo comes first */
+details.recap{border:1.5px solid var(--line);border-radius:10px;background:var(--bg);margin:12px 0 0}
+details.recap>summary{cursor:pointer;font-weight:800;padding:10px 14px}
+details.recap>summary:hover{color:var(--one)}
+details.recap[open]>summary{border-bottom:1px solid var(--line)}
+details.recap>.scroll{padding:4px 8px 8px}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 

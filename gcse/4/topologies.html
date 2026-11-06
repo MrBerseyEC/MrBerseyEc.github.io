@@ -17,6 +17,9 @@ published: false
 .stations div.tx{border-color:var(--one);background:var(--one-soft)}
 .stations div.hit{border-color:var(--bad);background:var(--bad-soft)}
 .stations small{display:block;font:600 .78rem var(--mono);color:var(--muted);min-height:1.3em}
+.algo{margin:14px 0 0;padding-left:1.6em;max-width:80ch}
+.algo li{padding:3px 8px;border-radius:6px;transition:background .2s}
+.algo li.cur{background:var(--one-soft);box-shadow:inset 4px 0 0 var(--one);font-weight:700}
 .alog{font:.88rem/1.6 var(--mono);background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;min-height:170px;white-space:pre-wrap;margin-top:12px}
 .alog .e{color:#FF8A80}.alog .g{color:#7CE0A6}.alog .s{color:#9AA7B3}
 </style>
@@ -44,7 +47,7 @@ published: false
   <div class="busbar" id="busbar"></div>
   <div class="stations" id="stations"></div>
   <div class="alog" id="clog"></div>
-  <ol style="margin:14px 0 0;padding-left:1.3em;max-width:80ch">
+  <ol class="algo" id="algo">
     <li>Check if the bus is busy.</li>
     <li>If it is not busy, send the message. Otherwise go back to step 1.</li>
     <li>Listen to see if the message was received correctly.</li>
@@ -56,6 +59,8 @@ published: false
 
 <section class="block">
   <h2>Comparing the topologies</h2>
+  <p class="sub">Use the demo above to test each claim: break the central switch, cut the backbone, count the cables, and see who receives each message.</p>
+  <details class="recap"><summary>Summary table</summary>
   <div class="scroll"><table class="t">
     <tr><th></th><th>Bus</th><th>Star</th><th>Mesh</th></tr>
     <tr><td><b>How it is connected</b></td><td>Every node is attached to a single cable, the backbone, with a terminator at each end</td><td>Every node is connected directly to a central node, usually a switch</td><td>Each node is connected to several others. In a fully connected mesh, every node is connected to every other node</td></tr>
@@ -66,6 +71,7 @@ published: false
     <tr><td><b>Cost</b></td><td>Cheap. Very little cable is needed</td><td>A wired star needs a lot of cable, so it is more difficult and expensive to set up</td><td>A fully connected wired mesh is difficult and expensive to install. This is not an issue for wireless mesh networks</td></tr>
     <tr><td><b>Where it is used</b></td><td>Rare in computer networks now. Almost every modern car uses a bus (the CAN bus) to link its sensors and controls</td><td>The most widely used. Most home networks are a star, with the wireless router as the central node</td><td>IoT devices such as smart lighting, traffic management in smart cities, and the backbone of the internet</td></tr>
   </table></div>
+  </details>
   <p class="note">Networks with a single topology are rare. Most are hybrid, combining elements of different topologies. The internet is the ultimate hybrid network.</p>
 </section>
 
@@ -172,25 +178,27 @@ const ST=['A','B','C','D'];
 function stations(state={}){$('#stations').innerHTML=ST.map(s=>`<div class="${(state[s]||[])[0]||''}">${s}<small>${(state[s]||[])[1]||'listening'}</small></div>`).join('')}
 const bus=c=>$('#busbar').className='busbar '+c;
 const say=(t,c)=>$('#clog').insertAdjacentHTML('beforeend',`<span class="${c||''}">${t}</span>\n`);
+const algo=n=>$$('#algo li').forEach((l,i)=>l.classList.toggle('cur',i===n-1));
 async function csma(both){
   if(cBusy)return;cBusy=true;$('#c-one').disabled=$('#c-two').disabled=true;$('#clog').innerHTML='';bus('');stations();
   if(!both){
-    say('A wants to send. It checks the bus: not busy.');stations({A:['','checking']});await sleep(1100);
-    say('A sends its message.');bus('busy');stations({A:['tx','sending']});await sleep(1400);
-    bus('');stations();say('A listens. ✔ The message was received correctly.','g');
+    algo(1);say('A wants to send. It checks the bus: not busy.');stations({A:['','checking']});await sleep(1100);
+    algo(2);say('A sends its message.');bus('busy');stations({A:['tx','sending']});await sleep(1400);
+    algo(3);bus('');stations();say('A listens. ✔ The message was received correctly.','g');
   }else{
     let wa=rnd(1,9),wc=rnd(1,9);while(wc===wa)wc=rnd(1,9);
     const f=wa<wc?'A':'C',s=wa<wc?'C':'A';
-    say('A checks the bus: not busy.');say('C checks the bus at the same moment: not busy.');stations({A:['','checking'],C:['','checking']});await sleep(1300);
-    say('✖ Both send at once. COLLISION: the signals interfere and both messages are unreadable.','e');bus('crash');stations({A:['hit','sending'],C:['hit','sending']});await sleep(1600);
-    bus('');say('A and C listen, and each detects that its message was not received correctly.');await sleep(1300);
-    say(`A waits a random time: ${wa} ms.   C waits a random time: ${wc} ms.`);stations({A:['',`waiting ${wa} ms`],C:['',`waiting ${wc} ms`]});await sleep(1500);
-    say(`${f} finishes waiting first. It checks the bus: not busy. It sends again.`);bus('busy');stations({[f]:['tx','sending'],[s]:['','waiting']});await sleep(1300);
-    say(`${s} finishes waiting. It checks the bus: busy. It keeps checking.`,'s');stations({[f]:['tx','sending'],[s]:['','checking']});await sleep(1300);
-    bus('');say(`✔ The message from ${f} was received correctly.`,'g');await sleep(900);
-    say(`${s} checks the bus: not busy. It sends.`);bus('busy');stations({[s]:['tx','sending']});await sleep(1300);
-    bus('');stations();say(`✔ The message from ${s} was received correctly.`,'g');
+    algo(1);say('A checks the bus: not busy.');say('C checks the bus at the same moment: not busy.');stations({A:['','checking'],C:['','checking']});await sleep(1300);
+    algo(2);say('✖ Both send at once. COLLISION: the signals interfere and both messages are unreadable.','e');bus('crash');stations({A:['hit','sending'],C:['hit','sending']});await sleep(1600);
+    algo(4);bus('');say('A and C listen, and each detects that its message was not received correctly.');await sleep(1300);
+    algo(5);say(`A waits a random time: ${wa} ms.   C waits a random time: ${wc} ms.`);stations({A:['',`waiting ${wa} ms`],C:['',`waiting ${wc} ms`]});await sleep(1500);
+    algo(2);say(`${f} finishes waiting first. It checks the bus: not busy. It sends again.`);bus('busy');stations({[f]:['tx','sending'],[s]:['','waiting']});await sleep(1300);
+    algo(1);say(`${s} finishes waiting. It checks the bus: busy. It keeps checking.`,'s');stations({[f]:['tx','sending'],[s]:['','checking']});await sleep(1300);
+    algo(3);bus('');say(`✔ The message from ${f} was received correctly.`,'g');await sleep(900);
+    algo(2);say(`${s} checks the bus: not busy. It sends.`);bus('busy');stations({[s]:['tx','sending']});await sleep(1300);
+    algo(3);bus('');stations();say(`✔ The message from ${s} was received correctly.`,'g');
   }
+  await sleep(900);algo(0);
   cBusy=false;$('#c-one').disabled=$('#c-two').disabled=false;
 }
 $('#c-one').onclick=()=>csma(false);$('#c-two').onclick=()=>csma(true);
