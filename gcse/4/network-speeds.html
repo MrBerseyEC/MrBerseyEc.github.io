@@ -23,10 +23,7 @@ published: false
 .calc input{width:7em}
 .work td{font-family:var(--mono)}
 .work td:first-child{font-family:var(--sans)}
-.forms{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
-.forms div{border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
-.forms b{display:block;font:700 1rem var(--mono)}
-.forms small{color:var(--muted)}
+.calc .grp{display:inline-flex;gap:8px;align-items:center}
 @media (max-width:640px){.sl{grid-template-columns:1fr}.call{grid-template-columns:1fr}}
 </style>
 
@@ -61,35 +58,31 @@ published: false
 <section class="block">
   <h2>Units of network speed</h2>
   <p class="sub">The <b>data transfer rate</b> is the speed at which data is transmitted from one device to another. It is measured in bits per second.</p>
-  <div class="scroll"><table class="t" style="max-width:640px">
+  <details class="recap" style="max-width:640px"><summary>Units of speed</summary>
+  <div class="scroll"><table class="t">
     <tr><th>Unit</th><th>Abbreviation</th><th>Bits per second</th></tr>
     <tr><td>bits per second</td><td class="mono">bps</td><td class="mono">1</td></tr>
     <tr><td>kilobits per second</td><td class="mono">Kbps</td><td class="mono">1,000</td></tr>
     <tr><td>megabits per second</td><td class="mono">Mbps</td><td class="mono">1,000,000</td></tr>
     <tr><td>gigabits per second</td><td class="mono">Gbps</td><td class="mono">1,000,000,000</td></tr>
   </table></div>
+  </details>
   <p class="note">Two things to watch. Network speeds go up in steps of <b>1000</b>, but file sizes (KiB, MiB, GiB) go up in steps of <b>1024</b>. And speeds are in <b>bits</b>, while file sizes are usually in bytes, so a file size has to be multiplied by 8.</p>
 </section>
 
 <section class="block">
-  <h2>How long will it take?</h2>
-  <p class="sub">Time = file size in bits ÷ transmission speed in bits per second. Get both into bits first.</p>
-  <div class="calc">
-    <label class="check">File size <input type="number" id="fs" value="50" min="0" step="any"></label><select id="fsu" aria-label="File size unit"></select>
-    <label class="check">Speed <input type="number" id="sp" value="12" min="0" step="any"></label><select id="spu" aria-label="Speed unit"></select>
+  <h2>Time, size or speed?</h2>
+  <p class="sub">The same relationship can be rearranged to find any one of the three. Choose what you want to find, fill in the other two, and watch the expression being built. Get everything into bits and seconds first.</p>
+  <div class="seg" id="solve" role="group" aria-label="What to work out"><button data-m="t" aria-pressed="true">time = size ÷ speed</button><button data-m="s" aria-pressed="false">size = speed × time</button><button data-m="v" aria-pressed="false">speed = size ÷ time</button></div>
+  <div class="calc" style="margin-top:12px">
+    <span class="grp" id="g-fs"><label class="check">File size <input type="number" id="fs" value="50" min="0" step="any"></label><select id="fsu" aria-label="File size unit"></select></span>
+    <span class="grp" id="g-sp"><label class="check">Speed <input type="number" id="sp" value="12" min="0" step="any"></label><select id="spu" aria-label="Speed unit"></select></span>
+    <span class="grp" id="g-tm"><label class="check">Time <input type="number" id="tm" value="35" min="0" step="any"> seconds</label></span>
+    <span class="grp" id="g-out"><label class="check">Answer in <select id="outu" aria-label="Unit for the answer"></select></label></span>
   </div>
   <div class="scroll"><table class="t work" id="work" style="max-width:820px"></table></div>
   <p class="result" id="tres"></p>
   <p class="note">The answer is only theoretical. Real transmission speeds are not constant, and other things such as latency and how busy the network is affect how long a transfer takes.</p>
-</section>
-
-<section class="block">
-  <h2>Three versions of the same relationship</h2>
-  <div class="forms">
-    <div><b>time = size ÷ speed</b><small>How long will a 22 GiB video take at 54 Mbps?<br><span class="mono">(22 × 1024 × 1024 × 1024 × 8) ÷ (54 × 1000 × 1000)</span> seconds</small></div>
-    <div><b>size = speed × time</b><small>A file takes 35 seconds at 40 Mbps. How big is it in mebibytes?<br><span class="mono">(40 × 1000 × 1000 × 35) ÷ (8 × 1024 × 1024)</span> MiB</small></div>
-    <div><b>speed = size ÷ time</b><small>A 6 MiB file takes 4 seconds. What is the speed in Mbps?<br><span class="mono">(6 × 1024 × 1024 × 8) ÷ (4 × 1000 × 1000)</span> Mbps</small></div>
-  </div>
 </section>
 
 <section class="block">
@@ -140,21 +133,35 @@ $('#hello').onclick=async()=>{
 };
 
 /* ---------- calculator ---------- */
-const SU=[['bits',1,''],['bytes',8,' × 8'],['KiB',8*1024,' × 1024 × 8'],['MiB',8*1024**2,' × 1024 × 1024 × 8'],['GiB',8*1024**3,' × 1024 × 1024 × 1024 × 8']];
-const PU=[['bps',1,''],['Kbps',1e3,' × 1000'],['Mbps',1e6,' × 1000 × 1000'],['Gbps',1e9,' × 1000 × 1000 × 1000']];
+const SU=[['bits',1,[]],['bytes',8,['8']],['KiB',8*1024,['1024','8']],['MiB',8*1024**2,['1024','1024','8']],['GiB',8*1024**3,['1024','1024','1024','8']]];
+const PU=[['bps',1,[]],['Kbps',1e3,['1000']],['Mbps',1e6,['1000','1000']],['Gbps',1e9,['1000','1000','1000']]];
+const mul=(x,u)=>u[2].length?`${x} × ${u[2].join(' × ')}`:x, den=u=>u[2].length>1?`(${u[2].join(' × ')})`:u[2][0];
+let mode='t';
 $('#fsu').innerHTML=SU.map((u,i)=>`<option value="${i}"${i===3?' selected':''}>${u[0]}</option>`).join('');
 $('#spu').innerHTML=PU.map((u,i)=>`<option value="${i}"${i===2?' selected':''}>${u[0]}</option>`).join('');
+function outOpts(){const L=mode==='s'?SU:PU,d=mode==='s'?3:2;$('#outu').innerHTML=L.map((u,i)=>`<option value="${i}"${i===d?' selected':''}>${u[0]}</option>`).join('')}
 function drawCalc(){
-  const f=+$('#fs').value,s=+$('#sp').value,fu=SU[$('#fsu').value],su=PU[$('#spu').value];
-  if(!(f>0&&s>0)){$('#work').innerHTML='<tr><td>Enter a file size and a speed.</td></tr>';$('#tres').textContent='';return}
-  const bits=f*fu[1],bps=s*su[1],t=bits/bps,fe=num(f,6)+fu[2],se=num(s,6)+su[2];
-  $('#work').innerHTML=`<tr><th>Step</th><th>Expression</th><th>Result</th></tr>
-   <tr><td>1. File size in bits</td><td>${fe}</td><td>${num(bits,0)} bits</td></tr>
-   <tr><td>2. Speed in bits per second</td><td>${se}</td><td>${num(bps,0)} bps</td></tr>
-   <tr><td>3. Divide bits by bits per second</td><td>${fu[2]?'('+fe+')':fe} ÷ ${su[2]?'('+se+')':se}</td><td>${num(t)} seconds</td></tr>`;
-  $('#tres').textContent='Time = '+num(t)+' seconds'+(t>=120?' ('+dur(t)+')':'');
+  const show={t:['fs','sp'],s:['sp','tm','out'],v:['fs','tm','out']}[mode];
+  ['fs','sp','tm','out'].forEach(g=>$('#g-'+g).classList.toggle('hidden',!show.includes(g)));
+  const f=+$('#fs').value,v=+$('#sp').value,t=+$('#tm').value,fu=SU[$('#fsu').value],su=PU[$('#spu').value];
+  const need={t:[f,v],s:[v,t],v:[f,t]}[mode];
+  if(!need.every(x=>x>0)){$('#work').innerHTML='<tr><td>Fill in both values.</td></tr>';$('#tres').textContent='';return}
+  const fe=mul(num(f,6),fu),se=mul(num(v,6),su),bits=f*fu[1],bps=v*su[1],H='<tr><th>Step</th><th>Expression</th><th>Result</th></tr>';
+  const wrap=(e,u)=>u[2].length?'('+e+')':e;
+  if(mode==='t'){const r=bits/bps;
+    $('#work').innerHTML=H+`<tr><td>1. File size in bits</td><td>${fe}</td><td>${num(bits,0)} bits</td></tr><tr><td>2. Speed in bits per second</td><td>${se}</td><td>${num(bps,0)} bps</td></tr><tr><td>3. Bits ÷ bits per second</td><td>${wrap(fe,fu)} ÷ ${wrap(se,su)}</td><td>${num(r)} seconds</td></tr>`;
+    $('#tres').textContent='Time = '+num(r)+' seconds'+(r>=120?' ('+dur(r)+')':'');}
+  else if(mode==='s'){const o=SU[$('#outu').value],b2=bps*t,r=b2/o[1];
+    $('#work').innerHTML=H+`<tr><td>1. Speed in bits per second</td><td>${se}</td><td>${num(bps,0)} bps</td></tr><tr><td>2. × time in seconds gives bits</td><td>${se} × ${num(t,6)}</td><td>${num(b2,0)} bits</td></tr>`+
+      (o[2].length?`<tr><td>3. Convert bits to ${o[0]}</td><td>(${se} × ${num(t,6)}) ÷ ${den(o)}</td><td>${num(r)} ${o[0]}</td></tr>`:'');
+    $('#tres').textContent=`Size = ${num(r)} ${o[0]}`;}
+  else{const o=PU[$('#outu').value],b1=bits/t,r=b1/o[1];
+    $('#work').innerHTML=H+`<tr><td>1. File size in bits</td><td>${fe}</td><td>${num(bits,0)} bits</td></tr><tr><td>2. ÷ time in seconds gives bps</td><td>${wrap(fe,fu)} ÷ ${num(t,6)}</td><td>${num(b1)} bps</td></tr>`+
+      (o[2].length?`<tr><td>3. Convert bps to ${o[0]}</td><td>${wrap(fe,fu)} ÷ (${num(t,6)} × ${o[2].join(' × ')})</td><td>${num(r)} ${o[0]}</td></tr>`:'');
+    $('#tres').textContent=`Speed = ${num(r)} ${o[0]}`;}
 }
-['fs','fsu','sp','spu'].forEach(k=>$('#'+k).oninput=drawCalc);drawCalc();
+$$('#solve button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('#solve button').forEach(x=>x.setAttribute('aria-pressed',x===b));outOpts();drawCalc()});
+['fs','fsu','sp','spu','tm','outu'].forEach(k=>$('#'+k).oninput=drawCalc);outOpts();drawCalc();
 
 /* ---------- expressions ---------- */
 cardQuiz($('#quiz1'),[
@@ -168,7 +175,7 @@ cardQuiz($('#quiz1'),[
 /* ---------- practice ---------- */
 drill($('#drill'),()=>{
   const t=rnd(0,4),k=[2,4,5,8,10,12,20,25,40,50][rnd(0,9)],s=rnd(2,30);
-  if(t===0){const u=rnd(1,3);return{q:`How many bits per second is ${k} ${PU[u][0]}?`,a:String(k*PU[u][1]),why:`${k}${PU[u][2]} = ${num(k*PU[u][1],0)}.`}}
+  if(t===0){const u=rnd(1,3);return{q:`How many bits per second is ${k} ${PU[u][0]}?`,a:String(k*PU[u][1]),why:`${k} × ${PU[u][2].join(' × ')} = ${num(k*PU[u][1],0)}.`}}
   if(t===1)return{q:`A network transmits data at ${k} Mbps. How many <b>bits</b> can it transfer in ${s} seconds?`,a:String(k*1e6*s),why:`${k} × 1000 × 1000 × ${s} = ${num(k*1e6*s,0)}.`};
   if(t===2)return{q:`A file of ${num(k*1e6*s,0)} bits is sent across a network at ${k} Mbps. How many <b>seconds</b> does it take?`,a:[String(s),s+'s',s+'seconds'],why:`${num(k*1e6*s,0)} ÷ ${num(k*1e6,0)} = ${s}.`};
   if(t===3)return{q:`A file of ${num(k*1e6*s,0)} bits takes ${s} seconds to transfer. What is the speed in <b>Mbps</b>?`,a:[String(k),k+'Mbps'],why:`${num(k*1e6*s,0)} ÷ ${s} = ${num(k*1e6,0)} bps, which is ${k} Mbps.`};
