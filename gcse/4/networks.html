@@ -25,6 +25,7 @@ published: false
 .lan.bad{border-color:var(--bad);background:var(--bad-soft)}
 .wlink{padding:0 6px;text-align:center}
 .wlink .lab{font:800 .7rem var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.wlink .own{display:block;font-size:.68rem;color:var(--muted);line-height:1.2}
 .wlink .bar{height:10px;border-radius:5px;background:var(--off);margin:4px 0;transition:background .2s,opacity .2s}
 .wlink.off .bar{opacity:.25;background:repeating-linear-gradient(90deg,var(--off) 0 8px,transparent 8px 16px)}
 .wlink.on .bar{background:var(--one)}
@@ -44,8 +45,20 @@ published: false
 </section>
 
 <section class="block">
-  <h2>LANs and WANs</h2>
-  <p class="sub">Networks are described by their reach: how big an area they cover.</p>
+  <h2>Joining LANs to make a WAN</h2>
+  <p class="sub">Networks are described by their reach. A <b>LAN</b> (local area network) covers one site. A <b>WAN</b> (wide area network) joins LANs across a large geographical area. A hotel chain has its head office in London and hotels across Europe. Each site has its own LAN. Try each job with the LANs separate, and then with them connected to form a WAN.</p>
+  <div class="row"><label class="check"><input type="checkbox" id="wan"> Connect the LANs together to form a WAN</label></div>
+  <div class="tasks" id="wtasks"></div>
+  <div class="wan">
+    <div class="lan" id="l-par"><h3>Paris hotel</h3><p class="tag">LAN</p><ul><li>Reception PCs</li><li>Printer</li><li>Guest Wi-Fi</li></ul></div>
+    <div class="wlink off" id="k-1"><div class="lab">Leased line</div><small class="own">rented from a telecoms company</small><div class="bar"></div></div>
+    <div class="lan" id="l-lon"><h3>London head office</h3><p class="tag">LAN</p><ul><li>Loyalty card database</li><li>Room prices</li><li>IT support team</li></ul></div>
+    <div class="wlink off" id="k-2"><div class="lab">Leased line</div><small class="own">rented from a telecoms company</small><div class="bar"></div></div>
+    <div class="lan" id="l-ber"><h3>Berlin hotel</h3><p class="tag">LAN</p><ul><li>Reception PCs</li><li>Printer</li><li>Guest Wi-Fi</li></ul></div>
+  </div>
+  <p class="explain" id="wexplain"></p>
+  <p class="note">A WAN lets an organisation keep its data synchronised across every site, send out software and updates easily, and avoid duplicating jobs such as IT support at each location. Staff can log in and work together wherever they are.</p>
+  <details class="recap"><summary>Summary: LAN or WAN</summary>
   <div class="scroll"><table class="t">
     <tr><th></th><th>Local area network (LAN)</th><th>Wide area network (WAN)</th></tr>
     <tr><td><b>Area covered</b></td><td>A relatively small area, often a single site such as a home, a school, a hospital or a factory</td><td>A large geographical area, spanning many sites, cities or countries</td></tr>
@@ -54,22 +67,7 @@ published: false
     <tr><td><b>Who owns it</b></td><td>Typically a single organisation or household, which owns all the equipment</td><td>The links between sites are owned and maintained by telecommunication companies, who charge a fee to use them</td></tr>
     <tr><td><b>Example</b></td><td>A school network, a home Wi-Fi network</td><td>A bank linking its branches. The internet is the world's largest public WAN</td></tr>
   </table></div>
-</section>
-
-<section class="block">
-  <h2>Joining LANs to make a WAN</h2>
-  <p class="sub">A hotel chain has its head office in London and hotels across Europe. Each site has its own LAN. Try each job with the LANs separate, and then with them connected to form a WAN.</p>
-  <div class="row"><label class="check"><input type="checkbox" id="wan"> Connect the LANs together to form a WAN</label></div>
-  <div class="tasks" id="wtasks"></div>
-  <div class="wan">
-    <div class="lan" id="l-par"><h3>Paris hotel</h3><p class="tag">LAN</p><ul><li>Reception PCs</li><li>Printer</li><li>Guest Wi-Fi</li></ul></div>
-    <div class="wlink off" id="k-1"><div class="lab">Leased link</div><div class="bar"></div></div>
-    <div class="lan" id="l-lon"><h3>London head office</h3><p class="tag">LAN</p><ul><li>Loyalty card database</li><li>Room prices</li><li>IT support team</li></ul></div>
-    <div class="wlink off" id="k-2"><div class="lab">Leased link</div><div class="bar"></div></div>
-    <div class="lan" id="l-ber"><h3>Berlin hotel</h3><p class="tag">LAN</p><ul><li>Reception PCs</li><li>Printer</li><li>Guest Wi-Fi</li></ul></div>
-  </div>
-  <p class="explain" id="wexplain"></p>
-  <p class="note">A WAN lets an organisation keep its data synchronised across every site, send out software and updates easily, and avoid duplicating jobs such as IT support at each location. Staff can log in and work together wherever they are.</p>
+  </details>
 </section>
 
 <section class="block">
@@ -117,7 +115,7 @@ function drawWan(){
   ['k-1','k-2'].forEach(k=>{const e=$('#'+k);e.classList.toggle('off',!on);e.classList.toggle('on',!!(on&&t&&t[2].includes(k)))});
   ['l-par','l-lon','l-ber'].forEach(l=>{const e=$('#'+l),used=t&&t[1].includes(l),ok=on||!t||!t[3];e.classList.toggle('on',!!(used&&ok));e.classList.toggle('bad',!!(used&&!ok))});
   $$('#wtasks button').forEach((b,i)=>b.classList.toggle('pri',i===wtask));
-  $('#wexplain').innerHTML=!t?'Choose a job.':!t[3]?'<b class="okc">Works either way.</b> '+t[4]:on?'<b class="okc">With the WAN.</b> '+t[4]:'<b class="badc">Separate LANs.</b> '+t[5];
+  $('#wexplain').innerHTML=!t?(on?'The three LANs are now joined into one WAN. Each hotel still owns its own LAN, but the long-distance links belong to a telecommunication company, which charges a fee to use them. Choose a job.':'Each hotel owns and runs its own LAN. Choose a job.'):!t[3]?'<b class="okc">Works either way.</b> '+t[4]:on?'<b class="okc">With the WAN.</b> '+t[4]:'<b class="badc">Separate LANs.</b> '+t[5];
 }
 $('#wtasks').onclick=e=>{const b=e.target.closest('button');if(!b)return;wtask=+b.dataset.i;drawWan()};
 $('#wan').onchange=drawWan;drawWan();
