@@ -1,0 +1,488 @@
+---
+layout: demo
+title: "Other Network Technologies"
+heading: "Other network technologies"
+spec: "EDEXCEL GCSE · 4.1.3"
+published: false
+---
+<style>
+.uses{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.uses span{font:600 .85rem var(--sans);padding:4px 11px;border-radius:999px;background:var(--bg);border:1.5px solid var(--line)}
+.stage{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:14px;min-width:0}
+.sl{display:grid;gap:4px;font-weight:700;margin:14px 0 0}
+.sl input{width:100%}
+.sl span{font:600 .9rem var(--mono)}
+.demo2{display:grid;grid-template-columns:minmax(0,250px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:760px){.demo2{grid-template-columns:1fr}}
+@keyframes flow{to{background-position:24px 0}}
+@keyframes flick{50%{opacity:.2}}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}}
+
+/* ---------- Bluetooth ---------- */
+.phone{border:3px solid var(--ink);border-radius:26px;padding:14px 12px 18px;background:var(--panel);min-height:340px;width:100%;max-width:250px}
+.ph-h{font:800 .74rem var(--sans);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:center;margin:0 0 8px}
+.tog{display:flex;justify-content:space-between;align-items:center;font-weight:800;padding:8px 4px;border-bottom:1.5px solid var(--line);cursor:pointer}
+.tog input{width:22px;height:22px}
+#bt-list button.dev{display:flex;gap:10px;align-items:center;width:100%;text-align:left;font:600 .95rem var(--sans);background:none;border:0;border-bottom:1px solid var(--line);color:var(--ink);padding:9px 4px;cursor:pointer}
+#bt-list button.dev.new{animation:pop .3s}
+#bt-list button.dev:hover{background:var(--hl-soft)}
+#bt-list button.dev small{margin-left:auto;font-weight:700;color:var(--muted);font-size:.74rem}
+#bt-list button.dev small.c{color:var(--ok)}
+#bt-list .i{font-size:1.3rem}
+.ph-note{color:var(--muted);font-size:.85rem;padding:8px 4px;margin:0}
+.dlg{border:2px solid var(--one);border-radius:12px;padding:10px 12px;margin-top:10px;background:var(--one-soft);font-size:.88rem}
+.dlg .code{font:700 1.35rem var(--mono);letter-spacing:.1em;margin:2px 0 8px}
+.btlink{display:flex;align-items:center}
+.end{width:92px;flex:none;text-align:center;font-size:2.4rem;line-height:1.15;transition:opacity .2s}
+.end small{display:block;font:700 .76rem var(--sans);color:var(--muted)}
+.end.none{opacity:.3}
+.gap{flex:1;display:flex;align-items:center;min-width:0}
+.air{height:10px;border-radius:5px;background:var(--line);transition:width .25s;flex:none}
+.air.on{background:repeating-linear-gradient(90deg,var(--one) 0 12px,transparent 12px 24px);animation:flow .7s linear infinite}
+.air.weak{background:repeating-linear-gradient(90deg,var(--hl) 0 12px,transparent 12px 24px);animation:flow .7s linear infinite,flick .45s steps(2) infinite}
+.bars{display:flex;gap:4px;align-items:flex-end;height:28px}
+.bars i{width:10px;border-radius:3px;background:var(--off)}
+.bars i.on{background:var(--ok)}
+.bars.weak i.on{background:var(--hl)}
+.act{border-top:1.5px solid var(--line);margin-top:14px;padding-top:12px;min-height:150px}
+.act h3{margin:0 0 8px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.eq{display:flex;gap:4px;align-items:flex-end;height:60px}
+.eq i{width:12px;border-radius:3px 3px 0 0;background:var(--one);animation:eq .9s ease-in-out infinite alternate}
+@keyframes eq{from{height:12%}to{height:100%}}
+.eq.weak i{background:var(--hl);animation:eq .9s ease-in-out infinite alternate,flick .5s steps(2) infinite}
+.eq.dead i{animation:none;height:6%;background:var(--off)}
+.wscreen{display:inline-block;border:3px solid var(--ink);border-radius:22px;padding:10px 14px;background:#16202B;color:#E7EDF2;min-width:220px;font-size:.88rem}
+.wscreen div{animation:pop .3s}
+.wscreen .s{color:#9AA7B3;font-size:.78rem}
+.pad{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pad .btn{min-width:46px}
+.game{position:relative;height:70px;border:2px solid var(--ink);border-radius:10px;background:var(--panel);margin-top:10px;overflow:hidden}
+.game .who{position:absolute;bottom:4px;font-size:2rem;transition:left .15s,bottom .15s;transform:translateX(-50%)}
+.game .lbl{position:absolute;top:4px;left:8px;font:700 .72rem var(--sans);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+
+/* ---------- Zigbee ---------- */
+.zwrap{overflow-x:auto}
+svg.zig{display:block;width:100%;min-width:620px;height:auto}
+.zig .room{fill:var(--bg);stroke:var(--ink);stroke-width:2.5}
+.zig .rl{font:800 11px var(--sans);fill:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.zig .rng{fill:var(--one);fill-opacity:.06;stroke:var(--one);stroke-opacity:.35;stroke-dasharray:4 4}
+.zig .ln{stroke:var(--off);stroke-width:2;stroke-dasharray:3 5}
+.zig .ln.hot{stroke:var(--one);stroke-width:4;stroke-dasharray:none}
+.zig .zn{cursor:pointer}
+.zig .zn circle{fill:var(--panel);stroke:var(--ink);stroke-width:2.5;transition:fill .25s}
+.zig .zn:hover circle{stroke:var(--one)}
+.zig .zn.lit circle{fill:var(--hl);stroke:#B26A00}
+.zig .zn.onp circle{fill:var(--ok-soft);stroke:var(--ok)}
+.zig .zn.hub circle{fill:var(--one-soft);stroke:var(--one)}
+.zig .zn.dead{opacity:.3}
+.zig .zn.dead circle{stroke-dasharray:4 3}
+.zig .zn.alert circle{fill:var(--bad-soft);stroke:var(--bad)}
+.zig .ic{font-size:20px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.zig .nl{font:700 11px var(--sans);fill:var(--ink);text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:var(--bg);stroke-width:4px}
+.zig .pkt{fill:var(--one);stroke:#fff;stroke-width:2}
+.zig .pkt.up{fill:var(--bad)}
+.zlog{font:.9rem/1.5 var(--mono);margin:10px 0 0;min-height:1.5em}
+
+/* ---------- RFID ---------- */
+.lane{position:relative;height:230px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin-top:12px}
+.zone{position:absolute;top:0;bottom:0;left:43%;width:14%;background:var(--one-soft);border-left:3px dashed var(--one);border-right:3px dashed var(--one)}
+.zone .ant{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:1.5rem;line-height:1}
+.zlab{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font:800 .68rem var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--one);white-space:nowrap;background:var(--panel);border:1.5px solid var(--one);border-radius:999px;padding:2px 9px;z-index:2}
+.zone .ring{position:absolute;left:50%;top:8px;width:20px;height:20px;margin-left:-10px;border:2px solid var(--one);border-radius:50%;opacity:0;animation:ring 1.6s ease-out infinite}
+.zone .ring:nth-child(3){animation-delay:.53s}.zone .ring:nth-child(4){animation-delay:1.06s}
+@keyframes ring{0%{transform:scale(.4);opacity:.8}100%{transform:scale(7);opacity:0}}
+.zone.ping{background:var(--ok-soft)}
+.item{position:absolute;transform:translate(-50%,-50%);font-size:2rem;line-height:1}
+.item i{position:absolute;right:-4px;bottom:-2px;width:11px;height:11px;border-radius:50%;background:var(--off);border:2px solid var(--panel)}
+.item.flip{transform:translate(-50%,-50%) scaleX(-1)}
+.item.read i{background:var(--ok);box-shadow:0 0 0 4px var(--ok-soft)}
+.rflog{max-height:230px;overflow-y:auto;margin-top:12px}
+.rflog td.id{font-family:var(--mono);font-size:.82rem;white-space:nowrap}
+.rflog tr.new td{animation:hi 1.2s}
+@keyframes hi{from{background:var(--ok-soft)}}
+.clock{font:700 1.1rem var(--mono)}
+
+/* ---------- NFC ---------- */
+.track{position:relative;height:210px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin-top:12px;user-select:none}
+.field{position:absolute;top:50%;transform:translateY(-50%);border-radius:50%;background:radial-gradient(closest-side,var(--one-soft),transparent);border:2px dashed var(--one);opacity:.9;pointer-events:none}
+.reader{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:150px;border:3px solid var(--ink);border-radius:16px;background:var(--panel);padding:10px;text-align:center}
+.reader b{display:block;font-size:.8rem}
+.scr{border-radius:8px;background:#16202B;color:#E7EDF2;font:700 1.05rem/1.3 var(--mono);padding:12px 6px;margin-top:6px;min-height:70px;display:flex;flex-direction:column;justify-content:center;transition:background .2s}
+.scr small{font:600 .72rem var(--sans);color:#9AA7B3}
+.scr.ok{background:var(--ok);color:#fff}
+.scr.ok small{color:#fff}
+.scr.busy{background:var(--one);color:#fff}
+.token{position:absolute;top:50%;transform:translateY(-50%);width:96px;height:96px;border:3px solid var(--ink);border-radius:14px;background:var(--panel);display:grid;place-items:center;font-size:2.6rem;cursor:grab;touch-action:none}
+.token:active{cursor:grabbing}
+.token small{position:absolute;bottom:3px;font:700 .64rem var(--sans);color:var(--muted)}
+.token .chip{position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:4px;background:var(--off);transition:background .2s,box-shadow .2s}
+.token.pow .chip{background:var(--hl);box-shadow:0 0 12px var(--hl)}
+@media (max-width:560px){.reader{width:112px;right:8px;padding:6px}.reader b{font-size:.7rem}.scr{font-size:.85rem;min-height:56px;padding:8px 4px}.token{width:72px;height:72px;font-size:2rem}.token small{font-size:.56rem}}
+.read{display:flex;gap:10px 24px;flex-wrap:wrap;align-items:center;margin-top:12px;font-weight:700}
+.read .mono{font-size:1.1rem}
+</style>
+
+<p class="lede">Wi-Fi isn't the only way devices talk without wires. These four technologies are all short range, and you probably used most of them today.</p>
+
+<!-- ======================= BLUETOOTH ======================= -->
+<section class="block" id="bt">
+  <h2>Bluetooth</h2>
+  <p class="sub">Links two nearby devices directly, with no router in between. Turn Bluetooth on, pair a device, then walk away from it.</p>
+  <div class="uses"><span>🎧 Wireless earbuds</span><span>⌚ Smartwatches</span><span>🚗 Hands-free calls in cars</span><span>🎮 Game controllers</span><span>⌨️ Keyboards and mice</span><span>🔊 Portable speakers</span></div>
+  <div class="demo2">
+    <div class="phone">
+      <p class="ph-h">Settings › Bluetooth</p>
+      <label class="tog">Bluetooth <input type="checkbox" id="bt-on"></label>
+      <div id="bt-list"></div>
+    </div>
+    <div class="stage">
+      <div class="row" style="justify-content:space-between"><b>Connection</b><div class="bars" id="bt-bars" aria-hidden="true"></div></div>
+      <div class="btlink" style="margin-top:8px">
+        <div class="end">📱<small>Phone</small></div>
+        <div class="gap"><div class="air" id="bt-air"></div><div class="end none" id="bt-dev">❔<small>Nothing paired</small></div></div>
+      </div>
+      <label class="sl">Distance between the phone and the device <input type="range" id="bt-dist" min="0.5" max="20" step="0.5" value="1"><span id="bt-dv"></span></label>
+      <div class="act" id="bt-act"></div>
+      <p class="status" id="bt-msg"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ZIGBEE ======================= -->
+<section class="block" id="zb">
+  <h2>Zigbee</h2>
+  <p class="sub">A low-power network for smart home devices. Each mains-powered device passes messages on to the next, so a command can hop right across the house. Click a device to control it, or switch some off at the wall and watch the messages find another way round.</p>
+  <div class="uses"><span>💡 Smart bulbs</span><span>🔌 Smart plugs</span><span>🔥 Smart heating</span><span>🚪 Door and motion sensors</span><span>⚡ UK smart meters</span><span>🏢 Office lighting systems</span></div>
+  <div class="toolbar" style="margin-bottom:10px">
+    <div class="seg" id="zb-mode" role="group" aria-label="What clicking a device does"><button data-m="ctl" aria-pressed="true">Control a device</button><button data-m="cut" aria-pressed="false">Switch off at the wall</button></div>
+    <label class="check"><input type="checkbox" id="zb-rng"> Show radio range</label>
+    <button class="btn" id="zb-reset">Reset</button>
+  </div>
+  <div class="zwrap"><svg class="zig" id="zb-svg" viewBox="0 0 800 380" role="img" aria-label="Floor plan of a house with Zigbee devices"></svg></div>
+  <p class="zlog" id="zb-log">Click the 🚪 front door sensor, or any light.</p>
+</section>
+
+<!-- ======================= RFID ======================= -->
+<section class="block" id="rf">
+  <h2>Radio-frequency identification (RFID)</h2>
+  <p class="sub">A reader sends out radio waves. Any tag inside its range wakes up and replies with its unique ID. No battery, no scanning by hand, and it doesn't need to be facing the reader.</p>
+  <div class="uses"><span>📦 Warehouse stock</span><span>📚 Library self-service</span><span>🏃 Race timing chips</span><span>🐶 Pet microchips</span><span>🛍️ Shop security tags</span><span>🧳 Airport baggage tags</span><span>⛷️ Ski lift passes</span></div>
+  <div class="toolbar">
+    <div class="seg" id="rf-sc" role="group" aria-label="Where the reader is"><button data-s="ware" aria-pressed="true">Warehouse</button><button data-s="lib" aria-pressed="false">Library</button><button data-s="race" aria-pressed="false">Marathon</button></div>
+    <button class="btn pri" id="rf-go">Go ▸</button><button class="btn" id="rf-reset">Reset</button>
+    <span class="clock" id="rf-clock"></span>
+  </div>
+  <div class="lane" id="rf-lane"><div class="zone" id="rf-zone"><div class="ant">📡</div><div class="ring"></div><div class="ring"></div><div class="ring"></div></div><span class="zlab" id="rf-zl">Reader</span></div>
+  <p class="status" id="rf-msg" style="margin-top:10px"></p>
+  <div class="rflog scroll"><table class="t"><thead><tr><th>Tag ID</th><th id="rf-col">Item</th><th id="rf-tcol">Read after</th></tr></thead><tbody id="rf-log"></tbody></table></div>
+</section>
+
+<!-- ======================= NFC ======================= -->
+<section class="block" id="nf">
+  <h2>Near field communication (NFC)</h2>
+  <p class="sub">Only works when the two devices are almost touching. Drag the card towards the reader (or press Tap) and watch what happens at about 4 cm.</p>
+  <div class="uses"><span>💳 Contactless payment</span><span>📱 Phone and watch wallets</span><span>🚇 Travel cards at ticket barriers</span><span>🏨 Hotel room keys</span><span>🏷️ Smart posters and tags</span><span>🪪 Passports and school ID cards</span></div>
+  <div class="toolbar">
+    <div class="seg" id="nf-sc" role="group" aria-label="What is being tapped"><button data-s="pay" aria-pressed="true">Pay for a coffee</button><button data-s="travel" aria-pressed="false">Ticket barrier</button><button data-s="hotel" aria-pressed="false">Hotel door</button><button data-s="poster" aria-pressed="false">Smart poster</button></div>
+    <button class="btn pri" id="nf-tap">Tap ▸</button>
+  </div>
+  <div class="track" id="nf-track">
+    <div class="field" id="nf-field"></div>
+    <div class="reader" id="nf-reader"><b id="nf-rn"></b><div class="scr" id="nf-scr"></div></div>
+    <div class="token" id="nf-tok" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="30" aria-label="Distance from the reader in centimetres"><span id="nf-ti"></span><i class="chip"></i><small id="nf-tn"></small></div>
+  </div>
+  <div class="read"><span>Distance: <span class="mono" id="nf-d"></span></span><span>Chip: <span id="nf-pw"></span></span></div>
+  <p class="status" id="nf-msg" style="margin-top:8px"></p>
+</section>
+
+<script>
+/* ======================= BLUETOOTH ======================= */
+(()=>{
+  const DEV=[
+    {id:'buds',ico:'🎧',n:'Earbuds'},
+    {id:'watch',ico:'⌚',n:'Smartwatch',code:true},
+    {id:'car',ico:'🚗',n:'Car stereo',code:true},
+    {id:'pad',ico:'🎮',n:'Game controller'}];
+  const dev=id=>DEV.find(d=>d.id===id);
+  const S={on:false,found:[],paired:new Set(),conn:null,pend:null,code:'',scan:null,tick:0,call:0,px:50,msgs:[]};
+  const quality=()=>{const d=+$('#bt-dist').value;return d<=8?2:d<=10?1:0};
+  let lastKey='';
+
+  function list(){
+    const L=$('#bt-list');
+    if(!S.on){L.innerHTML='<p class="ph-note">Bluetooth is off. Switch it on to look for nearby devices.</p>';return}
+    let h=S.found.map(id=>{const d=dev(id);
+      const st=S.conn===id?(quality()?'<small class="c">Connected</small>':'<small>Out of range</small>'):S.paired.has(id)?'<small>Paired</small>':'';
+      return `<button class="dev${id===S.fresh?' new':''}" data-id="${id}"><span class="i">${d.ico}</span>${d.n}${st}</button>`}).join('');
+    if(S.found.length<DEV.length)h+='<p class="ph-note">Searching for nearby devices…</p>';
+    else if(!S.conn&&!S.pend)h+='<p class="ph-note">Tap a device to pair with it.</p>';
+    if(S.pend){const d=dev(S.pend);
+      h+=`<div class="dlg"><b>Pair with ${d.n}?</b>`+(d.code?`<div>Check the ${d.n.toLowerCase()} shows the same code:</div><div class="code">${S.code}</div>`:'<div style="margin:4px 0 8px">It will connect to this phone automatically from now on.</div>')
+        +`<div class="row"><button class="btn pri" data-a="pair">Pair</button><button class="btn" data-a="cancel">Cancel</button></div></div>`}
+    L.innerHTML=h;
+  }
+  $('#bt-list').onclick=e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.a==='pair'){S.paired.add(S.pend);S.conn=S.pend;S.pend=null;S.msgs=[];S.call=0;S.px=50;lastKey=''}
+    else if(b.dataset.a==='cancel')S.pend=null;
+    else if(b.dataset.id){const id=b.dataset.id;
+      if(S.paired.has(id)){if(S.conn!==id){S.conn=id;S.msgs=[];S.call=0;S.px=50;lastKey=''}}
+      else{S.pend=id;S.code=String(Math.floor(100000+Math.random()*900000)).replace(/(...)(...)/,'$1 $2')}}
+    draw();
+  };
+  $('#bt-on').onchange=e=>{
+    S.on=e.target.checked;clearInterval(S.scan);
+    if(S.on){S.found=[];S.scan=setInterval(()=>{const next=DEV.find(d=>!S.found.includes(d.id));if(next){S.found.push(next.id);S.fresh=next.id;list();S.fresh=null}else clearInterval(S.scan)},550)}
+    else{S.conn=null;S.pend=null}
+    lastKey='';draw();
+  };
+
+  function act(q){
+    const A=$('#bt-act'),key=S.conn+':'+q;
+    if(key===lastKey)return;lastKey=key;
+    if(!S.conn){A.innerHTML='<h3>Device</h3><p class="ph-note" style="padding:0">Nothing connected yet.</p>';return}
+    const cls=q===2?'':q===1?'weak':'dead';
+    if(S.conn==='buds')A.innerHTML=`<h3>🎧 Playing on the earbuds</h3><div class="eq ${cls}">${'<i></i>'.repeat(16).replace(/<i>/g,()=>`<i style="animation-delay:${(-Math.random()).toFixed(2)}s">`)}</div><p class="ph-note" style="padding:6px 0 0">${q===2?'Music streams from the phone to the earbuds.':q===1?'The sound is cutting in and out.':'Silence. The phone pauses the music.'}</p>`;
+    if(S.conn==='watch')A.innerHTML=`<h3>⌚ On the watch</h3><div class="wscreen" id="bt-w"></div><p class="ph-note" style="padding:6px 0 0" id="bt-hr"></p>`;
+    if(S.conn==='car')A.innerHTML=`<h3>🚗 On the car's screen</h3><div class="wscreen" id="bt-c"></div><p class="ph-note" style="padding:6px 0 0" id="bt-cn"></p>`;
+    if(S.conn==='pad')A.innerHTML=`<h3>🎮 Press the controller's buttons</h3><div class="pad"><button class="btn" data-k="L">◀</button><button class="btn" data-k="R">▶</button><button class="btn" data-k="A">A</button></div><div class="game"><span class="lbl">Game on the phone</span><span class="who" id="bt-who" style="left:${S.px}%">🧍</span></div>`;
+    tick(true);
+  }
+  $('#bt-act').onclick=e=>{
+    const b=e.target.closest('[data-k]');if(!b)return;
+    const q=quality(),w=$('#bt-who');
+    if(!q||(q===1&&Math.random()<.5)){flash('Button press lost: the controller is too far away.');return}
+    if(b.dataset.k==='L')S.px=Math.max(6,S.px-8);
+    if(b.dataset.k==='R')S.px=Math.min(94,S.px+8);
+    w.style.left=S.px+'%';
+    if(b.dataset.k==='A'){w.textContent='🙆';w.style.bottom='30px';setTimeout(()=>{w.textContent='🧍';w.style.bottom='4px'},300)}
+  };
+  function flash(t){$('#bt-msg').innerHTML='<b class="badc">'+t+'</b>';setTimeout(()=>draw(),1200)}
+
+  const MSG=['💬 Sam: on my way','📅 Maths in 10 minutes','💬 Mum: dinner\'s ready','📦 Your parcel has arrived','⚽ GOAL! 2–1','💬 Priya: did you do the homework?'];
+  function tick(now){
+    if(!now)S.tick++;
+    const q=quality(),ok=q===2||(q===1&&Math.random()<.5);
+    if(S.conn==='watch'&&$('#bt-w')){
+      if(ok&&(now?S.msgs.length===0:S.tick%4===0)){S.msgs.unshift(MSG[(S.tick/4|0)%MSG.length]);S.msgs=S.msgs.slice(0,3)}
+      $('#bt-w').innerHTML=q?(S.msgs.map(m=>`<div>${m}</div>`).join('')||'<span class="s">Waiting for notifications…</span>'):'<span class="s">⚠️ Phone disconnected</span>';
+      $('#bt-hr').textContent=q?`Watch → phone: heart rate ${ok?68+Math.round(Math.random()*12):'…'} bpm`:'Heart rate data is no longer reaching the phone.';
+    }
+    if(S.conn==='car'&&$('#bt-c')){
+      if(q&&!now)S.call++;
+      const t=`${String(S.call/60|0).padStart(2,'0')}:${String(S.call%60).padStart(2,'0')}`;
+      $('#bt-c').innerHTML=q?`<div>📞 Call with Mum</div><div class="s">${t}</div>`:'<div>📞 Call moved back to the phone</div>';
+      $('#bt-cn').textContent=q===2?'Your voice: car microphone → phone. Mum\'s voice: phone → car speakers.':q===1?'Mum says you keep breaking up.':'Out of range. You\'ve walked away from the car with the phone.';
+    }
+  }
+  setInterval(()=>{if(S.conn)tick(false)},1000);
+
+  function draw(){
+    const d=+$('#bt-dist').value,q=S.conn?quality():0;
+    $('#bt-dv').textContent=d+' m';
+    $('#bt-air').style.width=`calc((100% - 92px) * ${Math.max(.04,d/20)})`;
+    $('#bt-air').className='air'+(S.conn&&q===2?' on':S.conn&&q===1?' weak':'');
+    const D=$('#bt-dev');
+    if(S.conn){const x=dev(S.conn);D.className='end'+(q?'':' none');D.innerHTML=`${x.ico}<small>${x.n}</small>`}
+    else{D.className='end none';D.innerHTML='❔<small>Nothing paired</small>'}
+    const bars=q===2?(d<=3?4:d<=6?3:2):q===1?1:0;
+    $('#bt-bars').className='bars'+(q===1?' weak':'');
+    $('#bt-bars').innerHTML=[1,2,3,4].map(i=>`<i class="${i<=bars?'on':''}" style="height:${i*25}%"></i>`).join('');
+    $('#bt-msg').innerHTML=!S.on?'Switch Bluetooth on to start.':!S.conn?'Pair a device from the list on the phone.':q===2?'<b class="okc">Connected.</b> Drag the distance slider to walk away.':q===1?'<b>Weak signal.</b> You\'re near the edge of Bluetooth\'s range, about 10 metres.':'<b class="badc">Out of range.</b> Walk back and it reconnects by itself, no pairing needed.';
+    list();act(q);
+  }
+  $('#bt-dist').oninput=draw;
+  draw();
+})();
+
+/* ======================= ZIGBEE ======================= */
+(()=>{
+  const R=185,svg=$('#zb-svg');
+  const ROOMS=[[10,10,260,200,'Living room'],[10,210,260,160,'Kitchen'],[270,10,190,360,'Hall'],[460,10,330,200,'Bedroom'],[460,210,160,160,'Bathroom'],[620,210,170,160,'Nursery']];
+  const N=[
+    {id:'hub',t:'hub',x:70,y:95,n:'Hub',i:'📡'},
+    {id:'lamp',t:'bulb',x:205,y:65,n:'Lamp',i:'💡'},
+    {id:'tv',t:'plug',x:220,y:190,n:'TV plug',i:'🔌'},
+    {id:'kit',t:'bulb',x:120,y:300,n:'Kitchen light',i:'💡'},
+    {id:'hall',t:'bulb',x:350,y:110,n:'Hall light',i:'💡'},
+    {id:'heat',t:'heat',x:520,y:55,n:'Heating',i:'🔥'},
+    {id:'hall2',t:'bulb',x:380,y:270,n:'Back hall light',i:'💡'},
+    {id:'door',t:'sensor',x:300,y:330,n:'Front door',i:'🚪'},
+    {id:'bed',t:'bulb',x:660,y:80,n:'Bedroom lamp',i:'💡'},
+    {id:'fan',t:'plug',x:740,y:160,n:'Fan plug',i:'🔌'},
+    {id:'bath',t:'bulb',x:540,y:300,n:'Bathroom light',i:'💡'},
+    {id:'bed2',t:'bulb',x:700,y:290,n:'Nursery light',i:'💡'}];
+  const by=id=>N.find(n=>n.id===id);
+  let st={},dead=new Set(),mode='ctl',busy=false;
+  const near=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y)<=R;
+  const relay=n=>n.t!=='sensor';
+  function route(from,to){
+    const prev={[from]:null},q=[from];
+    while(q.length){const c=q.shift();if(c===to)break;
+      for(const n of N){if(n.id in prev||dead.has(n.id)||!near(by(c),n))continue;
+        if(n.id!==to&&!relay(n))continue;prev[n.id]=c;q.push(n.id)}}
+    if(!(to in prev))return null;
+    const p=[];for(let c=to;c;c=prev[c])p.unshift(c);return p;
+  }
+  function draw(hot=[]){
+    const H=new Set(hot.slice(1).map((id,i)=>[hot[i],id].sort().join('|')));
+    let h=ROOMS.map(([x,y,w,hh,l])=>`<rect class="room" x="${x}" y="${y}" width="${w}" height="${hh}"/><text class="rl" x="${x+10}" y="${y+20}">${l}</text>`).join('');
+    if($('#zb-rng').checked)h+=N.filter(n=>!dead.has(n.id)&&relay(n)).map(n=>`<circle class="rng" cx="${n.x}" cy="${n.y}" r="${R}"/>`).join('');
+    N.forEach((a,i)=>N.slice(i+1).forEach(b=>{
+      if(!near(a,b)||dead.has(a.id)||dead.has(b.id))return;
+      if(!relay(a)&&!relay(b))return;
+      h+=`<line class="ln${H.has([a.id,b.id].sort().join('|'))?' hot':''}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`}));
+    h+=N.map(n=>{const c=['zn',n.t==='hub'?'hub':'',dead.has(n.id)?'dead':'',st[n.id]&&(n.t==='bulb')?'lit':'',st[n.id]&&(n.t==='plug'||n.t==='heat')?'onp':'',st[n.id]&&n.t==='sensor'?'alert':''].join(' ');
+      return `<g class="${c}" data-id="${n.id}" tabindex="0" role="button" aria-label="${n.n}"><circle cx="${n.x}" cy="${n.y}" r="22"/><text class="ic" x="${n.x}" y="${n.y+1}">${dead.has(n.id)?'✖️':n.i}</text><text class="nl" x="${n.x}" y="${n.y+38}">${n.n}</text></g>`}).join('');
+    h+='<circle class="pkt" id="zb-pkt" r="8" cx="-20" cy="-20"/>';
+    svg.innerHTML=h;
+  }
+  async function send(path,up){
+    draw(path);const p=$('#zb-pkt');p.classList.toggle('up',!!up);
+    for(let i=1;i<path.length;i++){
+      const a=by(path[i-1]),b=by(path[i]),t0=performance.now();
+      await new Promise(res=>{const f=t=>{const k=Math.min(1,(t-t0)/380);p.setAttribute('cx',a.x+(b.x-a.x)*k);p.setAttribute('cy',a.y+(b.y-a.y)*k);k<1?requestAnimationFrame(f):res()};requestAnimationFrame(f)});
+    }
+    p.setAttribute('cx',-20);
+  }
+  const hops=p=>p.map(id=>by(id).n).join(' → ')+` <span style="color:var(--muted)">(${p.length-1} hop${p.length>2?'s':''})</span>`;
+  async function click(id){
+    if(busy)return;const n=by(id),log=$('#zb-log');
+    if(mode==='cut'){
+      if(n.t==='hub'){log.innerHTML='The hub has to stay on: it links the Zigbee network to your home router and the app.';return}
+      dead.has(id)?dead.delete(id):dead.add(id);if(dead.has(id))st[id]=false;
+      draw();log.innerHTML=dead.has(id)?`<b>${n.n}</b> switched off at the wall. It can no longer pass messages on. Switch back to <i>Control a device</i> and try the far rooms.`:`<b>${n.n}</b> is back on and joins the mesh again.`;return}
+    if(dead.has(id)){log.innerHTML=`<b>${n.n}</b> is switched off at the wall, so it can't hear anything.`;return}
+    if(n.t==='hub'){log.innerHTML='This is the hub. Click a device to send it a command from the app.';return}
+    busy=true;
+    if(n.t==='sensor'){
+      const up=route('door','hub');
+      if(!up){log.innerHTML='<b class="badc">The door sensor can\'t reach the hub.</b> None of the devices near it are switched on.';busy=false;draw();return}
+      st.door=true;draw();log.innerHTML='🚪 Front door opened. Sensor → hub: '+hops(up);await send(up,true);
+      const dn=route('hub','hall');
+      if(dn){log.innerHTML='Hub → hall light: '+hops(dn)+' <b>Rule: when the door opens, turn on the hall light.</b>';await send(dn);st.hall=true}
+      else log.innerHTML='The hub got the message but <b class="badc">can\'t reach the hall light</b>.';
+      setTimeout(()=>{st.door=false;draw()},900);
+    }else{
+      const p=route('hub',id);
+      if(!p){log.innerHTML=`<b class="badc">No route to the ${n.n.toLowerCase()}.</b> Every device that could pass the message on is switched off.`;busy=false;return}
+      log.innerHTML='📱 App → '+hops(p);await send(p);st[id]=!st[id];
+    }
+    draw();busy=false;
+  }
+  svg.onclick=e=>{const g=e.target.closest('.zn');if(g)click(g.dataset.id)};
+  svg.onkeydown=e=>{const g=e.target.closest('.zn');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();click(g.dataset.id)}};
+  $$('#zb-mode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('#zb-mode button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    $('#zb-log').innerHTML=mode==='cut'?'Click devices to switch them off at the wall. Try the hall light.':'Click a device to send it a command.'});
+  $('#zb-rng').onchange=()=>draw();
+  $('#zb-reset').onclick=()=>{if(busy)return;st={};dead.clear();draw();$('#zb-log').innerHTML='Click the 🚪 front door sensor, or any light.'};
+  draw();
+})();
+
+/* ======================= RFID ======================= */
+(()=>{
+  const lane=$('#rf-lane'),zone=$('#rf-zone'),Z0=43;
+  const hex=()=>Math.floor(Math.random()*65536).toString(16).toUpperCase().padStart(4,'0');
+  const SC={
+    ware:{zl:'Reader: loading bay door',col:'Contents',go:'Drive the pallet through',
+      items:()=>['Trainers ×12','Hoodies ×20','Phone cases ×50','Headphones ×8','Water bottles ×24','Backpacks ×6','Watches ×10','Socks ×100','Caps ×30']
+        .map((n,i)=>({ico:'📦',n,x0:-32+(i%3)*7,y:22+(i/3|0)*28,v:24})),
+      done:t=>`<b class="okc">9 boxes identified in ${t} seconds</b> as the pallet drove through. Nobody scanned anything, and the tags were read through the boxes stacked in front of them. The stock system now knows exactly what has arrived.`},
+    lib:{zl:'Reader: self-service pad',col:'Book',go:'Put the books on the pad',
+      items:()=>[['📕','Harry Potter'],['📗','Wonder'],['📘','Holes'],['📙','Skellig'],['📓','Noughts & Crosses']]
+        .map(([ico,n],i)=>({ico,n,x0:-12,y:18+i*15,v:40,stop:50})),
+      done:t=>`<b class="okc">All 5 books issued in ${t} seconds</b>, read in one go while stacked on top of each other. A barcode scanner would need each book opened and scanned separately.`},
+    race:{zl:'Reader: finish line mat',col:'Runner',go:'Start the race',tcol:'Finish time',
+      items:()=>['Amira','Ben','Chloe','Dev','Ella','Femi'].map((n,i)=>({ico:'🏃',n,x0:-8-Math.random()*30,y:12+i*15,v:11+Math.random()*9})),
+      done:()=>'<b class="okc">Every runner got an exact finish time.</b> Each has a tag on their shoe or race number, read by the mat as they cross it. In a big marathon, tens of thousands of runners are timed this way.'}
+  };
+  let sc='ware',items=[],raf=0,t0=0,running=false,doneShown=false;
+  const raceTime=t=>{const s=3*3600+4*60+12+t*45;return `${s/3600|0}:${String((s/60|0)%60).padStart(2,'0')}:${(s%60).toFixed(1).padStart(4,'0')}`};
+  function reset(){
+    cancelAnimationFrame(raf);running=false;doneShown=false;
+    const s=SC[sc];$('#rf-zl').textContent=s.zl;$('#rf-col').textContent=s.col;$('#rf-tcol').textContent=s.tcol||'Read after';
+    $('#rf-go').textContent=s.go+' ▸';$('#rf-go').disabled=false;
+    lane.querySelectorAll('.item').forEach(e=>e.remove());
+    items=s.items().map(it=>{const e=document.createElement('div');e.className='item'+(sc==='race'?' flip':'');e.innerHTML=it.ico+'<i></i>';e.title=it.n;e.style.top=it.y+'%';e.style.left=it.x0+'%';lane.appendChild(e);return{...it,e,x:it.x0,read:false}});
+    $('#rf-log').innerHTML='<tr><td colspan="3" style="color:var(--muted)">No tags read yet.</td></tr>';
+    $('#rf-clock').textContent=sc==='race'?'⏱ '+raceTime(0):'';
+    $('#rf-msg').innerHTML='Each item has a tiny tag inside it (the grey dot). Press the button to send them past the reader.';
+  }
+  function frame(now){
+    const t=(now-t0)/1000;let readNow=false;
+    if(sc==='race')$('#rf-clock').textContent='⏱ '+raceTime(t);
+    for(const it of items){
+      it.x=it.x0+it.v*t;if(it.stop!=null&&it.x>it.stop)it.x=it.stop;
+      it.e.style.left=it.x+'%';
+      if(!it.read&&it.x>=Z0){
+        it.read=true;readNow=true;it.e.classList.add('read');
+        const log=$('#rf-log');if(log.querySelector('td[colspan]'))log.innerHTML='';
+        const tr=document.createElement('tr');tr.className='new';
+        tr.innerHTML=`<td class="id">E280 ${hex()} ${hex()} ${hex()}</td><td>${it.ico} ${it.n}</td><td class="mono">${sc==='race'?raceTime(t):t.toFixed(2)+' s'}</td>`;
+        log.appendChild(tr);log.parentElement.parentElement.scrollTop=1e6;
+        it.readAt=t;
+      }
+    }
+    if(readNow){zone.classList.add('ping');setTimeout(()=>zone.classList.remove('ping'),180)}
+    const allRead=items.every(i=>i.read);
+    if(allRead&&!doneShown){doneShown=true;const span=(Math.max(...items.map(i=>i.readAt))-Math.min(...items.map(i=>i.readAt))).toFixed(1);$('#rf-msg').innerHTML=SC[sc].done(Math.max(.1,+span))}
+    const finished=items.every(i=>i.stop!=null?i.x>=i.stop:i.x>112);
+    if(finished){running=false;return}
+    raf=requestAnimationFrame(frame);
+  }
+  $('#rf-go').onclick=()=>{if(running)return;if(items.some(i=>i.read||i.x!==i.x0))reset();running=true;$('#rf-go').disabled=true;$('#rf-msg').innerHTML='📡 The reader is sending out radio waves…';t0=performance.now();raf=requestAnimationFrame(frame)};
+  $('#rf-reset').onclick=reset;
+  $$('#rf-sc button').forEach(b=>b.onclick=()=>{sc=b.dataset.s;$$('#rf-sc button').forEach(x=>x.setAttribute('aria-pressed',x===b));reset()});
+  reset();
+})();
+
+/* ======================= NFC ======================= */
+(()=>{
+  const tr=$('#nf-track'),tk=$('#nf-tok'),rd=$('#nf-reader'),fd=$('#nf-field'),scr=$('#nf-scr');
+  const SC={
+    pay:{ti:'💳',tn:'Bank card',rn:'☕ Card machine',idle:'£3.40<small>Tap card</small>',ok:'✓ Approved<small>£3.40</small>',
+      msg:'<b class="okc">Paid.</b> The card has no battery. The card machine\'s field powered its chip just long enough to swap the payment details, in under half a second.'},
+    travel:{ti:'🎫',tn:'Travel card',rn:'🚇 Ticket barrier',idle:'Touch in<small>Gate closed 🚧</small>',ok:'✓ Gate open<small>Fare: £2.80</small>',
+      msg:'<b class="okc">Through the barrier.</b> The reader got the card\'s ID and checked it against your account. Thousands of people an hour pass through a busy station this way.'},
+    hotel:{ti:'🗝️',tn:'Room key',rn:'🚪 Room 214',idle:'🔴 Locked<small>Tap key card</small>',ok:'🟢 Unlocked<small>Welcome back</small>',
+      msg:'<b class="okc">Door unlocked.</b> The key card stores a code for room 214 until you check out. Lose it and reception just cancels that code.'},
+    poster:{ti:'📱',tn:'Phone',rn:'🎸 Gig poster',idle:'LIVE FRIDAY<small>Tap phone here</small>',ok:'✓ Tag read<small>Opening tickets…</small>',phone:true,
+      msg:'<b class="okc">The phone opened the ticket page.</b> This time the phone is the reader: it powers the sticker-sized tag hidden in the poster, which sends back a web link.'}
+  };
+  let sc='pay',d=25,armed=true,ac,anim=0;
+  const maxX=()=>rd.offsetLeft-tk.offsetWidth;
+  const fieldPx=()=>maxX()*4/30;
+  function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=1500;g.gain.value=.08;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.12)}catch(e){}}
+  function idle(){const s=SC[sc];scr.className='scr';scr.innerHTML=s.idle;$('#nf-msg').innerHTML=''}
+  function place(){
+    const m=maxX(),x=m-d/30*m,f=fieldPx(),s=SC[sc];
+    tk.style.left=x+'px';
+    fd.style.left=((s.phone?x+tk.offsetWidth:rd.offsetLeft)-f)+'px';fd.style.width=fd.style.height=2*f+'px';
+    tk.setAttribute('aria-valuenow',Math.round(d));
+    $('#nf-d').textContent=d<1?'touching':d.toFixed(1)+' cm';
+    const pow=d<=4;tk.classList.toggle('pow',pow);
+    $('#nf-pw').innerHTML=pow?(s.phone?'<b class="okc">⚡ powered by the phone</b>':'<b class="okc">⚡ powered by the reader\'s field</b>'):'<span style="color:var(--muted)">no power, out of range</span>';
+    if(pow&&armed){armed=false;scr.className='scr busy';scr.innerHTML='• • •<small>Reading</small>';
+      setTimeout(()=>{if(armed)return;scr.className='scr ok';scr.innerHTML=s.ok;$('#nf-msg').innerHTML=s.msg;beep()},350)}
+    if(d>6&&!armed){armed=true;setTimeout(()=>{if(armed&&d>6)idle()},900)}
+    if(!pow&&armed&&d<12)$('#nf-msg').innerHTML='Closer… nothing happens until it\'s about 4 cm away.';
+    else if(armed&&d>=12&&scr.className==='scr')$('#nf-msg').innerHTML='';
+  }
+  const setD=v=>{d=Math.max(0,Math.min(30,v));place()};
+  let drag=null;
+  tk.onpointerdown=e=>{cancelAnimationFrame(anim);tk.setPointerCapture(e.pointerId);drag=e.clientX-tk.getBoundingClientRect().left};
+  tk.onpointermove=e=>{if(drag==null)return;const m=maxX(),x=e.clientX-tr.getBoundingClientRect().left-drag;setD((m-x)/m*30)};
+  tk.onpointerup=tk.onpointercancel=()=>drag=null;
+  tk.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowUp'){setD(d-1);e.preventDefault()}if(e.key==='ArrowLeft'||e.key==='ArrowDown'){setD(d+1);e.preventDefault()}};
+  $('#nf-tap').onclick=()=>{
+    cancelAnimationFrame(anim);const from=d,t0=performance.now();
+    const f=t=>{const k=(t-t0)/1800;
+      if(k<.4)setD(from+(1-from)*(k/.4));else if(k<.6)setD(1);else if(k<1)setD(1+(25-1)*((k-.6)/.4));else{setD(25);return}
+      anim=requestAnimationFrame(f)};anim=requestAnimationFrame(f)};
+  $$('#nf-sc button').forEach(b=>b.onclick=()=>{sc=b.dataset.s;$$('#nf-sc button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    const s=SC[sc];$('#nf-ti').textContent=s.ti;$('#nf-tn').textContent=s.tn;$('#nf-rn').textContent=s.rn;
+    armed=true;d=25;idle();place()});
+  window.addEventListener('resize',place);
+  $('#nf-sc button').click();
+})();
+</script>

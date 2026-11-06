@@ -65,6 +65,7 @@
         - { title: "The Internet",         nav: "The internet",       url: /gcse/4/internet.html }
         - { title: "Packet Switching",     nav: "Packet switching",   url: /gcse/4/packet-switching.html }
         - { title: "Wired & Wireless",     nav: "Wired & wireless",   url: /gcse/4/connectivity.html }
+        - { title: "Other Network Technologies", nav: "Other technologies", url: /gcse/4/other-technologies.html }
         - { title: "Network Speeds",       nav: "Network speeds",     url: /gcse/4/network-speeds.html }
         - { title: "Protocols",            nav: "Protocols",          url: /gcse/4/protocols.html }
         - { title: "TCP/IP",               nav: "TCP/IP",             url: /gcse/4/tcp-ip.html }
