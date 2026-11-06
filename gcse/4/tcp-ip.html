@@ -27,6 +27,13 @@ published: false
 .explain{font-size:1.05rem;min-height:4em;margin:12px 0 0;max-width:85ch}
 .key{display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;color:var(--muted);margin:8px 0 0}
 .key i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:5px;border:1.5px solid var(--ink)}
+.swap td{vertical-align:middle}
+.swap td:first-child{white-space:nowrap}
+.swap td.pr{font:700 .95rem var(--mono);white-space:nowrap}
+.swap tr.chg td{background:var(--hl-soft)}
+.swap .tag{font:700 .72rem var(--sans);text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.swap .tag.c{background:var(--hl);color:#16202B}
+.swap .tag.s{background:var(--ok-soft);color:var(--ok)}
 @media (max-width:760px){.stacks{grid-template-columns:1fr}.mid{padding:0}}
 </style>
 
@@ -40,15 +47,15 @@ published: false
     <div class="stack"><h3>Computer A sends</h3>
       <div class="layer" id="a3"><b>Application layer</b><small>FTP</small></div>
       <div class="layer" id="a2"><b>Transport layer</b><small>TCP</small></div>
-      <div class="layer" id="a1"><b>Internet layer</b><small>IP</small></div>
-      <div class="layer" id="a0"><b>Link layer</b><small>Ethernet / Wi-Fi</small></div>
+      <div class="layer" id="a1"><b>Internet layer</b><small>IP · also called the network layer</small></div>
+      <div class="layer" id="a0"><b>Link layer</b><small>Ethernet / Wi-Fi · also called the network interface layer</small></div>
       <p class="dir">↓ down the stack</p></div>
     <div class="mid" id="mid"><small>routed across the internet</small><div class="bar"></div></div>
     <div class="stack"><h3>Computer B receives</h3>
       <div class="layer" id="b3"><b>Application layer</b><small>FTP</small></div>
       <div class="layer" id="b2"><b>Transport layer</b><small>TCP</small></div>
-      <div class="layer" id="b1"><b>Internet layer</b><small>IP</small></div>
-      <div class="layer" id="b0"><b>Link layer</b><small>Ethernet / Wi-Fi</small></div>
+      <div class="layer" id="b1"><b>Internet layer</b><small>IP · also called the network layer</small></div>
+      <div class="layer" id="b0"><b>Link layer</b><small>Ethernet / Wi-Fi · also called the network interface layer</small></div>
       <p class="dir">↑ up the stack</p></div>
   </div>
   <div class="unit" id="unit"></div>
@@ -57,24 +64,15 @@ published: false
 </section>
 
 <section class="block">
-  <h2>The four layers</h2>
-  <div class="scroll"><table class="t">
-    <tr><th>Layer</th><th>What it does</th><th>Protocols</th></tr>
-    <tr><td><b>Application</b></td><td>Defines how user services such as web browsers and email operate. This is the layer the user's software talks to</td><td>HTTP, HTTPS, FTP, SMTP, POP3, IMAP</td></tr>
-    <tr><td><b>Transport</b></td><td>Sets up a channel between the source and destination devices. Splits outgoing data into packets and reassembles incoming packets, checking that they are correct. It does not know what the data represents</td><td>TCP</td></tr>
-    <tr><td><b>Internet</b><br>(also called the network layer)</td><td>Adds the source and destination IP addresses to the packets it gets from the transport layer, and routes them to the recipient</td><td>IP</td></tr>
-    <tr><td><b>Link</b><br>(also called the network interface layer)</td><td>Defines how data is physically transferred from one device to the next, the whole way along the route: network card to switch, switch to router, router onwards</td><td>Ethernet (wired LANs), Wi-Fi (wireless LANs)</td></tr>
-  </table></div>
-  <p class="note">In practice the packets take different routes. The transport layer creates the impression of a single dedicated channel, and leaves the details of how packets actually travel to the layers below it.</p>
-</section>
-
-<section class="block">
-  <h2>Why use layers?</h2>
-  <ul style="margin:0;padding-left:1.2em;max-width:85ch">
-    <li>Each layer has one clear function, and only needs to know how to pass data to the layers directly above and below it.</li>
-    <li>A layer can be changed without affecting the others. Swapping a cable for Wi-Fi changes the link layer only: the browser carries on exactly as before.</li>
-    <li>Hardware and software from different suppliers work together, because they all follow the same standard. Without it each supplier would need its own customised system.</li>
-  </ul>
+  <h2>Change one layer</h2>
+  <p class="sub">Each layer has one job, and only talks to the layers directly above and below it. Change what the user is doing, how the laptop is connected, or who made it, and watch which layers are affected.</p>
+  <div class="toolbar" style="margin-bottom:14px">
+    <label class="check">The user is <select id="sw-app"></select></label>
+    <label class="check">Connected by <select id="sw-link"></select></label>
+    <label class="check">Device <select id="sw-dev"></select></label>
+  </div>
+  <div class="scroll"><table class="t swap" id="swap"></table></div>
+  <p class="status" id="swmsg" style="margin-top:10px"></p>
 </section>
 
 <section class="block">
@@ -111,6 +109,31 @@ $('#step').onclick=()=>{halt();step()};
 $('#play').onclick=()=>{if(timer){halt();return}$('#play').textContent='Pause';step();if(q.length)timer=setInterval(step,2600);else halt()};
 $('#reset').onclick=()=>{halt();q=[];show({text:'Press <b>Step</b> to start at the top of computer A\'s stack.'})};
 $('#reset').onclick();
+
+/* ---------- change one layer ---------- */
+const APP=[['loading a web page','HTTP','Defines how the browser requests the page and how the web server sends it back.'],['paying in an online shop','HTTPS','Like HTTP, but the data is encrypted between the browser and the web server.'],['uploading a file','FTP','Defines how the file is requested and transferred.'],['sending an email','SMTP','Defines how the email is passed to the mail server.']];
+const LNK=[['a cable','Ethernet','Converts packets into electrical signals on the cable, and transfers them from the network card to the switch, and on to the router.'],['Wi-Fi','Wi-Fi','Converts packets into radio waves, and transfers them from the wireless adapter to the access point, and on to the router.']];
+const DEV=['a Windows laptop','an Apple laptop','an Android phone','a games console'];
+const sw={app:0,link:0,dev:0};
+$('#sw-app').innerHTML=APP.map((a,i)=>`<option value="${i}">${a[0]}</option>`).join('');
+$('#sw-link').innerHTML=LNK.map((a,i)=>`<option value="${i}">${a[0]}</option>`).join('');
+$('#sw-dev').innerHTML=DEV.map((a,i)=>`<option value="${i}">${a}</option>`).join('');
+function drawSwap(changed){
+  const A=APP[sw.app],K=LNK[sw.link];
+  const rows=[
+   ['Application','',A[1],A[2]+' This is the layer the user\'s software talks to.','app'],
+   ['Transport','','TCP','Creates the impression of a single dedicated channel to the other device, even though the packets may take different routes. Splits the data into numbered packets and reassembles them at the other end, checking they are correct. It does not know or care what the data represents.',''],
+   ['Internet','network layer','IP','Adds the source and destination IP addresses to each packet and routes it towards the recipient.',''],
+   ['Link','network interface layer',K[1],K[2],'link']];
+  $('#swap').innerHTML='<tr><th>Layer</th><th>Protocol</th><th>What it does</th><th></th></tr>'+rows.map(r=>{const c=changed&&changed===r[4];
+    return `<tr class="${c?'chg':''}"><td><b>${r[0]}</b>${r[1]?`<br><small style="color:var(--muted)">also called the ${r[1]}</small>`:''}</td><td class="pr">${r[2]}</td><td>${r[3]}</td><td>${changed?(c?'<span class="tag c">changed</span>':'<span class="tag s">no change</span>'):''}</td></tr>`}).join('');
+  $('#swmsg').innerHTML=!changed?'Change one of the choices above.'
+    :changed==='app'?`<b>Only the application layer changed.</b> TCP, IP and ${K[1]} carry the ${A[1]} data in exactly the same way as before. They do not need to know what it is.`
+    :changed==='link'?`<b>Only the link layer changed.</b> The browser, TCP and IP carry on exactly as before. Swapping a cable for Wi-Fi does not mean rewriting the web browser.`
+    :`<b>No layer changed.</b> ${DEV[sw.dev][0].toUpperCase()+DEV[sw.dev].slice(1)} uses the same four layers and the same protocols as every other device. Hardware and software from different suppliers can work together because they all follow the same standard.`;
+}
+[['sw-app','app'],['sw-link','link'],['sw-dev','dev']].forEach(([id,k])=>$('#'+id).onchange=e=>{sw[k]=+e.target.value;drawSwap(k)});
+drawSwap();
 
 const L=['Application','Transport','Internet','Link'];
 cardQuiz($('#quiz1'),[
