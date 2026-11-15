@@ -17,9 +17,41 @@ spec: "OCR A LEVEL · 2.1.1"
 .lvl{font-weight:800;margin:10px 0 2px}
 .ans td:nth-child(2){white-space:nowrap;font-weight:700}
 .cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.cols3 .panel h3,.kinds .panel h3{margin:0 0 6px;font-size:1rem}
+.cols3 .panel{padding:14px 16px}
+.cols3 .panel h3{margin:0 0 6px;font-size:1rem}
+.cols3 .panel h3 small{display:block;font:600 .74rem var(--mono);color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
 .cols3 .pc{margin:8px 0}
-.cols3 ul,.kinds ul{margin:6px 0 0;padding-left:1.1em;font-size:.92rem}
+.cols3 ul{margin:6px 0 0;padding-left:1.1em;font-size:.88rem}
+.cpu{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 22px;align-items:center;margin-top:14px}
+.mem{display:flex;gap:8px;flex-wrap:wrap}
+.mem div{border:2px solid var(--line);border-radius:8px;padding:5px 10px;background:var(--bg);text-align:center;min-width:92px}
+.mem div.acc{border-color:var(--ink)}
+.mem div.on{border-color:var(--one);background:var(--one-soft)}
+.mem small{display:block;font:600 .7rem var(--mono);color:var(--muted)}
+.mem b{font:700 1.1rem var(--mono)}
+.kb{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
+.kb svg{width:100%;height:auto;display:block;background:var(--bg);border:2px solid var(--line);border-radius:12px}
+.kb .water{fill:var(--one-soft)}
+.kb .land{fill:var(--ok-soft);stroke:var(--ok);stroke-width:1.5;cursor:pointer}
+.kb .bridge{fill:none;stroke:var(--muted);stroke-width:9;stroke-linecap:round;cursor:pointer}
+.kb .edge{fill:none;stroke:var(--ink);stroke-width:3;cursor:pointer}
+.kb .hitline{fill:none;stroke:transparent;stroke-width:18;cursor:pointer}
+.kb .used{stroke:var(--one)}
+.kb .gone{stroke:var(--off);stroke-dasharray:4 5;cursor:default}
+.kb .node{fill:var(--panel);stroke:var(--ink);stroke-width:3;cursor:pointer}
+.kb .node.here,.kb .land.here{fill:var(--hl-soft);stroke:var(--hl);stroke-width:4}
+.kb text{font:700 12px var(--sans);fill:var(--ink);pointer-events:none}
+.kb text.num{font:700 11px var(--mono);fill:#fff}
+.kb .tag{fill:var(--one)}
+.deg td,.deg th{padding:5px 8px}
+.ballw{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:18px;align-items:start}
+.ballw svg{width:100%;height:auto;display:block;background:var(--bg);border:2px solid var(--line);border-radius:12px}
+.ballw .real{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:5 5}
+.ballw .mine{fill:none;stroke:var(--one);stroke-width:3}
+.stats3{display:grid;gap:8px}
+.stats3 div{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg)}
+.stats3 b{display:block;font:700 1.25rem var(--mono)}
+.stats3 small{color:var(--muted)}
 .q{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:start}
 .qview{display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-height:56px;margin:10px 0}
 .qview .it,.slot{font:700 1rem var(--mono);min-width:44px;height:44px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:8px;background:var(--panel)}
@@ -27,14 +59,14 @@ spec: "OCR A LEVEL · 2.1.1"
 .slots{display:grid;grid-template-columns:repeat(6,minmax(0,56px));gap:6px;margin:10px 0 2px}
 .slots>div{display:grid;gap:3px;text-align:center}
 .slots small{font:600 .74rem var(--mono);color:var(--muted);min-height:1.2em}
+.qc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.qc .pc{font-size:.76rem;margin:0}
+.qc .pc span{padding:0 8px}
 .slot.live{background:var(--one-soft);border-color:var(--one)}
 .slot.dead{border-color:var(--line);color:var(--off)}
-.kinds{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
-.kinds svg{width:100%;max-width:300px;height:auto;display:block;margin:8px auto 0}
-.kinds svg path{fill:none;stroke:var(--ink);stroke-width:2.5}
-.kinds svg circle{fill:var(--panel);stroke:var(--ink);stroke-width:2.5}
-.kinds svg text{font:700 12px var(--sans);fill:var(--ink)}
-@media (max-width:860px){.metro,.q,.kinds,.cols3{grid-template-columns:minmax(0,1fr)}}
+#sc{max-width:min(100%,62vw)}
+.block .check{flex-wrap:wrap}
+@media (max-width:860px){.metro,.q,.kb,.cols3,.cpu,.ballw{grid-template-columns:minmax(0,1fr)}}
 </style>
 <p class="lede">Abstraction means removing unnecessary detail from a problem so that only the features needed to solve it are left. The result is a simplified representation of reality. Every computer model, map, simulation and data structure is an abstraction of something.</p>
 
@@ -54,17 +86,46 @@ spec: "OCR A LEVEL · 2.1.1"
 </section>
 
 <section class="block">
-  <h2>Why programmers rely on abstraction</h2>
-  <p class="sub">Without abstraction, a programmer would have to think about every detail of the computer at once. Each generation of programming language hid more of the machine, so that the programmer could concentrate on the problem instead. Here is the same instruction at three levels.</p>
-  <div class="cols3">
-    <div class="panel"><h3>High-level language</h3><pre class="pc" id="hl"></pre>
-      <ul><li>Reads like the problem being solved</li><li>No need to know where <span class="mono">x</span> and <span class="mono">a</span> are stored</li><li>Runs on any computer that has a translator</li></ul></div>
-    <div class="panel"><h3>Assembly language</h3><pre class="pc" id="asm"></pre>
-      <ul><li>One mnemonic for each machine instruction</li><li>The programmer manages registers and memory</li><li>Has to be rewritten for a different processor</li></ul></div>
-    <div class="panel"><h3>Machine code</h3><pre class="pc" id="mc"></pre>
-      <ul><li>The binary patterns the processor executes</li><li>Every opcode and address written by hand</li><li>Slow to write, and the errors are hard to find</li></ul></div>
+  <h2>How an abstraction differs from reality</h2>
+  <p class="sub">A game needs a ball that bounces. The dashed line is how a real ball moves. Choose which properties of the ball your model includes, then drop it. The more you simplify, the less the model behaves like the real thing.</p>
+  <div class="toolbar" style="margin-bottom:12px">
+    <label class="check"><input type="checkbox" id="b-g" checked> Gravity</label>
+    <label class="check"><input type="checkbox" id="b-e"> Energy lost at each bounce</label>
+    <label class="check"><input type="checkbox" id="b-d"> Air resistance</label>
+    <button class="btn pri" id="b-go">Drop the ball</button>
   </div>
-  <p class="note">In programming, abstraction separates <b>what</b> a program unit does from <b>how</b> it does it. This makes large programs possible: a team can design and build a solution in layers, each one using the layer below without needing to understand its insides.</p>
+  <div class="ballw">
+    <svg id="ball" viewBox="0 0 600 240" role="img" aria-label="The path of a real bouncing ball and the path predicted by your model"></svg>
+    <div><div class="stats3" id="bstats"></div><p class="note" id="bnote"></p></div>
+  </div>
+  <details class="recap"><summary>Summary: more abstractions and how they differ from reality</summary>
+  <div class="scroll"><table class="t">
+    <tr><th>Abstraction</th><th>What it keeps</th><th>What it leaves out or simplifies</th><th>When the difference matters</th></tr>
+    <tr><td><b>Metro map</b></td><td>Stations, lines, the order of stops and where to change</td><td>Distances, directions, streets and the true route of the track</td><td>Deciding whether it would be quicker to walk, or planning where to dig a new tunnel</td></tr>
+    <tr><td><b>Sat-nav road network</b></td><td>Junctions, the roads joining them, lengths and speed limits</td><td>Buildings, scenery, the road surface and the weather</td><td>A road is closed or flooded and the data has not been updated</td></tr>
+    <tr><td><b>Bouncing ball in a game</b></td><td>Position, velocity, gravity and how elastic the ball is</td><td>Air resistance, spin and the ball changing shape</td><td>The game needs to feel realistic, as a snooker simulation does</td></tr>
+    <tr><td><b>Model of a housing estate</b></td><td>Where each house and road goes</td><td>Every house is identical, with no windows, doors or chimneys, and every tree is the same</td><td>A buyer wants to know what their own house will look like</td></tr>
+    <tr><td><b>Customer record</b></td><td>Name, address and order history</td><td>Everything else about the person</td><td>The business later needs a fact that it never stored</td></tr>
+  </table></div>
+  </details>
+</section>
+
+<section class="block">
+  <h2>Why programmers rely on abstraction</h2>
+  <p class="sub">In programming, abstraction separates <b>what</b> a program does from <b>how</b> it does it. Each generation of programming language hid more of the machine, so that the programmer could concentrate on the problem. Here is the statement <span class="mono">x = a + 5</span> at all three levels. Step through it to see what the processor really does.</p>
+  <div class="cols3">
+    <div class="panel"><h3><small>1st generation</small>Machine code</h3><pre class="pc" id="mc"></pre>
+      <ul><li>The binary patterns the processor executes</li><li>Every opcode and memory address written by hand</li><li>Slow to write, and errors are hard to find</li></ul></div>
+    <div class="panel"><h3><small>2nd generation</small>Assembly language</h3><pre class="pc" id="asm"></pre>
+      <ul><li>A mnemonic in place of each opcode</li><li>The programmer still manages the accumulator and memory</li><li>Must be rewritten for a different processor</li></ul></div>
+    <div class="panel"><h3><small>3rd generation, from the 1960s</small>High-level language</h3><pre class="pc" id="hl"></pre>
+      <ul><li>Reads like the problem being solved</li><li>No need to know where <span class="mono">x</span> and <span class="mono">a</span> are stored</li><li>Runs on any computer with a translator</li></ul></div>
+  </div>
+  <div class="cpu">
+    <div class="row"><button class="btn pri" id="mstep">Step</button><button class="btn" id="mrst">Reset</button><label class="check">a = <input type="number" id="ma" value="7" min="0" max="99" style="width:4.5em"></label></div>
+    <div class="mem" id="mem"></div>
+  </div>
+  <p class="status" id="mmsg" style="margin-top:10px"></p>
 </section>
 
 <section class="block">
@@ -80,33 +141,37 @@ spec: "OCR A LEVEL · 2.1.1"
     <div class="panel hidden" id="qimpl"><h2>What is hidden</h2>
       <div class="slots" id="slots"></div>
       <p class="mono" id="ptrs" style="margin:6px 0 10px;font-size:.9rem"></p>
-      <pre class="pc" id="qcode"></pre>
+      <div class="qc"><pre class="pc" id="qcode"></pre><pre class="pc" id="qcode2"></pre></div>
     </div>
   </div>
   <p class="note">The implementation is a fixed-size array with two pointers that wrap round to the start. It could be replaced with a linked list and no program that uses <span class="mono">enqueue</span> and <span class="mono">dequeue</span> would need to change.</p>
 </section>
 
 <section class="block">
-  <h2>Other kinds of abstraction</h2>
-  <div class="kinds">
-    <div class="panel"><h3>Abstraction by generalisation</h3>
-      <p class="sub" style="margin:0">Grouping things by their common characteristics, giving an "is a kind of" relationship. In 1736 Euler was asked whether a walk through Königsberg could cross each of its seven bridges exactly once. He discarded the streets and buildings, drew each piece of land as a node and each bridge as an edge, and so turned the puzzle into a graph problem. Every node has an odd number of edges, so no such walk exists. The same reasoning now solves any problem of the same kind, in any city.</p>
-      <svg viewBox="0 0 300 190" role="img" aria-label="Graph of the Königsberg bridges: four nodes joined by seven edges">
-        <path d="M150 30 Q95 45 80 100"/><path d="M150 30 Q135 85 80 100"/><path d="M150 160 Q95 145 80 100"/><path d="M150 160 Q135 105 80 100"/>
-        <path d="M150 30 L230 100"/><path d="M150 160 L230 100"/><path d="M80 100 L230 100"/>
-        <circle cx="150" cy="30" r="9"/><circle cx="150" cy="160" r="9"/><circle cx="80" cy="100" r="9"/><circle cx="230" cy="100" r="9"/>
-        <text x="165" y="24">North bank</text><text x="165" y="176">South bank</text><text x="66" y="104" text-anchor="end">West island</text><text x="244" y="104">East</text>
-      </svg>
-    </div>
-    <div class="panel"><h3>Where else you have met it</h3>
-      <ul>
-        <li><b>Classes and inheritance:</b> <span class="mono">Dog</span> and <span class="mono">Cat</span> are kinds of <span class="mono">Animal</span>, so the shared attributes and methods are written once in the superclass.</li>
-        <li><b>Procedural abstraction:</b> you call <span class="mono">drawTriangle("red", 4.5, 2.0)</span> knowing what it does and what arguments it needs, but not how it draws.</li>
-        <li><b>Data types:</b> you use an integer or a real number without thinking about how its bits are laid out in memory.</li>
-        <li><b>Models and simulations:</b> a flight simulator or a climate model keeps the variables that affect the outcome and leaves out the rest.</li>
-      </ul>
+  <h2>Abstraction by generalisation</h2>
+  <p class="sub">The people of Königsberg wanted a Sunday walk that crossed each of the city's seven bridges exactly once. Click a piece of land to start, then click bridges to cross them. Then switch to the graph that Euler drew in 1736: each piece of land became a node and each bridge an edge.</p>
+  <div class="toolbar" style="margin-bottom:12px">
+    <div class="seg" role="radiogroup" aria-label="View" id="kview"><button role="radio" data-v="map" aria-checked="true">Map</button><button role="radio" data-v="graph" aria-checked="false">Euler's graph</button></div>
+    <button class="btn" id="kundo">Undo</button><button class="btn" id="krst">Start again</button>
+    <label class="check"><input type="checkbox" id="kcut"> Remove the bridge between the north bank and the east</label>
+  </div>
+  <div class="kb">
+    <svg id="kb" viewBox="0 0 440 270" role="img" aria-label="Königsberg's four pieces of land and seven bridges"></svg>
+    <div>
+      <p class="status" id="kmsg" style="margin:0 0 10px"></p>
+      <table class="t deg" id="kdeg"></table>
+      <p class="note" id="knote"></p>
     </div>
   </div>
+  <details class="recap"><summary>Summary: kinds of abstraction</summary>
+  <div class="scroll"><table class="t">
+    <tr><th>Kind</th><th>What it means</th><th>Example</th></tr>
+    <tr><td><b>Representational abstraction</b></td><td>A representation arrived at by removing unnecessary details</td><td>A metro map, a flight simulator, a model of a housing estate</td></tr>
+    <tr><td><b>Abstraction by generalisation</b></td><td>Grouping by common characteristics, giving an "is a kind of" relationship</td><td>Königsberg is a kind of graph problem. <span class="mono">Dog</span> and <span class="mono">Cat</span> are kinds of <span class="mono">Animal</span>, so what they share is written once in the superclass</td></tr>
+    <tr><td><b>Procedural abstraction</b></td><td>Using a procedure while knowing only what it does and how to call it</td><td><span class="mono">drawTriangle("red", 4.5, 2.0)</span></td></tr>
+    <tr><td><b>Data abstraction</b></td><td>Hiding how data is represented, so only its operations are seen</td><td>Integers and reals; a queue with <span class="mono">enqueue</span> and <span class="mono">dequeue</span></td></tr>
+  </table></div>
+  </details>
 </section>
 
 <section class="block">
@@ -116,19 +181,6 @@ spec: "OCR A LEVEL · 2.1.1"
   <p id="brief" style="margin:0 0 12px;max-width:85ch"></p>
   {% include quiz.html n=2 %}
   <p class="note" id="model"></p>
-</section>
-
-<section class="block">
-  <h2>How an abstraction differs from reality</h2>
-  <div class="scroll"><table class="t">
-    <tr><th>Abstraction</th><th>What it keeps</th><th>What it leaves out or simplifies</th><th>When the difference matters</th></tr>
-    <tr><td><b>Metro map</b></td><td>Stations, lines, the order of stops and where to change</td><td>Distances, directions, streets and the true route of the track</td><td>Deciding whether it would be quicker to walk</td></tr>
-    <tr><td><b>Sat-nav road network</b></td><td>Junctions, the roads joining them, lengths and speed limits</td><td>Buildings, scenery, the road surface and the weather</td><td>A road is closed or flooded and the data has not been updated</td></tr>
-    <tr><td><b>Bouncing ball in a game</b></td><td>Position, velocity, gravity and how elastic the ball is</td><td>Air resistance, spin and the ball changing shape</td><td>The game needs to feel realistic, as a snooker simulation does</td></tr>
-    <tr><td><b>Model of a housing estate</b></td><td>Where each house and road goes</td><td>Every house is identical, with no windows, doors or chimneys</td><td>A buyer wants to know what their own house will look like</td></tr>
-    <tr><td><b>Customer record</b></td><td>Name, address and order history</td><td>Everything else about the person</td><td>The business later needs a fact that it never stored</td></tr>
-  </table></div>
-  <p class="note">The more you simplify, the easier the model is to build and the faster it runs, but the less likely it is to behave like the real thing. Choosing what to leave out is the design decision.</p>
 </section>
 
 <section class="block">
@@ -193,15 +245,118 @@ function animate(){
 $('#lv').oninput=e=>{lv=+e.target.value;drawInfo();if(!raf)animate()};
 drawMap();drawInfo();
 
+/* ---------- abstraction and reality: a bouncing ball ---------- */
+const GROUND=225,REAL={g:600,e:.72,k:.3};
+function fly(G,E,D){
+  let x=20,y=30,vx=135,vy=0;const pts=[[x,y]],dt=1/240;
+  for(let i=1;i<=960;i++){
+    if(D){vx-=REAL.k*vx*dt;vy-=REAL.k*vy*dt}
+    if(G)vy+=REAL.g*dt;
+    x+=vx*dt;y+=vy*dt;
+    if(y>GROUND){y=2*GROUND-y;vy=-vy*(E?REAL.e:1);if(Math.abs(vy)<12){vy=0;y=GROUND}}
+    if(i%4===0)pts.push([x,y]);
+  }
+  return pts;
+}
+const BNOTE=(G,E,D)=>!G?(D?'Without gravity the ball slows down but never falls. Air resistance on its own is the wrong thing to keep.':'With no gravity the ball never falls. It travels in a straight line for ever. Too much has been removed for the model to be any use.')
+  :!E&&!D?'The ball falls and bounces, but it bounces back to the same height for ever. That might do for a simple arcade game, but no real ball behaves like this.'
+  :E&&!D?'Close to reality for the first few bounces, but the ball travels too far because nothing slows it down. For most games this is a good enough abstraction: simple to program and quick to calculate.'
+  :!E?'Air resistance slows the ball, but with no energy lost at each bounce it keeps bouncing far too high.'
+  :'The model now matches the real ball. Every property added means more to program and more to calculate in every frame, and a real ball also spins, changes shape and is pushed by the wind. However detailed it is, a model is still an abstraction.';
+let bRaf=0;
+const bpath=(p,n)=>'M'+p.slice(0,n).map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join('L');
+function ballDraw(n){
+  const G=$('#b-g').checked,E=$('#b-e').checked,D=$('#b-d').checked,real=fly(1,1,1),mine=fly(G,E,D);n=n??real.length;
+  const r=real[n-1],m=mine[n-1];
+  $('#ball').innerHTML=`<rect x="0" y="${GROUND+7}" width="600" height="20" fill="var(--off)"/><path class="real" d="${bpath(real,n)}"/><path class="mine" d="${bpath(mine,n)}"/>`
+    +`<circle cx="${r[0]}" cy="${r[1]}" r="7" fill="var(--panel)" stroke="var(--muted)" stroke-width="2"/><circle cx="${m[0]}" cy="${m[1]}" r="7" fill="var(--one)"/>`
+    +`<text x="590" y="20" text-anchor="end" style="font:700 12px var(--sans);fill:var(--muted)">- - real ball</text><text x="590" y="38" text-anchor="end" style="font:700 12px var(--sans);fill:var(--one)">— your model</text>`;
+  const L=real.length-1,gap=Math.hypot(real[L][0]-mine[L][0],real[L][1]-mine[L][1])/100;
+  $('#bstats').innerHTML=[[[G,E,D].filter(Boolean).length+' of 3','properties of the ball modelled'],[2+G+E+2*D,'calculations for each time step'],[gap.toFixed(1)+' m','from the real ball after 4 seconds']].map(s=>`<div><b>${s[0]}</b><small>${s[1]}</small></div>`).join('');
+  $('#bnote').textContent=BNOTE(G,E,D);
+}
+['#b-g','#b-e','#b-d'].forEach(id=>$(id).onchange=()=>{cancelAnimationFrame(bRaf);ballDraw()});
+$('#b-go').onclick=()=>{cancelAnimationFrame(bRaf);const N=fly(1,1,1).length,t0=performance.now();
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return ballDraw();
+  const tick=t=>{const n=Math.min(N,1+Math.floor((t-t0)/1000*60));ballDraw(n);if(n<N)bRaf=requestAnimationFrame(tick)};bRaf=requestAnimationFrame(tick)};
+ballDraw();
+
 /* ---------- three levels of language ---------- */
-listing($('#hl'),['x = a + 5']);
-listing($('#asm'),['LDA a','ADD five','STA x']);
 listing($('#mc'),['0101 00010111','0001 00011001','0011 00011000']);
+listing($('#asm'),['LDA a','ADD five','STA x']);
+listing($('#hl'),['x = a + 5']);
+const MSTEP=[
+ ['<b>LDA a</b> (<span class="mono">0101 00010111</span>): the processor copies the value at address 23, which holds <span class="mono">a</span>, into the accumulator. The machine-code programmer had to know that 0101 means load and that <span class="mono">a</span> lives at 00010111.',[0,23]],
+ ['<b>ADD five</b> (<span class="mono">0001 00011001</span>): adds the value at address 25, which holds the constant 5, to the accumulator. Somebody had to put that 5 in memory first.',[0,25]],
+ ['<b>STA x</b> (<span class="mono">0011 00011000</span>): stores the accumulator at address 24, which is <span class="mono">x</span>.',[0,24]]];
+let ms,acc,mem;
+function mReset(){ms=0;acc=null;mem={23:Math.max(0,Math.min(99,+$('#ma').value||0)),24:null,25:5};mDraw('One high-level statement is three machine instructions. Press Step to run the first one.')}
+function mDraw(msg){
+  [['#mc',ms],['#asm',ms],['#hl',ms<3?0:-1]].forEach(([id,k])=>$$(id+' span').forEach((s,i)=>s.className=i===k?'cur':''));
+  const on=ms?MSTEP[ms-1][1]:[];
+  $('#mem').innerHTML=`<div class="acc ${on.includes(0)?'on':''}"><small>accumulator</small><b>${acc??'–'}</b></div>`
+    +[[23,'a'],[24,'x'],[25,'five']].map(([ad,n])=>`<div class="${on.includes(ad)?'on':''}"><small>address ${ad} · ${toBin(ad)}</small><b>${mem[ad]??'?'}</b><small>${n}</small></div>`).join('');
+  $('#mmsg').innerHTML=msg;$('#mstep').disabled=ms>=3;
+}
+$('#mstep').onclick=()=>{
+  if(ms===0)acc=mem[23];else if(ms===1)acc+=mem[25];else mem[24]=acc;
+  ms++;mDraw(MSTEP[ms-1][0]+(ms===3?` <b>Done: x = ${acc}.</b> The high-level programmer wrote one line and never needed to know about the accumulator or addresses 23, 24 and 25. The translator worked all of that out.`:''))};
+$('#mrst').onclick=mReset;$('#ma').onchange=mReset;
+mReset();
+
+/* ---------- Königsberg ---------- */
+const LAND=['North bank','South bank','Island','East'],N_E=5;
+/* bridges: [land, land, map path, graph path] */
+const BR=[[0,2,'M120 72V116','M220 35Q120 50 90 135'],[0,2,'M220 72V116','M220 35Q175 115 90 135'],[1,2,'M120 154V198','M220 235Q120 220 90 135'],[1,2,'M220 154V198','M220 235Q175 155 90 135'],
+ [2,3,'M242 135H313','M90 135H350'],[0,3,'M380 72V103','M220 35L350 135'],[1,3,'M380 167V198','M220 235L350 135']];
+const NODE=[[220,35],[220,235],[90,135],[350,135]];
+let kview='map',kpath=[],kstart=null;
+const kpos=()=>{let p=kstart;kpath.forEach(e=>p=BR[e][0]===p?BR[e][1]:BR[e][0]);return p};
+const live=()=>BR.map((b,i)=>i).filter(i=>!($('#kcut').checked&&i===N_E));
+function kDraw(msg){
+  const pos=kpos(),cut=$('#kcut').checked,map=kview==='map';
+  const cls=i=>(cut&&i===N_E?' gone':kpath.includes(i)?' used':'');
+  let s=map?`<rect class="water" x="0" y="0" width="440" height="270"/>`
+    +[`<rect class="land" data-k="0" x="0" y="0" width="440" height="75"/>`,`<rect class="land" data-k="1" x="0" y="195" width="440" height="75"/>`,`<ellipse class="land" data-k="2" cx="170" cy="135" rx="75" ry="30"/>`,`<rect class="land" data-k="3" x="310" y="100" width="130" height="70" rx="6"/>`].map((t,k)=>k===pos?t.replace('class="land"','class="land here"'):t).join('')
+    +BR.map((b,i)=>`<path class="bridge${cls(i)}" data-e="${i}" d="${b[2]}"/>`).join('')
+    +`<text x="14" y="40">North bank</text><text x="14" y="240">South bank</text><text x="170" y="139" text-anchor="middle">Island</text><text x="425" y="139" text-anchor="end">East</text><text x="270" y="96" style="fill:var(--one)">River Pregel</text>`
+   :BR.map((b,i)=>`<path class="hitline" data-e="${i}" d="${b[3]}"/><path class="edge${cls(i)}" data-e="${i}" d="${b[3]}"/>`).join('')
+    +NODE.map(([x,y],k)=>`<circle class="node${k===pos?' here':''}" data-k="${k}" cx="${x}" cy="${y}" r="14"/>`).join('')
+    +`<text x="244" y="30">North bank</text><text x="244" y="250">South bank</text><text x="68" y="139" text-anchor="end">Island</text><text x="372" y="139">East</text>`;
+  $('#kb').innerHTML=s;
+  kpath.forEach((e,n)=>{const p=$(`#kb path[data-e="${e}"]:not(.hitline)`),L=p.getTotalLength(),m=p.getPointAtLength(L/2);
+    $('#kb').insertAdjacentHTML('beforeend',`<circle class="tag" cx="${m.x}" cy="${m.y}" r="9"/><text class="num" x="${m.x}" y="${m.y+4}" text-anchor="middle">${n+1}</text>`)});
+  const deg=LAND.map((l,k)=>live().filter(i=>BR[i][0]===k||BR[i][1]===k).length),odd=deg.filter(d=>d%2).length;
+  $('#kdeg').innerHTML='<tr><th>Land</th><th>Bridges</th><th></th></tr>'+LAND.map((l,k)=>`<tr><td>${l}</td><td class="mono">${deg[k]}</td><td class="${deg[k]%2?'badc':'okc'}">${deg[k]%2?'odd':'even'}</td></tr>`).join('');
+  $('#knote').innerHTML=map?'Euler threw away everything except which pieces of land each bridge joins. Switch to his graph to see what was left.'
+    :`Each time a walk passes through a piece of land it uses two bridges, one in and one out. So every piece of land except the start and the end needs an even number of bridges. ${odd>2?`Here ${odd} are odd, so <b>no walk can work</b>, however you try.`:`Now only ${odd} are odd, so the walk <b>is</b> possible if it starts at one of them and ends at the other.`} Euler's rule works for any city and any network. Königsberg is just one kind of graph problem: that is abstraction by generalisation.`;
+  const total=live().length,stuck=pos!==null&&!live().some(i=>!kpath.includes(i)&&(BR[i][0]===pos||BR[i][1]===pos));
+  $('#kmsg').innerHTML=msg||(pos===null?'Click a piece of land to choose where to start.'
+    :kpath.length===total?`<b class="okc">Every bridge crossed exactly once.</b> You started on the ${LAND[kstart].toLowerCase()} and finished on the ${LAND[pos].toLowerCase()}.`
+    :stuck?`<b class="badc">Stuck on the ${LAND[pos].toLowerCase()}</b> after ${kpath.length} of ${total} bridges: every bridge from here has been used. Undo, or start again somewhere else.`
+    :`You are on the ${LAND[pos].toLowerCase()}. Bridges crossed: ${kpath.length} of ${total}.`);
+  $('#kundo').disabled=!kpath.length&&kstart===null;
+}
+$('#kb').onclick=e=>{
+  const t=e.target,pos=kpos();
+  if(t.dataset.k!==undefined){if(!kpath.length){kstart=+t.dataset.k;kDraw()}return}
+  if(t.dataset.e===undefined)return;const i=+t.dataset.e;
+  if($('#kcut').checked&&i===N_E)return;
+  if(pos===null)return kDraw('Click a piece of land first, to choose where to start.');
+  if(kpath.includes(i))return kDraw(`<b class="badc">You have already crossed that bridge.</b> Each one may be crossed only once.`);
+  if(BR[i][0]!==pos&&BR[i][1]!==pos)return kDraw(`That bridge does not touch the ${LAND[pos].toLowerCase()}, where you are now.`);
+  kpath.push(i);kDraw();
+};
+$('#kundo').onclick=()=>{if(kpath.length)kpath.pop();else kstart=null;kDraw()};
+$('#krst').onclick=()=>{kpath=[];kstart=null;kDraw()};
+$('#kcut').onchange=()=>{kpath=[];kstart=null;kDraw()};
+$('#kview').onclick=e=>{const b=e.target.closest('button');if(!b)return;kview=b.dataset.v;$$('#kview button').forEach(x=>x.setAttribute('aria-checked',x===b));kDraw()};
+kDraw();
 
 /* ---------- queue ---------- */
 const N=6;let arr,front,rear,size,nextCh;
 const QCODE=['procedure enqueue(item)','  if size == maxSize then','    print("Queue full")','  else','    rear = (rear + 1) MOD maxSize','    q[rear] = item','    size = size + 1','  endif','endprocedure','','function dequeue()','  if size == 0 then','    return "Queue empty"','  endif','  item = q[front]','  front = (front + 1) MOD maxSize','  size = size - 1','  return item','endfunction'];
-listing($('#qcode'),QCODE);
+listing($('#qcode'),QCODE.slice(0,9));listing($('#qcode2'),QCODE.slice(10));
 function qReset(){arr=Array(N).fill('');front=0;rear=-1;size=0;nextCh=0;qDraw('The queue is empty. Add some items.')}
 function qDraw(msg){
   const items=[];for(let k=0;k<size;k++)items.push(arr[(front+k)%N]);
@@ -267,8 +422,8 @@ cardQuiz($('#quiz'),[
  {q:'Why is a high-level language described as an abstraction?',opts:['It hides the details of registers, memory addresses and machine instructions','It runs faster than machine code','It can only be used to write simulations'],a:'It hides the details of registers, memory addresses and machine instructions',why:'The programmer can write x = a + 5 and think about the problem, not the hardware.'},
  {q:'A weather simulation divides the atmosphere into 10 km squares and gives each one a single temperature. How does this differ from reality?',opts:['Real temperature varies continuously inside each square','Real weather has no temperature','It does not differ: the simulation is exact'],a:'Real temperature varies continuously inside each square',why:'The variation inside each square has been removed to make the calculation possible, at the cost of some accuracy.'},
  {q:'Which is a benefit of using abstraction when designing a program?',opts:['The program is simpler to design, write and test','The program models reality perfectly','No decisions need to be made about what to include'],a:'The program is simpler to design, write and test',why:'There are fewer things to consider. It also takes less memory and processing time.'},
- {q:'Which is a risk of abstracting too much?',opts:['The model no longer behaves enough like the real thing to be useful','The program becomes too detailed','The program uses too much memory'],a:'The model no longer behaves enough like the real thing to be useful',why:'The more you simplify, the less likely the model is to mimic reality.'},
  {q:'<span class="mono">Car</span>, <span class="mono">Van</span> and <span class="mono">Lorry</span> are all defined as subclasses of <span class="mono">Vehicle</span>. Which kind of abstraction is this?',opts:['Abstraction by generalisation','Data abstraction','No abstraction is involved'],a:'Abstraction by generalisation',why:'They are grouped by their common characteristics: each one "is a kind of" Vehicle.'},
- {q:'A stack is provided with the operations <span class="mono">push</span>, <span class="mono">pop</span> and <span class="mono">isEmpty</span>. What has been hidden from the programmer who uses it?',opts:['How the items are stored, such as in an array with a pointer','What the stack is for','The order in which items are removed'],a:'How the items are stored, such as in an array with a pointer',why:'This is data abstraction. The implementation could change without affecting the programs that use the stack.'},
+ {q:'The sequence 1, 4, 9, 16 … is generalised to the rule "the nth term is n²". What is the 50th term?',opts:['2500','100','250'],a:'2500',why:'Once the general rule is found, any term can be worked out without listing the ones before it: 50² = 2500.'},
+ {q:'Königsberg had four pieces of land, each with an odd number of bridges. Why could no walk cross every bridge exactly once?',opts:['Every piece of land except the start and the end needs an even number of bridges','There were too many bridges to try every route','The river was too wide'],a:'Every piece of land except the start and the end needs an even number of bridges',why:'A walk uses one bridge to arrive and another to leave. Euler proved this without trying a single route, and the rule applies to any graph.'},
 ],null,$('#score'),$('#qreset'));
 </script>

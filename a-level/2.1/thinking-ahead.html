@@ -31,7 +31,25 @@ spec: "OCR A LEVEL · 2.1.2"
 .mono{font-variant-ligatures:none}
 .log td:first-child{font-weight:700}
 .vs ul{margin:6px 0 0;padding-left:1.1em}.vs li{margin:4px 0}
-@media (max-width:860px){.io,.pre,.cache{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.reuse{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:18px;align-items:start}
+.comps{display:grid;gap:8px;margin-top:8px}
+.comp{border:2px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg);font-size:.86rem;transition:border-color .2s,background .2s}
+.comp b{font:700 .92rem var(--mono);display:block;margin-bottom:2px}
+.comp span{color:var(--muted)}
+.comp.bug,.chip.bug{border-color:var(--bad);background:var(--bad-soft)}
+.comp.fixed,.chip.fixed{border-color:var(--ok);background:var(--ok-soft)}
+.comp.changed{border-color:var(--hl);background:var(--hl-soft)}
+.comps.dim .comp{opacity:.55;border-style:dashed}
+.progs{display:grid;gap:8px;margin-top:8px}
+.prog{border:2px solid var(--ink);border-radius:10px;padding:8px 12px;background:var(--panel)}
+.prog h3{margin:0 0 6px;font-size:.95rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:600 .8rem var(--mono);border:1.5px solid var(--line);border-radius:999px;padding:3px 10px;background:var(--bg);transition:border-color .2s,background .2s}
+.chip.broken{border-color:var(--bad);background:var(--bad);color:#fff}
+.chip small{font:600 .72rem var(--sans);color:inherit;opacity:.75}
+.stats.s3{grid-template-columns:repeat(3,minmax(0,1fr))}
+#fn{max-width:min(100%,62vw)}
+@media (max-width:860px){.io,.pre,.cache,.reuse{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <p class="lede">Thinking ahead means working out, before any code is written, what a solution will need: the data that goes in, the results that come out, the conditions that must already be true, and anything that could be reused or kept ready in advance.</p>
 
@@ -80,18 +98,19 @@ spec: "OCR A LEVEL · 2.1.2"
       <p class="note" id="fnote"></p>
     </div>
   </div>
-  <h3 style="margin:22px 0 6px">Why state preconditions?</h3>
-  <ul style="margin:0;padding-left:1.2em;max-width:85ch">
+  <details class="recap"><summary>Summary: why state preconditions?</summary>
+  <ul style="margin:0;padding:10px 14px 12px 2.2em">
     <li>Anyone calling the subroutine knows exactly which checks they must carry out first.</li>
     <li>If there are no preconditions, the caller can be confident that the subroutine does the checking itself, so the same checks are not coded twice. A shorter program is easier to debug and maintain.</li>
     <li>A subroutine with clearly documented inputs, outputs and preconditions is reusable. It can be put in a library and called from any program.</li>
     <li>A precondition can make a better solution possible. If a list is known to be sorted, it can be searched with a binary search.</li>
   </ul>
+  </details>
 </section>
 
 <section class="block">
   <h2>Caching</h2>
-  <p class="sub">Caching is the temporary storage of data or instructions that have been used once and may be needed again soon. Fetching a web page from the server takes 300 ms here, and reading it from the cache takes 5 ms. Click pages to request them.</p>
+  <p class="sub">Caching is the temporary storage of data or instructions that have been used once and may be needed again soon. It is thinking ahead done automatically, by the operating system, the processor or the browser, not by the programmer. Fetching a web page from the server takes 300 ms here, and reading it from the cache takes 5 ms. Click pages to request them.</p>
   <div class="toolbar">
     <label class="check">Cache size <input type="range" id="cap" min="0" max="4" value="2"> <b class="mono" id="capv"></b></label>
     <button class="btn" id="session">Run a typical session</button>
@@ -108,25 +127,40 @@ spec: "OCR A LEVEL · 2.1.2"
     </div>
     <div class="scroll"><table class="t log" id="clog"></table></div>
   </div>
-  <div class="cols2 vs" style="margin-top:16px">
-    <div class="panel"><h2>Benefits</h2><ul>
+  <details class="recap"><summary>Summary: benefits and drawbacks of caching</summary>
+  <div class="cols2 vs" style="padding:12px">
+    <div><b>Benefits</b><ul>
       <li>Much faster access to data that is used repeatedly</li>
       <li>Saves bandwidth, because pages and images are not downloaded again</li>
       <li>Reduces the load on the server or the slower storage device</li>
       <li>The same idea is used throughout a computer: cache memory in the CPU, the disk cache and the browser cache</li>
     </ul></div>
-    <div class="panel"><h2>Drawbacks</h2><ul>
+    <div><b>Drawbacks</b><ul>
       <li>The cached copy can be out of date (stale) if the original has changed</li>
       <li>The cache takes up memory or storage, and it is limited in size</li>
       <li>Deciding what to keep and what to remove is complicated to get right</li>
       <li>If the wrong data is cached, nothing is gained and the space is wasted</li>
     </ul></div>
   </div>
+  </details>
 </section>
 
 <section class="block">
   <h2>Reusable program components</h2>
-  <p class="sub">A well-designed component can be written once and used many times: a function or procedure, a class, or a module or library of them. Every time you call <span class="mono">print</span>, generate a random number or find a square root, you are reusing code somebody else wrote. A Windows DLL (dynamic link library) is a package of reusable components shared by many programs. Thinking ahead means spotting which parts of a solution could be reused, and designing them so that they can be.</p>
+  <p class="sub">A component written once can be used by many programs: a function, a procedure, a class, or a library of them, such as a Windows DLL (dynamic link library). Three programs here need the same subroutines. Choose how they get them, then see what happens when the code has to change.</p>
+  <div class="toolbar" style="margin-bottom:14px">
+    <div class="seg" role="radiogroup" aria-label="How the programs get the code" id="rmode"><button role="radio" data-v="copy" aria-checked="true">Copy the code into each program</button><button role="radio" data-v="lib" aria-checked="false">Import it from a shared library</button></div>
+    <button class="btn" id="rfix">Fix the bug in average()</button>
+    <button class="btn" id="rchg">Update maxInt() in the library</button>
+    <button class="btn" id="rrst">Reset</button>
+  </div>
+  <div class="reuse">
+    <div><b id="rlibh"></b><div class="comps" id="rlib"></div></div>
+    <div><b>Programs</b><div class="progs" id="rprogs"></div>
+      <div class="stats s3" id="rstats"></div>
+      <p class="status" id="rmsg" style="margin-top:10px"></p></div>
+  </div>
+  <details class="recap"><summary>Summary: kinds of reusable component</summary>
   <div class="scroll"><table class="t">
     <tr><th>Component</th><th>What it is</th><th>Example</th></tr>
     <tr><td><b>Function</b></td><td>A named block of code that takes parameters and returns a value</td><td><span class="mono">sqrt(n)</span>, <span class="mono">maxInt(listInt)</span></td></tr>
@@ -134,7 +168,12 @@ spec: "OCR A LEVEL · 2.1.2"
     <tr><td><b>Class</b></td><td>A template for objects, with their attributes and methods</td><td>A <span class="mono">Queue</span> class reused in several programs</td></tr>
     <tr><td><b>Module or library</b></td><td>A file or collection of related subroutines and classes that can be imported</td><td>A maths library, a graphics library, a DLL</td></tr>
   </table></div>
-  <p class="sub" style="margin-top:16px">Is each statement a benefit or a drawback of using reusable components?</p>
+  </details>
+</section>
+
+<section class="block">
+  <h2>Benefit or drawback?</h2>
+  <p class="sub">Is each statement a benefit or a drawback of using reusable components?</p>
   {% include quiz.html n=4 %}
 </section>
 
@@ -261,6 +300,39 @@ $('#crst').onclick=cReset;
 cReset();
 
 /* ---------- reusable components ---------- */
+const RC=[
+ {n:'average(numbers)',io:'Input: a list of numbers. Output: a real number, the mean',pre:'len(numbers) > 0',lines:7},
+ {n:'maxInt(listInt)',io:'Input: a list of integers. Output: an integer, the largest value',pre:'len(listInt) > 0',lines:9},
+ {n:'isValidDate(d, m, y)',io:'Input: three integers. Output: a Boolean',pre:'none',lines:16},
+ {n:'search(items, target)',io:'Input: a list and a target. Output: a Boolean',pre:'items is sorted',lines:14}];
+const RP=[['Exam results',[0,1,3]],['Weather station',[0,1,2]],['Library loans',[0,2,3]]];
+let rmode='copy',rfixed,rchanged,redits;
+function rReset(msg){rfixed=new Set();rchanged=false;redits=0;rDraw(msg||'A bug has been found in <span class="mono">average()</span>: it rounds the mean down to a whole number. Every program that uses it gives the wrong answer.')}
+const rUsers=c=>RP.map((p,i)=>i).filter(i=>RP[i][1].includes(c));
+function rDraw(msg){
+  const lib=rmode==='lib',bugLeft=lib?!rfixed.size:rUsers(0).some(i=>!rfixed.has(i));
+  $('#rlibh').textContent=lib?'Shared library: one copy of each subroutine':'The original subroutines, copied into each program';
+  $('#rlib').classList.toggle('dim',!lib);
+  $('#rlib').innerHTML=RC.map((c,i)=>`<div class="comp ${i===0?(bugLeft?(lib?'bug':''):(lib?'fixed':'')):''} ${i===1&&rchanged&&lib?'changed':''}"><b>${c.n}</b>${i===1&&rchanged&&lib?'Output: the <u>position</u> of the largest value':c.io}<br><span>Precondition: <span class="mono">${c.pre}</span> · ${c.lines} lines</span></div>`).join('');
+  $('#rprogs').innerHTML=RP.map(([n,u],p)=>`<div class="prog"><h3>${n}</h3><div class="chips">${u.map(c=>{
+    let k='';if(c===0)k=(lib?!rfixed.size:!rfixed.has(p))?'bug':'fixed';if(c===1&&rchanged&&lib)k='broken';
+    return`<span class="chip ${k}">${RC[c].n.split('(')[0]}() <small>${lib?'imported':RC[c].lines+'-line copy'}${k==='bug'?' · bug':k==='broken'?' · broken':''}</small></span>`}).join('')}</div></div>`).join('');
+  const used=[...new Set(RP.flatMap(p=>p[1]))],calls=RP.reduce((s,p)=>s+p[1].length,0);
+  const lines=lib?used.reduce((s,c)=>s+RC[c].lines,0)+calls:RP.reduce((s,p)=>s+p[1].reduce((t,c)=>t+RC[c].lines,0),0);
+  $('#rstats').innerHTML=[[lines,'lines of code to write'],[lib?used.length:calls,'subroutines to test and maintain'],[redits,'edits made to fix the bug']].map(s=>`<div><b>${s[0]}</b><small>${s[1]}</small></div>`).join('');
+  $('#rmsg').innerHTML=msg;$('#rfix').disabled=!bugLeft;
+}
+$('#rfix').onclick=()=>{redits++;
+  if(rmode==='lib'){rfixed.add('lib');return rDraw('<b class="okc">Fixed once, in the library.</b> All three programs that import <span class="mono">average()</span> are now correct, because they all use the same copy.')}
+  const p=rUsers(0).find(i=>!rfixed.has(i));rfixed.add(p);const left=rUsers(0).filter(i=>!rfixed.has(i));
+  rDraw(left.length?`Fixed in ${RP[p][0]}. <b class="badc">${left.map(i=>RP[i][0]).join(' and ')} still ${left.length>1?'have':'has'} the bug.</b> Every copy has to be found and fixed separately. Click again to fix the next one.`:'<b class="okc">All copies are now fixed</b>, after one edit for every program. Missing one would have left a program giving wrong answers.')};
+$('#rchg').onclick=()=>{rchanged=true;
+  rDraw(rmode==='lib'?'<b class="badc">The library changed what maxInt() returns.</b> Every program that imports it now gets a position where it expected a value, so all of them break, without a line of their own code changing. This is the drawback of depending on shared code.'
+    :'The library\'s maxInt() was changed, but each program has its own copy, so <b>none of them is affected</b>. They will not get any future improvements either, unless each copy is updated by hand.')};
+$('#rrst').onclick=()=>rReset();
+$('#rmode').onclick=e=>{const b=e.target.closest('button');if(!b)return;rmode=b.dataset.v;$$('#rmode button').forEach(x=>x.setAttribute('aria-checked',x===b));rReset()};
+rReset();
+
 cardQuiz($('#quiz4'),[
  {q:'The code has already been written, so the new program takes less time to develop.',a:'Benefit',why:'Less code has to be written from scratch.'},
  {q:'The component has already been tested and used in other programs.',a:'Benefit',why:'It is likely to be more reliable than new code, and there is less to test.'},

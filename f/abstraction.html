@@ -173,7 +173,7 @@ function realDraw(){
 }
 $('#thing').innerHTML=THINGS.map((t,i)=>`<option value="${i}">${BK.IMG[t.k]} ${t.name}</option>`).join('');
 $('#thing').onchange=$('#lv').oninput=realDraw;realDraw();
-matchMedia('(prefers-color-scheme:dark)').addEventListener('change',realDraw);
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',realDraw);addEventListener('themechange',realDraw);
 
 /* ---------- keep or remove ---------- */
 const SC=[

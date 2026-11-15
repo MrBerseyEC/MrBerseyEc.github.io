@@ -8,7 +8,8 @@
 .bk-pal.del{background:var(--bad-soft)}
 .bk-pal.del::before{content:"Drop here to delete";font:700 .8rem var(--sans);color:var(--bad)}
 .bk-cat{font:700 .7rem var(--mono);text-transform:uppercase;letter-spacing:.07em;color:var(--c);margin:8px 0 1px;filter:brightness(.85)}
-@media (prefers-color-scheme:dark){.bk-cat{filter:brightness(1.3)}}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .bk-cat{filter:brightness(1.3)}}
+:root[data-theme=dark] .bk-cat{filter:brightness(1.3)}
 .bk-ws{overflow:auto;padding:14px;display:flex;flex-wrap:wrap;gap:18px;align-content:flex-start;align-items:flex-start;background-image:radial-gradient(var(--line) 1px,transparent 1.5px);background-size:18px 18px}
 .bk-ed.ro .bk-ws{overflow:visible;padding:0;background:none;gap:14px}
 .bk-ws.empty::before{content:"Drag blocks here from the left";color:var(--muted);font-size:.9rem}

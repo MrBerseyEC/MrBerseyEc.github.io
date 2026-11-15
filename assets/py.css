@@ -1,6 +1,7 @@
 /* Styles for the runnable Python editors built by py.js. Link after site.css and the CodeMirror stylesheet. */
 :root{--kw:#7B4DFF}
-@media (prefers-color-scheme:dark){:root{--kw:#B49BFF}}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--kw:#B49BFF}}
+:root[data-theme=dark]{--kw:#B49BFF}
 
 /* JetBrains Mono joins != <= >= == into single symbols by default. Students need to see the characters they type. */
 /* CodeMirror switches ligatures back on for its own lines, hence the extra selectors. */
