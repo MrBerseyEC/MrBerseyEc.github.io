@@ -17,6 +17,7 @@ spec: "EDEXCEL GCSE · 4.1.5"
 .node small{display:block;color:var(--muted);font-size:.78rem;line-height:1.3}
 .node .ico{font-size:1.8rem;line-height:1.3}
 .node.on{border-color:var(--one);box-shadow:0 0 0 4px var(--one-soft)}
+.node.bad{border-color:var(--bad);box-shadow:0 0 0 4px var(--bad-soft)}
 .link{padding:0 6px;text-align:center}
 .link .lab{font:800 .8rem var(--mono);color:var(--muted);min-height:1.3em}
 .link .bar{height:10px;border-radius:5px;background:var(--off);margin:4px 0;transition:background .2s}
@@ -32,17 +33,94 @@ spec: "EDEXCEL GCSE · 4.1.5"
 .snoop{font:.88rem/1.6 var(--mono);background:#16202B;color:#E7EDF2;border-radius:8px;padding:10px 12px;min-height:7.5em;white-space:pre-wrap;word-break:break-all}
 .snoop .e{color:#FF8A80}.snoop .g{color:#7CE0A6}.snoop .s{color:#9AA7B3}
 .tasks{display:flex;gap:8px;flex-wrap:wrap}
+.lrow{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:start;margin:0 0 12px}
+.lrow>h3{margin:0;padding-top:10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
 .chips div{border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);opacity:.4;transition:opacity .2s,border-color .2s,box-shadow .2s}
 .chips div.on{opacity:1;border-color:var(--one);box-shadow:0 0 0 4px var(--one-soft)}
 .chips b{font:800 1.05rem var(--mono)}
+.chips b a{color:inherit;text-decoration:none}
+.chips b a:hover{text-decoration:underline}
 .chips em{display:block;font-style:normal;font-size:.8rem;color:var(--muted)}
 .chips small{display:block;font-size:.85rem;margin-top:4px}
 .chips .job{color:var(--one);font-weight:700}
-@media (max-width:860px){.two,.hops,.boxes{grid-template-columns:1fr}.link{padding:6px 0}.node{min-height:0}}
+
+/* level toggle and layer banners */
+.level{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;margin:0 0 6px}
+.level span{color:var(--muted);font-size:.92rem}
+body:not(.stretch) .sx{display:none!important}
+.sxtag{font:800 .68rem var(--sans);letter-spacing:.06em;text-transform:uppercase;background:var(--hl);color:#16202B;border-radius:999px;padding:2px 8px;vertical-align:3px;margin-left:8px}
+.ltag{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:38px 0 -6px;padding:0 0 0 12px;border-left:6px solid var(--hl)}
+.ltag b{font-size:1.1rem;letter-spacing:.04em;text-transform:uppercase}
+.ltag span{color:var(--muted);font-size:.92rem}
+
+/* message sequence diagrams (the seq() helper) */
+.seq .ends,.seq .msg{display:grid;grid-template-columns:150px minmax(0,1fr) 150px;align-items:center}
+.seq .end{border:3px solid var(--ink);border-radius:12px;padding:8px;background:var(--bg);text-align:center;font-weight:800;line-height:1.25}
+.seq .end small{display:block;font-weight:600;color:var(--muted);font-size:.78rem}
+.seq .end .ico{display:block;font-size:1.6rem}
+.seq .msgs{margin:12px 0 0;min-height:60px}
+.seq .msg{margin:0 0 8px;animation:pop .25s}
+.seq .msg.cur .lab{color:var(--one)}
+.seq .msg.cur .ln{background:var(--one)}
+.seq .msg.cur.r .ln::after{border-left-color:var(--one)}
+.seq .msg.cur.l .ln::before{border-right-color:var(--one)}
+.seq .mid{padding:0 12px;text-align:center}
+.seq .lab{font:700 .88rem var(--mono);word-break:break-word}
+.seq .sm{font-size:.78rem;color:var(--muted)}
+.seq .ln{position:relative;height:4px;background:var(--ink);border-radius:2px;margin:8px 0 4px}
+.seq .r .ln::after{content:'';position:absolute;right:-2px;top:-6px;border:8px solid transparent;border-right:0;border-left:13px solid var(--ink)}
+.seq .l .ln::before{content:'';position:absolute;left:-2px;top:-6px;border:8px solid transparent;border-left:0;border-right:13px solid var(--ink)}
+.seq .nt{margin:0 0 8px;text-align:center;animation:pop .25s}
+.seq .nt span{display:inline-block;background:var(--hl-soft);border:1.5px solid var(--hl);border-radius:999px;padding:4px 14px;font-size:.9rem;font-weight:600}
+.seq .bad .lab,.seq .bad .sm{color:var(--bad)}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.files{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 14px}
+.files .f{font:.88rem var(--mono);border:1.5px solid var(--line);border-radius:8px;padding:3px 8px;margin:4px 0;background:var(--panel)}
+.files .f.new{border-color:var(--ok);background:var(--ok-soft);font-weight:700}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;font-size:.92rem;margin:0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font:700 .92rem var(--mono)}
+.kv dd.set{color:var(--ok)}
+
+/* TCP and UDP packet demos */
+.pk{display:flex;flex-wrap:wrap;gap:8px;min-height:62px;margin:8px 0}
+.pkt{border:2px solid var(--line);border-radius:8px;padding:4px 8px;min-width:74px;text-align:center;font:700 .85rem var(--mono);background:var(--panel);transition:border-color .2s,background .2s,opacity .2s}
+.pkt small{display:block;font-weight:600;color:var(--muted);font-size:.7rem}
+.pkt.gap{opacity:.45;border-style:dashed}
+.pkt.sent{border-color:var(--one);background:var(--one-soft)}
+.pkt.lost{border-color:var(--bad);background:var(--bad-soft)}
+.pkt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.pkt.re{border-color:var(--hl);background:var(--hl-soft)}
+.cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.cells{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;margin:8px 0}
+.cells i{display:block;height:34px;border-radius:6px;border:2px solid var(--line);background:var(--panel);transition:background .15s,border-color .15s}
+.cells i.ok{border-color:var(--ok);background:var(--ok-soft)}
+.cells i.lost{border-color:var(--bad);background:var(--bad)}
+.cells i.re{border-color:var(--hl);background:var(--hl)}
+.cells i.now{border-color:var(--one);background:var(--one-soft)}
+.clock{font:800 1.4rem var(--mono)}
+
+/* IP and link layer demos */
+.hdr{display:flex;flex-wrap:wrap;gap:0;border:2px solid var(--ink);border-radius:8px;overflow:hidden;font:600 .85rem var(--mono);margin:14px 0 0}
+.hdr div{padding:6px 12px;border-right:2px solid var(--ink);min-width:0}
+.hdr div:last-child{border:0}
+.hdr small{display:block;color:var(--muted);font-weight:600;font-size:.7rem;font-family:var(--sans);text-transform:uppercase;letter-spacing:.05em}
+.hdr .d{background:var(--panel);flex:1 1 120px}
+.meter{height:16px;border-radius:8px;background:var(--off);overflow:hidden;margin:6px 0 4px}
+.meter i{display:block;height:100%;background:var(--one);transition:width .25s}
+.meter.w i{background:var(--hl)}
+.big{font:800 1.5rem var(--mono)}
+.ctl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 22px;margin:0 0 14px}
+.ctl label{display:block;font-size:.9rem;font-weight:700}
+.ctl input[type=range]{width:100%}
+.vs td:first-child,.vs th:first-child{white-space:nowrap;color:var(--muted)}
+.vs td{font-size:.92rem}
+@media (max-width:860px){.two,.hops,.boxes,.cmp,.ctl,.files{grid-template-columns:1fr}.link{padding:6px 0}.node{min-height:0}.lrow{grid-template-columns:1fr;gap:4px}.seq .ends,.seq .msg{grid-template-columns:84px minmax(0,1fr) 84px}.seq .end{font-size:.8rem;padding:4px}}
 </style>
 
-<p class="lede">A <b>protocol</b> is a set of rules that governs how devices communicate. Devices made by different manufacturers, running different software, can exchange data because they all follow the same agreed rules about how it is formatted, addressed, sent and checked.</p>
+<p class="lede">A <b>protocol</b> is a set of rules that governs how devices communicate. Devices made by different manufacturers, running different software, can exchange data because they all follow the same agreed rules about how it is formatted, addressed, sent and checked. The demos below are sorted by the layer of the TCP/IP stack each protocol works at, from the top (what the user's software does) down to the bottom (the cable or radio signal).</p>
+
+<div class="level"><div class="seg" id="level" role="group" aria-label="Level"><button data-l="0" aria-pressed="true">GCSE</button><button data-l="1" aria-pressed="false">Stretch</button></div><span id="levelnote">The protocols in the GCSE specification.</span></div>
 
 <section class="block">
   <h2>Why rules are needed</h2>
@@ -55,20 +133,42 @@ spec: "EDEXCEL GCSE · 4.1.5"
   <p class="status" id="pmsg"></p>
 </section>
 
-<section class="block">
+<section class="block" id="d-map">
   <h2>Which protocols are working?</h2>
-  <p class="sub">Doing one thing on a network uses several protocols at once, each with its own job. Choose a task and how the device is connected, and see which protocols light up.</p>
+  <p class="sub">Doing one thing on a network uses several protocols at once, one or more at each layer, each with its own job. Choose a task and how the device is connected, and see which protocols light up. Click a protocol's name to jump to its demo.</p>
   <div class="toolbar" style="margin-bottom:14px">
     <div class="tasks" id="ptask"></div>
     <div class="seg" id="pconn" role="group" aria-label="Connection"><button data-c="eth" aria-pressed="false">Cable</button><button data-c="wifi" aria-pressed="true">Wi-Fi</button></div>
   </div>
-  <div class="chips" id="chips"></div>
+  <div id="chips"></div>
   <p class="status" id="pwmsg" style="margin-top:12px"></p>
 </section>
 
-<section class="block">
-  <h2>Sending an email</h2>
-  <p class="sub">Sending and collecting email use different protocols. Step through the journey of one message.</p>
+<!-- ======================= APPLICATION LAYER ======================= -->
+<div class="ltag"><b>Application layer</b><span>The protocols the user's software talks to: browsers, email apps, file transfer</span></div>
+
+<section class="block" id="d-http">
+  <h2>HTTP and HTTPS</h2>
+  <p class="sub">The browser sends a request and the web server sends a response. Step through the messages, then see what someone intercepting them on a café's public Wi-Fi can read.</p>
+  <div class="row" style="margin-bottom:12px"><div class="seg" id="web" role="group" aria-label="Web protocol"><button data-h="0" aria-pressed="true">http://</button><button data-h="1" aria-pressed="false">https://</button></div></div>
+  <div id="sq-http"></div>
+  <h3 style="margin:18px 0 8px;font-size:1rem">What the person at the next table captures</h3>
+  <div class="snoop" id="snoop"></div>
+  <p class="note">HTTPS encrypts everything sent between the browser and the web server. It should always be used when personal or financial data is involved, and most websites now use it for everything.</p>
+</section>
+
+<section class="block" id="d-ftp">
+  <h2>FTP</h2>
+  <p class="sub">FTP is used to move files between a client and a server, such as uploading a website's files to the web server. The user has to log in, and can then upload or download files. Choose a direction and step through.</p>
+  <div class="row" style="margin-bottom:12px"><div class="seg" id="ftpdir" role="group" aria-label="Direction"><button data-d="up" aria-pressed="true">Upload logo.png</button><button data-d="down" aria-pressed="false">Download style.css</button></div></div>
+  <div class="files"><div class="pane"><h3>Designer's computer</h3><div id="f-client"></div></div><div class="pane"><h3>Web server</h3><div id="f-server"></div></div></div>
+  <div id="sq-ftp"></div>
+  <p class="note">FTP is for transferring files, so it can upload as well as download, and it needs a login. HTTP is for requesting web pages and is mainly used to download them. Plain FTP sends the password as text, so secure versions exist, in the same way that HTTPS is the secure version of HTTP.</p>
+</section>
+
+<section class="block" id="d-email">
+  <h2>SMTP: sending an email</h2>
+  <p class="sub">Sending and collecting email use different protocols. SMTP is the one for sending. Step through the journey of one message.</p>
   <div class="row"><button class="btn pri" id="step">Step ▸</button><button class="btn" id="reset">Reset</button></div>
   <div class="hops">
     <div class="node" id="n0"><div class="ico">💻</div><b>Alex's laptop</b><small>Email app</small></div>
@@ -82,8 +182,8 @@ spec: "EDEXCEL GCSE · 4.1.5"
   <p class="explain" id="explain"></p>
 </section>
 
-<section class="block">
-  <h2>POP3 or IMAP?</h2>
+<section class="block" id="d-pop">
+  <h2>POP3 and IMAP: collecting an email</h2>
   <p class="sub">Both collect email from a mail server, but they treat the mailbox differently. Alex reads her email on a phone and on a laptop. Check the mail on one device and then the other, with each protocol.</p>
   <div class="toolbar">
     <div class="seg" id="proto" role="group" aria-label="Protocol"><button data-p="pop" aria-pressed="true">POP3</button><button data-p="imap" aria-pressed="false">IMAP</button></div>
@@ -99,12 +199,110 @@ spec: "EDEXCEL GCSE · 4.1.5"
   <p class="note">With IMAP the email stays on the server and each device shows a synchronised view of it, so IMAP suits someone who uses several devices. POP3 downloads the messages and normally removes them from the server, which frees up space there and lets you read them offline, but only on that one device.</p>
 </section>
 
-<section class="block">
-  <h2>HTTP or HTTPS?</h2>
-  <p class="sub">You log in to a website from a café's public Wi-Fi. Someone at the next table is capturing the wireless traffic. This is what they see.</p>
-  <div class="row" style="margin-bottom:12px"><div class="seg" id="web" role="group" aria-label="Web protocol"><button data-h="0" aria-pressed="true">http://</button><button data-h="1" aria-pressed="false">https://</button></div></div>
-  <div class="snoop" id="snoop"></div>
-  <p class="note">HTTPS encrypts everything sent between the browser and the web server. It should always be used when personal or financial data is involved, and most websites now use it for everything.</p>
+<section class="block sx" id="d-dns">
+  <h2>DNS <span class="sxtag">Stretch</span></h2>
+  <p class="sub">People use names such as <span class="mono">www.example.org</span>, but packets are routed using IP addresses. The Domain Name System turns the name into the address. Choose a website and whether the browser has looked it up before.</p>
+  <div class="toolbar" style="margin-bottom:12px">
+    <select id="dnsname" aria-label="Website"><option value="0">www.example.org</option><option value="1">www.school-news.co.uk</option><option value="2">www.exmaple.org (a typing mistake)</option></select>
+    <div class="seg" id="dnscache" role="group" aria-label="Visit"><button data-c="0" aria-pressed="true">First visit</button><button data-c="1" aria-pressed="false">Visited before</button></div>
+  </div>
+  <div id="sq-dns"></div>
+  <p class="note">DNS is the internet's phone book. Without it you would have to remember the IP address of every website. Devices remember recent answers (a cache), so they do not need to ask again every time.</p>
+</section>
+
+<section class="block sx" id="d-dhcp">
+  <h2>DHCP <span class="sxtag">Stretch</span></h2>
+  <p class="sub">Every device on a network needs an IP address. The Dynamic Host Configuration Protocol hands them out automatically when a device joins, so nobody has to type them in. Step through a new laptop joining the Wi-Fi.</p>
+  <div class="two" style="margin-bottom:14px">
+    <div class="pane"><h3>The laptop's network settings</h3><dl class="kv" id="dhcpset"></dl></div>
+    <div class="pane"><h3>Why not set them by hand?</h3><p style="margin:0;font-size:.92rem">Two devices given the same address would clash, and every visitor's phone would need setting up. DHCP keeps track of which addresses are in use and gives each device one that is free. The address is <b>leased</b> for a period of time, then handed back so it can be reused.</p></div>
+  </div>
+  <div id="sq-dhcp"></div>
+</section>
+
+<!-- ======================= TRANSPORT LAYER ======================= -->
+<div class="ltag"><b>Transport layer</b><span>Breaks the data up and manages getting it to the other end</span></div>
+
+<section class="block" id="d-tcp">
+  <h2>TCP</h2>
+  <p class="sub">TCP splits the message into numbered packets, the packets may take different routes and arrive in any order, and TCP at the other end puts them back together. If any are missing, it asks for them again. Choose how many packets to lose and send.</p>
+  <div class="toolbar" style="margin-bottom:10px"><input type="text" id="tmsg" value="HELLO FROM ALEX" maxlength="24" aria-label="Message" style="font-family:var(--mono)"><label>Packets lost on the way <select id="tloss"><option>0</option><option selected>1</option><option>2</option></select></label><button class="btn pri" id="tsend">Send</button></div>
+  <div class="two">
+    <div class="pane"><h3>Sender</h3><div class="pk" id="tx"></div></div>
+    <div class="pane"><h3>Receiver</h3><div class="pk" id="rx"></div><div class="got" id="trx"></div></div>
+  </div>
+  <div class="snoop" id="tlog" style="margin-top:14px"></div>
+  <p class="note">TCP is <b>reliable</b>: the data that arrives is complete, correct and in order, even though the network underneath gives no guarantees. The cost is some extra waiting while missing packets are sent again.</p>
+</section>
+
+<section class="block sx" id="d-udp">
+  <h2>UDP, compared with TCP <span class="sxtag">Stretch</span></h2>
+  <p class="sub">UDP also sends data in packets but does not number them, check them or resend anything. It has less to do, so it is faster, but lost packets stay lost. The same 12 packets are sent both ways, with the same ones lost.</p>
+  <div class="toolbar" style="margin-bottom:12px">
+    <label>What is being sent <select id="uuse"><option value="v">A live video call</option><option value="f">A file download</option></select></label>
+    <label>Packets lost <select id="uloss"><option value="0.1">About 1 in 10</option><option value="0.25" selected>About 1 in 4</option><option value="0">None</option></select></label>
+    <button class="btn pri" id="usend">Send</button>
+  </div>
+  <div class="cmp">
+    <div class="pane"><h3>TCP</h3><div class="cells" id="c-tcp"></div><div>Time taken: <span class="clock" id="t-tcp">0</span></div></div>
+    <div class="pane"><h3>UDP</h3><div class="cells" id="c-udp"></div><div>Time taken: <span class="clock" id="t-udp">0</span></div></div>
+  </div>
+  <div class="key" style="display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin:10px 0 0"><span>🟩 arrived</span><span>🟥 lost for good</span><span>🟨 lost, then sent again</span></div>
+  <p class="status" id="umsg" style="margin-top:10px"></p>
+  <table class="t vs" style="margin-top:8px"><thead><tr><th></th><th>TCP</th><th>UDP</th></tr></thead><tbody>
+    <tr><td>Reliable?</td><td>Yes: lost packets are sent again</td><td>No: lost packets are gone</td></tr>
+    <tr><td>Packets in order?</td><td>Yes: numbered and reassembled</td><td>No guarantee</td></tr>
+    <tr><td>Speed</td><td>Slower: waits and resends</td><td>Faster: no waiting</td></tr>
+    <tr><td>Used for</td><td>Web pages, email, file transfer</td><td>Live video and voice calls, online games, DNS lookups</td></tr></tbody></table>
+</section>
+
+<!-- ======================= INTERNET LAYER ======================= -->
+<div class="ltag"><b>Internet layer</b><span>Addresses each packet and routes it from network to network</span></div>
+
+<section class="block" id="d-ip">
+  <h2>IP</h2>
+  <p class="sub">IP puts the source and destination IP addresses on every packet in a header. Each router reads the destination address and forwards the packet one hop closer. Step through the journey.</p>
+  <div class="row"><button class="btn pri" id="ipstep">Step ▸</button><button class="btn" id="ipreset">Reset</button><span class="sx"><label>Hop limit (TTL) at the start <select id="ttl"><option value="64">64</option><option value="3">3</option></select></label></span></div>
+  <div class="hdr" id="iph"></div>
+  <div class="hops" style="grid-template-columns:repeat(5,minmax(0,1fr));gap:10px" id="iphops"></div>
+  <p class="explain" id="ipx"></p>
+  <p class="note">An IP address identifies a device on a network, like the address on a house. IP does not check that the packet arrives or put packets in order: that is TCP's job. Together they are called TCP/IP.</p>
+</section>
+
+<!-- ======================= LINK LAYER ======================= -->
+<div class="ltag"><b>Link layer</b><span>Sends the signals over the cable or the air to the next device</span></div>
+
+<section class="block" id="d-link">
+  <h2>Ethernet and Wi-Fi</h2>
+  <p class="sub">Ethernet is the protocol for wired LANs and Wi-Fi is the protocol for wireless LANs. Both do the same job, delivering data to the next device, but over different media. Change the conditions and compare.</p>
+  <div class="ctl">
+    <div><label for="wd">Distance from the router: <span id="wdv"></span> m</label><input type="range" id="wd" min="1" max="30" value="5"></div>
+    <div><label for="ww">Walls in between: <span id="wwv"></span></label><input type="range" id="ww" min="0" max="3" value="0"></div>
+    <div><label for="wn">Devices using the network: <span id="wnv"></span></label><input type="range" id="wn" min="1" max="8" value="1"></div>
+  </div>
+  <div class="cmp">
+    <div class="pane"><h3>🔌 Ethernet</h3><p class="role">Each device has its own cable to the switch</p><div class="big" id="e-sp"></div><div class="meter"><i id="e-m"></i></div><p class="status" id="e-tx"></p></div>
+    <div class="pane"><h3>📶 Wi-Fi</h3><p class="role">All devices share the same radio channel</p><div class="big" id="w-sp"></div><div class="meter w"><i id="w-m"></i></div><p class="status" id="w-tx"></p></div>
+  </div>
+  <p class="note" style="margin-bottom:14px">These figures are only illustrative, but the pattern is real: a cable gives a steady speed whatever the conditions, while Wi-Fi gets slower with distance and obstacles, and the devices on it share the available speed.</p>
+  <div class="scroll"><table class="t vs"><thead><tr><th></th><th>Ethernet</th><th>Wi-Fi</th></tr></thead><tbody>
+    <tr><td>Medium</td><td>Cables: copper or fibre optic</td><td>Radio waves</td></tr>
+    <tr><td>Used on</td><td>Wired LANs</td><td>Wireless LANs</td></tr>
+    <tr><td>Speed</td><td>Fast and consistent</td><td>Slower, and varies with distance and obstacles</td></tr>
+    <tr><td>Reliability</td><td>High: little interference</td><td>Lower: other networks and appliances interfere</td></tr>
+    <tr><td>Mobility</td><td>The device has to be plugged in</td><td>Devices can move around within range</td></tr>
+    <tr><td>Security</td><td>Someone needs physical access to connect</td><td>Anyone in range can try to connect or listen, so it needs encrypting and a password</td></tr>
+    <tr><td>Cost and set-up</td><td>Cables to buy and install</td><td>No cabling needed</td></tr>
+  </tbody></table></div>
+</section>
+
+<!-- ======================= COMPARE ======================= -->
+<section class="block" id="d-cmp">
+  <h2>Compare two protocols</h2>
+  <p class="sub">Pick any two protocols to see them side by side. The list is in layer order.</p>
+  <div class="toolbar" style="margin-bottom:12px"><select id="cmpa" aria-label="First protocol"></select><b>or</b><select id="cmpb" aria-label="Second protocol"></select></div>
+  <div class="scroll"><table class="t vs" id="cmpt"></table></div>
+  <p class="note" id="cmpn"></p>
 </section>
 
 <section class="block">
@@ -113,10 +311,66 @@ spec: "EDEXCEL GCSE · 4.1.5"
 </section>
 
 <section class="block">
+  <h2>Which layer?</h2>
+  {% include quiz.html n=3 %}
+</section>
+
+<section class="block">
   <h2>Quick check</h2>
   {% include quiz.html n=2 %}
 </section>
 <script>
+let stretch=false;
+const LAYERS=['Application','Transport','Internet','Link'];
+/* every protocol: [name, full name, layer, job, who it is between, encrypted?, example use, stretch only?, demo anchor] */
+const PROTO=[
+ ['HTTP','Hypertext Transfer Protocol',0,'How web pages are requested by a browser and served by a web server','Browser and web server','No: sent as plain text','Reading a web page',0,'d-http'],
+ ['HTTPS','Hypertext Transfer Protocol Secure',0,'A secure version of HTTP, with encryption','Browser and web server','Yes','Online banking and shopping',0,'d-http'],
+ ['FTP','File Transfer Protocol',0,'How files are transferred across a network','FTP client and file server','No (secure versions exist)','Uploading a website\'s files',0,'d-ftp'],
+ ['SMTP','Simple Mail Transfer Protocol',0,'How emails are sent, to a mail server and between mail servers','Email app and mail server, and mail server and mail server','No (unless extra security is added)','Sending an email',0,'d-email'],
+ ['POP3','Post Office Protocol',0,'Retrieves email by downloading it from the mail server to one device','Email app and mail server','No (unless extra security is added)','Downloading email to one PC',0,'d-pop'],
+ ['IMAP','Internet Message Access Protocol',0,'Accesses email that stays on the mail server, so every device sees the same mailbox','Email app and mail server','No (unless extra security is added)','Reading the same inbox on a phone and a laptop',0,'d-pop'],
+ ['DNS','Domain Name System',0,'Turns a website\'s name into its IP address','Device and DNS server','No','Finding the address of www.example.org',1,'d-dns'],
+ ['DHCP','Dynamic Host Configuration Protocol',0,'Gives a device an IP address automatically when it joins a network','Device and DHCP server (usually the router)','No','Joining the school Wi-Fi',1,'d-dhcp'],
+ ['TCP','Transmission Control Protocol',1,'Splits data into packets, delivers them and reassembles them','The two devices communicating','No','Almost everything on the web, email and file transfer',0,'d-tcp'],
+ ['UDP','User Datagram Protocol',1,'Sends packets quickly without checking they arrive','The two devices communicating','No','Video calls, online games',1,'d-udp'],
+ ['IP','Internet Protocol',2,'Adds the address the data is sent to, and routes it there','Every device and router along the way','No','Every packet that crosses a network',0,'d-ip'],
+ ['Ethernet','',3,'How data is transmitted on wired LANs','Devices connected by cable','No','A desktop PC plugged into the school network',0,'d-link'],
+ ['Wi-Fi','',3,'How data is transmitted on wireless LANs','Devices connected by radio','Yes, if the network is secured','A phone on the home network',0,'d-link']];
+const byName=n=>PROTO.find(p=>p[0]===n);
+const vis=p=>stretch||!p[7];
+
+/* ---------- level toggle ---------- */
+function setLevel(on,save){
+  stretch=on;document.body.classList.toggle('stretch',on);
+  $$('#level button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.l==='1')===on));
+  $('#levelnote').textContent=on?'Stretch adds UDP, DNS and DHCP, which go beyond the GCSE specification.':'The protocols in the GCSE specification.';
+  if(save){try{localStorage.setItem('protocols-level',on?'1':'0')}catch(e){}}
+  if(window.drawPW){drawPW();fillCmp();drawCmp();buildQuizzes();ipReset();pt=Math.min(pt,PT.filter(t=>stretch||!t[2]).length-1)}
+}
+$$('#level button').forEach(b=>b.onclick=()=>setLevel(b.dataset.l==='1',true));
+
+/* ---------- message sequence diagram ---------- */
+function seq(el,o){
+  let steps=[],i=0;
+  el.classList.add('seq');
+  el.innerHTML=`<div class="row"><button class="btn pri" data-s>Step ▸</button><button class="btn" data-r>Reset</button></div>
+   <div class="ends" style="margin-top:12px"><div class="end"><span class="ico">${o.a[0]}</span>${o.a[1]}<small>${o.a[2]}</small></div><div></div><div class="end"><span class="ico">${o.b[0]}</span>${o.b[1]}<small>${o.b[2]}</small></div></div>
+   <div class="msgs"></div><p class="explain"></p>`;
+  const [go,rs]=['[data-s]','[data-r]'].map(s=>el.querySelector(s)),box=el.querySelector('.msgs'),ex=el.querySelector('.explain');
+  const reset=()=>{i=0;box.innerHTML='';ex.innerHTML='Press <b>Step</b> to begin.';go.disabled=false;go.textContent='Step ▸';if(o.onreset)o.onreset()};
+  go.onclick=()=>{
+    const s=steps[i++];if(!s)return;
+    box.querySelectorAll('.cur').forEach(e=>e.classList.remove('cur'));
+    box.insertAdjacentHTML('beforeend',s.d==='n'?`<div class="nt cur"><span>${s.t}</span></div>`
+      :`<div class="msg ${s.d} ${s.bad?'bad':''} cur"><div></div><div class="mid"><div class="lab">${s.t}</div><div class="ln"></div><div class="sm">${s.s||''}</div></div><div></div></div>`);
+    ex.innerHTML=s.x;if(s.fx)s.fx();
+    if(i>=steps.length){go.disabled=true;go.textContent='Done'}
+  };
+  rs.onclick=reset;
+  return{load(st){steps=st;reset()}};
+}
+
 /* ---------- why rules are needed ---------- */
 const printable=k=>k>=32&&k<127?String.fromCharCode(k):'�';
 function drawRule(){
@@ -133,27 +387,72 @@ function drawRule(){
 $('#msg').oninput=$('#rule').onchange=drawRule;drawRule();
 
 /* ---------- which protocols are working ---------- */
-const PR=[['HTTP','Hypertext Transfer Protocol','How web pages are requested by a browser and served by a web server'],['HTTPS','Hypertext Transfer Protocol Secure','A secure version of HTTP, with encryption'],['FTP','File Transfer Protocol','How files are transferred across a network'],['SMTP','Simple Mail Transfer Protocol','How emails are sent, to a mail server and between mail servers'],['POP3','Post Office Protocol','Retrieves email by downloading it from the mail server to one device'],['IMAP','Internet Message Access Protocol','Accesses email that stays on the mail server, so every device sees the same mailbox'],['TCP','Transmission Control Protocol','Splits data into packets, delivers them and reassembles them'],['IP','Internet Protocol','Adds the address the data is sent to, and routes it there'],['Ethernet','','How data is transmitted on wired LANs'],['Wi-Fi','','How data is transmitted on wireless LANs']];
+/* [task, {protocol: what it does here}, stretch only?, transport used] */
 const PT=[
- ['Read a news website',{HTTP:'requests the page from the web server'}],
- ['Log in to online banking',{HTTPS:'encrypts the login details on the way'}],
- ['Upload a website\'s files',{FTP:'transfers the files to the web server'}],
- ['Send an email',{SMTP:'passes the email to the mail server'}],
- ['Read email on phone and laptop',{IMAP:'shows the mailbox kept on the server'}],
- ['Download email to one PC',{POP3:'downloads the emails and removes them from the server'}]];
+ ['Read a news website',{HTTP:'requests the page from the web server',DNS:'finds the IP address of the website from its name'},0,'TCP'],
+ ['Log in to online banking',{HTTPS:'encrypts the login details on the way',DNS:'finds the IP address of the bank\'s website'},0,'TCP'],
+ ['Upload a website\'s files',{FTP:'transfers the files to the web server',DNS:'finds the IP address of the file server'},0,'TCP'],
+ ['Send an email',{SMTP:'passes the email to the mail server',DNS:'finds the mail server for the address'},0,'TCP'],
+ ['Read email on phone and laptop',{IMAP:'shows the mailbox kept on the server'},0,'TCP'],
+ ['Download email to one PC',{POP3:'downloads the emails and removes them from the server'},0,'TCP'],
+ ['Join the Wi-Fi',{DHCP:'gives the device an IP address'},1,'UDP'],
+ ['Look up a website\'s address',{DNS:'answers with the IP address'},1,'UDP']];
 let pt=0,pc='wifi';
-$('#ptask').innerHTML=PT.map((t,i)=>`<button class="btn" data-i="${i}">${t[0]}</button>`).join('');
+const tasks=()=>PT.filter(t=>stretch||!t[2]);
 function drawPW(){
-  const t=PT[pt],job={...t[1],TCP:'splits the data into packets and puts them back together',IP:'addresses each packet and routes it'};
-  job[pc==='eth'?'Ethernet':'Wi-Fi']=pc==='eth'?'sends the packets along the cable':'sends the packets as radio waves';
-  $$('#ptask button').forEach((b,i)=>b.classList.toggle('pri',i===pt));
-  $('#chips').innerHTML=PR.map(p=>`<div class="${job[p[0]]?'on':''}"><b>${p[0]}</b>${p[1]?`<em>${p[1]}</em>`:''}<small>${job[p[0]]?`<span class="job">Here it ${job[p[0]]}.</span>`:p[2]}</small></div>`).join('');
-  const app=Object.keys(t[1])[0];
-  $('#pwmsg').innerHTML=`<b>${t[0]}:</b> four protocols at work. <b>${app}</b> is the one that depends on the task. <b>TCP</b> and <b>IP</b> are used for everything, and <b>${pc==='eth'?'Ethernet':'Wi-Fi'}</b> depends only on how the device is connected.`;
+  const T=tasks();pt=Math.min(pt,T.length-1);
+  $('#ptask').innerHTML=T.map((t,i)=>`<button class="btn${i===pt?' pri':''}" data-i="${i}">${t[0]}</button>`).join('');
+  const t=T[pt],eth=pc==='eth',job={...t[1]};
+  job[t[3]]=t[3]==='TCP'?'splits the data into packets and puts them back together':'sends the data in single packets with no checking';
+  job.IP='addresses each packet and routes it';
+  job[eth?'Ethernet':'Wi-Fi']=eth?'sends the packets along the cable':'sends the packets as radio waves';
+  $('#chips').innerHTML=LAYERS.map((L,li)=>`<div class="lrow"><h3>${L}</h3><div class="chips">`+PROTO.filter(p=>p[2]===li&&vis(p)).map(p=>`<div class="${job[p[0]]?'on':''}"><b><a href="#${p[8]}">${p[0]}</a></b>${p[1]?`<em>${p[1]}</em>`:''}<small>${job[p[0]]?`<span class="job">Here it ${job[p[0]]}.</span>`:p[3]}</small></div>`).join('')+'</div></div>').join('');
+  const on=PROTO.filter(p=>job[p[0]]&&vis(p)).map(p=>p[0]);
+  $('#pwmsg').innerHTML=`<b>${t[0]}:</b> ${on.length} protocols at work, from the top layer to the bottom: <b>${on.join(', ')}</b>. The application layer protocol${on.filter(n=>byName(n)[2]===0).length>1?'s depend':' depends'} on the task. IP is used for everything, and <b>${eth?'Ethernet':'Wi-Fi'}</b> depends only on how the device is connected.`;
 }
 $('#ptask').onclick=e=>{const b=e.target.closest('button');if(!b)return;pt=+b.dataset.i;drawPW()};
 $$('#pconn button').forEach(b=>b.onclick=()=>{pc=b.dataset.c;$$('#pconn button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawPW()});
-drawPW();
+
+/* ---------- HTTP / HTTPS ---------- */
+let secure=false;
+const httpSq=seq($('#sq-http'),{a:['💻','Browser','alex\'s laptop'],b:['🗄️','Web server','shop.example.org']});
+function drawWeb(){
+  let junk='',s=7;for(let i=0;i<150;i++){s=(s*73+41)%251;junk+=(s%16).toString(16)+(i%2?' ':'')}
+  $('#snoop').innerHTML=secure?`<span class="s">Captured packet to 203.0.113.80 (shop.example.org)</span>\n${junk}\n<span class="g">✔ Encrypted. The eavesdropper can see which server you are talking to, but not what you sent.</span>`
+    :`<span class="s">Captured packet to 203.0.113.80 (shop.example.org)</span>\nPOST /login HTTP/1.1\nHost: shop.example.org\n\nusername=alex.m&amp;password=<span class="e">Tiger2011</span>\n<span class="e">✖ Not encrypted. The username and password can be read by anyone who intercepts the data.</span>`;
+  const p=secure?'🔒 ':'';
+  httpSq.load([
+   {d:'n',t:`Alex types ${secure?'https':'http'}://shop.example.org into her browser`,x:'The browser knows the address of the web server and starts to talk to it using '+(secure?'<b>HTTPS</b>.':'<b>HTTP</b>.')},
+   ...(secure?[
+    {d:'r',t:'Hello: I would like a secure connection',s:'HTTPS set-up',x:'Before anything private is sent, the browser asks the server to set up an encrypted connection.'},
+    {d:'l',t:'Here is my certificate',s:'proves who the server is',x:'The server sends a <b>digital certificate</b> that proves it really is shop.example.org and not an imposter.'},
+    {d:'r',t:'Secret key (locked so only you can read it)',s:'HTTPS set-up',x:'The browser and the server agree a secret key. From now on everything they send is scrambled with it.'}]:[]),
+   {d:'r',t:p+'GET /login',s:'HTTP request'+(secure?' (encrypted)':''),x:'The browser sends an <b>HTTP request</b> asking for the login page.'+(secure?' Nobody else can read it.':'')},
+   {d:'l',t:p+'200 OK + the page',s:'HTTP response'+(secure?' (encrypted)':''),x:'The server sends an <b>HTTP response</b>. The code <b>200 OK</b> means it worked, and the page itself follows. The browser displays it.'},
+   {d:'r',t:p+'POST username and password',s:'HTTP request'+(secure?' (encrypted)':''),x:'Alex logs in. The browser sends her details to the server. '+(secure?'They are encrypted, so the person capturing the traffic sees only scrambled data (below).':'They travel as plain text, so the person capturing the traffic can read them (below).')}]);
+}
+$$('#web button').forEach(b=>b.onclick=()=>{$$('#web button').forEach(x=>x.setAttribute('aria-pressed',x===b));secure=b.dataset.h==='1';drawWeb()});
+drawWeb();
+
+/* ---------- FTP ---------- */
+let ftpDir='up',cF,sF;
+const ftpSq=seq($('#sq-ftp'),{a:['💻','FTP client','designer\'s computer'],b:['🗄️','FTP server','web server'],onreset:()=>{cF=['logo.png','report.pdf'];sF=['index.html','style.css'];drawFiles()}});
+const drawFiles=nw=>{$('#f-client').innerHTML=cF.map(f=>`<div class="f${f===nw?' new':''}">${f}</div>`).join('');$('#f-server').innerHTML=sF.map(f=>`<div class="f${f===nw?' new':''}">${f}</div>`).join('')};
+function loadFtp(){
+  const up=ftpDir==='up',f=up?'logo.png':'style.css';
+  ftpSq.load([
+   {d:'r',t:'Connect',s:'to ftp.example.org',x:'The FTP client connects to the FTP server.'},
+   {d:'l',t:'220 Ready',s:'server reply',x:'The server replies with a status code. FTP is a conversation of commands from the client and numbered replies from the server.'},
+   {d:'r',t:'USER designer',s:'login',x:'FTP needs a login, so the client sends the username.'},
+   {d:'l',t:'331 Password needed',s:'server reply',x:'The server asks for the password.'},
+   {d:'r',t:'PASS Tiger2011',s:'sent as plain text',x:'The client sends the password. With ordinary FTP this is <b>not encrypted</b>, so anyone intercepting it could read it.'},
+   {d:'l',t:'230 Logged in',s:'server reply',x:'The user is logged in and can now transfer files.'},
+   up?{d:'r',t:'STOR logo.png',s:'upload this file',x:'The client tells the server it wants to <b>upload</b> (store) a file.'}:{d:'r',t:'RETR style.css',s:'download this file',x:'The client asks the server to <b>download</b> (retrieve) a file.'},
+   up?{d:'r',t:'logo.png (the file)',s:'file data',x:'The file is sent to the server.',fx:()=>{sF.push(f);drawFiles(f)}}:{d:'l',t:'style.css (the file)',s:'file data',x:'The file is sent to the designer\'s computer.',fx:()=>{cF.push(f);drawFiles(f)}},
+   {d:'l',t:'226 Transfer complete',s:'server reply',x:`The server confirms the transfer. <b>${f}</b> is now on both computers.`}]);
+}
+$$('#ftpdir button').forEach(b=>b.onclick=()=>{$$('#ftpdir button').forEach(x=>x.setAttribute('aria-pressed',x===b));ftpDir=b.dataset.d;loadFtp()});
+loadFtp();
 
 /* ---------- sending an email ---------- */
 const STEPS=[
@@ -200,35 +499,192 @@ $$('[data-a]').forEach(b=>b.onclick=()=>mail(b.dataset.a));
 $$('#proto button').forEach(b=>b.onclick=()=>{proto=b.dataset.p;$$('#proto button').forEach(x=>x.setAttribute('aria-pressed',x===b));mail('reset')});
 fresh();drawMail();
 
-/* ---------- HTTP / HTTPS ---------- */
-function drawWeb(secure){
-  let junk='',s=7;for(let i=0;i<150;i++){s=(s*73+41)%251;junk+=(s%16).toString(16)+(i%2?' ':'')}
-  $('#snoop').innerHTML=secure?`<span class="s">Captured packet to 203.0.113.80 (shop.example.org)</span>\n${junk}\n<span class="g">✔ Encrypted. The eavesdropper can see which server you are talking to, but not what you sent.</span>`
-    :`<span class="s">Captured packet to 203.0.113.80 (shop.example.org)</span>\nPOST /login HTTP/1.1\nHost: shop.example.org\n\nusername=alex.m&amp;password=<span class="e">Tiger2011</span>\n<span class="e">✖ Not encrypted. The username and password can be read by anyone who intercepts the data.</span>`;
+/* ---------- DNS (stretch) ---------- */
+const SITES=[['www.example.org','203.0.113.80'],['www.school-news.co.uk','198.51.100.7'],['www.exmaple.org',null]];
+let dnsCached=false;
+const dnsSq=seq($('#sq-dns'),{a:['💻','Browser','alex\'s laptop'],b:['📖','DNS server','run by her ISP']});
+function loadDns(){
+  const [n,ip]=SITES[+$('#dnsname').value],pre={d:'n',t:`Alex types ${n} into her browser`,x:'The browser needs the IP address of the website, because packets are sent to addresses, not names.'};
+  if(!ip&&!dnsCached)return dnsSq.load([pre,{d:'r',t:`What is the IP address of ${n}?`,s:'DNS query',x:'The browser asks the DNS server.'},
+    {d:'l',t:'No such name',s:'DNS reply',bad:1,x:'The DNS server has no record of that name, so there is no address to connect to. A mistyped name fails at this first step, before any web server is contacted.'}]);
+  if(!ip)return dnsSq.load([pre,{d:'n',t:'Not in the browser\'s cache',x:'A name that does not exist is never stored. The browser has to ask again, and fails again.'},{d:'r',t:`What is the IP address of ${n}?`,s:'DNS query',x:'The browser asks the DNS server.'},{d:'l',t:'No such name',s:'DNS reply',bad:1,x:'Still no such website.'}]);
+  dnsSq.load(dnsCached?[pre,{d:'n',t:`Cache hit: ${n} is ${ip}`,x:'The browser remembers the answer from the last visit, so it <b>does not need to ask the DNS server</b>. That saves time.'},{d:'n',t:`Browser connects to ${ip} using HTTPS`,x:'It goes straight to the web server.'}]
+   :[pre,{d:'r',t:`What is the IP address of ${n}?`,s:'DNS query',x:'The browser sends a <b>DNS query</b> to the DNS server.'},
+     {d:'l',t:`${n} is ${ip}`,s:'DNS reply',x:'The DNS server looks the name up and sends back the IP address. The browser remembers it for next time.'},
+     {d:'n',t:`Browser connects to ${ip} using HTTPS`,x:'Now the browser can contact the web server, using the IP address.'}]);
 }
-$$('#web button').forEach(b=>b.onclick=()=>{$$('#web button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawWeb(b.dataset.h==='1')});
-drawWeb(false);
+$('#dnsname').onchange=loadDns;
+$$('#dnscache button').forEach(b=>b.onclick=()=>{$$('#dnscache button').forEach(x=>x.setAttribute('aria-pressed',x===b));dnsCached=b.dataset.c==='1';loadDns()});
+loadDns();
+
+/* ---------- DHCP (stretch) ---------- */
+const dhcpSet=on=>{const v=on?['192.168.1.23','255.255.255.0','192.168.1.1','192.168.1.1']:['none yet','none yet','none yet','none yet'];
+  $('#dhcpset').innerHTML=['IP address','Subnet mask','Default gateway','DNS server'].map((k,i)=>`<dt>${k}</dt><dd class="${on?'set':''}">${v[i]}</dd>`).join('')};
+const dhcpSq=seq($('#sq-dhcp'),{a:['💻','New laptop','just joined the Wi-Fi'],b:['📡','Router','the DHCP server'],onreset:()=>dhcpSet(false)});
+dhcpSq.load([
+ {d:'n',t:'The laptop connects to the Wi-Fi network',x:'The laptop is connected, but it has <b>no IP address</b> yet, so it cannot send or receive any data on the network.'},
+ {d:'r',t:'DISCOVER: is there a DHCP server?',s:'sent to every device (broadcast)',x:'The laptop does not know who is on the network, so it shouts to everyone: "Is there a DHCP server out there?"'},
+ {d:'l',t:'OFFER: you can use 192.168.1.23',s:'from the DHCP server',x:'The DHCP server picks an address that nobody else is using and offers it.'},
+ {d:'r',t:'REQUEST: I will take 192.168.1.23',s:'accepting the offer',x:'The laptop accepts the offer.'},
+ {d:'l',t:'ACK: it is yours for 24 hours',s:'also sends the other settings',x:'The server confirms, and sends the other settings the laptop needs: the subnet mask, the default gateway (the router) and the DNS server. The laptop is ready to use the network.',fx:()=>dhcpSet(true)}]);
+
+/* ---------- TCP ---------- */
+let tcpBusy=false;
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function tlog(t,c){const l=$('#tlog');l.innerHTML+=`<span class="${c||''}">${t}</span>\n`;l.scrollTop=l.scrollHeight}
+function tcpDraw(ch){
+  $('#tx').innerHTML=ch.map((c,i)=>`<div class="pkt" id="tx${i}"><small>packet ${i+1}</small>${esc(c).replace(/ /g,'␣')}</div>`).join('');
+  $('#rx').innerHTML=ch.map((c,i)=>`<div class="pkt gap" id="rx${i}"><small>packet ${i+1}</small>?</div>`).join('');
+  $('#trx').textContent='';$('#tlog').innerHTML='';
+}
+const arrive=(ch,i,re)=>{const r=$('#rx'+i);r.className='pkt '+(re?'re':'ok');r.lastChild.textContent=ch[i].replace(/ /g,'␣');$('#tx'+i).className='pkt '+(re?'re':'ok')};
+async function tcpRun(){
+  if(tcpBusy)return;tcpBusy=true;$('#tsend').disabled=true;
+  const m=$('#tmsg').value||'HELLO',ch=m.match(/.{1,3}/g),n=ch.length,k=Math.min(+$('#tloss').value,n),lost=new Set(shuffle([...ch.keys()]).slice(0,k));
+  tcpDraw(ch);
+  tlog(`<span class="s">TCP splits "${esc(m)}" into ${n} packets and numbers them.</span>`);await sleep(600);
+  let seen=0,hi=-1;
+  for(const i of shuffle([...ch.keys()])){
+    $('#tx'+i).className='pkt sent';await sleep(350);
+    if(lost.has(i)){$('#tx'+i).className='pkt lost';tlog(`✖ Packet ${i+1} was lost on the way.`,'e');}
+    else{arrive(ch,i,false);seen++;tlog(`Packet ${i+1} arrives`+(i<hi?' late, after a later packet. The number says where it belongs.':'.')+' Acknowledgement sent.','g');hi=Math.max(hi,i)}
+  }
+  await sleep(500);
+  if(lost.size){
+    const miss=[...lost].sort((a,b)=>a-b);
+    tlog(`The receiver notices packets ${miss.map(i=>i+1).join(' and ')} never arrived (no acknowledgement was sent), so the sender sends ${miss.length>1?'them':'it'} again.`);await sleep(900);
+    for(const i of miss){$('#tx'+i).className='pkt sent';await sleep(450);arrive(ch,i,true);tlog(`Packet ${i+1} arrives the second time.`,'g')}
+    await sleep(300);
+  }
+  $('#trx').textContent=m;tlog(`✔ All ${n} packets have arrived. TCP puts them in order and delivers "${esc(m)}".`,'g');
+  tcpBusy=false;$('#tsend').disabled=false;
+}
+$('#tsend').onclick=tcpRun;
+tcpDraw('HELLO FROM ALEX'.match(/.{1,3}/g));$('#tlog').innerHTML='<span class="s">Press Send.</span>';
+
+/* ---------- UDP vs TCP (stretch) ---------- */
+let udpBusy=false;
+const cellsDraw=()=>{['tcp','udp'].forEach(k=>$('#c-'+k).innerHTML='<i></i>'.repeat(12));$('#t-tcp').textContent=$('#t-udp').textContent='0'};
+async function udpRun(){
+  if(udpBusy)return;udpBusy=true;$('#usend').disabled=true;cellsDraw();$('#umsg').textContent='';
+  const p=+$('#uloss').value,lost=[...Array(12).keys()].map(()=>Math.random()<p),T=$$('#c-tcp i'),U=$$('#c-udp i');
+  let tt=0,tu=0;
+  for(let i=0;i<12;i++){
+    T[i].className=U[i].className='now';await sleep(260);
+    tu++;U[i].className=lost[i]?'lost':'ok';
+    if(lost[i]){T[i].className='lost';await sleep(450);tt+=3;T[i].className='re';await sleep(150)}else T[i].className='ok';
+    tt++;$('#t-tcp').textContent=tt;$('#t-udp').textContent=tu;
+  }
+  const nl=lost.filter(Boolean).length,vid=$('#uuse').value==='v';
+  $('#umsg').innerHTML=!nl?'No packets were lost, so both arrived complete. UDP finished in the same time here, but it would have had no way to recover if any had gone missing.'
+   :vid?`<b>UDP wins for a live call.</b> It finished in ${tu} while TCP needed ${tt}, because TCP kept stopping to resend. A frame that arrives late is no use in a live conversation, so UDP's ${nl} missing frame${nl>1?'s':''} cause a brief glitch and the call carries on. With TCP the call would freeze and lag.`
+   :`<b>TCP wins for a file.</b> UDP finished in ${tu} but ${nl} piece${nl>1?'s are':' is'} missing, so the file is corrupt. TCP took ${tt} because it resent the lost packets, but every piece arrived, which is what matters for a file.`;
+  udpBusy=false;$('#usend').disabled=false;
+}
+$('#usend').onclick=udpRun;cellsDraw();$('#umsg').textContent='Press Send.';
+
+/* ---------- IP ---------- */
+const IPN=[['💻','Laptop','192.168.1.23'],['🔀','Router A',''],['🔀','Router B',''],['🔀','Router C',''],['🗄️','Web server','203.0.113.80']];
+let iph=0,ttl=64;
+$('#iphops').innerHTML=IPN.map((n,i)=>`<div class="node" id="ip${i}"><div class="ico">${n[0]}</div><b>${n[1]}</b><small>${n[2]||'forwards the packet'}</small></div>`).join('');
+function drawIp(msg,bad){
+  $$('#iphops .node').forEach((e,i)=>e.className='node'+(i===iph?(bad?' bad':' on'):''));
+  $('#iph').innerHTML=`<div><small>Source IP</small>192.168.1.23</div><div><small>Destination IP</small>203.0.113.80</div>${stretch?`<div><small>Hops left (TTL)</small>${ttl}</div>`:''}<div class="d"><small>Data</small>the TCP packet</div>`;
+  $('#ipx').innerHTML=msg;
+}
+function ipStep(){
+  if(iph<0||$('#ipstep').disabled)return;
+  if(iph===-1)return;
+  const first=iph===0&&$('#ipstep').dataset.s!=='1';
+  if(first){$('#ipstep').dataset.s='1';return drawIp('The laptop\'s IP layer adds a header with its own <b>source address</b> and the <b>destination address</b> of the web server, then sends the packet to the first router.')}
+  iph++;const last=iph===IPN.length-1;
+  if(stretch)ttl--;
+  if(stretch&&ttl<=0&&!last){$('#ipstep').disabled=true;return drawIp(`<b>${IPN[iph][1]}</b> subtracts 1 from the hops left and it reaches 0. The packet has been travelling too long, possibly in a loop, so the router <b>discards it</b>. This stops lost packets circulating forever. (TCP would notice no acknowledgement and send it again.)`,true)}
+  if(last){$('#ipstep').disabled=true;return drawIp('The packet reaches the address in its header. <b>IP</b> removes the header and passes the data up to TCP.')}
+  drawIp(`<b>${IPN[iph][1]}</b> reads the destination address, works out which neighbour is closest to it, and forwards the packet.`+(stretch?' It also subtracts 1 from the hops left.':''));
+}
+function ipReset(){iph=0;ttl=+$('#ttl').value;$('#ipstep').disabled=false;delete $('#ipstep').dataset.s;drawIp('Press <b>Step</b> to send a packet from the laptop to the web server.')}
+$('#ipstep').onclick=ipStep;$('#ipreset').onclick=ipReset;$('#ttl').onchange=ipReset;
+
+/* ---------- Ethernet vs Wi-Fi ---------- */
+function drawLink(){
+  const d=+$('#wd').value,w=+$('#ww').value,n=+$('#wn').value;
+  $('#wdv').textContent=d;$('#wwv').textContent=w;$('#wnv').textContent=n;
+  const sig=Math.max(0,Math.min(100,100-2*d-18*w)),wf=Math.max(2,Math.round(600*sig/100/n)),eth=1000;
+  $('#e-sp').textContent=eth+' Mbit/s';$('#e-m').style.width='100%';
+  $('#e-tx').textContent='Each device has its own cable to the switch, so distance, walls and other devices make no difference.';
+  $('#w-sp').textContent=wf+' Mbit/s';$('#w-m').style.width=Math.max(1,wf/10)+'%';
+  const why=[];if(d>15)why.push('a long way from the router');if(w)why.push(w+' wall'+(w>1?'s':'')+' absorbing the signal');if(n>1)why.push(n+' devices sharing one channel');
+  $('#w-tx').textContent=why.length?`Signal strength ${sig}%. Slower because of: ${why.join(', ')}.`:`Signal strength ${sig}%. Close to the router, with a clear path and one device, it works well.`;
+}
+$$('.ctl input').forEach(i=>i.oninput=drawLink);
+
+/* ---------- compare two protocols ---------- */
+const NOTES={
+ 'HTTP|HTTPS':'The same requests and responses. The only real difference is that HTTPS encrypts them, so intercepted data cannot be read. Use HTTPS whenever personal or financial data is involved.',
+ 'IMAP|POP3':'Both collect email. POP3 downloads it to one device and normally removes it from the server. IMAP leaves it on the server and synchronises every device, so it suits people with more than one device.',
+ 'SMTP|POP3':'They do opposite jobs. SMTP pushes email out, to the mail server and between mail servers. POP3 pulls it in to one device. An email system needs both.',
+ 'IMAP|SMTP':'They do opposite jobs. SMTP pushes email out, to the mail server and between mail servers. IMAP lets devices read the mailbox kept on the server. An email system needs both.',
+ 'FTP|HTTP':'Both fetch data from a server, but HTTP is for web pages, requested by a browser. FTP is for transferring files in either direction and needs a login, for example uploading a website to a web server.',
+ 'FTP|HTTPS':'HTTPS is for web pages, encrypted. FTP is for transferring files in either direction and needs a login. Plain FTP is not encrypted, unlike HTTPS.',
+ 'IP|TCP':'They work together as TCP/IP. TCP splits the data into numbered packets, checks they arrive and puts them in order. IP adds the addresses and routes each packet. IP does not check delivery: TCP does.',
+ 'TCP|UDP':'Both are transport layer protocols. TCP is reliable: it numbers packets, checks and resends, so it suits web pages, email and files. UDP skips all that to be faster, so it suits live video, voice and games, where an occasional lost packet matters less than delay.',
+ 'DHCP|DNS':'Both are looked up automatically when you go online. DHCP gives your device its own IP address when it joins the network. DNS finds the IP address of someone else\'s website from its name.',
+ 'Ethernet|Wi-Fi':'Both carry data across a LAN. Ethernet uses cables: faster, steadier and harder to snoop on. Wi-Fi uses radio: no cables and devices can move, but it is slower, varies with distance and obstacles, and needs encrypting.'};
+function fillCmp(){
+  const keep=[$('#cmpa').value,$('#cmpb').value],html=LAYERS.map((L,li)=>`<optgroup label="${L} layer">`+PROTO.filter(p=>p[2]===li&&vis(p)).map(p=>`<option>${p[0]}</option>`).join('')+'</optgroup>').join('');
+  $('#cmpa').innerHTML=$('#cmpb').innerHTML=html;
+  const ok=v=>v&&byName(v)&&vis(byName(v));
+  $('#cmpa').value=ok(keep[0])?keep[0]:'HTTP';$('#cmpb').value=ok(keep[1])?keep[1]:'HTTPS';
+}
+function drawCmp(){
+  const a=byName($('#cmpa').value),b=byName($('#cmpb').value);
+  const rows=[['Layer',p=>LAYERS[p[2]]+' layer'],['Full name',p=>p[1]||'—'],['Job',p=>p[3]],['Between',p=>p[4]],['Encrypted?',p=>p[5]],['Example use',p=>p[6]]];
+  $('#cmpt').innerHTML=`<thead><tr><th></th><th>${a[0]}</th><th>${b[0]}</th></tr></thead><tbody>`+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1](a)}</td><td>${r[1](b)}</td></tr>`).join('')+'</tbody>';
+  const key=[a[0],b[0]].sort().join('|');
+  $('#cmpn').innerHTML=a===b?'Choose two different protocols to compare.':NOTES[key]||(a[2]===b[2]?`Both work at the ${LAYERS[a[2]].toLowerCase()} layer, but have different jobs: ${a[0]} ${a[3].charAt(0).toLowerCase()+a[3].slice(1)}, while ${b[0]} ${b[3].charAt(0).toLowerCase()+b[3].slice(1)}.`:`They work at different layers, so one does not replace the other: they are used together. ${a[0]} works at the ${LAYERS[a[2]].toLowerCase()} layer and ${b[0]} at the ${LAYERS[b[2]].toLowerCase()} layer.`);
+}
+$('#cmpa').onchange=$('#cmpb').onchange=drawCmp;
 
 /* ---------- quizzes ---------- */
-cardQuiz($('#quiz1'),[
- {q:'A browser requests a news page from a web server.',a:'HTTP',why:'HTTP defines how web pages are requested and served.'},
- {q:'A customer types card details into an online shop.',a:'HTTPS',why:'The data must be encrypted, so the secure version of HTTP is used.'},
- {q:'A web designer uploads the files for a new site to the web server.',a:'FTP',why:'FTP defines how files are transferred across a network.'},
- {q:'An email app sends a message to the mail server.',a:'SMTP',why:'SMTP is the protocol for sending email.'},
- {q:'One mail server passes an email on to another mail server.',a:'SMTP',why:'SMTP is also used between servers.'},
- {q:'Alex wants to see the same inbox on her phone and her laptop.',a:'IMAP',why:'IMAP keeps the email on the server and synchronises every device.'},
- {q:'Email is downloaded to a single PC and removed from the server.',a:'POP3',why:'POP3 retrieves the messages to one device.'},
- {q:'Logging in to online banking.',a:'HTTPS',why:'Encryption stops the login details being read if they are intercepted.'},
-],['HTTP','HTTPS','FTP','SMTP','POP3','IMAP'],$('#score1'),$('#qreset1'));
+function buildQuizzes(){
+  const S=stretch;
+  cardQuiz($('#quiz1'),[
+   {q:'A browser requests a news page from a web server.',a:'HTTP',why:'HTTP defines how web pages are requested and served.'},
+   {q:'A customer types card details into an online shop.',a:'HTTPS',why:'The data must be encrypted, so the secure version of HTTP is used.'},
+   {q:'A web designer uploads the files for a new site to the web server.',a:'FTP',why:'FTP defines how files are transferred across a network.'},
+   {q:'An email app sends a message to the mail server.',a:'SMTP',why:'SMTP is the protocol for sending email.'},
+   {q:'One mail server passes an email on to another mail server.',a:'SMTP',why:'SMTP is also used between servers.'},
+   {q:'Alex wants to see the same inbox on her phone and her laptop.',a:'IMAP',why:'IMAP keeps the email on the server and synchronises every device.'},
+   {q:'Email is downloaded to a single PC and removed from the server.',a:'POP3',why:'POP3 retrieves the messages to one device.'},
+   {q:'Logging in to online banking.',a:'HTTPS',why:'Encryption stops the login details being read if they are intercepted.'},
+   ...(S?[{q:'A browser needs the IP address for www.example.org.',a:'DNS',why:'DNS turns a name into an IP address.'},
+     {q:'A phone joins the school Wi-Fi and is given an IP address automatically.',a:'DHCP',why:'DHCP hands out IP addresses when devices join a network.'},
+     {q:'A live video call where speed matters more than perfect delivery.',a:'UDP',why:'UDP is faster because it does not stop to resend lost packets.'}]:[])
+  ],['HTTP','HTTPS','FTP','SMTP','POP3','IMAP',...(S?['DNS','DHCP','UDP']:[])],$('#score1'),$('#qreset1'));
 
-cardQuiz($('#quiz2'),[
- {q:'What is the purpose of a network protocol?',opts:['To provide a set of rules for how devices communicate','To make a network faster','To connect cables together'],a:'To provide a set of rules for how devices communicate',why:'Without agreed rules, devices from different manufacturers could not exchange data.'},
- {q:'What is the difference between HTTP and HTTPS?',opts:['HTTPS encrypts the data','HTTPS is faster','HTTPS is only for email'],a:'HTTPS encrypts the data',why:'It is the secure version of HTTP.'},
- {q:'Which protocol would <b>not</b> be used when transferring a web page from a web server?',opts:['IMAP','TCP','HTTP'],a:'IMAP',why:'IMAP is an email protocol. HTTP, TCP and IP are all involved in fetching a web page.'},
- {q:'Which two protocols are used to retrieve email from a mail server?',opts:['POP3 and IMAP','SMTP and FTP','HTTP and HTTPS'],a:'POP3 and IMAP',why:'SMTP is for sending.'},
- {q:'Which protocol splits data into packets and reassembles them at the other end?',opts:['TCP','IP','FTP'],a:'TCP',why:'It also checks that the packets have arrived correctly.'},
- {q:'Which protocol is responsible for the addresses that data is sent to?',opts:['IP','SMTP','HTTP'],a:'IP',why:'IP stands for Internet Protocol.'},
- {q:'Which protocols set out how data is transmitted on a LAN?',opts:['Ethernet and Wi-Fi','POP3 and IMAP','HTTP and FTP'],a:'Ethernet and Wi-Fi',why:'Ethernet for wired LANs and Wi-Fi for wireless LANs.'},
- {q:'Why is it useful that everyone uses the same standard protocols?',opts:['Hardware and software from different suppliers can work together','It makes all networks the same size','It means no cables are needed'],a:'Hardware and software from different suppliers can work together',why:'Otherwise each supplier would need its own customised system.'},
-],null,$('#score2'),$('#qreset2'));
+  const L=['Application','Transport','Internet','Link'];
+  cardQuiz($('#quiz3'),[...PROTO.filter(vis).map(p=>({q:`Which layer does <b>${p[0]}</b> work at?`,a:L[p[2]],why:`${p[0]} works at the ${L[p[2]].toLowerCase()} layer. ${p[3]}.`}))],L,$('#score3'),$('#qreset3'));
+
+  cardQuiz($('#quiz2'),[
+   {q:'What is the purpose of a network protocol?',opts:['To provide a set of rules for how devices communicate','To make a network faster','To connect cables together'],a:'To provide a set of rules for how devices communicate',why:'Without agreed rules, devices from different manufacturers could not exchange data.'},
+   {q:'What is the difference between HTTP and HTTPS?',opts:['HTTPS encrypts the data','HTTPS is faster','HTTPS is only for email'],a:'HTTPS encrypts the data',why:'It is the secure version of HTTP.'},
+   {q:'Which protocol would <b>not</b> be used when transferring a web page from a web server?',opts:['IMAP','TCP','HTTP'],a:'IMAP',why:'IMAP is an email protocol. HTTP, TCP and IP are all involved in fetching a web page.'},
+   {q:'Which two protocols are used to retrieve email from a mail server?',opts:['POP3 and IMAP','SMTP and FTP','HTTP and HTTPS'],a:'POP3 and IMAP',why:'SMTP is for sending.'},
+   {q:'Which protocol splits data into packets and reassembles them at the other end?',opts:['TCP','IP','FTP'],a:'TCP',why:'It also checks that the packets have arrived correctly.'},
+   {q:'Which protocol is responsible for the addresses that data is sent to?',opts:['IP','SMTP','HTTP'],a:'IP',why:'IP stands for Internet Protocol.'},
+   {q:'Which protocols set out how data is transmitted on a LAN?',opts:['Ethernet and Wi-Fi','POP3 and IMAP','HTTP and FTP'],a:'Ethernet and Wi-Fi',why:'Ethernet for wired LANs and Wi-Fi for wireless LANs.'},
+   {q:'Give one advantage of Ethernet over Wi-Fi.',opts:['A faster, more reliable connection','Devices can move around','No cables are needed'],a:'A faster, more reliable connection',why:'The other two are advantages of Wi-Fi.'},
+   {q:'Why would a person who reads email on a phone and a laptop choose IMAP rather than POP3?',opts:['The mailbox stays on the server so both devices show the same emails','POP3 cannot send email','IMAP encrypts the emails'],a:'The mailbox stays on the server so both devices show the same emails',why:'POP3 normally downloads the email to one device and removes it from the server.'},
+   {q:'Why is it useful that everyone uses the same standard protocols?',opts:['Hardware and software from different suppliers can work together','It makes all networks the same size','It means no cables are needed'],a:'Hardware and software from different suppliers can work together',why:'Otherwise each supplier would need its own customised system.'},
+   ...(S?[{q:'Why is UDP used for live video calls?',opts:['It is faster because it does not resend lost packets','It encrypts the video','It guarantees every packet arrives'],a:'It is faster because it does not resend lost packets',why:'A late frame is no use in a live call, so a small glitch is better than a delay.'},
+     {q:'What does DNS do?',opts:['Turns a website name into an IP address','Gives a device an IP address','Encrypts web traffic'],a:'Turns a website name into an IP address',why:'DHCP is the one that gives a device its own address.'}]:[])
+  ],null,$('#score2'),$('#qreset2'));
+}
+
+/* ---------- start ---------- */
+drawLink();ipReset();
+setLevel(false);
+fillCmp();drawCmp();buildQuizzes();
+try{if(localStorage.getItem('protocols-level')==='1')setLevel(true)}catch(e){}
 </script>
