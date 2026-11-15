@@ -6,7 +6,8 @@ logic: true
 ---
 <style>
 :root{--g0:#1F5BFF;--g1:#E8590C;--g2:#0F9D58;--g3:#C2185B;--g4:#7B3FE4;--g5:#00838F}
-@media (prefers-color-scheme:dark){:root{--g0:#5B8CFF;--g1:#FF8A3D;--g2:#3CC47F;--g3:#F06292;--g4:#A983FF;--g5:#26C6DA}}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--g0:#5B8CFF;--g1:#FF8A3D;--g2:#3CC47F;--g3:#F06292;--g4:#A983FF;--g5:#26C6DA}}
+:root[data-theme=dark]{--g0:#5B8CFF;--g1:#FF8A3D;--g2:#3CC47F;--g3:#F06292;--g4:#A983FF;--g5:#26C6DA}
 table.tt{border-collapse:collapse;font-size:.88rem}
 .tt th,.tt td{padding:3px 10px;text-align:center;border-bottom:1px solid var(--line)}
 .tt td.idx{color:var(--muted)}
