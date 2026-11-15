@@ -2,7 +2,6 @@
 layout: demo
 title: "Thinking Concurrently"
 spec: "OCR A LEVEL · 2.1.5"
-published: false
 ---
 <style>
 .tl{display:grid;gap:6px;margin:14px 0 8px;min-width:max-content}
@@ -27,6 +26,7 @@ published: false
 .gantt .r>span small{display:block;color:var(--muted);font-size:.76rem}
 .gantt .trk{position:relative;height:30px;background:var(--bg);border:1.5px solid var(--line);border-radius:6px}
 .gantt .bar{position:absolute;top:2px;bottom:2px;border-radius:4px;background:var(--one);color:#fff;font:700 .72rem var(--mono);display:grid;place-items:center;transition:left .3s,width .3s}
+.gantt .bar.ov{background:var(--muted)}
 .gantt .bar.w1{background:#7B4DFF}.gantt .bar.w2{background:var(--ok)}.gantt .bar.w3{background:var(--bad)}
 .race{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:start}
 .race .pc{margin:8px 0}
@@ -50,24 +50,38 @@ published: false
   <p class="key"><span><i class="run"></i> Using a processor</span><span><i class="wait"></i> Waiting for input or the network</span><span><i class="ready"></i> Ready, but waiting for a processor</span></p>
   <div class="stats" id="tstats"></div>
   <p class="note" id="tnote"></p>
-  <div class="cols2 vs" style="margin-top:16px">
-    <div class="panel"><h2>Concurrent processing</h2><p style="margin:0">Several processes are in progress over the same period. Each is given a slice of processor time in turn, so they <b>appear</b> to run simultaneously even on a single processor. Nothing happens at exactly the same instant.</p></div>
-    <div class="panel"><h2>Parallel processing</h2><p style="margin:0">Several processors, or cores, each execute different instructions at exactly the same instant. This cannot be done with a single processor. Its aim is to speed up the computation.</p></div>
-  </div>
+  <details class="recap"><summary>Summary: concurrent and parallel processing</summary>
+  <div class="scroll"><table class="t">
+    <tr><th></th><th>Concurrent processing</th><th>Parallel processing</th></tr>
+    <tr><td><b>What happens</b></td><td>Several processes are in progress over the same period. Each is given a slice of processor time in turn, so they appear to run at the same time</td><td>Several processors, or cores, each execute different instructions at exactly the same instant</td></tr>
+    <tr><td><b>Processors needed</b></td><td>Possible with just one</td><td>Impossible with just one</td></tr>
+    <tr><td><b>Benefits</b></td><td>More tasks completed in a given time (throughput). Time spent waiting for input, output or the network is used for another task. Programs stay responsive</td><td>Work that splits into independent parts finishes much sooner, such as repetitive calculations on large amounts of data, or a graphics processor rendering each part of a 3D image</td></tr>
+    <tr><td><b>Trade-offs</b></td><td>If many tasks all need a lot of processing, each one takes longer to complete</td><td>Coordinating the processors is an overhead, so some tasks run faster on one processor. Parts that depend on each other still run in order</td></tr>
+    <tr><td><b>Both</b></td><td colspan="2">Shared data has to be protected with locks, which brings a risk of deadlock, and programs are harder to design, write, test and debug</td></tr>
+  </table></div>
+  </details>
 </section>
 
 <section class="block">
   <h2>What can happen at the same time?</h2>
   <p class="sub">A task can start only when everything it depends on has finished. Tasks that do not depend on each other can be carried out at the same time, if there are enough processors. Choose a problem and change the number of processors.</p>
+  <div class="tabs" id="gtabs" role="tablist">
+    <button role="tab" data-p="g-sch" aria-selected="true">Schedule the tasks</button>
+    <button role="tab" data-p="g-q" aria-selected="false">Same time, or must wait?</button>
+  </div>
   <div class="toolbar">
     <label class="check">Problem <select id="prob"></select></label>
     <label class="check">Processors <input type="range" id="pw" min="1" max="4" value="1"> <b class="mono" id="pwv"></b></label>
+    <label class="check"><input type="checkbox" id="ovh"> Include the cost of coordinating the processors</label>
   </div>
-  <div class="gantt" id="gantt"></div>
-  <p class="status" id="gmsg"></p>
-  <p class="note" id="gnote"></p>
-  <h3 style="margin:20px 0 8px">Same time, or must wait?</h3>
-  {% include quiz.html n=2 %}
+  <div id="g-sch">
+    <div class="gantt" id="gantt"></div>
+    <p class="status" id="gmsg"></p>
+    <p class="note" id="gnote"></p>
+  </div>
+  <div id="g-q" class="hidden" style="margin-top:14px">
+    {% include quiz.html n=2 %}
+  </div>
 </section>
 
 <section class="block">
@@ -84,26 +98,6 @@ published: false
 </section>
 
 <section class="block">
-  <h2>Benefits and trade-offs</h2>
-  <div class="cols2 vs">
-    <div class="panel"><h2>Benefits</h2><ul>
-      <li>More tasks are completed in a given time (greater throughput)</li>
-      <li>Time the processor would have wasted waiting for input, output or the network is used for another task</li>
-      <li>A program stays responsive: the interface still reacts while a long task carries on in the background</li>
-      <li>Many users can be served over the same period, as on a web server</li>
-      <li>With several processors, work that splits into independent parts finishes much sooner, such as rendering graphics or processing a large data set</li>
-    </ul></div>
-    <div class="panel"><h2>Trade-offs</h2><ul>
-      <li>Parts that depend on each other still have to run in order, which limits how much time can be saved</li>
-      <li>If many tasks all need a lot of processing, each of them takes longer to complete</li>
-      <li>Switching between tasks and coordinating them is an overhead. A small job can be faster on a single processor</li>
-      <li>Shared data must be protected with locks, which brings a risk of deadlock</li>
-      <li>Programs are harder to design, write, test and debug</li>
-    </ul></div>
-  </div>
-</section>
-
-<section class="block">
   <h2>Apply it</h2>
   {% include quiz.html %}
 </section>
@@ -112,9 +106,9 @@ published: false
 /* each task is a list of segments: c = needs the processor, w = waiting for input or the network */
 const TASKS=[['A  Word processor',[['c',2],['w',6],['c',2]]],['B  Virus scan',[['c',8]]],['C  File download',[['c',1],['w',5],['c',2]]]];
 const TNOTE={
- seq:'Each program runs to completion before the next one starts. While the word processor waits for the user to type, the processor does nothing at all, and the other two programs cannot even begin.',
- con:'The processor switches between whichever programs are ready, one time slice each. The time one program spends waiting is used to run the others, so all three finish far sooner. The trade-off: the virus scan needs 8 units of processing but takes longer than that, because it has to share the processor.',
- par:'Each program has its own processor, so nothing ever waits for a processor. This is the fastest of the three, but it needs more hardware, and for much of the time two of the processors are idle.'};
+ seq:'Sequential: each program runs to completion before the next one starts. While the word processor waits for the user to type, the processor does nothing at all, and the other two programs cannot even begin.',
+ con:'Concurrent processing: several processes are in progress over the same period, but only one runs at any instant. The processor switches between whichever programs are ready, one time slice each. The time one program spends waiting is used to run the others, so all three finish far sooner. The trade-off: the virus scan needs 8 units of processing but takes longer than that, because it has to share the processor.',
+ par:'Parallel processing: several processors execute instructions at exactly the same instant, which is impossible with one processor. Each program has its own processor, so nothing ever waits for a processor. This is the fastest of the three, but it needs more hardware, and for much of the time two of the processors are idle.'};
 let mode='seq';
 function sim(m){
   const st=TASKS.map(t=>({segs:t[1].map(s=>[...s]),i:0,row:[],end:0})),cpus=m==='par'?3:1,cpu=[];let t=0,rr=0,idle=0;
@@ -166,15 +160,19 @@ function schedule(tasks,w){
   return{start,end,who,total:Math.max(...end)};
 }
 function gDraw(){
-  const p=PROBS[$('#prob').value],w=+$('#pw').value,one=p.tasks.reduce((s,x)=>s+x[1],0),r=schedule(p.tasks,w),best=schedule(p.tasks,9).total;
-  $('#pwv').textContent=w;
-  $('#gantt').innerHTML=p.tasks.map((x,i)=>`<div class="r"><span>${x[0]}<small>${x[2].length?'after: '+x[2].map(d=>p.tasks[d][0][0].toLowerCase()+p.tasks[d][0].slice(1)).join(', '):'depends on nothing'}</small></span><div class="trk"><div class="bar w${r.who[i]}" style="left:${r.start[i]/one*100}%;width:${x[1]/one*100}%">P${r.who[i]+1}</div></div></div>`).join('');
-  $('#gmsg').innerHTML=`<b>Finished after ${r.total} time units</b> with ${w} processor${w>1?'s':''}`+(w>1?`, compared with ${one} for one processor.`:'. Every task has to take its turn.')+(r.total===best&&w>1?` This is the limit: the longest chain of dependent tasks takes ${best} units, and no number of processors can shorten it.`:'');
+  const p=PROBS[$('#prob').value],w=+$('#pw').value,one=p.tasks.reduce((s,x)=>s+x[1],0),r=schedule(p.tasks,w),best=schedule(p.tasks,9).total,ov=$('#ovh').checked?w-1:0;
+  $('#pwv').textContent=w;r.total+=ov;
+  const span=one+($('#ovh').checked?3:0);
+  $('#gantt').innerHTML=p.tasks.map((x,i)=>`<div class="r"><span>${x[0]}<small>${x[2].length?'after: '+x[2].map(d=>p.tasks[d][0][0].toLowerCase()+p.tasks[d][0].slice(1)).join(', '):'depends on nothing'}</small></span><div class="trk"><div class="bar w${r.who[i]}" style="left:${(r.start[i]+ov)/span*100}%;width:${x[1]/span*100}%">P${r.who[i]+1}</div></div></div>`).join('');
+  $('#gantt').insertAdjacentHTML('afterbegin',ov?`<div class="r"><span>Split up the work and coordinate<small>1 time unit for each extra processor</small></span><div class="trk"><div class="bar ov" style="left:0;width:${ov/span*100}%">${ov}</div></div></div>`:'');
+  $('#gmsg').innerHTML=`<b>Finished after ${r.total} time units</b> with ${w} processor${w>1?'s':''}`+(w>1?`, compared with ${one} for one processor.`:'. Every task has to take its turn.')
+    +(ov&&r.total>=one?` <b class="badc">No faster than one processor:</b> the time spent coordinating has cancelled out the gain.`:ov&&r.total>=schedule(p.tasks,w-1).total+ov-1?` The extra processor saved less time than it cost to coordinate.`:'')
+    +(!ov&&r.total===best&&w>1?` This is the limit: the longest chain of dependent tasks takes ${best} units, and no number of processors can shorten it.`:'');
   $('#gnote').textContent=p.note;
 }
 function gQuiz(){cardQuiz($('#quiz2'),PROBS[$('#prob').value].q.map(r=>({q:r[0],a:r[1],why:r[2]})),ST,$('#score2'),$('#qreset2'))}
 $('#prob').innerHTML=PROBS.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
-$('#prob').onchange=()=>{gDraw();gQuiz()};$('#pw').oninput=gDraw;gDraw();gQuiz();
+$('#prob').onchange=()=>{gDraw();gQuiz()};$('#pw').oninput=$('#ovh').onchange=gDraw;tabs($('#gtabs'));gDraw();gQuiz();
 
 /* ---------- shared data ---------- */
 const ADD=[50,20],NAME=['A','B'];let bal,th,holder;
