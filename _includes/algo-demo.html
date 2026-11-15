@@ -1,0 +1,29 @@
+{%- comment -%} The interactive block for an algorithm page. algoDemo() in assets/algo.js fills it in. {%- endcomment -%}
+<section class="block">
+  <h2>{{ include.title | default: "Try it" }}</h2>
+  <p class="sub">{{ include.sub }}</p>
+  <div class="toolbar" id="ad-setup"></div>
+  <div class="ad-stage">
+    <div id="ad-cells" class="cells"></div>
+    <div id="ad-tmp" class="tmp hidden"></div>
+    <p class="ad-x" id="ad-x"></p>
+  </div>
+  <div class="ad-key" id="ad-key"><span><i class="cmp"></i>being compared</span><span><i class="swap"></i>swapped</span><span><i class="sorted"></i>in its final place</span></div>
+  <div class="row">
+    <button class="btn" id="ad-reset">⏮ Reset</button><button class="btn" id="ad-back">◀ Back</button><button class="btn pri" id="ad-play">▶ Play</button><button class="btn" id="ad-step">Step ▶</button>
+    <label class="check">Speed <input type="range" id="ad-speed" min="1" max="10" value="5"></label>
+  </div>
+  <div class="ad-info">
+    <div class="ad-msg" id="ad-msg" aria-live="polite"></div>
+    <div class="ad-side"><div class="vars" id="ad-vars"></div><div id="ad-count"></div></div>
+  </div>
+  <div class="cols2" style="align-items:start">
+    <div><h3>Flowchart</h3><div id="ad-flows"></div></div>
+    <div>
+      <div class="tabs" id="ad-codetabs" role="tablist"><button role="tab" aria-selected="true" data-p="ad-ocr">OCR pseudocode</button><button role="tab" aria-selected="false" data-p="ad-swift">Swift</button></div>
+      <pre class="pc" id="ad-ocr"></pre>
+      <pre class="pc hidden" id="ad-swift"></pre>
+      <p class="sub" style="margin:10px 0 0;font-size:.88rem">The line being run is highlighted as you step through. Switch tabs to see the same step in the other language.</p>
+    </div>
+  </div>
+</section>

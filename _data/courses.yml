@@ -28,6 +28,16 @@
         - { title: "Thinking Logically",     nav: "Thinking logically",     url: /a-level/2.1/thinking-logically.html }
         - { title: "Thinking Concurrently",  nav: "Thinking concurrently",  url: /a-level/2.1/thinking-concurrently.html }
 
+    - title: 2.3 Algorithms
+      label: 2.3 demos
+      pages:
+        - { title: "Linear Search",   nav: "Linear search",   url: /a-level/2.3/linear-search.html }
+        - { title: "Binary Search",   nav: "Binary search",   url: /a-level/2.3/binary-search.html }
+        - { title: "Bubble Sort",     nav: "Bubble sort",     url: /a-level/2.3/bubble-sort.html }
+        - { title: "Insertion Sort",  nav: "Insertion sort",  url: /a-level/2.3/insertion-sort.html }
+        - { title: "Merge Sort",      nav: "Merge sort",      url: /a-level/2.3/merge-sort.html }
+        - { title: "Quick Sort",      nav: "Quick sort",      url: /a-level/2.3/quick-sort.html }
+
 - id: gcse
   name: GCSE Computer Science
   tag: Edexcel

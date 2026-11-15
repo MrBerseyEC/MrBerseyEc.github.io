@@ -1,0 +1,88 @@
+---
+layout: demo
+title: "Binary Search"
+spec: "OCR A LEVEL · 2.3.1 STANDARD ALGORITHMS"
+algo: true
+---
+<p class="lede">A binary search finds an item in a <b>sorted</b> list by repeatedly looking at the middle item and throwing away the half that cannot contain the target. Each step halves the number of items left to search, so it is very fast on long lists.</p>
+
+<section class="block">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>The list must already be <b>sorted</b>.</li>
+      <li>Set <span class="mono">low</span> to the first position and <span class="mono">high</span> to the last position.</li>
+      <li>Find the middle: <span class="mono">mid = (low + high) DIV 2</span>.</li>
+      <li>Compare the middle item with the target. If they are equal, the target is <b>found</b>.</li>
+      <li>If the middle item is <b>smaller</b> than the target, the target can only be in the upper half, so set <span class="mono">low = mid + 1</span>. If it is <b>larger</b>, the target can only be in the lower half, so set <span class="mono">high = mid - 1</span>.</li>
+      <li>Repeat from step 3. If <span class="mono">low</span> becomes greater than <span class="mono">high</span> there are no items left, so the target is <b>not in the list</b>.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>It only works if the list is sorted. On an unsorted list it may discard the half that holds the target.</li>
+        <li>It needs direct access to the middle item, as an array provides.</li>
+        <li>A list of 1 000 000 items needs at most <b>20</b> comparisons, where a linear search could need 1 000 000.</li>
+        <li>Doubling the length of the list adds just <b>one</b> more comparison.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="The list starts sorted. Press Play to watch the search window shrink: items outside the window fade out. Try a target that is not in the list, then switch the list to Unsorted to see why the sort order matters." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'search',cLabel:'Items checked',refs:['logn'],needsSorted:true,
+ key:'<span><i class="cmp"></i>middle item</span><span><i class="sorted"></i>found</span><span>Faded items have been ruled out</span>',
+ best:a=>a[(a.length-1)>>1],
+ bigO:{best:'O(1)',avg:'O(log n)',worst:'O(log n)',space:'O(1)'},
+ why:[
+  '<b>Best case, O(1):</b> the target happens to be the middle item, so it is found on the first comparison.',
+  '<b>Worst case, O(log n):</b> the list is halved every time, so the most checks needed is about log₂ n. For 1024 items that is 11 checks. This is logarithmic time, the slowest-growing of the complexities in the specification apart from constant time.',
+  '<b>Average case, O(log n):</b> most targets are found only near the end of the search, so the average is close to the worst case.',
+  '<b>Space, O(1):</b> the iterative version stores only low, high and mid. (A recursive version would also use stack space of O(log n).)',
+  '<b>The price:</b> the list must be sorted first. If it is searched only once, sorting it may take longer than a linear search would.'],
+ ocr:['function binarySearch(numbers, target)','  low = 0','  high = numbers.length - 1','  while low <= high','    mid = (low + high) DIV 2','    if numbers[mid] == target then','      return mid','    elseif numbers[mid] < target then','      low = mid + 1','    else','      high = mid - 1','    endif','  endwhile','  return -1','endfunction'],
+ swift:['func binarySearch(_ numbers: [Int], target: Int) -> Int? {','    var low = 0','    var high = numbers.count - 1','    while low <= high {','        let mid = (low + high) / 2','        if numbers[mid] == target {','            return mid','        } else if numbers[mid] < target {','            low = mid + 1','        } else {','            high = mid - 1','        }','    }','    return nil','}'],
+ flows:[{w:640,h:620,nodes:[
+  {id:'start',t:'term',x:300,y:30,s:'Start'},{id:'init',t:'proc',x:300,y:95,s:'low = 0|high = length - 1'},{id:'d1',t:'dec',x:300,y:175,s:'low <= high ?'},
+  {id:'mid',t:'proc',x:300,y:260,s:'mid = (low + high)|DIV 2'},{id:'d2',t:'dec',x:300,y:345,s:'list[mid] == target?'},{id:'found',t:'term',x:520,y:345,s:'Return mid'},
+  {id:'d3',t:'dec',x:300,y:450,s:'list[mid] < target?'},{id:'lo',t:'proc',x:190,y:545,s:'low = mid + 1'},{id:'hi',t:'proc',x:410,y:545,s:'high = mid - 1'},{id:'nf',t:'term',x:95,y:175,s:'Return -1'}],
+  arrows:[{d:'M300 52V73'},{d:'M300 117V143'},{d:'M300 207V238',l:'Yes',x:320,y:228},{d:'M205 175H180',l:'No',x:192,y:167},{d:'M300 282V313'},{d:'M395 345H435',l:'Yes',x:415,y:337},{d:'M300 377V418',l:'No',x:320,y:402},
+   {d:'M205 450H190V523',l:'Yes',x:178,y:442},{d:'M395 450H410V523',l:'No',x:424,y:442},{d:'M190 567V595H620V175H395'},{d:'M410 567V595'}]}],
+ run:function*(X){
+  const a=X.a,t=X.t,S=X.S;let low=0,high=a.length-1;
+  yield S(`Search for <b>${t}</b>. The window is the whole list: low = 0, high = ${high}.`,[1,2],[1,2],'init',{rng:[low,high],p:[[low,'low'],[high,'high']],v:{target:t,low,high}});
+  while(low<=high){
+    const mid=(low+high)>>1;X.c++;
+    yield S(`low ≤ high, so carry on. mid = (${low} + ${high}) DIV 2 = <b>${mid}</b>. The middle item is ${a[mid]}.`,[3,4],[3,4],['d1','mid'],{k:{[mid]:'cmp'},rng:[low,high],p:[[low,'low'],[mid,'mid'],[high,'high']],v:{target:t,low,mid,high}});
+    if(a[mid]===t){yield S(`${a[mid]} == ${t}. <b>Found</b> at position ${mid}. Return ${mid}, after checking ${X.c} item${X.c>1?'s':''}.`,[5,6],[5,6],['d2','found'],{k:{[mid]:'found'},rng:[low,high],p:[[mid,'mid']],v:{target:t,low,mid,high}});return}
+    if(a[mid]<t){
+      yield S(`${a[mid]} &lt; ${t}, so the target can only be in the upper half. Set low to mid + 1 = <b>${mid+1}</b>, ruling out positions ${low} to ${mid}.`,[7,8],[7,8],['d2','d3','lo'],{k:{[mid]:'cmp'},rng:[low,high],p:[[low,'low'],[mid,'mid'],[high,'high']],v:{target:t,low:mid+1,mid,high}});
+      low=mid+1;
+    }else{
+      yield S(`${a[mid]} &gt; ${t}, so the target can only be in the lower half. Set high to mid - 1 = <b>${mid-1}</b>, ruling out positions ${mid} to ${high}.`,[9,10],[9,10],['d2','d3','hi'],{k:{[mid]:'cmp'},rng:[low,high],p:[[low,'low'],[mid,'mid'],[high,'high']],v:{target:t,low,mid,high:mid-1}});
+      high=mid-1;
+    }
+  }
+  yield S(`low (${low}) is now greater than high (${high}), so no items are left to check. Return <b>-1</b>: ${t} was not found after checking ${X.c} item${X.c===1?'':'s'}.`,[12,13],[12,13],['d1','nf'],{rng:[low,high],v:{target:t,low,high}});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'What must be true of a list before a binary search can be used on it?',opts:['It must be sorted','It must contain no duplicates','It must have an even number of items'],a:'It must be sorted',why:'The algorithm decides which half to discard by comparing with the middle item, which only makes sense if the items are in order.'},
+ {q:'A binary search for 27 is run on 3, 8, 12, 15, 20, 27, 31 (positions 0 to 6). Which item is compared first?',opts:['15','8','27'],a:'15',why:'mid = (0 + 6) DIV 2 = 3, and the item at position 3 is 15.'},
+ {q:'Following on, 27 is greater than 15. What is the new value of low?',opts:['4','3','5'],a:'4',why:'low = mid + 1 = 3 + 1 = 4. The middle item has been checked so it is not included again.'},
+ {q:'What is the worst-case time complexity of a binary search?',opts:['O(log n)','O(n)','O(1)'],a:'O(log n)',why:'The number of items is halved with each comparison, so the number of comparisons grows with log₂ n.'},
+ {q:'A sorted list is made twice as long. How many more comparisons does a binary search need in the worst case?',opts:['One more','Twice as many','Double the number plus one'],a:'One more',why:'Doubling n adds 1 to log₂ n.'},
+ {q:'<span class="mono">low = 0</span> and <span class="mono">high = 9</span>. What is <span class="mono">mid</span>?',opts:['4','5','4.5'],a:'4',why:'(0 + 9) DIV 2 = 9 DIV 2 = 4. DIV discards the remainder so mid is always a whole number.'},
+ {q:'When might a linear search be preferred to a binary search?',opts:['The list is unsorted and will only be searched once','The list has over a million items','The list is stored in an array'],a:'The list is unsorted and will only be searched once',why:'The cost of sorting the list first would be greater than the cost of one linear search.'},
+ {q:'Which part of the algorithm decides that the target is not in the list?',opts:['low becomes greater than high','mid becomes 0','The target is smaller than the first item'],a:'low becomes greater than high',why:'The window of possible positions is then empty.'},
+],null,$('#score'),$('#qreset'));
+</script>

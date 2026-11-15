@@ -1,0 +1,88 @@
+---
+layout: demo
+title: "Bubble Sort"
+spec: "OCR A LEVEL · 2.3.1 STANDARD ALGORITHMS"
+algo: true
+---
+<p class="lede">A bubble sort puts a list in order by comparing neighbouring items and swapping any pair that is the wrong way round. Larger items "bubble" towards the end of the list on every pass. It is simple to write but slow on long lists.</p>
+
+<section class="block">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>Start at the first item and compare it with the item next to it.</li>
+      <li>If the first is larger than the second, <b>swap</b> them. Otherwise leave them.</li>
+      <li>Move along one place and compare the next pair. Carry on until the end of the list is reached. This is one <b>pass</b>.</li>
+      <li>After a pass, the largest item that was still unsorted has reached its final place at the end. The next pass can stop one place sooner.</li>
+      <li>Keep a flag, <span class="mono">swapped</span>, that is set to false at the start of each pass and to true whenever a swap is made.</li>
+      <li>Repeat passes until a whole pass is made <b>without any swap</b>. The list is now in order.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>It works <b>in place</b>: it needs no second list, only a temporary variable for a swap.</li>
+        <li>Without the <span class="mono">swapped</span> flag it would always make every pass, even on a list that is already sorted.</li>
+        <li>A list with <b>n</b> items needs at most <b>n − 1</b> passes.</li>
+        <li>It only ever compares and swaps <b>neighbours</b>, which is why an item near the end that belongs at the start has to move one place per pass.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Choose some data, then press Play. Try Already sorted to see the swapped flag stop the sort after one pass, and Reversed to see the worst case. Watch the items at the right turn green as each pass finishes." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'sort',cLabel:'Comparisons',wLabel:'Swaps',refs:['n','n2'],
+ bigO:{best:'O(n)',avg:'O(n²)',worst:'O(n²)',space:'O(1)'},
+ why:[
+  '<b>Worst case, O(n²):</b> a reversed list makes every pass swap its way along the unsorted part, giving about n × n ÷ 2 comparisons. Doubling the number of items roughly <b>quadruples</b> the work.',
+  '<b>Best case, O(n):</b> with the <span class="mono">swapped</span> flag, a list that is already in order needs only one pass of n − 1 comparisons.',
+  '<b>Space, O(1):</b> the list is sorted in place, using only a few extra variables whatever the size of the list.',
+  '<b>Polynomial time:</b> O(n²) is an example of polynomial complexity, O(nᵏ) with k = 2. It becomes impractical for large lists.'],
+ ocr:['procedure bubbleSort(numbers:byRef)','  n = numbers.length','  do','    swapped = false','    for i = 0 to n - 2','      if numbers[i] > numbers[i + 1] then','        temp = numbers[i]','        numbers[i] = numbers[i + 1]','        numbers[i + 1] = temp','        swapped = true','      endif','    next i','    n = n - 1','  until swapped == false','endprocedure'],
+ swift:['func bubbleSort(_ numbers: inout [Int]) {','    guard numbers.count > 1 else { return }','    var n = numbers.count','    var swapped = false','    repeat {','        swapped = false','        for i in 0..<(n - 1) {','            if numbers[i] > numbers[i + 1] {','                numbers.swapAt(i, i + 1)','                swapped = true','            }','        }','        n -= 1','    } while swapped','}'],
+ flows:[{w:570,h:600,nodes:[
+  {id:'start',t:'term',x:170,y:30,s:'Start'},{id:'n',t:'proc',x:170,y:95,s:'n = length of list'},{id:'sw0',t:'proc',x:170,y:160,s:'swapped = false'},{id:'i0',t:'proc',x:170,y:225,s:'i = 0'},
+  {id:'d1',t:'dec',x:170,y:300,s:'i <= n - 2 ?'},{id:'d2',t:'dec',x:170,y:395,s:'list[i] > list[i+1]?'},{id:'swap',t:'proc',x:170,y:480,s:'swap the two items|swapped = true'},{id:'inc',t:'proc',x:170,y:560,s:'i = i + 1'},
+  {id:'dn',t:'proc',x:430,y:300,s:'n = n - 1'},{id:'d3',t:'dec',x:430,y:395,s:'swapped = true ?'},{id:'end',t:'term',x:430,y:500,s:'End'}],
+  arrows:[{d:'M170 52V73'},{d:'M170 117V138'},{d:'M170 182V203'},{d:'M170 247V268'},{d:'M170 332V363',l:'Yes',x:190,y:352},{d:'M265 300H345',l:'No',x:305,y:292},
+   {d:'M170 427V458',l:'Yes',x:190,y:447},{d:'M265 395H300V560H255',l:'No',x:282,y:387},{d:'M170 502V538'},{d:'M85 560H12V300H75'},{d:'M430 322V363'},{d:'M525 395H550V160H255',l:'Yes',x:538,y:386},{d:'M430 427V478',l:'No',x:450,y:452}]}],
+ run:function*(X){
+  const a=X.a,S=X.S;let n=a.length,swapped,pass=0;
+  const K=e=>{const k={};for(let t=n;t<a.length;t++)k[t]='sorted';return Object.assign(k,e)};
+  yield S(`The list has <b>${n}</b> items, so <b>n</b> is ${n}.`,[0,1],[0,1,2],'n',{v:{n}});
+  do{
+    pass++;swapped=false;
+    yield S(`<b>Pass ${pass}.</b> Set <b>swapped</b> to false, then work along the list comparing each pair of neighbours.`,[2,3,4],[3,4,5,6],['sw0','i0'],{k:K(),v:{n,swapped}});
+    for(let i=0;i<=n-2;i++){
+      X.c++;const gt=a[i]>a[i+1];
+      yield S(`Is ${a[i]} &gt; ${a[i+1]}? ${gt?'<b>Yes</b>: they are the wrong way round, so swap them.':'<b>No</b>: they are in order, so leave them.'}`,[4,5],[6,7],['d1','d2'],{k:K({[i]:'cmp',[i+1]:'cmp'}),p:[[i,'i'],[i+1,'i+1']],v:{n,i,swapped}});
+      if(gt){
+        [a[i],a[i+1]]=[a[i+1],a[i]];X.w++;swapped=true;
+        yield S(`Swapped. <b>swapped</b> is now true, so at least one more pass will be needed.`,[6,7,8,9],[8,9],'swap',{k:K({[i]:'swap',[i+1]:'swap'}),p:[[i,'i'],[i+1,'i+1']],v:{n,i,swapped}});
+      }
+    }
+    n--;
+    yield S(`End of pass ${pass}. The largest item left, <b>${a[n]}</b>, is now in its final place. <b>n</b> becomes ${n}. ${swapped?'<b>swapped</b> is true, so repeat.':'<b>swapped</b> is false: no swaps were needed, so stop.'}`,[10,11,12,13],[10,11,12,13],['dn','d3'],{k:K(),v:{n,swapped}});
+  }while(swapped);
+  const k={};a.forEach((_,t)=>k[t]='sorted');
+  yield S(`<b>Sorted.</b> It took ${pass} pass${pass>1?'es':''}, ${X.c} comparisons and ${X.w} swaps.`,14,14,'end',{k});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'A bubble sort is run on 5, 2, 8, 1. What is the list after the first pass?',opts:['2, 5, 1, 8','1, 2, 5, 8','2, 5, 8, 1'],a:'2, 5, 1, 8',why:'5 and 2 swap, 5 and 8 stay, then 8 and 1 swap. The largest item, 8, has bubbled to the end. The list is not sorted yet.'},
+ {q:'What is the purpose of the <span class="mono">swapped</span> flag?',opts:['To stop as soon as a pass makes no swaps','To count how many items are in the wrong place','To make the sort stable'],a:'To stop as soon as a pass makes no swaps',why:'If no pair needed swapping, every pair is in order, so the whole list must be sorted.'},
+ {q:'How many comparisons does the first pass make on a list of 10 items?',opts:['9','10','45'],a:'9',why:'A pass compares each neighbouring pair, and 10 items have 9 pairs.'},
+ {q:'What is the worst-case time complexity of a bubble sort?',opts:['O(n²)','O(n log n)','O(n)'],a:'O(n²)',why:'Up to n − 1 passes are made, each with up to n − 1 comparisons. This is polynomial time.'},
+ {q:'Which input gives a bubble sort (with a swapped flag) its best case?',opts:['A list that is already sorted','A list in reverse order','A list with only two items'],a:'A list that is already sorted',why:'One pass with no swaps is enough, so the time is O(n).'},
+ {q:'Why can each pass stop one place earlier than the one before?',opts:['The largest unsorted item has reached its final place','The first item is always correct','Half of the list is sorted after every pass'],a:'The largest unsorted item has reached its final place',why:'After pass 1 the largest item is at the end, after pass 2 the second largest is next to it, and so on.'},
+ {q:'Why is the space complexity of a bubble sort O(1)?',opts:['It sorts the list in place, using only a few extra variables','It never makes a copy of any variable','It only needs one pass'],a:'It sorts the list in place, using only a few extra variables',why:'The memory used does not grow with the length of the list.'},
+],null,$('#score'),$('#qreset'));
+</script>

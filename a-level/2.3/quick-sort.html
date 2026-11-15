@@ -1,0 +1,116 @@
+---
+layout: demo
+title: "Quick Sort"
+spec: "OCR A LEVEL · 2.3.1 STANDARD ALGORITHMS"
+algo: true
+---
+<p class="lede">A quick sort is also a <b>divide and conquer</b> algorithm. It picks an item called the <b>pivot</b> and rearranges the list so that smaller items are on one side of it and larger items are on the other. The pivot is then in its final place, and the same method is applied to each side.</p>
+
+<section class="block">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>If the list has fewer than two items it is already sorted. Stop. This is the <b>base case</b>.</li>
+      <li>Choose a <b>pivot</b>. In this demo it is the last item.</li>
+      <li><b>Partition</b> the list. Work along it, and every item that is less than or equal to the pivot is moved into a group at the left. Items larger than the pivot are left on the right.</li>
+      <li>Swap the pivot into the gap between the two groups. It is now in its <b>final position</b>.</li>
+      <li>Quick sort the items to the left of the pivot, then quick sort the items to the right of it.</li>
+      <li>There is no merge step. When every call has finished, the list is sorted.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>It sorts <b>in place</b>, using swaps within the list, so it needs no second list.</li>
+        <li>The pivot choice matters. A pivot near the middle value splits the list evenly. A pivot that is the smallest or largest value splits off just one item.</li>
+        <li>Choosing the last item as pivot is simple but performs badly on a list that is already sorted. Choosing a random item, or the median of the first, middle and last items, avoids this.</li>
+        <li>It is not stable: swaps can change the order of equal items.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Press Play. The pivot is purple. Items are moved into the blue group if they are less than or equal to the pivot and are left in the amber group if they are larger. Green items are in their final place. Try Already sorted to see the worst case, where every partition splits off a single item." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'sort',cLabel:'Comparisons',wLabel:'Swaps',refs:['n','nlogn','n2'],
+ key:'<span><i class="pivot"></i>pivot</span><span><i class="L"></i>≤ pivot</span><span><i class="R"></i>&gt; pivot</span><span><i class="cmp"></i>being checked</span><span><i class="swap"></i>swapped</span><span><i class="sorted"></i>in its final place</span>',
+ bigO:{best:'O(n log n)',avg:'O(n log n)',worst:'O(n²)',space:'O(log n)'},
+ why:[
+  '<b>Best and average case, O(n log n):</b> if each pivot splits the list roughly in half there are about log₂ n levels, and the partitioning on each level compares each item with a pivot once, which is about n comparisons per level.',
+  '<b>Worst case, O(n²):</b> if the pivot is always the smallest or largest item, as with an already sorted list and a last-item pivot, each partition removes only one item. There are then n levels of about n comparisons each. Run Already sorted above to see it.',
+  '<b>Space, O(log n):</b> there is no temporary list. The only extra memory is the stack of recursive calls, which is about log₂ n deep when the splits are even (O(n) deep in the worst case).',
+  '<b>In practice:</b> quick sort is usually faster than merge sort on average because it does fewer copies and works in place, but its worst case is worse.'],
+ ocr:['procedure quickSort(numbers:byRef, low, high)','  if low < high then','    p = partition(numbers, low, high)','    quickSort(numbers, low, p - 1)','    quickSort(numbers, p + 1, high)','  endif','endprocedure','','function partition(numbers:byRef, low, high)','  pivot = numbers[high]','  i = low - 1','  for j = low to high - 1','    if numbers[j] <= pivot then','      i = i + 1','      temp = numbers[i]','      numbers[i] = numbers[j]','      numbers[j] = temp','    endif','  next j','  temp = numbers[i + 1]','  numbers[i + 1] = numbers[high]','  numbers[high] = temp','  return i + 1','endfunction','','// main program','quickSort(numbers, 0, numbers.length - 1)'],
+ swift:['func quickSort(_ numbers: inout [Int], _ low: Int, _ high: Int) {','    if low < high {','        let p = partition(&numbers, low, high)','        quickSort(&numbers, low, p - 1)','        quickSort(&numbers, p + 1, high)','    }','}','','func partition(_ numbers: inout [Int], _ low: Int, _ high: Int) -> Int {','    let pivot = numbers[high]','    var i = low - 1','    for j in low..<high {','        if numbers[j] <= pivot {','            i += 1','            numbers.swapAt(i, j)','        }','    }','    numbers.swapAt(i + 1, high)','    return i + 1','}','','// main program','quickSort(&numbers, 0, numbers.count - 1)'],
+ flows:[
+  {title:'quickSort',w:520,h:450,nodes:[
+   {id:'call',t:'term',x:200,y:30,s:'quickSort(low, high)'},{id:'if',t:'dec',x:200,y:105,s:'low < high ?'},{id:'part',t:'proc',x:200,y:195,s:'p = partition(low, high)'},
+   {id:'l',t:'proc',x:200,y:270,s:'quickSort(low, p - 1)'},{id:'r',t:'proc',x:200,y:340,s:'quickSort(p + 1, high)'},{id:'end',t:'term',x:200,y:410,s:'End'}],
+   arrows:[{d:'M200 52V73'},{d:'M200 137V173',l:'Yes',x:220,y:160},{d:'M200 217V248'},{d:'M200 292V318'},{d:'M200 362V388'},{d:'M295 105H440V410H285',l:'No',x:322,y:97}]},
+  {title:'partition',w:560,h:575,nodes:[
+   {id:'pstart',t:'term',x:200,y:30,s:'Start partition'},{id:'pv',t:'proc',x:200,y:100,s:'pivot = list[high]|i = low - 1'},{id:'j0',t:'proc',x:200,y:170,s:'j = low'},
+   {id:'d1',t:'dec',x:200,y:250,s:'j <= high - 1 ?'},{id:'d2',t:'dec',x:200,y:350,s:'list[j] <= pivot ?'},{id:'sw',t:'proc',x:200,y:450,s:'i = i + 1|swap list[i], list[j]'},
+   {id:'inc',t:'proc',x:200,y:530,s:'j = j + 1'},{id:'fin',t:'proc',x:430,y:250,s:'swap list[i + 1]|with list[high]'},{id:'ret',t:'term',x:430,y:345,s:'Return i + 1'}],
+   arrows:[{d:'M200 52V78'},{d:'M200 122V148'},{d:'M200 192V218'},{d:'M200 282V318',l:'Yes',x:220,y:304},{d:'M295 250H345',l:'No',x:320,y:242},{d:'M200 382V428',l:'Yes',x:220,y:412},
+    {d:'M200 472V508'},{d:'M295 350H330V530H285',l:'No',x:312,y:342},{d:'M115 530H20V250H105'},{d:'M430 272V323'}]}],
+ run:function*(X){
+  const a=X.a,S=X.S,n=a.length,stack=[],fin=new Set();
+  const x=()=>'Calls in progress: '+stack.slice(-4).map(s=>`quickSort(${s})`).join(' → ')+(stack.length>4?' (…)':'');
+  const base=e=>{const k={};fin.forEach(t=>k[t]='sorted');return Object.assign(k,e)};
+  function* qs(lo,hi){
+    stack.push(lo+'–'+hi);
+    if(lo<hi){
+      yield S(`<b>quickSort(${lo}–${hi})</b>: ${hi-lo+1} items, so low &lt; high. Partition them.`,[0,1,2],[0,1,2],['call','if','part'],{k:base(),rng:[lo,hi],x:x(),v:{low:lo,high:hi}});
+      const p=yield* partition(lo,hi);
+      yield S(`The pivot is in its final place at position <b>${p}</b>. Now quick sort the items to its left${p-1>lo?` (positions ${lo}–${p-1})`:' (there are none or just one)'}.`,3,3,'l',{k:base(),rng:[lo,hi],x:x(),v:{low:lo,p,high:hi}});
+      yield* qs(lo,p-1);
+      yield S(`Now quick sort the items to the right of the pivot${hi>p+1?` (positions ${p+1}–${hi})`:' (there are none or just one)'}.`,4,4,'r',{k:base(),rng:[lo,hi],x:x(),v:{low:lo,p,high:hi}});
+      yield* qs(p+1,hi);
+    }else{
+      if(lo===hi)fin.add(lo);
+      yield S(`<b>quickSort(${lo}–${hi})</b>: ${lo===hi?'one item, so it is already sorted and in its final place':'no items'}. low is not less than high, so there is nothing to do.`,[0,1],[0,1],['call','if'],{k:base(),rng:[lo,hi],x:x(),v:{low:lo,high:hi}});
+    }
+    stack.pop();
+  }
+  function* partition(lo,hi){
+    const pivot=a[hi];let i=lo-1;
+    const grp=(j,e)=>{const k=base();for(let t=lo;t<=i;t++)k[t]='L';for(let t=i+1;t<=j;t++)k[t]='R';k[hi]='pivot';return Object.assign(k,e)};
+    yield S(`Take the last item, <b>${pivot}</b>, as the <b>pivot</b>. <b>i</b> is ${i}: the group of items that are ≤ the pivot is empty so far.`,[8,9,10],[8,9,10],'pv',{k:grp(lo-1),rng:[lo,hi],p:[[hi,'pivot']],x:x(),v:{pivot,i,low:lo,high:hi}});
+    for(let j=lo;j<hi;j++){
+      X.c++;const vj=a[j],le=vj<=pivot;
+      if(le){
+        i++;const sw=i!==j;if(sw){[a[i],a[j]]=[a[j],a[i]];X.w++}
+        yield S(`Is ${vj} ≤ ${pivot}? <b>Yes</b>. <b>i</b> becomes ${i} and ${vj} joins the ≤ group${sw?`, so it is swapped with the item at position ${i} (${a[j]})`:', where it already is'}.`,[11,12,13,14,15,16],[11,12,13,14],['d1','d2','sw'],{k:grp(j,sw?{[i]:'swap',[j]:'swap'}:{[i]:'cmp'}),rng:[lo,hi],p:[[i,'i'],[j,'j'],[hi,'pivot']],x:x(),v:{pivot,i,j}});
+      }else{
+        yield S(`Is ${vj} ≤ ${pivot}? <b>No</b>. It is larger than the pivot, so it stays in the right-hand group.`,[11,12],[11,12],['d1','d2'],{k:grp(j,{[j]:'cmp'}),rng:[lo,hi],p:[[i,'i'],[j,'j'],[hi,'pivot']],x:x(),v:{pivot,i,j}});
+      }
+    }
+    if(i+1!==hi){[a[i+1],a[hi]]=[a[hi],a[i+1]];X.w++}
+    fin.add(i+1);
+    const k=base();for(let t=lo;t<=i;t++)k[t]='L';for(let t=i+2;t<=hi;t++)k[t]='R';
+    yield S(`Every item has been checked. Swap the pivot with the item at position ${i+1}. <b>${pivot}</b> is now in its final place: everything to its left is ≤ ${pivot} and everything to its right is larger. Return ${i+1}.`,[18,19,20,21,22],[16,17,18],['d1','fin','ret'],{k,rng:[lo,hi],p:[[i+1,'pivot']],x:x(),v:{pivot,low:lo,high:hi,returns:i+1}});
+    return i+1;
+  }
+  yield S(`The list has ${n} items. Call <b>quickSort(0, ${n-1})</b> to sort the whole list.`,[25,26],[21,22],'call',{v:{low:0,high:n-1}});
+  yield* qs(0,n-1);
+  const k={};a.forEach((_,t)=>k[t]='sorted');
+  yield S(`<b>Sorted.</b> ${X.c} comparisons and ${X.w} swaps.`,6,6,'end',{k});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'In a quick sort the list 6, 2, 8, 3, 5 is partitioned using the last item, 5, as the pivot. In which position (counting from 0) does the pivot end up?',opts:['2','4','0'],a:'2',why:'Two items, 2 and 3, are smaller than 5, so the pivot goes after them in position 2.'},
+ {q:'What is true of the pivot once a partition has finished?',opts:['It is in its final sorted position','It is the smallest item in the list','The left side is sorted'],a:'It is in its final sorted position',why:'Everything to its left is smaller or equal and everything to its right is larger. The two sides are not necessarily sorted yet.'},
+ {q:'What is the average-case time complexity of a quick sort?',opts:['O(n log n)','O(n²)','O(log n)'],a:'O(n log n)',why:'Roughly even splits give about log₂ n levels with about n comparisons on each.'},
+ {q:'Which input gives the worst case when the last item is always used as the pivot?',opts:['A list that is already sorted','A list in random order','A list with a single item'],a:'A list that is already sorted',why:'The pivot is always the largest item, so each partition leaves one empty side and the other side only one item shorter. This gives O(n²).'},
+ {q:'How can the worst case be made less likely?',opts:['Choose a random pivot, or the median of the first, middle and last items','Always choose the first item as the pivot','Sort the list first'],a:'Choose a random pivot, or the median of the first, middle and last items',why:'A first-item pivot has exactly the same problem on a sorted list, and sorting the list first defeats the purpose.'},
+ {q:'How does a quick sort differ from a merge sort?',opts:['It does its work as it divides, and it needs no merge or temporary list','It always uses less time','It only works on lists with an even number of items'],a:'It does its work as it divides, and it needs no merge or temporary list',why:'The partition puts items on the correct side of the pivot, so once both sides are sorted nothing has to be combined. A quick sort is not always faster: its worst case is O(n²).'},
+ {q:'What is the space complexity of a quick sort, on average?',opts:['O(log n)','O(n)','O(1)'],a:'O(log n)',why:'There is no temporary list, but each recursive call is stored on the stack, and with even splits the stack is about log₂ n calls deep.'},
+],null,$('#score'),$('#qreset'));
+</script>

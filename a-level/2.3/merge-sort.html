@@ -1,0 +1,117 @@
+---
+layout: demo
+title: "Merge Sort"
+spec: "OCR A LEVEL · 2.3.1 STANDARD ALGORITHMS"
+algo: true
+---
+<p class="lede">A merge sort is a <b>divide and conquer</b> algorithm. It splits the list in half again and again until every part has a single item, which is trivially sorted, and then merges the parts back together in order. It is much faster than a bubble or insertion sort on long lists, but it needs extra memory.</p>
+
+<section class="block">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>If the list has only one item it is already sorted. Stop. This is the <b>base case</b>.</li>
+      <li>Otherwise <b>divide</b> the list into two halves at the middle.</li>
+      <li>Merge sort the left half, then merge sort the right half. Each call splits its list again, so this is <b>recursive</b>.</li>
+      <li><b>Merge</b> the two sorted halves into one sorted list. Compare the first unused item in each half and copy the smaller one into a new <span class="mono">temp</span> list. Repeat.</li>
+      <li>When one half runs out, copy whatever is left of the other half to the end of <span class="mono">temp</span>.</li>
+      <li>Copy <span class="mono">temp</span> back into the original positions. This part of the list is now sorted.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>Merging two sorted lists is quick, because only the front item of each needs to be compared, so the whole merge is one pass.</li>
+        <li>Using <span class="mono">&lt;=</span> in the comparison keeps equal items in their original order, so the sort is <b>stable</b>.</li>
+        <li>Its speed does not depend on the starting order: a sorted, reversed or random list all take about the same time.</li>
+        <li>It needs a temporary list as long as the part being merged, so it uses more memory than the other sorts.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Press Play. The window of the list being worked on is bright and the rest is faded. The left half is blue and the right half is amber. The temp row fills as items are copied, then it is copied back. Use Step to follow one merge carefully." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'sort',cLabel:'Comparisons',wLabel:'Items copied back',refs:['n','nlogn','n2'],
+ key:'<span><i class="L"></i>left half</span><span><i class="R"></i>right half</span><span><i class="cmp"></i>being compared</span><span><i class="sorted"></i>merged and sorted</span>',
+ bigO:{best:'O(n log n)',avg:'O(n log n)',worst:'O(n log n)',space:'O(n)'},
+ why:[
+  '<b>Time, O(n log n) in every case:</b> halving the list gives about log₂ n levels, and the merges on each level handle all n items between them. That is n × log₂ n work, whatever order the data starts in.',
+  '<b>Compared with O(n²):</b> for 1000 items an O(n²) sort makes about 1 000 000 steps, but a merge sort makes about 10 000. The gap grows as the list gets longer.',
+  '<b>Space, O(n):</b> the merge needs a temporary list that can be as long as the list being sorted. The recursion adds only O(log n) for the stack.',
+  '<b>Trade-off:</b> merge sort has the best guaranteed time of the sorts in the specification, but quick sort and insertion sort use less memory.'],
+ ocr:['procedure mergeSort(numbers:byRef, low, high)','  if low < high then','    mid = (low + high) DIV 2','    mergeSort(numbers, low, mid)','    mergeSort(numbers, mid + 1, high)','    merge(numbers, low, mid, high)','  endif','endprocedure','','procedure merge(numbers:byRef, low, mid, high)','  array temp[high - low + 1]','  i = low','  j = mid + 1','  k = 0','  while i <= mid AND j <= high','    if numbers[i] <= numbers[j] then','      temp[k] = numbers[i]','      i = i + 1','    else','      temp[k] = numbers[j]','      j = j + 1','    endif','    k = k + 1','  endwhile','  while i <= mid','    temp[k] = numbers[i]','    i = i + 1','    k = k + 1','  endwhile','  while j <= high','    temp[k] = numbers[j]','    j = j + 1','    k = k + 1','  endwhile','  for k = 0 to high - low','    numbers[low + k] = temp[k]','  next k','endprocedure','','// main program','mergeSort(numbers, 0, numbers.length - 1)'],
+ swift:['func mergeSort(_ numbers: inout [Int], _ low: Int, _ high: Int) {','    if low < high {','        let mid = (low + high) / 2','        mergeSort(&numbers, low, mid)','        mergeSort(&numbers, mid + 1, high)','        merge(&numbers, low, mid, high)','    }','}','','func merge(_ numbers: inout [Int], _ low: Int, _ mid: Int, _ high: Int) {','    var temp: [Int] = []','    var i = low','    var j = mid + 1','    while i <= mid && j <= high {','        if numbers[i] <= numbers[j] {','            temp.append(numbers[i])','            i += 1','        } else {','            temp.append(numbers[j])','            j += 1','        }','    }','    while i <= mid {','        temp.append(numbers[i])','        i += 1','    }','    while j <= high {','        temp.append(numbers[j])','        j += 1','    }','    for k in 0..<temp.count {','        numbers[low + k] = temp[k]','    }','}','','// main program','mergeSort(&numbers, 0, numbers.count - 1)'],
+ flows:[
+  {title:'mergeSort (divide)',w:520,h:520,nodes:[
+   {id:'call',t:'term',x:200,y:30,s:'mergeSort(low, high)'},{id:'if',t:'dec',x:200,y:105,s:'low < high ?'},{id:'mid',t:'proc',x:200,y:195,s:'mid = (low + high)|DIV 2'},
+   {id:'l',t:'proc',x:200,y:270,s:'mergeSort(low, mid)'},{id:'r',t:'proc',x:200,y:340,s:'mergeSort(mid + 1, high)'},{id:'merge',t:'proc',x:200,y:410,s:'merge(low, mid, high)'},{id:'end',t:'term',x:200,y:485,s:'End'}],
+   arrows:[{d:'M200 52V73'},{d:'M200 137V173',l:'Yes',x:220,y:160},{d:'M200 217V248'},{d:'M200 292V318'},{d:'M200 362V388'},{d:'M200 432V463'},{d:'M295 105H440V485H285',l:'No',x:322,y:97}]},
+  {title:'merge (conquer)',w:620,h:500,nodes:[
+   {id:'mstart',t:'term',x:250,y:30,s:'Start merge'},{id:'setup',t:'proc',x:250,y:100,s:'temp = empty list|i = low, j = mid + 1'},{id:'mc',t:'dec',x:250,y:185,s:'i <= mid AND|j <= high ?'},
+   {id:'cmp',t:'dec',x:250,y:290,s:'list[i] <= list[j]?'},{id:'tl',t:'proc',x:140,y:385,s:'add list[i] to temp|i = i + 1'},{id:'tr',t:'proc',x:360,y:385,s:'add list[j] to temp|j = j + 1'},
+   {id:'left',t:'proc',x:500,y:185,s:'add any items left|in either half'},{id:'copy',t:'proc',x:500,y:290,s:'copy temp back into|list[low to high]'},{id:'mend',t:'term',x:500,y:470,s:'End'}],
+   arrows:[{d:'M250 52V78'},{d:'M250 122V153'},{d:'M250 217V258',l:'Yes',x:270,y:242},{d:'M345 185H415',l:'No',x:380,y:177},{d:'M155 290H140V363',l:'Yes',x:140,y:282},{d:'M345 290H360V363',l:'No',x:372,y:282},
+    {d:'M140 407V430H20V185H155'},{d:'M360 407V430H140'},{d:'M500 207V268'},{d:'M500 312V448'}]}],
+ run:function*(X){
+  const a=X.a,S=X.S,n=a.length,stack=[],m=new Array(n).fill(false);
+  const x=()=>'Calls in progress: '+stack.slice(-4).map(s=>`mergeSort(${s})`).join(' → ')+(stack.length>4?' (…)':'');
+  const base=()=>{const k={};m.forEach((f,t)=>{if(f)k[t]='sorted'});return k};
+  function* ms(lo,hi){
+    stack.push(lo+'–'+hi);
+    if(lo<hi){
+      const mid=(lo+hi)>>1,k=base();for(let t=lo;t<=mid;t++)k[t]='L';for(let t=mid+1;t<=hi;t++)k[t]='R';
+      const v={low:lo,mid,high:hi};
+      yield S(`<b>mergeSort(${lo}–${hi})</b>: ${hi-lo+1} items, so low &lt; high. Split at mid = (${lo} + ${hi}) DIV 2 = <b>${mid}</b>: left half ${lo}–${mid}, right half ${mid+1}–${hi}.`,[0,1,2],[0,1,2],['call','if','mid'],{k,rng:[lo,hi],x:x(),v});
+      yield S(`Call mergeSort on the <b>left</b> half, positions ${lo}–${mid}.`,3,3,'l',{k,rng:[lo,hi],x:x(),v});
+      yield* ms(lo,mid);
+      yield S(`The left half (${lo}–${mid}) is sorted. Now call mergeSort on the <b>right</b> half, positions ${mid+1}–${hi}.`,4,4,'r',{k:Object.assign(base(),k),rng:[lo,hi],x:x(),v});
+      yield* ms(mid+1,hi);
+      yield* merge(lo,mid,hi);
+    }else{
+      yield S(`<b>mergeSort(${lo}–${hi})</b>: only one item, so low is not less than high. A list of one item is already sorted.`,[0,1],[0,1],['call','if'],{k:Object.assign(base(),{[lo]:'cur'}),rng:[lo,hi],x:x(),v:{low:lo,high:hi}});
+    }
+    stack.pop();
+  }
+  function* merge(lo,mid,hi){
+    let i=lo,j=mid+1,k=0;const tmp=new Array(hi-lo+1).fill(null);
+    const KK=e=>{const kk=base();for(let t=lo;t<=mid;t++)kk[t]=t<i?'used':'L';for(let t=mid+1;t<=hi;t++)kk[t]=t<j?'used':'R';return Object.assign(kk,e)};
+    const V=()=>({low:lo,mid,high:hi,i,j,k});
+    yield S(`Both halves, ${lo}–${mid} and ${mid+1}–${hi}, are now sorted. Call <b>merge</b> to combine them.`,5,5,'merge',{k:KK(),rng:[lo,hi],x:x(),v:V()});
+    yield S(`Set up an empty <b>temp</b> list. <b>i</b> points at the front of the left half, <b>j</b> at the front of the right half, and <b>k</b> at the next free place in temp.`,[9,10,11,12,13],[9,10,11,12],'setup',{k:KK(),rng:[lo,hi],p:[[i,'i'],[j,'j']],tmp:tmp.slice(),x:x(),v:V()});
+    while(i<=mid&&j<=hi){
+      X.c++;const left=a[i]<=a[j],kk=KK({[i]:'cmp',[j]:'cmp'}),p=[[i,'i'],[j,'j']],ai=a[i],aj=a[j];
+      if(left){tmp[k]=a[i];i++}else{tmp[k]=a[j];j++}k++;
+      yield S(`Compare ${ai} and ${aj}: ${left?`${ai} ≤ ${aj}, so copy <b>${ai}</b> from the left half`:`${ai} is bigger, so copy <b>${aj}</b> from the right half`} into temp.`,left?[14,15,16,17,22]:[14,15,18,19,20,22],left?[13,14,15,16]:[13,14,17,18,19],['mc','cmp',left?'tl':'tr'],{k:kk,rng:[lo,hi],p,tmp:tmp.slice(),x:x(),v:V()});
+    }
+    while(i<=mid){const ai=a[i];tmp[k]=a[i];i++;k++;
+      yield S(`The right half has run out. Copy the rest of the left half: <b>${ai}</b>.`,[24,25,26,27],[22,23,24],'left',{k:KK({[i-1]:'cmp'}),rng:[lo,hi],p:[[i-1,'i']],tmp:tmp.slice(),x:x(),v:V()})}
+    while(j<=hi){const aj=a[j];tmp[k]=a[j];j++;k++;
+      yield S(`The left half has run out. Copy the rest of the right half: <b>${aj}</b>.`,[29,30,31,32],[25,26,27],'left',{k:KK({[j-1]:'cmp'}),rng:[lo,hi],p:[[j-1,'j']],tmp:tmp.slice(),x:x(),v:V()})}
+    for(let t=0;t<tmp.length;t++)a[lo+t]=tmp[t];
+    X.w+=tmp.length;for(let t=lo;t<=hi;t++)m[t]=true;
+    yield S(`Copy temp back into positions ${lo}–${hi}. These ${tmp.length} items are now <b>sorted</b>.`,[34,35,36],[29,30,31],'copy',{k:base(),rng:[lo,hi],tmp:tmp.slice(),x:x(),v:{low:lo,mid,high:hi}});
+  }
+  yield S(`The list has ${n} items. Call <b>mergeSort(0, ${n-1})</b> to sort the whole list.`,[39,40],[34,35],'call',{x:'',v:{low:0,high:n-1}});
+  yield* ms(0,n-1);
+  const k={};a.forEach((_,t)=>k[t]='sorted');
+  yield S(`<b>Sorted.</b> ${X.c} comparisons, and ${X.w} items copied back from temp.`,[7],[7],'end',{k});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'The sorted lists 2, 5, 9 and 3, 4, 10 are merged. What is the result?',opts:['2, 3, 4, 5, 9, 10','2, 5, 9, 3, 4, 10','2, 3, 4, 9, 5, 10'],a:'2, 3, 4, 5, 9, 10',why:'Compare the fronts each time: 2 v 3 gives 2, then 5 v 3 gives 3, then 5 v 4 gives 4, then 5 v 10 gives 5, then 9 v 10 gives 9, and 10 is left over.'},
+ {q:'What is the base case in a merge sort?',opts:['A list with one item','A list that is already sorted','A list with an even number of items'],a:'A list with one item',why:'A list of one item cannot be out of order, so no more splitting is needed.'},
+ {q:'How many times can a list of 16 items be halved until every part has one item?',opts:['4','8','16'],a:'4',why:'16 → 8 → 4 → 2 → 1. This is log₂ 16 = 4, and it is why a merge sort has a log n factor.'},
+ {q:'What is the time complexity of a merge sort in the best, average and worst cases?',opts:['O(n log n) in all three','O(n) best, O(n²) worst','O(n²) in all three'],a:'O(n log n) in all three',why:'The list is always split and merged in the same way, whatever order the items start in.'},
+ {q:'Why does a merge sort have a space complexity of O(n)?',opts:['It needs a temporary list to merge into','It makes a copy of the list for each pass','It calls itself recursively'],a:'It needs a temporary list to merge into',why:'The merge cannot be done in place, so temp may need to hold as many items as the part being merged.'},
+ {q:'A programmer has to sort a very large list. Why is a merge sort a better choice than a bubble sort?',opts:['O(n log n) grows far more slowly than O(n²)','It uses less memory','It does not use recursion'],a:'O(n log n) grows far more slowly than O(n²)',why:'It does use more memory than a bubble sort, but its time grows far more slowly as n increases.'},
+ {q:'What is meant by saying a merge sort uses "divide and conquer"?',opts:['It breaks the problem into smaller copies of itself, solves them and combines the results','It divides the list by the largest item','It sorts the list using two processors'],a:'It breaks the problem into smaller copies of itself, solves them and combines the results',why:'Dividing is the splitting into halves, and the conquering is the merging of sorted halves.'},
+],null,$('#score'),$('#qreset'));
+</script>

@@ -1,0 +1,90 @@
+---
+layout: demo
+title: "Insertion Sort"
+spec: "OCR A LEVEL · 2.3.1 STANDARD ALGORITHMS"
+algo: true
+---
+<p class="lede">An insertion sort builds a sorted list one item at a time, in the same way that most people sort playing cards in their hand. Each new item is slotted into its correct place among the items that are already sorted.</p>
+
+<section class="block">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>The first item on its own is a sorted list of one item.</li>
+      <li>Take the next item from the unsorted part. Call it the <b>current</b> item and hold it to one side, leaving a gap.</li>
+      <li>Compare the current item with the sorted items, working from right to left. Each item that is <b>larger</b> than the current item is shifted one place to the right, and the gap moves left.</li>
+      <li>Stop when an item is not larger than the current item, or when the start of the list is reached.</li>
+      <li>Put the current item into the gap. The sorted part is now one item longer.</li>
+      <li>Repeat for every remaining item. When the last one has been inserted the list is in order.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>It sorts <b>in place</b>: only the current item is held outside the list.</li>
+        <li>Items are <b>shifted</b>, not swapped, so each shift is a single assignment.</li>
+        <li>If an item is already in the right place the inner loop stops at once, so a list that is nearly sorted is sorted very quickly.</li>
+        <li>It is a good choice for short lists, and for lists that are already nearly in order.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Press Play to watch each item being picked up and inserted into the sorted part of the list on its left. The dashed gap shows where the current item will go. Try Already sorted and Reversed to compare the best and worst cases." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'sort',cLabel:'Comparisons',wLabel:'Shifts',refs:['n','n2'],
+ key:'<span><i class="cur"></i>current item</span><span><i class="hole"></i>gap for the current item</span><span><i class="cmp"></i>being compared</span><span><i class="sorted"></i>sorted part</span>',
+ bigO:{best:'O(n)',avg:'O(n²)',worst:'O(n²)',space:'O(1)'},
+ why:[
+  '<b>Worst case, O(n²):</b> in a reversed list every new item is smaller than everything before it, so it is shifted all the way to the start. That is about n × n ÷ 2 shifts.',
+  '<b>Best case, O(n):</b> in a list that is already sorted, each item is compared once with its left neighbour and is not shifted, so the inner loop never repeats.',
+  '<b>Average case, O(n²):</b> on random data each item is shifted past about half of the sorted items, which is still proportional to n².',
+  '<b>Space, O(1):</b> the list is sorted in place. Only the current item and a few counters are stored.'],
+ ocr:['procedure insertionSort(numbers:byRef)','  for i = 1 to numbers.length - 1','    current = numbers[i]','    j = i - 1','    while j >= 0 AND numbers[j] > current','      numbers[j + 1] = numbers[j]','      j = j - 1','    endwhile','    numbers[j + 1] = current','  next i','endprocedure'],
+ swift:['func insertionSort(_ numbers: inout [Int]) {','    guard numbers.count > 1 else { return }','    for i in 1..<numbers.count {','        let current = numbers[i]','        var j = i - 1','        while j >= 0 && numbers[j] > current {','            numbers[j + 1] = numbers[j]','            j -= 1','        }','        numbers[j + 1] = current','    }','}'],
+ flows:[{w:560,h:580,nodes:[
+  {id:'start',t:'term',x:200,y:30,s:'Start'},{id:'i1',t:'proc',x:200,y:95,s:'i = 1'},{id:'d1',t:'dec',x:200,y:175,s:'i <= length - 1 ?'},
+  {id:'pick',t:'proc',x:200,y:260,s:'current = list[i]|j = i - 1'},{id:'wh',t:'dec',x:200,y:350,s:'j >= 0 AND|list[j] > current?'},{id:'shift',t:'proc',x:430,y:350,s:'list[j+1] = list[j]|j = j - 1'},
+  {id:'place',t:'proc',x:200,y:450,s:'list[j+1] = current'},{id:'inc',t:'proc',x:200,y:530,s:'i = i + 1'},{id:'end',t:'term',x:430,y:175,s:'End'}],
+  arrows:[{d:'M200 52V73'},{d:'M200 117V143'},{d:'M200 207V238',l:'Yes',x:220,y:228},{d:'M295 175H345',l:'No',x:320,y:167},{d:'M200 282V318'},{d:'M295 350H345',l:'Yes',x:320,y:342},
+   {d:'M430 328V300H200'},{d:'M200 382V428',l:'No',x:220,y:408},{d:'M200 472V508'},{d:'M115 530H20V175H105'}]}],
+ run:function*(X){
+  const a=X.a,S=X.S,n=a.length;
+  yield S(`The first item, <b>${a[0]}</b>, on its own is a sorted list of one item. Each remaining item will be inserted into the sorted part on its left.`,[0,1],[0,1,2],'i1',{k:{0:'sorted'}});
+  for(let i=1;i<n;i++){
+    const cur=a[i];let j=i-1;
+    const K=(h,e)=>{const k={};for(let t=0;t<=i;t++)k[t]='sorted';k[h]=h===i?'cur':'hole';return Object.assign(k,e)};
+    const OV=h=>({[h]:cur});
+    yield S(`<b>i = ${i}.</b> Pick up <b>${cur}</b> as the current item, leaving a gap. Compare it with the sorted items on its left.`,[1,2,3],[2,3,4],'pick',{k:K(i),ov:OV(i),p:[[j,'j']],v:{i,current:cur,j}});
+    while(true){
+      if(j<0){yield S(`<b>j</b> is ${j}, so the start of the list has been reached. ${cur} is the smallest so far.`,4,5,'wh',{k:K(0),ov:OV(0),v:{i,current:cur,j}});break}
+      X.c++;const gt=a[j]>cur;
+      yield S(`Is ${a[j]} &gt; ${cur}? ${gt?`<b>Yes</b>: shift ${a[j]} one place to the right.`:`<b>No</b>: ${a[j]} is not larger, so ${cur} belongs just after it.`}`,4,5,'wh',{k:K(j+1,{[j]:'cmp'}),ov:OV(j+1),p:[[j,'j']],v:{i,current:cur,j}});
+      if(!gt)break;
+      a[j+1]=a[j];X.w++;j--;
+      yield S(`Shifted right. The gap is now at position ${j+1}.`,[5,6],[6,7],'shift',{k:K(j+1),ov:OV(j+1),p:[[j,'j']],v:{i,current:cur,j}});
+    }
+    a[j+1]=cur;
+    yield S(`Put <b>${cur}</b> into the gap at position ${j+1}. The first ${i+1} items are now sorted.`,[8,9],[9,10],'place',{k:K(j+1,{[j+1]:'cur'}),v:{i,current:cur,j}});
+  }
+  const k={};a.forEach((_,t)=>k[t]='sorted');
+  yield S(`<b>Sorted.</b> It took ${X.c} comparisons and ${X.w} shifts.`,10,11,'end',{k});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'An insertion sort is run on 3, 8, 5, 1. What is the list after 5 has been inserted?',opts:['3, 5, 8, 1','3, 8, 5, 1','1, 3, 5, 8'],a:'3, 5, 8, 1',why:'The sorted part is 3, 8. 5 is smaller than 8, so 8 shifts right, and 5 is placed after 3. The 1 has not been looked at yet.'},
+ {q:'Why does the loop start with the second item, not the first?',opts:['A list of one item is already sorted','The first item is always the smallest','The first item is stored in a temporary variable'],a:'A list of one item is already sorted',why:'There is nothing to the left of the first item to compare it with.'},
+ {q:'Which input gives the worst case for an insertion sort?',opts:['A list in reverse order','A list that is already sorted','A list with every item the same'],a:'A list in reverse order',why:'Every item is smaller than all the items before it, so it is shifted all the way to the start: O(n²).'},
+ {q:'What is the best-case time complexity of an insertion sort?',opts:['O(n)','O(1)','O(n log n)'],a:'O(n)',why:'On a sorted list each item needs only one comparison and no shifts, so n − 1 comparisons are made in total.'},
+ {q:'What does "shifting" an item mean in an insertion sort?',opts:['Copying it one place to the right to make room','Swapping it with the first item','Removing it from the list'],a:'Copying it one place to the right to make room',why:'Larger items move right one place at a time, so the gap moves left until the current item fits.'},
+ {q:'Why might an insertion sort be chosen over a merge sort for a short, nearly sorted list?',opts:['It has little overhead, needs no extra memory and is close to O(n) on nearly sorted data','It always has a lower worst case time complexity','It is the only sort that works in place'],a:'It has little overhead, needs no extra memory and is close to O(n) on nearly sorted data',why:'Merge sort has a better worst case, O(n log n), but it needs extra memory. Insertion sort is not the only in-place sort, because a bubble sort and a quick sort are also in place.'},
+ {q:'What is the space complexity of an insertion sort?',opts:['O(1)','O(n)','O(log n)'],a:'O(1)',why:'It sorts the list in place and only stores the current item and a few counters.'},
+],null,$('#score'),$('#qreset'));
+</script>

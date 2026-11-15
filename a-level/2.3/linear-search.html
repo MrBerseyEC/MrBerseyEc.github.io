@@ -1,0 +1,77 @@
+---
+layout: demo
+title: "Linear Search"
+spec: "OCR A LEVEL · 2.3.1 STANDARD ALGORITHMS"
+algo: true
+---
+<p class="lede">A linear search finds an item by looking at every item in turn, from the start of the list, until it finds the target or runs out of items. It is the simplest searching algorithm and it works on any list, sorted or not.</p>
+
+<section class="block">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>Start at the first item in the list.</li>
+      <li>Compare the item with the <b>target</b>, the value being looked for.</li>
+      <li>If they are equal, stop. The target has been <b>found</b>, and the position of the item is returned.</li>
+      <li>If not, move on to the next item and repeat from step 2.</li>
+      <li>If the end of the list is reached without a match, the target is <b>not in the list</b>. A value that cannot be a position, such as −1, is returned to show this.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>The list does <b>not</b> need to be sorted.</li>
+        <li>It needs no extra memory and is easy to write and to test.</li>
+        <li>It can be used on any structure that can be read in order, such as an array or a linked list.</li>
+        <li>On a long list it is slow, because every item might have to be checked.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Choose a target, or pick one in the list or one that is not, then press Play. Items that have been checked fade out. Try a target at the start, at the end and not in the list to compare the best and worst cases." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'search',cLabel:'Items checked',refs:['n'],
+ key:'<span><i class="cmp"></i>being checked</span><span><i class="sorted"></i>found</span>',
+ best:a=>a[0],
+ bigO:{best:'O(1)',avg:'O(n)',worst:'O(n)',space:'O(1)'},
+ why:[
+  '<b>Best case, O(1):</b> the target is the first item, so only one comparison is made however long the list is. This is constant time.',
+  '<b>Worst case, O(n):</b> the target is the last item or is not in the list, so all n items are checked. Doubling the length of the list doubles the work. This is linear time.',
+  '<b>Average case, O(n):</b> if the target is in the list, about n ÷ 2 items are checked on average. Constants are ignored in Big O, so this is still O(n).',
+  '<b>Space, O(1):</b> only a counter is needed, so the memory used does not grow with the list.'],
+ ocr:['function linearSearch(numbers, target)','  for i = 0 to numbers.length - 1','    if numbers[i] == target then','      return i','    endif','  next i','  return -1','endfunction'],
+ swift:['func linearSearch(_ numbers: [Int], target: Int) -> Int? {','    for i in 0..<numbers.count {','        if numbers[i] == target {','            return i','        }','    }','    return nil','}'],
+ flows:[{w:560,h:410,nodes:[
+  {id:'start',t:'term',x:200,y:30,s:'Start'},{id:'i0',t:'proc',x:200,y:95,s:'i = 0'},{id:'d1',t:'dec',x:200,y:175,s:'i <= length - 1 ?'},{id:'d2',t:'dec',x:200,y:275,s:'list[i] == target?'},
+  {id:'inc',t:'proc',x:200,y:370,s:'i = i + 1'},{id:'found',t:'term',x:430,y:275,s:'Return i'},{id:'nf',t:'term',x:430,y:175,s:'Return -1'}],
+  arrows:[{d:'M200 52V73'},{d:'M200 117V143'},{d:'M200 207V243',l:'Yes',x:220,y:228},{d:'M295 175H345',l:'No',x:320,y:167},{d:'M295 275H345',l:'Yes',x:320,y:267},{d:'M200 307V348',l:'No',x:220,y:332},{d:'M115 370H20V175H105'}]}],
+ run:function*(X){
+  const a=X.a,t=X.t,S=X.S;
+  yield S(`Search for <b>${t}</b>. Start at the first item, position 0.`,[0,1],[0,1],'i0',{v:{target:t,i:0}});
+  for(let i=0;i<a.length;i++){
+    X.c++;const eq=a[i]===t,k={};for(let j=0;j<i;j++)k[j]='used';k[i]=eq?'found':'cmp';
+    yield S(`i = ${i}. Is ${a[i]} == ${t}? ${eq?'<b>Yes</b>.':'<b>No</b>, so move on to the next item.'}`,[1,2],[1,2],['d1','d2'],{k,p:[[i,'i']],v:{target:t,i}});
+    if(eq){yield S(`<b>Found.</b> Return ${i}, the position of ${t}. ${i+1} item${i?'s were':' was'} checked.`,3,3,'found',{k:{[i]:'found'},p:[[i,'i']],v:{target:t,i}});return}
+  }
+  const k={};a.forEach((_,j)=>k[j]='used');
+  yield S(`The end of the list has been reached and ${t} was not found. Return <b>-1</b>. All ${a.length} items were checked.`,[5,6],[5,6],['d1','nf'],{k,v:{target:t}});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'A linear search for 2 is run on 4, 9, 2, 7. How many items are checked?',opts:['3','2','4'],a:'3',why:'4 and 9 do not match, and the third item, 2, does. The search stops there.'},
+ {q:'Does a list have to be sorted before it can be searched with a linear search?',opts:['No, it works on any list','Yes, in ascending order','Yes, in any order'],a:'No, it works on any list',why:'Every item is checked in turn, so the order of the items does not matter.'},
+ {q:'What is the worst-case time complexity of a linear search?',opts:['O(n)','O(1)','O(log n)'],a:'O(n)',why:'If the target is last, or missing, all n items are checked.'},
+ {q:'What is the best case for a linear search, and what is its complexity?',opts:['The target is the first item: O(1)','The target is in the middle: O(n)','The list is sorted: O(log n)'],a:'The target is the first item: O(1)',why:'Only one comparison is needed, however long the list is.'},
+ {q:'On average, about how many items does a linear search check when the target is in a list of 1 000 000 items?',opts:['About 500 000','About 20','1 000 000'],a:'About 500 000',why:'On average the target is half way along the list. It is still described as O(n).'},
+ {q:'Why does the algorithm return −1 when the target is not found?',opts:['−1 cannot be a position in a list, so it signals "not found"','−1 is the position of the last item','It makes the loop stop'],a:'−1 cannot be a position in a list, so it signals "not found"',why:'List positions start from 0, so no valid position is negative.'},
+ {q:'A list is not sorted and is only going to be searched once. Which is the better choice?',opts:['A linear search','Sort the list, then use a binary search','A binary search without sorting'],a:'A linear search',why:'Sorting the list first takes longer than a single linear search, and a binary search on an unsorted list may give the wrong answer.'},
+],null,$('#score'),$('#qreset'));
+</script>

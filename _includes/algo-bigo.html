@@ -1,0 +1,14 @@
+{%- comment -%} The Big O block for an algorithm page. algoDemo() in assets/algo.js fills it in. {%- endcomment -%}
+<section class="block">
+  <h2>Efficiency and Big O</h2>
+  <p class="sub">{{ include.sub }}</p>
+  <div class="facts" id="ad-bo-facts"></div>
+  <ul class="why" id="ad-bo-why" style="margin:14px 0 0;padding-left:1.2em"></ul>
+  <h3 style="margin:22px 0 8px">Measure it</h3>
+  <p class="sub">Each point is a real run of the algorithm above on a list of that size. Dashed lines show the shapes of the standard Big O curves for comparison.</p>
+  <div class="toolbar" style="margin-bottom:10px"><label>Input <select id="ad-bo-mode"></select></label></div>
+  <div class="cols2" style="align-items:start">
+    <div><div id="ad-bo-chart"></div><div class="ad-legend" id="ad-bo-legend"></div></div>
+    <div><div id="ad-bo-tbl" class="scroll"></div><p class="status" id="ad-bo-note" style="margin-top:10px"></p></div>
+  </div>
+</section>
