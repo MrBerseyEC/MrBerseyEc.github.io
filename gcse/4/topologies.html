@@ -25,7 +25,7 @@ spec: "EDEXCEL GCSE · 4.1.7"
 
 <p class="lede">Each device on a network, whether it is a phone, a printer, a router or a smart light bulb, is called a <b>node</b>. A network <b>topology</b> describes how the nodes are connected to one another. Three common topologies are bus, star and mesh.</p>
 
-<section class="block">
+<section class="block" id="build-it-and-break-it">
   <h2>Build it and break it</h2>
   <p class="sub">Choose a topology and send a message. Then click any device or cable to make it fail (click again to mend it) and see what still works.</p>
   <div class="toolbar">
@@ -39,7 +39,7 @@ spec: "EDEXCEL GCSE · 4.1.7"
   <p class="note" id="about"></p>
 </section>
 
-<section class="block">
+<section class="block" id="collisions-on-a-bus">
   <h2>Collisions on a bus</h2>
   <p class="sub">Only one message at a time can travel along the shared cable of a bus network. If two devices send at the same moment the signals collide, and both messages become unreadable. Bus networks deal with this using CSMA/CD: Carrier Sense, Multiple Access with Collision Detection.</p>
   <div class="row"><button class="btn pri" id="c-one">A sends on its own</button><button class="btn pri" id="c-two">A and C send at the same time</button></div>
@@ -56,7 +56,7 @@ spec: "EDEXCEL GCSE · 4.1.7"
   <p class="note">The wait has to be random. If both devices waited the same length of time, they would simply collide again, and again. The more devices there are on a bus, the more collisions happen and the slower the network runs.</p>
 </section>
 
-<section class="block">
+<section class="block" id="comparing-the-topologies">
   <h2>Comparing the topologies</h2>
   <p class="sub">Use the demo above to test each claim: break the central switch, cut the backbone, count the cables, and see who receives each message.</p>
   <details class="recap"><summary>Summary table</summary>
@@ -74,12 +74,12 @@ spec: "EDEXCEL GCSE · 4.1.7"
   <p class="note">Networks with a single topology are rare. Most are hybrid, combining elements of different topologies. The internet is the ultimate hybrid network.</p>
 </section>
 
-<section class="block">
+<section class="block" id="bus-star-or-mesh">
   <h2>Bus, star or mesh?</h2>
   {% include quiz.html n=1 %}
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html n=2 %}
 </section>

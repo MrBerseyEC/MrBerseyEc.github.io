@@ -47,7 +47,7 @@ spec: "EDEXCEL GCSE · 4.2.1"
 
 <p class="lede">The goal of network security is to protect a network and its data from threats, both from inside the organisation and from outside it. A security threat is any incident, malicious or unintended, that causes disruption, damage or data loss: a hacker stealing data, or simply an employee who clicks on a link in an email and downloads a virus.</p>
 
-<section class="block">
+<section class="block" id="three-things-to-protect">
   <h2>Three things to protect</h2>
   <p class="sub">This is one record on a hospital's network. Make something go wrong and see which of the three principles is broken. Then switch on a protection and try again.</p>
   <div class="cia">
@@ -89,12 +89,12 @@ spec: "EDEXCEL GCSE · 4.2.1"
   <p class="status" id="cia-msg" style="margin-top:12px"></p>
 </section>
 
-<section class="block">
+<section class="block" id="which-principle-is-at-risk">
   <h2>Which principle is at risk?</h2>
   {% include quiz.html n=1 %}
 </section>
 
-<section class="block">
+<section class="block" id="run-a-penetration-test">
   <h2>Run a penetration test</h2>
   <p class="sub">To keep a network secure, an organisation first has to find its weak spots. Run each test, then fix what you find and test again. Then switch to the criminal and run the same tests: the techniques are identical, but what happens next is not.</p>
   <div class="row" style="margin-bottom:12px"><div class="seg" id="who" role="group" aria-label="Who is running the tests"><button data-w="white" aria-pressed="true">Ethical hacker (white hat)</button><button data-w="black" aria-pressed="false">Criminal hacker (black hat)</button></div></div>
@@ -106,7 +106,7 @@ spec: "EDEXCEL GCSE · 4.2.1"
   <p class="note">Penetration testing (pen testing) looks for technical weaknesses, and also tests how security-aware the staff are, using social engineering tactics to see how easily they are tricked. An ethical hacker works with the organisation's permission and reports every vulnerability with advice on fixing it. A criminal hacker has no permission and keeps what they find secret, to use or sell.</p>
 </section>
 
-<section class="block">
+<section class="block" id="why-a-fix-has-to-reach-every-machine">
   <h2>Why a fix has to reach every machine</h2>
   <p class="sub">In 2017 the <b>WannaCry</b> ransomware spread across the internet and infected more than 230,000 computers in over 150 countries, including many in the NHS. It used a flaw in Windows that already had a security patch. Only the computers that had not installed the patch were infected. Choose how many computers on this network are up to date, then release it.</p>
   <div class="toolbar">
@@ -121,7 +121,7 @@ spec: "EDEXCEL GCSE · 4.2.1"
   <p class="note">The same lesson came from <b>Heartbleed</b> in 2014, a flaw in OpenSSL caused by insufficient input validation. A patch was released quickly, but it took time for every website to apply it, and data was stolen in the meantime. Once a vulnerability is known, every system that has not been updated is a target.</p>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html n=2 %}
 </section>

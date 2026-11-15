@@ -25,7 +25,7 @@ published: false
 
 <p class="lede">A processor contains billions of transistors. Each one is a tiny switch with just two states: on or off. Binary has just two digits, 1 and 0, so it is the natural way to describe what is going on inside. Everything a computer stores or processes, including numbers, text, images, sound and the program instructions themselves, is held as a pattern of binary digits (bits).</p>
 
-<section class="block">
+<section class="block" id="switches-and-bits">
   <h2>Switches and bits</h2>
   <p class="sub">Each switch is one transistor. Click the switches to turn them on and off, or count up through every pattern.</p>
   <div class="row" style="margin-bottom:14px">
@@ -39,14 +39,14 @@ published: false
   <p class="note">Counting in binary: when every bit is 1, the next number needs one more bit on the left. After 111 comes 1000.</p>
 </section>
 
-<section class="block">
+<section class="block" id="how-many-patterns">
   <h2>How many patterns?</h2>
   <p class="sub">Every extra bit doubles the number of different patterns. With <i>n</i> bits there are 2<sup><i>n</i></sup> patterns.</p>
   <div class="scroll"><table class="t" id="pow"></table></div>
   <p class="note">A group of 8 bits is a <b>byte</b> (256 patterns). Half a byte, 4 bits, is a <b>nibble</b> (16 patterns). Long patterns are usually written in groups of four so they are easier to read: 1001 0111 rather than 10010111.</p>
 </section>
 
-<section class="block">
+<section class="block" id="how-many-bits-do-i-need">
   <h2>How many bits do I need?</h2>
   <p class="sub">To give each item its own pattern, you need enough bits to make at least that many patterns.</p>
   <div class="row"><label class="check">Number of different items <input type="number" id="items" min="1" max="1000000" value="34" style="width:8em"></label></div>
@@ -54,7 +54,7 @@ published: false
   <p class="status" id="needwhy"></p>
 </section>
 
-<section class="block">
+<section class="block" id="same-bits-different-meanings">
   <h2>Same bits, different meanings</h2>
   <p class="sub">A pattern of bits has no meaning on its own. What it represents depends on how the program has been told to interpret it. Change the bits and see five different interpretations of the same byte.</p>
   <div id="mb" class="nib"></div>
@@ -68,12 +68,12 @@ published: false
   <p class="note">Numbers and text can be represented exactly. Images and sound can only be approximated: the more bits used, the closer the binary version gets to the original, but the more storage space it needs.</p>
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

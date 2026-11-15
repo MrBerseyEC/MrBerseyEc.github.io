@@ -8,7 +8,7 @@ published: false
 ---
 <p class="lede">A variable holds one value. A list holds many values under a single name, in order. Each item has a numbered position called its index, so a program can store thirty marks in one list instead of thirty separate variables. In Python, a list is used wherever another language would use an array.</p>
 
-<section class="block">
+<section class="block" id="index-explorer">
   <h2>Index explorer</h2>
   <p class="sub">This is the list <code>pets = ["cat", "dog", "fish", "hamster", "rabbit"]</code>. The small number above each item is its index. Click an item to see the code that would fetch it.</p>
   <div class="strip" id="strip"></div>
@@ -16,7 +16,7 @@ published: false
   <p class="note">Indexes start at <b>0</b>, not 1. A list with 5 items has indexes 0 to 4, so the last index is always one less than the length.</p>
 </section>
 
-<section class="block">
+<section class="block" id="creating-a-list-and-reading-items">
   <h2>Creating a list and reading items</h2>
   <p class="sub">A list is written in square brackets with commas between the items. Use the list's name followed by an index in square brackets to get one item. <code>len()</code> tells you how many items there are.</p>
   <div class="py"><textarea>
@@ -36,7 +36,7 @@ print(pets[len(pets) - 1])
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="changing-items">
   <h2>Changing items</h2>
   <p class="sub">Assigning to an index replaces the item in that position. The rest of the list is untouched.</p>
   <div class="py" data-vars><textarea>
@@ -56,7 +56,7 @@ print(scores)
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="adding-and-removing-items">
   <h2>Adding and removing items</h2>
   <p class="sub">Lists can grow and shrink while the program runs. <code>append()</code> adds to the end, <code>insert()</code> adds at a chosen index and shuffles everything after it along, and <code>del</code> removes the item at an index.</p>
   <div class="py" data-vars><textarea>
@@ -89,7 +89,7 @@ print("People in the queue: " + str(len(queue)))
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="visiting-every-item-with-a-loop">
   <h2>Visiting every item with a loop</h2>
   <p class="sub">There are two ways to loop through a list. The first gives you each item in turn. The second counts through the indexes, which is what you need when the position matters or when you want to change the items.</p>
   <div class="py"><textarea>
@@ -111,7 +111,7 @@ for index in range(len(pets)):
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="total-average-and-highest">
   <h2>Total, average and highest</h2>
   <p class="sub">Combine a list with a loop and a running total and you can process any amount of data with the same few lines.</p>
   <div class="py" data-vars><textarea>
@@ -139,7 +139,7 @@ print("Highest: " + str(highest))
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="searching-a-list">
   <h2>Searching a list</h2>
   <p class="sub">A linear search checks each item in turn, from the start, to see whether it matches the one you want.</p>
   <div class="py"><textarea>
@@ -163,7 +163,7 @@ if not found:
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="building-a-list-from-input">
   <h2>Building a list from input</h2>
   <p class="sub">Start with an empty list and <code>append()</code> to it inside a loop.</p>
   <div class="py" data-vars><textarea>
@@ -184,7 +184,7 @@ for item in shopping:
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="playground">
   <h2>Playground</h2>
   <p class="sub">A starter program. Change it or replace it with your own.</p>
   <div class="py big" data-vars><textarea>

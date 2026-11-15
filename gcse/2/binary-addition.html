@@ -27,7 +27,7 @@ published: false
 
 <p class="lede">Binary numbers are added in columns from right to left, just like denary numbers. In denary you carry when a column comes to more than 9. In binary you carry when it comes to more than 1.</p>
 
-<section class="block">
+<section class="block" id="the-four-rules">
   <h2>The four rules</h2>
   <div class="rules">
     <div><b>0 + 0 = 0</b><small>write 0</small></div>
@@ -37,7 +37,7 @@ published: false
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="adding-two-8-bit-numbers">
   <h2>Adding two 8-bit numbers</h2>
   <p class="sub">Click the bits to set the two numbers, then step through the addition one column at a time, starting from the right.</p>
   <div class="row" style="margin-bottom:14px">
@@ -48,7 +48,7 @@ published: false
   <p class="note hidden" id="ofnote"><b>Overflow error.</b> The answer needs 9 bits, but only 8 bits have been set aside to store it. The carry out of the left-hand column has nowhere to go, so it is lost and the stored result is wrong.</p>
 </section>
 
-<section class="block">
+<section class="block" id="overflow">
   <h2>Overflow</h2>
   <p class="sub">A computer sets aside a fixed number of bits to hold each number. An <b>overflow error</b> happens when the result of a calculation is too large to fit. This 8-bit counter stores the number of views of a video. Keep adding to it and watch what happens after 255.</p>
   <div class="row" style="margin-bottom:14px"><button class="btn pri" id="c1">+1</button><button class="btn" id="c10">+10</button><button class="btn" id="c50">+50</button><button class="btn" id="c0">Reset</button></div>
@@ -58,13 +58,13 @@ published: false
   <p class="note">This really happened. YouTube stored view counts in 32 bits as a signed number, so the largest value it could hold was 2,147,483,647. In 2014 the video for Gangnam Style passed that number, and YouTube had to change to 64 bits. Overflow errors can make programs crash or give unreliable results, so programmers have to think ahead about how much storage a value could ever need.</p>
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <p class="sub">Add the two numbers and give the answer as 8 bits. None of these overflow.</p>
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="will-it-overflow">
   <h2>Will it overflow?</h2>
   <p class="sub">The two numbers are added and the result is stored in 8 bits.</p>
   {% include quiz.html %}

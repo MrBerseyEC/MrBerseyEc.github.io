@@ -53,7 +53,7 @@ spec: "OCR A LEVEL · 2.1.2"
 </style>
 <p class="lede">Thinking ahead means working out, before any code is written, what a solution will need: the data that goes in, the results that come out, the conditions that must already be true, and anything that could be reused or kept ready in advance.</p>
 
-<section class="block">
+<section class="block" id="inputs-and-outputs">
   <h2>Inputs and outputs</h2>
   <p class="sub">At its most abstract, every computational problem looks the same. The inputs are the information the problem needs, and the outputs are its solution. Stating exactly what they are is the first step towards solving it. A subroutine has inputs and outputs too: its parameters and the value it returns.</p>
   <p class="model"><span>Input</span> → <span class="p">Computational problem</span> → <span>Output</span></p>
@@ -78,7 +78,7 @@ spec: "OCR A LEVEL · 2.1.2"
   <p class="note">In a flowchart, inputs and outputs are drawn in a parallelogram. Values that are calculated along the way, or fixed in the program, are neither: they are part of the processing.</p>
 </section>
 
-<section class="block">
+<section class="block" id="preconditions">
   <h2>Preconditions</h2>
   <p class="sub">A precondition is something that must be true before a subroutine is called, if it is to work correctly. Choose a function, then try calling it. Switch between the two designs to see how the precondition changes the solution.</p>
   <div class="toolbar" style="margin-bottom:14px">
@@ -108,7 +108,7 @@ spec: "OCR A LEVEL · 2.1.2"
   </details>
 </section>
 
-<section class="block">
+<section class="block" id="caching">
   <h2>Caching</h2>
   <p class="sub">Caching is the temporary storage of data or instructions that have been used once and may be needed again soon. It is thinking ahead done automatically, by the operating system, the processor or the browser, not by the programmer. Fetching a web page from the server takes 300 ms here, and reading it from the cache takes 5 ms. Click pages to request them.</p>
   <div class="toolbar">
@@ -145,7 +145,7 @@ spec: "OCR A LEVEL · 2.1.2"
   </details>
 </section>
 
-<section class="block">
+<section class="block" id="reusable-program-components">
   <h2>Reusable program components</h2>
   <p class="sub">A component written once can be used by many programs: a function, a procedure, a class, or a library of them, such as a Windows DLL (dynamic link library). Three programs here need the same subroutines. Choose how they get them, then see what happens when the code has to change.</p>
   <div class="toolbar" style="margin-bottom:14px">
@@ -171,13 +171,13 @@ spec: "OCR A LEVEL · 2.1.2"
   </details>
 </section>
 
-<section class="block">
+<section class="block" id="benefit-or-drawback">
   <h2>Benefit or drawback?</h2>
   <p class="sub">Is each statement a benefit or a drawback of using reusable components?</p>
   {% include quiz.html n=4 %}
 </section>
 
-<section class="block">
+<section class="block" id="check-your-understanding">
   <h2>Check your understanding</h2>
   {% include quiz.html n=5 %}
 </section>

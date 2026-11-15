@@ -24,7 +24,7 @@ published: false
 
 <p class="lede">Sound is a vibration that travels through the air as a wave. It is <b>analogue</b>: the air pressure changes smoothly and continuously. A computer can only store separate binary numbers, so to record a sound it measures the height of the wave thousands of times a second and stores each measurement. This is called <b>sampling</b>.</p>
 
-<section class="block">
+<section class="block" id="sound-waves">
   <h2>Sound waves</h2>
   <p class="sub">The height of the wave is its <b>amplitude</b>. The bigger the amplitude, the louder the sound. The number of waves per second is the frequency. The higher the frequency, the higher the pitch.</p>
   <div class="sl">
@@ -35,7 +35,7 @@ published: false
   <div class="row" style="margin-top:12px"><button class="btn pri" id="tone">Play this sound</button><span class="status">Check your volume first.</span></div>
 </section>
 
-<section class="block">
+<section class="block" id="sampling">
   <h2>Sampling</h2>
   <p class="sub">This is one millisecond of an analogue sound. At regular intervals the amplitude is measured and rounded to the nearest level that can be stored. Change how often samples are taken and how many bits are used for each one.</p>
   <div class="sl">
@@ -49,7 +49,7 @@ published: false
   <p class="note">A higher sample rate catches more of the changes in the wave. A higher bit depth means each sample is rounded less. Both make the stored version closer to the original, and both make the file bigger. A digital recording can never match the analogue sound completely, because whatever happens between two samples is not recorded.</p>
 </section>
 
-<section class="block">
+<section class="block" id="key-terms">
   <h2>Key terms</h2>
   <div class="scroll"><table class="t" style="max-width:860px">
     <tr><th>Term</th><th>Meaning</th></tr>
@@ -61,7 +61,7 @@ published: false
   </table></div>
 </section>
 
-<section class="block">
+<section class="block" id="hear-the-difference">
   <h2>Hear the difference</h2>
   <p class="sub">The same short tune, sampled in different ways. Listen for the dull, muffled sound of a low sample rate and the hiss and crackle of a low bit depth.</p>
   <div class="toolbar" style="margin-bottom:12px">
@@ -73,7 +73,7 @@ published: false
   <p class="status" id="a-msg"></p>
 </section>
 
-<section class="block">
+<section class="block" id="calculating-file-size">
   <h2>Calculating file size</h2>
   <p class="sub">File size in bits = sample rate × bit depth × duration in seconds.</p>
   <div class="calc">
@@ -85,12 +85,12 @@ published: false
   <p class="note">Watch the units. A sample rate given in kHz must be multiplied by 1000, and a duration given in minutes must be multiplied by 60. For example, 3 minutes at 24 kHz with 8 bits per sample is <span class="mono">24 × 1000 × 8 × 3 × 60</span> bits.</p>
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

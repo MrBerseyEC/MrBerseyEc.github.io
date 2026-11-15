@@ -7,7 +7,7 @@ published: false
 ---
 <p class="lede">Selection lets a program choose which lines to run. It asks a question that is either true or false, then follows a different path depending on the answer. In Python, selection is written with <code>if</code>, <code>elif</code> and <code>else</code>.</p>
 
-<section class="block">
+<section class="block" id="conditions-questions-with-a-true-or-false-answer">
   <h2>Conditions: questions with a True or False answer</h2>
   <p class="sub">A condition compares two values using a relational operator. The result is always a Boolean: <code>True</code> or <code>False</code>.</p>
   <div class="py"><textarea>
@@ -37,7 +37,7 @@ print(score <= 7)
   <p class="note">One equals sign (<code>=</code>) stores a value. Two equals signs (<code>==</code>) ask whether two values are the same. Mixing them up is one of the most common mistakes.</p>
 </section>
 
-<section class="block">
+<section class="block" id="if">
   <h2>if</h2>
   <p class="sub">The indented lines under an <code>if</code> only run when the condition is true. The line needs a colon at the end, and the indentation (4 spaces) is how Python knows which lines belong to the <code>if</code>.</p>
   <div class="py"><textarea>
@@ -57,7 +57,7 @@ print("Have a nice day.")
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="if-else">
   <h2>if ... else</h2>
   <p class="sub"><code>else</code> gives the program something to do when the condition is false. Exactly one of the two blocks will run, never both.</p>
   <div class="py"><textarea>
@@ -75,7 +75,7 @@ else:
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="if-elif-else">
   <h2>if ... elif ... else</h2>
   <p class="sub">When there are more than two paths, use <code>elif</code> (short for "else if"). Python checks the conditions from the top and runs the block for the <b>first</b> one that is true, then skips the rest. The <code>else</code> at the end catches everything that is left.</p>
   <div class="py"><textarea>
@@ -100,7 +100,7 @@ print("Result: " + grade)
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="combining-conditions-and-or-not">
   <h2>Combining conditions: and, or, not</h2>
   <p class="sub">Logical operators join conditions together. With <code>and</code>, both sides must be true. With <code>or</code>, at least one side must be true. <code>not</code> flips true to false and false to true.</p>
   <div class="py"><textarea>
@@ -131,7 +131,7 @@ if age < 5 or age >= 65:
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="selection-inside-selection">
   <h2>Selection inside selection</h2>
   <p class="sub">An <code>if</code> can go inside another <code>if</code>. This is called nesting. The inner question is only asked when the outer condition was true. Each level is indented by another 4 spaces.</p>
   <div class="py"><textarea>
@@ -153,7 +153,7 @@ else:
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="playground">
   <h2>Playground</h2>
   <p class="sub">A starter program that makes a decision. Change it or replace it with your own.</p>
   <div class="py big"><textarea>

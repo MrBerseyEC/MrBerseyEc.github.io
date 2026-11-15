@@ -14,7 +14,7 @@ published: false
 </style>
 <p class="lede">A string is a sequence of characters: letters, digits, spaces and symbols. Names, passwords, postcodes and messages are all strings. Because a string is a sequence, each character has an index, and Python has plenty of built-in tools for measuring, cutting, searching and changing text.</p>
 
-<section class="block">
+<section class="block" id="slice-explorer">
   <h2>Slice explorer</h2>
   <p class="sub">Every character has an index, starting at 0. A slice cuts out part of a string: it begins at the start index and stops just <b>before</b> the end index. Change the word and the two numbers.</p>
   <div class="sx">
@@ -32,7 +32,7 @@ published: false
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="length-and-indexing">
   <h2>Length and indexing</h2>
   <p class="sub"><code>len()</code> returns the number of characters. Square brackets with one index fetch a single character, exactly as with a list.</p>
   <div class="py"><textarea>
@@ -51,7 +51,7 @@ print(word[len(word) - 1])
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="slicing-and-joining">
   <h2>Slicing and joining</h2>
   <p class="sub">A slice returns a new, shorter string. The <code>+</code> operator joins strings together (concatenation), and <code>*</code> repeats a string.</p>
   <div class="py" data-vars><textarea>
@@ -76,7 +76,7 @@ print(len(fullName))
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="changing-and-checking-case">
   <h2>Changing and checking case</h2>
   <p class="sub">These subprograms are written after the string with a dot. The ones that begin with "is" answer a question with <code>True</code> or <code>False</code>. None of them change the original string: they hand back a result.</p>
   <div class="py"><textarea>
@@ -102,7 +102,7 @@ else:
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="what-kind-of-characters-are-these">
   <h2>What kind of characters are these?</h2>
   <p class="sub">Three checks that are very useful for validating input.</p>
   <div class="py"><textarea>
@@ -125,7 +125,7 @@ else:
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="searching-replacing-and-splitting">
   <h2>Searching, replacing and splitting</h2>
   <p class="sub"><code>find()</code> returns the index where some text first appears, or -1 if it isn't there. <code>replace()</code> swaps every occurrence. <code>strip()</code> trims unwanted characters from both ends. <code>split()</code> breaks a string into a list.</p>
   <div class="py" data-vars><textarea>
@@ -154,7 +154,7 @@ print(fields[0] + " is in " + fields[2] + " house")
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="looping-through-a-string">
   <h2>Looping through a string</h2>
   <p class="sub">A <code>for</code> loop visits every character in turn. Here it counts the vowels and builds a new string without them.</p>
   <div class="py"><textarea>
@@ -181,7 +181,7 @@ print(withoutVowels)
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="characters-are-numbers-underneath">
   <h2>Characters are numbers underneath</h2>
   <p class="sub">Every character is stored as a number, its character code. <code>ord()</code> gives the code for a character and <code>chr()</code> gives the character for a code. This program uses them for a Caesar cipher, which shifts every letter along the alphabet.</p>
   <div class="py"><textarea>
@@ -212,7 +212,7 @@ print(secret)
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="playground">
   <h2>Playground</h2>
   <p class="sub">A starter password checker. Change it or replace it with your own.</p>
   <div class="py big"><textarea>

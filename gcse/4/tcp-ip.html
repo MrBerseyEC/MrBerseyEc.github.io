@@ -38,7 +38,7 @@ spec: "EDEXCEL GCSE · 4.1.6"
 
 <p class="lede">TCP/IP is a collection of protocols that sets out exactly how data is formatted and transmitted across networks, including the internet. The protocols are organised into four <b>layers</b>, known as a protocol stack. Each layer has one job to do, and passes the data on to the layer next to it.</p>
 
-<section class="block">
+<section class="block" id="down-the-stack-and-back-up">
   <h2>Down the stack and back up</h2>
   <p class="sub">Computer A asks for a file from computer B. Data passes down through the four layers when it is sent, and back up through them in reverse order when it is received. Step through to see what each layer adds or removes.</p>
   <div class="row" style="margin-bottom:14px"><button class="btn pri" id="step">Step ▸</button><button class="btn" id="play">Play</button><button class="btn" id="reset">Reset</button></div>
@@ -62,7 +62,7 @@ spec: "EDEXCEL GCSE · 4.1.6"
   <p class="explain" id="explain"></p>
 </section>
 
-<section class="block">
+<section class="block" id="change-one-layer">
   <h2>Change one layer</h2>
   <p class="sub">Each layer has one job, and only talks to the layers directly above and below it. Change what the user is doing, how the laptop is connected, or who made it, and watch which layers are affected.</p>
   <div class="toolbar" style="margin-bottom:14px">
@@ -74,12 +74,12 @@ spec: "EDEXCEL GCSE · 4.1.6"
   <p class="status" id="swmsg" style="margin-top:10px"></p>
 </section>
 
-<section class="block">
+<section class="block" id="which-layer">
   <h2>Which layer?</h2>
   {% include quiz.html n=1 %}
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html n=2 %}
 </section>

@@ -1,5 +1,5 @@
 {%- comment -%} The interactive block for an algorithm page. algoDemo() in assets/algo.js fills it in. {%- endcomment -%}
-<section class="block">
+<section class="block" id="{{ include.id | default: "try-it" }}">
   <h2>{{ include.title | default: "Try it" }}</h2>
   <p class="sub">{{ include.sub }}</p>
   <div class="toolbar" id="ad-setup"></div>

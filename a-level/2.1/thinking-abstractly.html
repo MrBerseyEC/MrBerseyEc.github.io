@@ -70,7 +70,7 @@ spec: "OCR A LEVEL · 2.1.1"
 </style>
 <p class="lede">Abstraction means removing unnecessary detail from a problem so that only the features needed to solve it are left. The result is a simplified representation of reality. Every computer model, map, simulation and data structure is an abstraction of something.</p>
 
-<section class="block">
+<section class="block" id="from-a-city-to-a-map">
   <h2>From a city to a map</h2>
   <p class="sub">Drag the slider to strip detail away from this city, one layer at a time, until only a metro map is left. The table shows which questions each version can still answer.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Reality <input type="range" id="lv" min="0" max="3" step="1" value="0" style="width:min(320px,50vw)"> Abstraction</label></div>
@@ -85,7 +85,7 @@ spec: "OCR A LEVEL · 2.1.1"
   <p class="note">The metro map is the better tool for planning a journey <b>because</b> so much has been left out. It is also wrong about distance, direction and the shape of every line. An abstraction is judged by whether it keeps what matters for its purpose, not by how closely it matches reality.</p>
 </section>
 
-<section class="block">
+<section class="block" id="how-an-abstraction-differs-from-reality">
   <h2>How an abstraction differs from reality</h2>
   <p class="sub">A game needs a ball that bounces. The dashed line is how a real ball moves. Choose which properties of the ball your model includes, then drop it. The more you simplify, the less the model behaves like the real thing.</p>
   <div class="toolbar" style="margin-bottom:12px">
@@ -110,7 +110,7 @@ spec: "OCR A LEVEL · 2.1.1"
   </details>
 </section>
 
-<section class="block">
+<section class="block" id="why-programmers-rely-on-abstraction">
   <h2>Why programmers rely on abstraction</h2>
   <p class="sub">In programming, abstraction separates <b>what</b> a program does from <b>how</b> it does it. Each generation of programming language hid more of the machine, so that the programmer could concentrate on the problem. Here is the statement <span class="mono">x = a + 5</span> at all three levels. Step through it to see what the processor really does.</p>
   <div class="cols3">
@@ -128,7 +128,7 @@ spec: "OCR A LEVEL · 2.1.1"
   <p class="status" id="mmsg" style="margin-top:10px"></p>
 </section>
 
-<section class="block">
+<section class="block" id="data-abstraction-a-queue">
   <h2>Data abstraction: a queue</h2>
   <p class="sub">A queue is an abstract data type. The programmer who uses it only needs to know its operations: items join at the rear and leave from the front. How the items are stored is hidden. Use the queue first, then reveal what is going on underneath.</p>
   <div class="row"><button class="btn pri" id="enq">enqueue(item)</button><button class="btn" id="deq">dequeue()</button><button class="btn" id="qrst">Reset</button>
@@ -147,7 +147,7 @@ spec: "OCR A LEVEL · 2.1.1"
   <p class="note">The implementation is a fixed-size array with two pointers that wrap round to the start. It could be replaced with a linked list and no program that uses <span class="mono">enqueue</span> and <span class="mono">dequeue</span> would need to change.</p>
 </section>
 
-<section class="block">
+<section class="block" id="abstraction-by-generalisation">
   <h2>Abstraction by generalisation</h2>
   <p class="sub">The people of Königsberg wanted a Sunday walk that crossed each of the city's seven bridges exactly once. Click a piece of land to start, then click bridges to cross them. Then switch to the graph that Euler drew in 1736: each piece of land became a node and each bridge an edge.</p>
   <div class="toolbar" style="margin-bottom:12px">
@@ -174,7 +174,7 @@ spec: "OCR A LEVEL · 2.1.1"
   </details>
 </section>
 
-<section class="block">
+<section class="block" id="apply-it">
   <h2>Apply it</h2>
   <p class="sub">Choose a scenario. For each detail of the real situation, decide whether the program needs to keep it or whether it can be removed.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Scenario <select id="sc"></select></label></div>
@@ -183,7 +183,7 @@ spec: "OCR A LEVEL · 2.1.1"
   <p class="note" id="model"></p>
 </section>
 
-<section class="block">
+<section class="block" id="check-your-understanding">
   <h2>Check your understanding</h2>
   {% include quiz.html %}
 </section>

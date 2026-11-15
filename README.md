@@ -38,3 +38,19 @@ bundle exec jekyll serve  # then open http://localhost:4000
 ```
 
 To preview the hidden demos as well, run `bundle exec jekyll serve --unpublished`.
+
+## Linking to a demo on a page
+
+Every demo block on a page has an `id`, so a page can be opened at a particular block, for example `/a-level/2.3/bubble-sort.html#big-o`. Hover over a block's heading and click the `#` to get its link. If the block is inside a hidden tab, that tab opens. The ids are the heading text in lower case with hyphens. Give a block its own `id="…"` where you want a shorter one. The Python-style ids already used by a page's script are left alone.
+
+## The glossary
+
+`glossary.html` is built from `_data/glossary.yml`, one line per term:
+
+```yaml
+- { t: "Bubble sort", d: "Sorts by comparing neighbours…", u: "/a-level/2.3/bubble-sort.html#how-it-works" }
+```
+
+- The level (F, GCSE or A-Level) is taken from the course in `_data/courses.yml` that holds the page, so there is nothing to set. The same term may appear once for each level and is grouped on the page.
+- A term whose page has `published: false` is still listed, shown as "demo not published yet" with no link. It links up automatically when the page is published.
+- Add the new demo's terms to `_data/glossary.yml` when you add the demo.

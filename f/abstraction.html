@@ -26,7 +26,7 @@ blocks: true
 </style>
 <p class="lede">Abstraction means hiding or removing the details you do not need, so you can concentrate on the things that matter. Every game you make in MakeCode Arcade is an abstraction: a real duck becomes a tiny picture and a few numbers, and one block can stand in for dozens of instructions that you never have to think about.</p>
 
-<section class="block">
+<section class="block" id="from-a-real-thing-to-a-sprite">
   <h2>From a real thing to a sprite</h2>
   <p class="sub">Drag the slider to strip detail away, one step at a time, until only what the game needs is left. The table shows which facts survive each step.</p>
   <div class="row" style="margin-bottom:12px">
@@ -44,7 +44,7 @@ blocks: true
   <p class="note">The game is better <b>because</b> so much is missing. A game that tracked every feather would be impossible to build and far too slow to play. All a sprite needs is a picture, a position, a speed and a kind.</p>
 </section>
 
-<section class="block">
+<section class="block" id="keep-it-or-remove-it">
   <h2>Keep it or remove it?</h2>
   <p class="sub">Choose a game. For each detail of the real thing, decide whether the game needs to keep it, or whether it can be removed.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Game <select id="sc"></select></label></div>
@@ -52,7 +52,7 @@ blocks: true
   {% include quiz.html n=2 %}
 </section>
 
-<section class="block">
+<section class="block" id="one-block-hides-lots-of-work">
   <h2>One block hides lots of work</h2>
   <p class="sub">The <b>move mySprite with buttons</b> block is an abstraction. You say <i>what</i> you want, and it hides <i>how</i> it is done. Step down through the layers to see what it hides. The duck on the right works the same way in every layer, so try it out each time.</p>
   <div class="seg" id="lay" role="group" aria-label="Layer" style="margin-bottom:14px;flex-wrap:wrap">
@@ -85,7 +85,7 @@ blocks: true
   <p class="note">Every layer does the same job. Each layer up hides more detail, so you have less to think about. That is why you can write a game in an afternoon without knowing anything about electrical signals or screen dots.</p>
 </section>
 
-<section class="block">
+<section class="block" id="build-it-with-the-shortcut-then-without">
   <h2>Build it with the shortcut, then without</h2>
   <p class="sub"><b>Task:</b> make the duck move with the arrow keys. First do it <b>with</b> the move block. Then switch to <b>without</b> and do it again using only <b>forever</b>, <b>if … button is pressed</b> and <b>change … by</b>. Drag blocks in from the left, and drag them back to delete them. Press Check to test your program.</p>
   <div class="row"><div class="seg" id="mode" role="group" aria-label="Which blocks"><button aria-pressed="true" data-m="0">With the shortcut</button><button aria-pressed="false" data-m="1">Without it</button></div>
@@ -94,7 +94,7 @@ blocks: true
   <p class="status" id="mres"></p>
 </section>
 
-<section class="block">
+<section class="block" id="what-the-game-really-knows">
   <h2>What the game really knows</h2>
   <p class="sub">To you, this is a duck running away from a ghost to grab strawberries. To the computer, each sprite is a picture with a box around it and a few numbers. Play the game and watch the numbers change. Then switch to <b>What the computer sees</b>.</p>
   <div class="insp">
@@ -111,7 +111,7 @@ blocks: true
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="kinds-one-rule-for-lots-of-sprites">
   <h2>Kinds: one rule for lots of sprites</h2>
   <p class="sub">Grouping things by what they have in common is another kind of abstraction. Instead of thinking about strawberry 1, strawberry 2 and strawberry 3, you think about <b>Food</b>. Drag the slider to add more strawberries and compare the two programs.</p>
   <div class="row" style="margin-bottom:14px"><label class="check">Strawberries <input type="range" id="nk" min="1" max="12" value="3"> <b class="mono" id="nkv"></b></label></div>
@@ -123,7 +123,7 @@ blocks: true
   <p class="note">With kinds, the rule is written once. It works for 3 strawberries or 300, and it still works for a strawberry that appears halfway through the game.</p>
 </section>
 
-<section class="block">
+<section class="block" id="make-your-own-block">
   <h2>Make your own block</h2>
   <p class="sub">This program makes three ghosts, but it does it by repeating the same three blocks three times. A <b>function</b> lets you wrap those blocks up, give them a name, and then forget how they work. <b>Task:</b> make a function called <span class="mono">spawnEnemy</span> that contains the three ghost blocks, then replace each group of three with <b>call spawnEnemy</b>. Type the name into the function block.</p>
   <div class="row"><button class="btn pri" id="fchk">Check</button><button class="btn" id="fshow">Show me</button><button class="btn" id="frst">Start again</button></div>
@@ -132,7 +132,7 @@ blocks: true
   <p class="note">Once <span class="mono">spawnEnemy</span> exists, it is your own abstraction. To add a fourth ghost you add one block, not three. To make every ghost faster you change one number, not three.</p>
 </section>
 
-<section class="block">
+<section class="block" id="check-your-understanding">
   <h2>Check your understanding</h2>
   {% include quiz.html %}
 </section>

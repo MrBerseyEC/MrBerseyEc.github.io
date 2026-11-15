@@ -24,13 +24,13 @@ published: false
 
 <p class="lede">Long strings of 1s and 0s are hard for people to read, remember and copy without making mistakes. Hexadecimal (hex) is a shorthand: a base-16 number system in which one digit stands for exactly four bits. Computers do not use hexadecimal themselves. They still work only in binary.</p>
 
-<section class="block">
+<section class="block" id="sixteen-digits">
   <h2>Sixteen digits</h2>
   <p class="sub">Hexadecimal needs 16 different digits. Denary only has ten, 0 to 9, so the letters A to F are used for the values 10 to 15.</p>
   <div class="scroll"><div class="digits" id="digits"></div></div>
 </section>
 
-<section class="block">
+<section class="block" id="binary-to-hexadecimal">
   <h2>Binary to hexadecimal</h2>
   <p class="sub">Split the byte into two nibbles. Work out each nibble as a denary number, using the place values 8, 4, 2 and 1. Swap any value above 9 for its letter. Click the bits to try other patterns.</p>
   <div id="bits" class="nib"></div>
@@ -44,7 +44,7 @@ published: false
   <p class="result" id="b2h"></p>
 </section>
 
-<section class="block">
+<section class="block" id="hexadecimal-to-binary">
   <h2>Hexadecimal to binary</h2>
   <p class="sub">Go the other way. Turn each hex digit into denary, then write each one as a 4-bit binary number and join the nibbles together.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Hex number (two digits) <input type="text" id="hex" maxlength="2" value="AC" style="width:4.5em;font-family:var(--mono);text-transform:uppercase"></label></div>
@@ -53,7 +53,7 @@ published: false
   <p class="note">Each digit must become <b>four</b> bits. The hex digit 3 is 0011, not 11. Leaving out the leading zeros in a nibble is the most common mistake.</p>
 </section>
 
-<section class="block">
+<section class="block" id="where-you-will-see-it-colours">
   <h2>Where you will see it: colours</h2>
   <p class="sub">A colour on screen is stored in 24 bits: 8 bits each for the amount of red, green and blue. Typing 24 bits is asking for mistakes. In hex it is just six digits, two for each colour.</p>
   <div class="rgb">
@@ -69,7 +69,7 @@ published: false
   <p class="note">The # symbol in front shows that the number is hexadecimal. Hex is also used for memory addresses, error codes and the hardware (MAC) addresses of network devices, all for the same reason: it is shorter and easier for people to work with than binary.</p>
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <div class="seg" id="mode" role="group" aria-label="Type of question" style="margin-bottom:14px">
     <button data-m="b" aria-pressed="true">Binary to hex</button><button data-m="h" aria-pressed="false">Hex to binary</button><button data-m="x" aria-pressed="false">Mixed</button>
@@ -77,7 +77,7 @@ published: false
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

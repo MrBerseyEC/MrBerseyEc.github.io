@@ -26,7 +26,7 @@ published: false
 
 <p class="lede">An <b>unsigned</b> integer can only be zero or positive. A <b>signed</b> integer can be negative as well. Computers cannot store a minus sign, only 0s and 1s, so signed integers are stored using a system called <b>two's complement</b>, in which the most significant bit has a negative place value.</p>
 
-<section class="block">
+<section class="block" id="one-pattern-two-possible-values">
   <h2>One pattern, two possible values</h2>
   <p class="sub">In 8-bit two's complement the MSB is worth −128 instead of +128. Every other place value is the same. Click the bits and compare the two interpretations.</p>
   <div id="bits" class="nib"></div>
@@ -38,7 +38,7 @@ published: false
   <p class="note">The MSB works as a <b>sign bit</b>. If it is 0 the number is positive (or zero) and has the same value either way. If it is 1 the number is negative. You have to know which kind of number a pattern is meant to be before you can convert it.</p>
 </section>
 
-<section class="block">
+<section class="block" id="ranges">
   <h2>Ranges</h2>
   <p class="sub">Both kinds of number have the same count of patterns. Signed numbers use half of them for negative values, so the largest positive value is about half as big.</p>
   <div class="scroll"><table class="t" style="max-width:760px">
@@ -50,7 +50,7 @@ published: false
   <p class="note">The largest positive 8-bit value is 0111 1111 = +127. The most negative is 1000 0000 = −128. Zero counts as a positive number, which is why there is one more negative value than positive.</p>
 </section>
 
-<section class="block">
+<section class="block" id="negative-denary-to-twos-complement">
   <h2>Negative denary to two's complement</h2>
   <p class="sub">Write the positive version in binary, flip every bit, then add 1.</p>
   <div class="row" style="margin-bottom:12px">
@@ -62,7 +62,7 @@ published: false
   <p class="note">The same three steps work in the other direction. To find out what a negative two's complement number is, flip the bits and add 1 to get the positive version.</p>
 </section>
 
-<section class="block">
+<section class="block" id="why-twos-complement">
   <h2>Why two's complement?</h2>
   <p class="sub">Because ordinary binary addition just works, with no extra circuits for negative numbers. Add a number to its own negative and the 8 bits come out as zero.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Number <input type="range" id="w" min="1" max="127" value="42"> <b class="mono" id="wv"></b></label></div>
@@ -71,7 +71,7 @@ published: false
   <p class="note">An obvious alternative would be to keep the normal binary number and use the MSB only as a + or − sign. That method (sign and magnitude) gives two different patterns for zero, 0000 0000 and 1000 0000, and adding +2 to −2 gives −4. Two's complement was invented to make the arithmetic work properly.</p>
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <div class="seg" id="mode" role="group" aria-label="Type of question" style="margin-bottom:14px">
     <button data-m="b" aria-pressed="true">Two's complement to denary</button><button data-m="d" aria-pressed="false">Denary to two's complement</button><button data-m="x" aria-pressed="false">Mixed</button>
@@ -79,7 +79,7 @@ published: false
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

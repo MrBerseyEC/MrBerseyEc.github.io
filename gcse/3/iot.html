@@ -41,7 +41,7 @@ pre.code{margin:0;font:.86rem/1.7 var(--mono);background:var(--panel);border-rad
 
 <p class="lede">The Internet of Things (IoT) is what you get when embedded systems are given a wireless connection to the internet. The devices collect and exchange data with little or no human involvement, and can be monitored and controlled from anywhere.</p>
 
-<section class="block">
+<section class="block" id="switching-on-a-light-from-your-phone">
   <h2>Switching on a light from your phone</h2>
   <p class="sub">The phone does not talk to the bulb directly. Step through to follow the command from the app to the light.</p>
   <div class="row">
@@ -60,7 +60,7 @@ pre.code{margin:0;font:.86rem/1.7 var(--mono);background:var(--panel);border-rad
   <p class="note">The bulb is an embedded system. Adding wireless connectivity and a remote server is what makes it an IoT device.</p>
 </section>
 
-<section class="block">
+<section class="block" id="acting-on-its-own">
   <h2>Acting on its own</h2>
   <p class="sub">An IoT device can also be programmed to act when its sensors pick up something outside the normal range, with nobody pressing anything. This room light switches itself off when no movement is detected. Each tick is one minute.</p>
   <div class="row" style="margin-bottom:14px">
@@ -89,7 +89,7 @@ pre.code{margin:0;font:.86rem/1.7 var(--mono);background:var(--panel);border-rad
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="making-the-battery-last">
   <h2>Making the battery last</h2>
   <p class="sub">Many IoT devices sit where there is no mains power, such as a sensor on a glacier or in a field, so they run on a battery. Sending data wirelessly is the most power-hungry thing they do. See how the design choices change the battery life of a soil moisture sensor.</p>
   <div class="row">
@@ -102,7 +102,7 @@ pre.code{margin:0;font:.86rem/1.7 var(--mono);background:var(--panel);border-rad
   <p class="note">The figures are made up to show the pattern, but the pattern is real. The programmer's choices matter as much as the battery: efficient code that does less, less often, keeps the device running for longer. Devices that must be always on, such as pacemakers, cannot simply power down, so they are designed to use very little energy all the time.</p>
 </section>
 
-<section class="block">
+<section class="block" id="privacy-and-security">
   <h2>Privacy and security</h2>
   <p class="sub">IoT devices are often shipped with weak security, and many collect personal data. An attacker only needs to find one poorly secured device to get onto the network it is connected to. Choose how this smart camera is set up, then let the attacker try.</p>
   <div class="row">
@@ -116,7 +116,7 @@ pre.code{margin:0;font:.86rem/1.7 var(--mono);background:var(--panel);border-rad
   <p class="note">The program in most IoT devices is held in flash memory, which can be rewritten. That makes it easy to install a patch that fixes a security flaw, but without proper security it is just as easy for an attacker to reprogram the device with malware.</p>
 </section>
 
-<section class="block">
+<section class="block" id="wireless-technologies-used-by-iot-devices">
   <h2>Wireless technologies used by IoT devices</h2>
   <div class="scroll"><table class="t">
     <tr><th>Technology</th><th>Range</th><th>Power needed</th><th>Typical use</th></tr>
@@ -127,7 +127,7 @@ pre.code{margin:0;font:.86rem/1.7 var(--mono);background:var(--panel);border-rad
   </table></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

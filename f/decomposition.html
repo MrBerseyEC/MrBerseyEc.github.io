@@ -47,7 +47,7 @@ button.node.open::after{content:""}
 </style>
 <p class="lede">Decomposition means breaking a big problem down into smaller parts that are each easier to solve. "Make a game" is too big to start on. "Make a duck that moves with the arrow keys" is something you can do in two blocks. In MakeCode Arcade, each part usually becomes its own event or its own function.</p>
 
-<section class="block">
+<section class="block" id="break-a-big-problem-down">
   <h2>Break a big problem down</h2>
   <p class="sub">The whole problem is at the top. Click a dashed box to break it into smaller parts. Keep going until every part is small enough to build in a few blocks. Try to say what the parts will be before you click.</p>
   <div class="toolbar" style="margin-bottom:14px">
@@ -59,14 +59,14 @@ button.node.open::after{content:""}
   <p class="note">The boxes at the bottom are the jobs you actually build. Each one can be made and tested on its own, and different people can work on different boxes at the same time.</p>
 </section>
 
-<section class="block">
+<section class="block" id="which-part-does-it-belong-to">
   <h2>Which part does it belong to?</h2>
   <p class="sub">Here are some of the small jobs from a game, all mixed up. Decide which part of the game each one belongs to.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Game <select id="wsel"></select></label></div>
   {% include quiz.html n=2 %}
 </section>
 
-<section class="block">
+<section class="block" id="build-duck-dash-one-part-at-a-time">
   <h2>Build Duck Dash one part at a time</h2>
   <p class="sub">Duck Dash has been decomposed into five parts. Build them one at a time, and press <b>Check</b> after each one before you move on. A good way to keep each part separate is to put it in its own <b>function</b>, then <b>call</b> it from <b>on start</b>. The <span class="mono">on</span> switch on each event or function lets you turn a part off to test the others without it. If you get stuck, <b>Show me</b> adds that part for you.</p>
   <ol class="parts" id="parts"></ol>
@@ -74,7 +74,7 @@ button.node.open::after{content:""}
   <div class="row" style="margin-top:10px"><button class="btn" id="p-rst">Start again</button></div>
 </section>
 
-<section class="block">
+<section class="block" id="find-the-bug-by-switching-parts-off">
   <h2>Find the bug by switching parts off</h2>
   <p class="sub">This version of Duck Dash has a bug: <b>the game ends after 3 seconds</b>, when it should last 30. Because the game is made of separate parts, you can switch parts off one at a time and run it again. When switching a part off makes the bug go away, the bug is in that part.</p>
   <div id="lab4"></div>
@@ -83,7 +83,7 @@ button.node.open::after{content:""}
   <p class="status" id="bugmsg"></p>
 </section>
 
-<section class="block">
+<section class="block" id="one-big-lump-or-named-parts">
   <h2>One big lump, or named parts?</h2>
   <p class="sub">Here are two programs that make exactly the same game. One is a single lump. The other is decomposed into parts with names. Choose a change, then click the block you would need to edit. Try it in both versions.</p>
   <div class="find">
@@ -100,7 +100,7 @@ button.node.open::after{content:""}
   <p class="note">In the lump, you have to read every block until you find the right one. With named parts, the names tell you where to look, so you can ignore everything else. The game works the same either way. The difference is how easy it is for a person to understand and change.</p>
 </section>
 
-<section class="block">
+<section class="block" id="share-the-work">
   <h2>Share the work</h2>
   <p class="sub">Decomposing a game means a team can build it together. Choose who builds each part and see how long the project takes. A team has to spend 5 minutes at the start agreeing on names, such as "the duck is called <span class="mono">mySprite</span> and is of kind Player", or the parts will not fit together.</p>
   <div class="team">
@@ -109,7 +109,7 @@ button.node.open::after{content:""}
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="plan-your-own-game">
   <h2>Plan your own game</h2>
   <p class="sub">Think of a game. Break it down into up to six parts and give each part a short name, such as <i>make the player</i> or <i>spawn an enemy</i>. Then turn your plan into blocks: each part becomes an empty function, ready for you to fill in and test one at a time. Or load the example to see a finished space shooter built this way.</p>
   <div class="plan" id="plan"></div>
@@ -117,7 +117,7 @@ button.node.open::after{content:""}
   <div id="lab5"></div>
 </section>
 
-<section class="block">
+<section class="block" id="check-your-understanding">
   <h2>Check your understanding</h2>
   {% include quiz.html %}
 </section>

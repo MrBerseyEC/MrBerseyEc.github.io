@@ -37,7 +37,7 @@ canvas{width:100%;height:220px;display:block}
 </style>
 <p class="lede">An embedded system is a computer built into a larger device to do one dedicated job. Its program is fixed in ROM or flash memory, it takes inputs from sensors, and it controls outputs such as motors, heaters and displays. This one is a central heating thermostat.</p>
 
-<section class="block">
+<section class="block" id="a-thermostat-running">
   <h2>A thermostat, running</h2>
   <p class="sub">Change the target temperature or open a window, and watch the microcontroller react. It runs the same short loop forever.</p>
   <div class="row" style="margin-bottom:14px">
@@ -66,7 +66,7 @@ canvas{width:100%;height:220px;display:block}
   <p class="note">Things to notice: the program never ends and never changes; there is no keyboard or screen beyond what the job needs; and the processor only has to be powerful enough for this one task, so it can be cheap, tiny and use very little power.</p>
 </section>
 
-<section class="block">
+<section class="block" id="inside-the-microcontroller">
   <h2>Inside the microcontroller</h2>
   <p class="sub">At the heart of an embedded system is a microcontroller: a CPU, memory and input/output ports, all on a single chip. Step through to follow one temperature reading through the thermostat, or click any part to see what it does.</p>
   <div class="row"><button class="btn pri" id="m-step">Step ▸</button><button class="btn" id="m-reset">Reset</button>
@@ -89,7 +89,7 @@ canvas{width:100%;height:220px;display:block}
   <p class="note">Some microcontrollers need extra components for their job: a <b>timer</b> to measure time intervals, a <b>counter</b> to record how many times something has happened, or <b>wireless connectivity</b> to talk to other devices. A thermostat that also connects to the internet is part of the <a href="iot.html">Internet of Things</a>.</p>
 </section>
 
-<section class="block">
+<section class="block" id="design-one">
   <h2>Design one</h2>
   <p class="sub">Choose a system, then decide what each component would be: an input, an output, or not needed at all.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">System <select id="d-sys"></select></label></div>
@@ -97,7 +97,7 @@ canvas{width:100%;height:220px;display:block}
   <p class="note model" id="d-model"></p>
 </section>
 
-<section class="block">
+<section class="block" id="embedded-vs-general-purpose">
   <h2>Embedded vs general-purpose</h2>
   <div class="vs">
     <div><b>Embedded system</b><ul>
@@ -119,7 +119,7 @@ canvas{width:100%;height:220px;display:block}
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="sort-them">
   <h2>Sort them</h2>
   {% include quiz.html %}
 </section>

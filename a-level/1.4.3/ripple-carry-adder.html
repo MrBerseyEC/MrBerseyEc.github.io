@@ -65,24 +65,24 @@ spec: "OCR A LEVEL · 1.4.3"
   </div>
 </div>
 
-<section class="block">
+<section class="block" id="result">
   <div class="scroll"><div class="chain" id="chain"></div></div>
 </section>
 
 <div class="cols2">
-  <section class="block">
+  <section class="block" id="result-2">
     <h2>Result</h2>
     <div class="sums" id="sums"></div>
     <p class="hint" id="overflow"></p>
   </section>
-  <section class="block">
+  <section class="block" id="full-adder">
     <h2 id="faTitle">Full adder</h2>
     <div class="eq" id="eq"></div>
     <p class="hint">Click any adder in the chain to inspect it.</p>
   </section>
 </div>
 
-<section class="block">
+<section class="block" id="why-its-called-ripple-carry">
   <h2>Why it's called "ripple carry"</h2>
   <p class="sub" style="margin:0">Column <i>i</i> can't finish until it knows its carry-in, which comes from column <i>i</i>−1. So the carry ripples one adder at a time from right to left. Each full adder adds about two gate delays to the carry path, so an <i>n</i>-bit ripple adder needs roughly 2<i>n</i> gate delays in the worst case. Try <em>Worst case</em>: 0111…1 + 0000…1 forces the carry through every stage. Faster designs such as carry-lookahead adders compute the carries in parallel.</p>
 </section>

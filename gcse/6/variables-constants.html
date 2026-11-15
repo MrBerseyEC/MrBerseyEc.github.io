@@ -7,7 +7,7 @@ published: false
 ---
 <p class="lede">A variable is a named place in memory that holds a value, and the value can change while the program runs. A constant is a named value that is set once and should not change. On this page, each program shows a table of its variables when it finishes, so you can see exactly what ended up in memory.</p>
 
-<section class="block">
+<section class="block" id="assignment">
   <h2>Assignment</h2>
   <p class="sub">The <code>=</code> sign means "becomes". Python works out the value on the right, then stores it under the name on the left. Assigning to the same name again replaces the old value.</p>
   <div class="py" data-vars><textarea>
@@ -28,7 +28,7 @@ print(score)
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="data-types">
   <h2>Data types</h2>
   <p class="sub">Every value has a data type. Python decides the type from the value you assign. Run this and look at the "Data type" column in the table.</p>
   <div class="py" data-vars><textarea>
@@ -58,7 +58,7 @@ print(isStudent)
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="converting-between-types">
   <h2>Converting between types</h2>
   <p class="sub">You can convert a value from one type to another using <code>int()</code>, <code>float()</code>, <code>str()</code> and <code>bool()</code>. The original variable is not changed, so store the result somewhere.</p>
   <div class="py" data-vars><textarea>
@@ -85,7 +85,7 @@ print("Pi is roughly " + label)
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="arithmetic-operators">
   <h2>Arithmetic operators</h2>
   <p class="sub">Variables can be used in calculations. Notice that Python has three operators to do with division.</p>
   <div class="py"><textarea>
@@ -117,7 +117,7 @@ print("a ** b = " + str(a ** b))
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="constants">
   <h2>Constants</h2>
   <p class="sub">A constant is a value that is fixed while the program runs, like a VAT rate or the number of players in a team. By convention, constants are named in capital letters and set at the top of the program. They make code easier to read, and if the value ever needs updating you only change it in one place.</p>
   <div class="py" data-vars><textarea>
@@ -142,7 +142,7 @@ print("Total:    £{:.2f}".format(total))
   <p class="note">Python doesn't actually stop you changing a constant. The capital letters are a signal to other programmers: this value is not meant to change.</p>
 </section>
 
-<section class="block">
+<section class="block" id="naming-and-things-that-go-wrong">
   <h2>Naming, and things that go wrong</h2>
   <p class="sub">Identifiers (names) can contain letters, digits and underscores, and must start with a letter. Capital letters matter: <code>total</code> and <code>Total</code> are different names. This program has two bugs. Fix them one at a time.</p>
   <div class="py" data-vars><textarea>
@@ -161,7 +161,7 @@ print(bonus)
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="playground">
   <h2>Playground</h2>
   <p class="sub">A starter program that uses variables, a constant, input and arithmetic. Change it, break it, or delete it and write your own.</p>
   <div class="py big" data-vars><textarea>

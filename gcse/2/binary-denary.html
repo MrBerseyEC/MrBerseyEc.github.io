@@ -18,7 +18,7 @@ published: false
 
 <p class="lede">Denary is the number system we use every day. It has ten digits, 0 to 9, and each place is worth 10 times the one to its right. Binary works in exactly the same way, but with two digits, 0 and 1, and each place is worth 2 times the one to its right.</p>
 
-<section class="block">
+<section class="block" id="place-values">
   <h2>Place values</h2>
   <p class="sub">In denary the place values are powers of 10. In binary they are powers of 2. Type a denary number to see how it is built from its place values.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Denary number <input type="number" id="den" min="0" max="9999" value="3639" style="width:7em"></label></div>
@@ -26,7 +26,7 @@ published: false
   <p class="status mono" id="dsum"></p>
 </section>
 
-<section class="block">
+<section class="block" id="binary-to-denary">
   <h2>Binary to denary</h2>
   <p class="sub">Click the bits to switch them between 0 and 1. Add up the place values of every column that contains a 1.</p>
   <div id="b2d" class="nib"></div>
@@ -35,7 +35,7 @@ published: false
   <p class="note">The bit on the far left has the highest place value and is called the <b>most significant bit (MSB)</b>. The bit on the far right is the <b>least significant bit (LSB)</b> and is always worth 1. The MSB of an <i>n</i>-bit number is worth 2<sup><i>n</i>−1</sup>, so in a byte it is worth 2<sup>7</sup> = 128.</p>
 </section>
 
-<section class="block">
+<section class="block" id="denary-to-binary-divide-by-2">
   <h2>Denary to binary: divide by 2</h2>
   <p class="sub">Keep dividing by 2 and writing down the remainder until you reach 0. Then read the remainders from the bottom up.</p>
   <div class="row" style="margin-bottom:12px">
@@ -48,14 +48,14 @@ published: false
   <p class="note">If the answer has to be 8 bits long, fill the empty places on the left with 0s. These <b>leading zeros</b> do not change the value: 1101 and 0000 1101 are both 13.</p>
 </section>
 
-<section class="block">
+<section class="block" id="denary-to-binary-place-values">
   <h2>Denary to binary: place values</h2>
   <p class="sub">Another way is to work from the left. If the place value fits into what is left, write a 1 and subtract it. If it does not fit, write a 0.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Denary number (0 to 255) <input type="number" id="sub" min="0" max="255" value="173" style="width:6em"></label></div>
   <div class="scroll"><table class="t pv" id="subt" style="max-width:720px"></table></div>
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <div class="seg" id="mode" role="group" aria-label="Type of question" style="margin-bottom:14px">
     <button data-m="b" aria-pressed="true">Binary to denary</button><button data-m="d" aria-pressed="false">Denary to binary</button><button data-m="x" aria-pressed="false">Mixed</button>
@@ -63,7 +63,7 @@ published: false
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

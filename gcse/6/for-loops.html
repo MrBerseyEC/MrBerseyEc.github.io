@@ -16,7 +16,7 @@ published: false
 </style>
 <p class="lede">Repetition means running the same lines of code more than once. When you know in advance how many times to repeat, use a count-controlled loop. In Python that is a <code>for</code> loop with <code>range()</code>, which counts for you.</p>
 
-<section class="block">
+<section class="block" id="repeating-a-fixed-number-of-times">
   <h2>Repeating a fixed number of times</h2>
   <p class="sub">The indented lines under the <code>for</code> are the body of the loop. They run once for every number that <code>range()</code> produces. Lines that are not indented run once, after the loop has finished.</p>
   <div class="py"><textarea>
@@ -32,7 +32,7 @@ print("Finished")
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="the-loop-variable">
   <h2>The loop variable</h2>
   <p class="sub">Each time round the loop, the variable after <code>for</code> (here it is called <code>count</code>) holds the next number from the range. You can use it inside the loop like any other variable.</p>
   <div class="py"><textarea>
@@ -48,7 +48,7 @@ for count in range(5):
   <p class="note"><code>range(5)</code> produces five numbers, 0, 1, 2, 3 and 4. It starts at 0 and stops <b>before</b> it reaches 5.</p>
 </section>
 
-<section class="block">
+<section class="block" id="range-explorer">
   <h2>Range explorer</h2>
   <p class="sub"><code>range()</code> can take up to three values: where to start, where to stop (it never includes this number), and the step between numbers. Change the values to see which numbers the loop would count through.</p>
   <div class="rx">
@@ -67,7 +67,7 @@ for count in range(5):
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="start-stop-and-step-in-a-program">
   <h2>Start, stop and step in a program</h2>
   <p class="sub">If you give one value it is the stop. Two values are the start and the stop. Three values are the start, the stop and the step. This program also uses <code>time.sleep()</code> to pause between numbers.</p>
   <div class="py"><textarea>
@@ -94,7 +94,7 @@ print("Lift off!")
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="using-the-loop-variable-in-a-calculation">
   <h2>Using the loop variable in a calculation</h2>
   <p class="sub">The loop variable is most useful when each repetition needs to do something slightly different.</p>
   <div class="py"><textarea>
@@ -110,7 +110,7 @@ for number in range(1, 13):
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="keeping-a-running-total">
   <h2>Keeping a running total</h2>
   <p class="sub">A very common pattern: set a total to zero before the loop, add to it inside the loop, and use it after the loop.</p>
   <div class="py" data-vars><textarea>
@@ -132,7 +132,7 @@ print("Average: " + str(round(average, 1)))
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="a-loop-inside-a-loop">
   <h2>A loop inside a loop</h2>
   <p class="sub">Loops can be nested. For each single turn of the outer loop, the inner loop runs all the way through.</p>
   <div class="py"><textarea>
@@ -148,7 +148,7 @@ for row in range(1, 4):
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="looping-over-a-string-or-a-list">
   <h2>Looping over a string or a list</h2>
   <p class="sub">A <code>for</code> loop can also visit every item in a data structure, one at a time. This is called iteration. There is no <code>range()</code>: the loop variable holds each item in turn.</p>
   <div class="py"><textarea>
@@ -164,7 +164,7 @@ for colour in ["red", "amber", "green"]:
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="playground">
   <h2>Playground</h2>
   <p class="sub">A starter program. Change it or replace it with your own.</p>
   <div class="py big"><textarea>

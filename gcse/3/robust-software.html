@@ -38,7 +38,7 @@ spec: "EDEXCEL GCSE · 3.2.3"
 </style>
 <p class="lede">Robust software can handle the unexpected without crashing, giving the wrong output or revealing sensitive data. A flaw in a program that compromises security (a code vulnerability) can be exploited by an attacker, so developers look for them through code reviews, and keep an audit trail of who changed what in the code, and when.</p>
 
-<section class="block">
+<section class="block" id="code-review">
   <h2>Code review</h2>
   <p class="sub">A code review is designed to spot poor programming practice, find vulnerabilities and check efficiency before the code is released. This program has <b>6</b> problems. Click the lines you think are a problem, then check your review. You can also run an automated review to see what a tool would find.</p>
   <div class="row" style="margin-bottom:12px"><button class="btn pri" id="chk">Check my review</button><button class="btn" id="auto">Run automated review</button><button class="btn" id="rst">Start again</button><span class="score" id="rscore"></span></div>
@@ -49,7 +49,7 @@ spec: "EDEXCEL GCSE · 3.2.3"
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="two-types-of-code-review">
   <h2>Two types of code review</h2>
   <div class="scroll"><table class="t">
     <tr><th></th><th>Review by another programmer</th><th>Automated review</th></tr>
@@ -60,7 +60,7 @@ spec: "EDEXCEL GCSE · 3.2.3"
   <p class="note">Often both are used. If issues are found, the original programmer is asked to improve the code, and then it is reviewed again.</p>
 </section>
 
-<section class="block">
+<section class="block" id="audit-trail">
   <h2>Audit trail</h2>
   <p class="sub">While software is being developed, an audit trail tracks who made which changes to the code, and when. It reduces errors and makes people accountable. If a security issue turns up, it can be traced back to the version of the code where it first appeared. Click a version to see what changed.</p>
   <p class="bug"><b>Bug report, Friday:</b> a customer typed <span class="mono">-4</span> for the number of tickets and the machine paid them a refund. This used to be impossible. What went wrong?</p>
@@ -73,13 +73,13 @@ spec: "EDEXCEL GCSE · 3.2.3"
   {% include quiz.html n=2 %}
 </section>
 
-<section class="block">
+<section class="block" id="good-practice-or-bad-practice">
   <h2>Good practice or bad practice?</h2>
   <p class="sub">Vulnerabilities often come from bad habits, or from shortcuts taken under pressure to meet a deadline.</p>
   {% include quiz.html n=3 %}
 </section>
 
-<section class="block">
+<section class="block" id="audit-trail-on-a-live-system">
   <h2>Audit trail on a live system</h2>
   <p class="sub">The same idea is used once software is running: the system keeps a log of who did what, and when. It can't stop an attack on its own, but it lets you detect unusual activity, investigate what happened, and hold people accountable. Something odd happened to the Year 10 mock grades. Use the log to find out what.</p>
   <div class="filters">

@@ -7,7 +7,7 @@ published: false
 ---
 <p class="lede">Almost every program takes something in, does something with it, and sends something out. In Python, <code>print()</code> displays output on the screen and <code>input()</code> collects what the user types on the keyboard. Every box of code on this page is real Python: change it, press Run, and see what happens.</p>
 
-<section class="block">
+<section class="block" id="output-with-print">
   <h2>Output with print()</h2>
   <p class="sub">Python runs one line at a time, from the top to the bottom. <code>print()</code> displays whatever is inside its brackets. Text (a string) needs quote marks around it. Numbers and calculations do not.</p>
   <div class="py"><textarea>
@@ -25,7 +25,7 @@ print("3 + 4")
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="input-with-input">
   <h2>Input with input()</h2>
   <p class="sub"><code>input()</code> displays a prompt, waits for the user to type something and press Enter, then hands back what they typed. Store the answer in a variable so you can use it later. When you run this, type your answer into the highlighted box in the output.</p>
   <div class="py"><textarea>
@@ -40,7 +40,7 @@ print("Nice to meet you.")
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="input-always-gives-you-a-string">
   <h2>input() always gives you a string</h2>
   <p class="sub">Even if the user types a number, <code>input()</code> returns it as text. This program has a bug. Run it, type your age, and read the error.</p>
   <div class="py"><textarea>
@@ -63,7 +63,7 @@ print("That is " + str(height * 100) + " cm")
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="building-an-output-message">
   <h2>Building an output message</h2>
   <p class="sub">There are two ways to mix text and values in one line of output. You can join strings with <code>+</code> (concatenation), or you can write a string with <code>{}</code> placeholders and fill them in using <code>.format()</code>.</p>
   <div class="py"><textarea>
@@ -87,7 +87,7 @@ print("Total: £{:.2f}".format(total))
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="lining-output-up-in-columns">
   <h2>Lining output up in columns</h2>
   <p class="sub">A placeholder can also set how wide a value should be and which side it sits on. <code>&lt;</code> is left aligned, <code>&gt;</code> is right aligned and <code>^</code> is centred. The number after it is the width in characters. Multiplying a string repeats it, which is handy for drawing lines.</p>
   <div class="py"><textarea>
@@ -117,7 +117,7 @@ print("{:<10} {:>5} {:>8.2f}".format("Total", 16, 25.85))
   </ul>
 </section>
 
-<section class="block">
+<section class="block" id="playground-input-process-output">
   <h2>Playground: input, process, output</h2>
   <p class="sub">This program follows the classic pattern: get the inputs, work something out, display the result. Change it into something of your own.</p>
   <div class="py big"><textarea>

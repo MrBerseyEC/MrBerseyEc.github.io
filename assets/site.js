@@ -72,3 +72,25 @@ document.addEventListener('DOMContentLoaded',()=>{
   d.addEventListener('fullscreenchange',()=>{if(!d.fullscreenElement)close()});
   d.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 });
+
+/* Links to a particular demo. Every block has an id, so a page can be opened at /page.html#id.
+   Adds a # link to each block heading (right-click or tap it to copy the address), opens the right tab if the
+   target is inside a hidden tab panel, scrolls to it and flashes it. */
+document.addEventListener('DOMContentLoaded',()=>{
+  const d=document;
+  $$('.wrap>.block[id]:not(.course)>h2').forEach(h=>{
+    const a=d.createElement('a');a.className='plink';a.href='#'+h.parentNode.id;a.textContent='#';a.title='Link to this demo';a.setAttribute('aria-label','Link to '+h.textContent);
+    h.append(a);
+  });
+  const go=()=>{
+    const id=decodeURIComponent(location.hash.slice(1));if(!id)return;
+    const t=d.getElementById(id);if(!t)return;
+    const panel=t.closest('.hidden');
+    const btn=panel&&panel.id&&d.querySelector(`[role=tab][data-p="${panel.id}"]`);if(btn)btn.click();
+    const box=t.closest('.block')||t;
+    t.scrollIntoView({block:'start'});
+    $$('.block.target').forEach(x=>x.classList.remove('target'));
+    box.classList.add('target');setTimeout(()=>box.classList.remove('target'),2400);
+  };
+  addEventListener('hashchange',go);setTimeout(go,60);
+});

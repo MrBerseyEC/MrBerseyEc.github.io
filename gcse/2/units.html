@@ -21,7 +21,7 @@ published: false
 
 <p class="lede">The smallest unit of data is the bit. Bits are grouped into bytes, and bytes are counted in binary multiples: each unit is <b>1024</b> times the one before, because 1024 is 2<sup>10</sup>. You need these units to work out file sizes and to decide whether something will fit on a storage device.</p>
 
-<section class="block">
+<section class="block" id="the-units">
   <h2>The units</h2>
   <div class="scroll"><table class="t" style="max-width:820px">
     <tr><th>Unit</th><th>Abbreviation</th><th>Equivalent to</th><th>In bytes</th></tr>
@@ -36,7 +36,7 @@ published: false
   <p class="note">You will also see kilobyte, megabyte and gigabyte. Those prefixes strictly mean 1000, not 1024, which has caused a lot of confusion. The binary prefixes kibi, mebi, gibi and tebi were introduced to make it clear that the multiple is 1024. They are the ones to use in this course.</p>
 </section>
 
-<section class="block">
+<section class="block" id="converting-between-units">
   <h2>Converting between units</h2>
   <p class="sub">Moving to a <b>smaller</b> unit, there will be more of them, so <b>multiply</b>. Moving to a <b>larger</b> unit, there will be fewer, so <b>divide</b>. Do one step of the ladder at a time.</p>
   <div class="calc">
@@ -49,7 +49,7 @@ published: false
   <p class="result" id="cres"></p>
 </section>
 
-<section class="block">
+<section class="block" id="how-many-will-fit">
   <h2>How many will fit?</h2>
   <p class="sub">To find out how many files fit on a device, put both sizes into the same unit and divide. Any part of a file left over does not count.</p>
   <div class="calc">
@@ -60,18 +60,18 @@ published: false
   <p class="result" id="fres"></p>
 </section>
 
-<section class="block">
+<section class="block" id="constructing-expressions">
   <h2>Constructing expressions</h2>
   <p class="sub">Exam questions often ask you to construct an expression and tell you not to carry out the calculation. Choose the correct expression for each one.</p>
   {% include quiz.html n=1 %}
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html n=2 %}
 </section>

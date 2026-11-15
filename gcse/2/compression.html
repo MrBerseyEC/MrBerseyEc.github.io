@@ -32,7 +32,7 @@ textarea{width:100%;min-height:7.5em;font:.95rem/1.5 var(--mono);padding:10px;bo
 
 <p class="lede">Compression makes a file smaller by repackaging its data or by removing some of it. There are two kinds. <b>Lossless</b> compression keeps everything, so the original file can be rebuilt exactly. <b>Lossy</b> compression permanently throws some of the data away.</p>
 
-<section class="block">
+<section class="block" id="why-compress">
   <h2>Why compress?</h2>
   <div class="why">
     <div><b>Less storage space</b><small>More photos, songs and videos fit on the same drive, phone or server.</small></div>
@@ -41,7 +41,7 @@ textarea{width:100%;min-height:7.5em;font:.95rem/1.5 var(--mono);padding:10px;bo
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="lossless-compression">
   <h2>Lossless compression</h2>
   <p class="sub">Lossless compression works by finding data that is repeated. In this text, every word used more than once is put into a lookup table. Each time it appears, it is replaced by a short token pointing to its place in the table. Edit the text and see how the saving changes.</p>
   <textarea id="txt" spellcheck="false" aria-label="Text to compress">row row row your boat gently down the stream
@@ -58,7 +58,7 @@ if you see a crocodile do not forget to scream</textarea>
   <p class="note">The sizes assume one byte for each character and one byte for each token. The lookup table has to be stored in the file as well, so text with little repetition hardly shrinks at all. Lossless compression is essential when every bit matters, such as a text document, a spreadsheet or a program: losing words from a report or lines from a program would be a serious problem.</p>
 </section>
 
-<section class="block">
+<section class="block" id="lossy-compression">
   <h2>Lossy compression</h2>
   <p class="sub">Lossy compression removes detail that people are unlikely to notice. A photograph contains tiny differences in colour that our eyes cannot tell apart. Here, a pixel that is nearly the same colour as the one before it is given exactly the same colour. Long runs of identical pixels can then be stored using far fewer bits. Increase the compression until you can see the damage.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Compression <input type="range" id="lv" min="0" max="6" value="2" style="width:14em"> <b id="lvv"></b></label></div>
@@ -71,7 +71,7 @@ if you see a crocodile do not forget to scream</textarea>
   <p class="note">The removed data is gone for good. There is no way to get the original back from the compressed file. Sound is compressed in the same way: an MP3 leaves out frequencies we cannot hear and differences in volume too small to notice.</p>
 </section>
 
-<section class="block">
+<section class="block" id="comparing-the-two">
   <h2>Comparing the two</h2>
   <div class="scroll"><table class="t">
     <tr><th></th><th>Lossless</th><th>Lossy</th></tr>
@@ -84,12 +84,12 @@ if you see a crocodile do not forget to scream</textarea>
   </table></div>
 </section>
 
-<section class="block">
+<section class="block" id="lossy-or-lossless">
   <h2>Lossy or lossless?</h2>
   {% include quiz.html n=1 %}
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html n=2 %}
 </section>

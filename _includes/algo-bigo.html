@@ -1,5 +1,5 @@
 {%- comment -%} The Big O block for an algorithm page. algoDemo() in assets/algo.js fills it in. {%- endcomment -%}
-<section class="block">
+<section class="block" id="{{ include.id | default: "big-o" }}">
   <h2>Efficiency and Big O</h2>
   <p class="sub">{{ include.sub }}</p>
   <div class="facts" id="ad-bo-facts"></div>

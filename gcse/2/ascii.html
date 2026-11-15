@@ -29,7 +29,7 @@ published: false
 
 <p class="lede">Pressing a key sends a pattern of 1s and 0s to the processor. For computers from different manufacturers to exchange text, they have to agree on which pattern stands for which character. ASCII (the American Standard Code for Information Interchange) is one such agreement. It uses <b>7 bits</b> for each character, which gives 2<sup>7</sup> = 128 different codes.</p>
 
-<section class="block">
+<section class="block" id="text-to-binary">
   <h2>Text to binary</h2>
   <p class="sub">Type something. Each character is stored as its own 7-bit code. The set of characters that a computer can represent is called its <b>character set</b>.</p>
   <div class="row"><input type="text" id="txt" value="8 bits" maxlength="24" style="width:min(100%,26em);font-family:var(--mono)" aria-label="Text to encode"></div>
@@ -38,14 +38,14 @@ published: false
   <p class="status" id="tsize"></p>
 </section>
 
-<section class="block">
+<section class="block" id="binary-to-text">
   <h2>Binary to text</h2>
   <p class="sub">Click the 7 bits to build a code and see which character it stands for.</p>
   <div id="bits"></div>
   <p class="result" id="dec"></p>
 </section>
 
-<section class="block">
+<section class="block" id="the-ascii-table">
   <h2>The ASCII table</h2>
   <p class="sub">These are the printable characters, codes 32 to 126. Codes 0 to 31 and 127 are control codes, such as new line and tab. Click any character to load it into the bits above.</p>
   <div class="toolbar" style="margin-bottom:12px"><span><b style="color:var(--hl)">■</b> digits 48 to 57</span><span><b style="color:var(--one)">■</b> upper case 65 to 90</span><span><b style="color:var(--ok)">■</b> lower case 97 to 122</span></div>
@@ -53,7 +53,7 @@ published: false
   <p class="note">You do not need to memorise the table. The codes within each group run in order, so if you are given one code you can work out the others. If 'd' is 100, then 'c' is 99 and 'f' is 102. A lower-case letter is always 32 more than its upper-case version: 'A' is 65 and 'a' is 97.</p>
 </section>
 
-<section class="block">
+<section class="block" id="comparing-characters">
   <h2>Comparing characters</h2>
   <p class="sub">Because every character is really a number, a program can compare them with relational operators such as &lt; and &gt;. Strings are compared one character at a time, from the left, until two characters differ.</p>
   <div class="cmp"><input type="text" id="ca" value="Zebra" maxlength="12" aria-label="First string"><span class="op" id="cop"></span><input type="text" id="cb" value="apple" maxlength="12" aria-label="Second string"></div>
@@ -61,7 +61,7 @@ published: false
   <p class="note">All the upper-case letters have lower codes than all the lower-case letters, so "Zebra" comes before "apple". This is why programs often convert text to one case before sorting it.</p>
 </section>
 
-<section class="block">
+<section class="block" id="the-limits-of-ascii">
   <h2>The limits of ASCII</h2>
   <p class="sub">The number of bits limits what can be represented. With 7 bits there are only 128 codes: enough for English letters, digits and punctuation, and nothing else.</p>
   <div class="scroll"><table class="t" style="max-width:820px">
@@ -73,13 +73,13 @@ published: false
   <p class="note">More bits per character means a bigger character set, but each character can take up more storage space.</p>
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <p class="sub">Work these out from the code you are given, without looking at the table.</p>
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

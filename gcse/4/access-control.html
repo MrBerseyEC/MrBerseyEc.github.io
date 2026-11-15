@@ -32,7 +32,7 @@ spec: "EDEXCEL GCSE · 4.2.2"
 
 <p class="lede"><b>Access control</b> decides who can log in to a network, and what each authorised user can see and do once they are in. It starts with <b>authentication</b>: checking the identity of the person who is trying to gain access.</p>
 
-<section class="block">
+<section class="block" id="multi-factor-authentication">
   <h2>Multi-factor authentication</h2>
   <p class="sub">A username and password is the most basic form of authentication. Many organisations ask for more than one kind of proof. Choose what this network asks for, and what an attacker has managed to get hold of.</p>
   <div class="mfa">
@@ -51,7 +51,7 @@ spec: "EDEXCEL GCSE · 4.2.2"
   <p class="note">Someone attempting to gain unauthorised access may be able to meet one or two of the requirements, but would struggle to supply a matching physical attribute. Each extra factor means one more thing an attacker has to get hold of.</p>
 </section>
 
-<section class="block">
+<section class="block" id="how-long-would-a-password-last">
   <h2>How long would a password last?</h2>
   <p class="sub">A brute force attack tries every possible password until one works. The longer the password and the more kinds of character it uses, the more possibilities there are to try.</p>
   <label class="sl">Length of password <input type="range" id="len" min="4" max="16" value="8"><span id="lenv"></span></label>
@@ -61,7 +61,7 @@ spec: "EDEXCEL GCSE · 4.2.2"
   <p class="note">The time assumes an attacker who can try ten billion passwords a second, which is realistic for stolen password data. It only applies to random passwords: a real word, a name or a date falls much faster, because attackers try those first.</p>
 </section>
 
-<section class="block">
+<section class="block" id="file-permissions">
   <h2>File permissions</h2>
   <p class="sub">Being logged in does not mean being able to open everything. This is a hotel's network. Choose who is logged in, then try to do things with each file.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Logged in as <select id="user"></select></label></div>
@@ -71,7 +71,7 @@ spec: "EDEXCEL GCSE · 4.2.2"
   <p class="note">The <b>principle of least privilege</b>: give each user only the permissions and administrative rights they need to do their job. A receptionist needs the booking system, but not the revenue forecasts. Access controls are set up by the organisation's system administrator.</p>
 </section>
 
-<section class="block">
+<section class="block" id="physical-security">
   <h2>Physical security</h2>
   <p class="sub">Anyone with physical access to a server, and enough technical skill, could bypass the authentication and access control systems altogether, then copy, change or delete data or install malware. So the servers are kept in a locked server room. Try the door with each kind of lock.</p>
   <div class="toolbar" style="margin-bottom:12px">
@@ -85,12 +85,12 @@ spec: "EDEXCEL GCSE · 4.2.2"
   <p class="note">Other physical measures include locked doors and windows to stop people simply walking in, and security tags or locking equipment down to protect against theft.</p>
 </section>
 
-<section class="block">
+<section class="block" id="which-kind-of-protection">
   <h2>Which kind of protection?</h2>
   {% include quiz.html n=1 %}
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html n=2 %}
 </section>

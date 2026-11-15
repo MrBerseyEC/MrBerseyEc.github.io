@@ -31,7 +31,7 @@ spec: "EDEXCEL GCSE · 4.1.2"
 
 <p class="lede">Data is not sent across the internet in one piece. It is broken up into small <b>packets</b>. Each packet is labelled with the address it is going to and travels there independently, passed from router to router. When all the packets have arrived, they are put back together in the right order. This is called <b>packet switching</b>.</p>
 
-<section class="block">
+<section class="block" id="send-a-message">
   <h2>Send a message</h2>
   <p class="sub">Type a message and send it from computer A to computer B. Click any link between two routers to make it congested, and watch the routers send packets a different way.</p>
   <div class="toolbar" style="margin-bottom:12px">
@@ -62,7 +62,7 @@ spec: "EDEXCEL GCSE · 4.1.2"
   <p class="note">The <b>checksum</b> is a number calculated from the data before it is sent. The receiving computer does the same calculation on the data that arrives. If the two results do not match, the packet was damaged on the way, and the destination asks for it to be sent again. In this demo the checksum is the character codes of the data added together, keeping only the last 8 bits.</p>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

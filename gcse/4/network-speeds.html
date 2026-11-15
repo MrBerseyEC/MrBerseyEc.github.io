@@ -28,7 +28,7 @@ spec: "EDEXCEL GCSE · 4.1.4"
 
 <p class="lede">Two things decide how fast a network feels. <b>Bandwidth</b> is its capacity: the maximum amount of data that can be transferred each second. <b>Latency</b>, also called lag, is the delay between data being sent and it arriving, measured in milliseconds. Sometimes one matters more, sometimes the other.</p>
 
-<section class="block">
+<section class="block" id="bandwidth-and-latency">
   <h2>Bandwidth and latency</h2>
   <p class="sub">Choose something to do on the network, then change the bandwidth and the latency. The bar shows where the time goes.</p>
   <div class="seg" id="task" role="group" aria-label="Task"><button data-t="0" aria-pressed="true">Download a 50 MiB film clip</button><button data-t="1" aria-pressed="false">Load a 20 KiB image on a web page</button></div>
@@ -41,7 +41,7 @@ spec: "EDEXCEL GCSE · 4.1.4"
   <p class="status" id="tmsg"></p>
 </section>
 
-<section class="block">
+<section class="block" id="feel-the-latency">
   <h2>Feel the latency</h2>
   <p class="sub">On a voice or video call the amount of data is small, but it has to arrive without a noticeable delay. This uses the latency set above. Press the button and watch how long it takes for the other person to hear you.</p>
   <div class="row"><button class="btn pri" id="hello">Say "hello"</button></div>
@@ -54,7 +54,7 @@ spec: "EDEXCEL GCSE · 4.1.4"
   <p class="note">High latency ruins anything that happens in real time. In an online game, what you see is already out of date and your moves reach the server late. For downloading a large file it hardly matters how long any one byte takes: what counts is the total time, and that depends on the bandwidth.</p>
 </section>
 
-<section class="block">
+<section class="block" id="units-of-network-speed">
   <h2>Units of network speed</h2>
   <p class="sub">The <b>data transfer rate</b> is the speed at which data is transmitted from one device to another. It is measured in bits per second.</p>
   <details class="recap" style="max-width:640px"><summary>Units of speed</summary>
@@ -69,7 +69,7 @@ spec: "EDEXCEL GCSE · 4.1.4"
   <p class="note">Two things to watch. Network speeds go up in steps of <b>1000</b>, but file sizes (KiB, MiB, GiB) go up in steps of <b>1024</b>. And speeds are in <b>bits</b>, while file sizes are usually in bytes, so a file size has to be multiplied by 8.</p>
 </section>
 
-<section class="block">
+<section class="block" id="time-size-or-speed">
   <h2>Time, size or speed?</h2>
   <p class="sub">The same relationship can be rearranged to find any one of the three. Choose what you want to find, fill in the other two, and watch the expression being built. Get everything into bits and seconds first.</p>
   <div class="seg" id="solve" role="group" aria-label="What to work out"><button data-m="t" aria-pressed="true">time = size ÷ speed</button><button data-m="s" aria-pressed="false">size = speed × time</button><button data-m="v" aria-pressed="false">speed = size ÷ time</button></div>
@@ -84,18 +84,18 @@ spec: "EDEXCEL GCSE · 4.1.4"
   <p class="note">The answer is only theoretical. Real transmission speeds are not constant, and other things such as latency and how busy the network is affect how long a transfer takes.</p>
 </section>
 
-<section class="block">
+<section class="block" id="constructing-expressions">
   <h2>Constructing expressions</h2>
   <p class="sub">You will usually be asked to construct an expression, without working out the answer.</p>
   {% include quiz.html n=1 %}
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html n=2 %}
 </section>

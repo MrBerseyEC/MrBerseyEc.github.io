@@ -135,3 +135,12 @@ html.fulling{overflow:hidden}
 .settings .shelp{color:var(--muted);font-size:.85rem;margin:8px 0 0}
 html.fulling .gear,html.fulling .settings{display:none}
 @media print{.gear,.settings{display:none}}
+
+/* ---------- links to a particular demo (built by site.js) ---------- */
+.block{scroll-margin-top:12px}
+.plink{margin-left:.5em;font:600 .9rem var(--mono);color:var(--muted);text-decoration:none;opacity:0;transition:opacity .15s}
+.block>h2:hover .plink,.plink:focus-visible{opacity:1}
+@media (hover:none){.plink{opacity:.6}}
+.block.target{animation:target 2.4s ease-out}
+@keyframes target{0%,60%{box-shadow:0 0 0 4px var(--hl);background:var(--hl-soft)}100%{box-shadow:0 0 0 4px transparent}}
+@media print{.plink{display:none}}

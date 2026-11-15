@@ -20,7 +20,7 @@ published: false
 
 <p class="lede">A binary shift moves every bit in a pattern a number of places to the left or to the right. Bits that fall off the end are discarded and the empty places are filled in. Shifting is a very fast way for a processor to multiply and divide by powers of 2.</p>
 
-<section class="block">
+<section class="block" id="shift-a-pattern">
   <h2>Shift a pattern</h2>
   <p class="sub">Set the bits, choose a shift and the number of places. Press <b>Apply</b> to carry on shifting from the result.</p>
   <div id="bits" class="nib"></div>
@@ -37,7 +37,7 @@ published: false
   <p class="note" id="effect"></p>
 </section>
 
-<section class="block">
+<section class="block" id="the-four-shifts">
   <h2>The four shifts</h2>
   <div class="scroll"><table class="t">
     <tr><th>Shift</th><th>Bits move</th><th>Discarded</th><th>Empty places filled with</th><th>Effect on a number</th></tr>
@@ -49,7 +49,7 @@ published: false
   <p class="note">A <b>logical</b> shift treats every bit the same way, whatever the pattern represents. An <b>arithmetic</b> shift right takes account of the MSB so that a negative two's complement number stays negative. Shifting by <i>n</i> places multiplies or divides by 2<sup><i>n</i></sup>: one place is 2, two places is 4, three places is 8.</p>
 </section>
 
-<section class="block">
+<section class="block" id="when-shifting-gives-the-wrong-answer">
   <h2>When shifting gives the wrong answer</h2>
   <div class="scroll"><table class="t">
     <tr><th>Problem</th><th>Example</th><th>Why</th></tr>
@@ -59,12 +59,12 @@ published: false
   </table></div>
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

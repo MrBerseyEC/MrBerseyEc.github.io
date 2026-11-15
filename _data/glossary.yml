@@ -1,0 +1,251 @@
+# The glossary. The glossary page is built from this file, and only this file.
+#   t: the term
+#   d: a short definition, in plain words, at the level of the demo it points to
+#   u: where to find it: the demo page's path, then optionally #id of a block on that page
+#      (every block has an id; hover its heading to see a # link, or use the id from the page source)
+#
+# The level (F, GCSE or A-Level) comes from the course in _data/courses.yml that holds the page, so there is
+# nothing to set here. The same term can appear several times, once per level: the glossary groups them.
+#
+# Entries for pages with published: false are still listed, without a link, and gain their link the moment
+# the page is published. A page that is missing or has no id is not an error either: the entry just links
+# to the page, or is shown without a link. Keep this file in alphabetical order within each section if you like;
+# the page sorts it anyway.
+
+# ---------------- F (MakeCode Arcade) ----------------
+- { t: "Abstraction", d: "Keeping the parts of a problem that matter and hiding the details that do not. A sprite stands for a real thing without showing every detail of it.", u: "/f/abstraction.html#from-a-real-thing-to-a-sprite" }
+- { t: "Block (custom)", d: "A block you make yourself, so that a group of blocks can be reused by giving it a name.", u: "/f/abstraction.html#make-your-own-block" }
+- { t: "Bug", d: "A mistake in a program that makes it do the wrong thing. Switching parts of a program off helps to find which part has it.", u: "/f/decomposition.html#find-the-bug-by-switching-parts-off" }
+- { t: "Call", d: "Using a function you have already made by running its name. The program jumps to it, does it, and comes back.", u: "/f/decomposition.html#one-big-lump-or-named-parts" }
+- { t: "Decomposition", d: "Breaking a big problem down into smaller parts that are easier to build, test and share out.", u: "/f/decomposition.html#break-a-big-problem-down" }
+- { t: "Function", d: "A named group of blocks that does one job. You can call it as often as you like.", u: "/f/abstraction.html#make-your-own-block" }
+- { t: "Kind", d: "A label that sprites share, such as Food or Enemy, so that one rule can work for lots of sprites at once.", u: "/f/abstraction.html#kinds-one-rule-for-lots-of-sprites" }
+- { t: "Sprite", d: "A picture in a game that can move, such as a player or an enemy. It is an abstraction of a real thing.", u: "/f/abstraction.html#from-a-real-thing-to-a-sprite" }
+
+# ---------------- A-Level: 1.4.3 Boolean algebra ----------------
+- { t: "AND gate", d: "A logic gate whose output is 1 only when both of its inputs are 1.", u: "/a-level/1.4.3/logic-gates.html" }
+- { t: "Boolean expression", d: "A statement written with Boolean operators such as AND, OR and NOT that works out to true (1) or false (0).", u: "/a-level/1.4.3/boolean-simplification.html" }
+- { t: "Boolean simplification", d: "Using the laws of Boolean algebra to rewrite an expression in a shorter form that does the same job, so a circuit needs fewer gates.", u: "/a-level/1.4.3/boolean-simplification.html#rules" }
+- { t: "Carry", d: "The 1 passed to the next column when two bits (and any carry in) add up to more than 1.", u: "/a-level/1.4.3/half-full-adders.html" }
+- { t: "Clock", d: "A signal that switches between 0 and 1 at a steady rate. A flip-flop only changes its stored value when the clock edge arrives.", u: "/a-level/1.4.3/d-type-flip-flop.html" }
+- { t: "Combinational circuit", d: "A circuit whose output depends only on its present inputs. It has no memory, unlike a latch or flip-flop.", u: "/a-level/1.4.3/d-type-flip-flop.html" }
+- { t: "D-type flip-flop", d: "A circuit that stores one bit. It copies the D input to the output Q only when the clock rises, and holds it otherwise.", u: "/a-level/1.4.3/d-type-flip-flop.html" }
+- { t: "De Morgan's laws", d: "Rules for swapping AND and OR when a NOT is moved across them: NOT (A AND B) = NOT A OR NOT B, and NOT (A OR B) = NOT A AND NOT B.", u: "/a-level/1.4.3/boolean-simplification.html#rules" }
+- { t: "Full adder", d: "A circuit that adds two bits and a carry in, giving a sum bit and a carry out. Two half adders and an OR gate make one.", u: "/a-level/1.4.3/ripple-carry-adder.html#full-adder" }
+- { t: "Half adder", d: "A circuit that adds two bits and gives a sum (A XOR B) and a carry (A AND B). It has no carry in.", u: "/a-level/1.4.3/half-full-adders.html" }
+- { t: "Karnaugh map", d: "A grid used to simplify a Boolean expression by grouping neighbouring 1s, instead of using algebra.", u: "/a-level/1.4.3/karnaugh-maps.html" }
+- { t: "Logic gate", d: "An electronic component that takes one or more binary inputs and gives one binary output according to a rule: AND, OR, NOT, NAND, NOR or XOR.", u: "/a-level/1.4.3/logic-gates.html" }
+- { t: "NAND gate", d: "A logic gate that is NOT AND: its output is 0 only when both inputs are 1.", u: "/a-level/1.4.3/logic-gates.html" }
+- { t: "NOR gate", d: "A logic gate that is NOT OR: its output is 1 only when both inputs are 0.", u: "/a-level/1.4.3/logic-gates.html" }
+- { t: "NOT gate", d: "A logic gate that inverts its input: 1 becomes 0 and 0 becomes 1.", u: "/a-level/1.4.3/logic-gates.html" }
+- { t: "OR gate", d: "A logic gate whose output is 1 when at least one of its inputs is 1.", u: "/a-level/1.4.3/logic-gates.html" }
+- { t: "Ripple-carry adder", d: "Several full adders chained together, with each carry out feeding the next carry in, to add multi-bit numbers. The carry ripples along, so the answer takes longer for more bits.", u: "/a-level/1.4.3/ripple-carry-adder.html#why-its-called-ripple-carry" }
+- { t: "SR latch", d: "A pair of cross-coupled gates that remember one bit: Set makes the output 1, Reset makes it 0, and with both low it holds its value.", u: "/a-level/1.4.3/d-type-flip-flop.html" }
+- { t: "Truth table", d: "A table listing every combination of inputs to a logic gate or circuit with the output for each.", u: "/a-level/1.4.3/logic-gates.html" }
+- { t: "XOR gate", d: "A logic gate whose output is 1 when its two inputs are different.", u: "/a-level/1.4.3/logic-gates.html" }
+
+# ---------------- A-Level: 2.1 Computational thinking ----------------
+- { t: "Abstraction", d: "Removing unnecessary detail to leave only what is needed to solve the problem, as a map does for a city. Types include representational abstraction, abstraction by generalisation, procedural abstraction and data abstraction.", u: "/a-level/2.1/thinking-abstractly.html#from-a-city-to-a-map" }
+- { t: "Abstraction by generalisation", d: "Grouping problems that share a pattern so one general solution can be used for all of them.", u: "/a-level/2.1/thinking-abstractly.html#abstraction-by-generalisation" }
+- { t: "Cache", d: "Data kept close at hand after it has been fetched once, so that asking for it again is faster. It is prepared ahead of need.", u: "/a-level/2.1/thinking-ahead.html#caching" }
+- { t: "Component (reusable)", d: "A tested part of a program, such as a function, class or library, that can be used again in other programs.", u: "/a-level/2.1/thinking-ahead.html#reusable-program-components" }
+- { t: "Concurrent processing", d: "Tasks that take turns on a processor so that they all make progress over the same period of time, even with only one processor.", u: "/a-level/2.1/thinking-concurrently.html#concurrent-or-parallel" }
+- { t: "Data abstraction", d: "Hiding how data is stored and giving only the operations you can perform on it, such as the enqueue and dequeue of a queue.", u: "/a-level/2.1/thinking-abstractly.html#data-abstraction-a-queue" }
+- { t: "Decision", d: "A point in a program where the path taken depends on whether a condition is true or false.", u: "/a-level/2.1/thinking-logically.html#where-are-the-decisions" }
+- { t: "Decomposition", d: "Breaking a problem down into smaller sub-problems that can be solved, tested and reused separately.", u: "/a-level/2.1/thinking-procedurally.html#breaking-a-problem-down" }
+- { t: "Input and output", d: "What a program or sub-program is given and what it produces. Knowing them in advance is part of thinking ahead.", u: "/a-level/2.1/thinking-ahead.html#inputs-and-outputs" }
+- { t: "Logic error", d: "A mistake in a condition or the order of a program that lets it run but gives the wrong result. It can be found by tracing.", u: "/a-level/2.1/thinking-logically.html#tracing-a-logic-error" }
+- { t: "Parallel processing", d: "Tasks that really run at the same moment on more than one processor or core.", u: "/a-level/2.1/thinking-concurrently.html#concurrent-or-parallel" }
+- { t: "Parameter", d: "A named value passed into a sub-procedure so that the same code can work on different data.", u: "/a-level/2.1/thinking-procedurally.html#parameters-at-work" }
+- { t: "Path (through a program)", d: "One route through the decisions in a program. Testing needs every path to be followed at least once.", u: "/a-level/2.1/thinking-logically.html#paths-and-testing" }
+- { t: "Precondition", d: "Something that must be true before a sub-program is run for it to work, such as a list being sorted before a binary search.", u: "/a-level/2.1/thinking-ahead.html#preconditions" }
+- { t: "Procedural abstraction", d: "Hiding the steps of a procedure behind its name, so you only need to know what it does and not how.", u: "/a-level/2.1/thinking-abstractly.html#why-programmers-rely-on-abstraction" }
+- { t: "Representational abstraction", d: "A simplified representation of something real that leaves out detail, such as the Metro map.", u: "/a-level/2.1/thinking-abstractly.html#how-an-abstraction-differs-from-reality" }
+- { t: "Shared data", d: "Data used by more than one task. Concurrency has a trade-off here, because tasks can interfere with each other's data.", u: "/a-level/2.1/thinking-concurrently.html#the-trade-off-shared-data" }
+- { t: "Sub-procedure", d: "A smaller named procedure that does one part of a larger solution and is called from it.", u: "/a-level/2.1/thinking-procedurally.html#from-components-to-sub-procedures" }
+
+# ---------------- A-Level: 2.3 Algorithms ----------------
+- { t: "Base case", d: "The simple case of a recursive algorithm that can be answered without a further call, so that the recursion stops.", u: "/a-level/2.3/merge-sort.html#how-it-works" }
+- { t: "Big O notation", d: "A way of describing how the work or memory an algorithm needs grows with the size of its input, ignoring constants. It is normally quoted for the worst case.", u: "/a-level/2.3/bubble-sort.html#big-o" }
+- { t: "Binary search", d: "Finds an item in a sorted list by checking the middle item and discarding the half that cannot hold it, repeatedly. Time is O(log n).", u: "/a-level/2.3/binary-search.html#how-it-works" }
+- { t: "Bubble sort", d: "Sorts by comparing neighbouring items and swapping any pair the wrong way round, in repeated passes, until a pass makes no swap. Worst case O(n²).", u: "/a-level/2.3/bubble-sort.html#how-it-works" }
+- { t: "Divide and conquer", d: "Solving a problem by splitting it into smaller copies of the same problem, solving those and combining the results, as merge sort and quick sort do.", u: "/a-level/2.3/merge-sort.html#how-it-works" }
+- { t: "In place", d: "Describes an algorithm that rearranges the data within the original list, needing no second list of the same size.", u: "/a-level/2.3/bubble-sort.html#how-it-works" }
+- { t: "Insertion sort", d: "Sorts by taking each item in turn and inserting it into its correct place in the sorted part of the list on its left. Worst case O(n²), best case O(n).", u: "/a-level/2.3/insertion-sort.html#how-it-works" }
+- { t: "Linear search", d: "Finds an item by checking each item in turn from the start until it is found or the list ends. Time is O(n), and the list need not be sorted.", u: "/a-level/2.3/linear-search.html#how-it-works" }
+- { t: "Merge", d: "Combining two sorted lists into one sorted list by repeatedly taking the smaller of the front items.", u: "/a-level/2.3/merge-sort.html#how-it-works" }
+- { t: "Merge sort", d: "A divide and conquer sort that halves the list until each part has one item, then merges the parts back in order. Time is O(n log n) in every case, using O(n) extra space.", u: "/a-level/2.3/merge-sort.html#how-it-works" }
+- { t: "Partition", d: "In quick sort, moving items so that those smaller than the pivot are on one side and larger ones on the other, with the pivot in its final position.", u: "/a-level/2.3/quick-sort.html#how-it-works" }
+- { t: "Pass", d: "One complete trip through the list by a sorting algorithm. Bubble sort repeats passes until one has no swaps.", u: "/a-level/2.3/bubble-sort.html#how-it-works" }
+- { t: "Pivot", d: "The item that quick sort chooses to split the other items around.", u: "/a-level/2.3/quick-sort.html#how-it-works" }
+- { t: "Quick sort", d: "A divide and conquer sort that partitions around a pivot, then sorts each side. O(n log n) on average, but O(n²) in the worst case.", u: "/a-level/2.3/quick-sort.html#how-it-works" }
+- { t: "Recursion", d: "When a subroutine calls itself on a smaller version of the problem, until a base case is reached.", u: "/a-level/2.3/merge-sort.html#how-it-works" }
+- { t: "Space complexity", d: "How the memory an algorithm needs grows with the size of the input. Bubble and insertion sort are O(1); merge sort is O(n).", u: "/a-level/2.3/merge-sort.html#big-o" }
+- { t: "Stable sort", d: "A sort that keeps items with equal keys in their original order. Merge sort is stable.", u: "/a-level/2.3/merge-sort.html#how-it-works" }
+- { t: "Time complexity", d: "How the number of steps an algorithm takes grows with the size of the input, written in Big O notation.", u: "/a-level/2.3/linear-search.html#big-o" }
+
+# ---------------- GCSE Topic 2: Data ----------------
+- { t: "Amplitude", d: "The height of a sound wave, which sets how loud the sound is. Sampling records it at each sample point.", u: "/gcse/2/sound.html#sound-waves" }
+- { t: "Analogue", d: "Data that varies smoothly and continuously, such as a sound wave. It has to be sampled to be stored by a computer.", u: "/gcse/2/sound.html#sound-waves" }
+- { t: "Arithmetic shift", d: "A binary shift that keeps the sign bit, so that a signed number keeps its sign when it is multiplied or divided by powers of 2.", u: "/gcse/2/binary-shifts.html#the-four-shifts" }
+- { t: "ASCII", d: "A character set that uses 7 bits per character, giving 128 codes for English letters, digits, punctuation and control codes.", u: "/gcse/2/ascii.html#the-ascii-table" }
+- { t: "Binary", d: "The base-2 number system that uses only the digits 0 and 1. Computers use it because a switch can be on or off.", u: "/gcse/2/binary.html#switches-and-bits" }
+- { t: "Binary addition", d: "Adding in binary using four rules: 0+0=0, 0+1=1, 1+1=10 and 1+1+1=11, carrying a 1 into the next column when needed.", u: "/gcse/2/binary-addition.html#the-four-rules" }
+- { t: "Binary shift", d: "Moving all the bits of a pattern left or right. A left shift of 1 multiplies by 2 and a right shift of 1 divides by 2.", u: "/gcse/2/binary-shifts.html#the-four-shifts" }
+- { t: "Bit", d: "A binary digit, 0 or 1. It is the smallest unit of data.", u: "/gcse/2/binary.html#switches-and-bits" }
+- { t: "Bit depth", d: "The number of bits used to store each sample of a sound. More bits gives a more accurate recording and a bigger file.", u: "/gcse/2/sound.html#key-terms" }
+- { t: "Bitmap image", d: "An image stored as a grid of pixels, each with a binary colour code.", u: "/gcse/2/bitmap-images.html#pixels-and-colour-depth" }
+- { t: "Byte", d: "A group of 8 bits.", u: "/gcse/2/binary.html#switches-and-bits" }
+- { t: "Character set", d: "The set of characters a computer can represent, each with its own binary code.", u: "/gcse/2/ascii.html#text-to-binary" }
+- { t: "Colour depth", d: "The number of bits used to store the colour of each pixel. More bits allows more colours and makes the file bigger.", u: "/gcse/2/bitmap-images.html#pixels-and-colour-depth" }
+- { t: "Compression", d: "Making a file smaller so that it needs less storage space and is faster to transfer. It can be lossy or lossless.", u: "/gcse/2/compression.html#why-compress" }
+- { t: "Denary", d: "The base-10 number system that people normally use, with the digits 0 to 9.", u: "/gcse/2/binary-denary.html#place-values" }
+- { t: "Hexadecimal", d: "The base-16 number system with digits 0 to 9 and A to F. One hex digit stands for exactly four bits, so it is a shorter way to write binary.", u: "/gcse/2/hexadecimal.html#sixteen-digits" }
+- { t: "Image resolution", d: "The number of pixels in an image, usually given as width by height. More pixels gives more detail and a bigger file.", u: "/gcse/2/bitmap-images.html#image-size-and-resolution" }
+- { t: "Kibibyte", d: "1024 bytes. The units go up in steps of 1024: kibibyte, mebibyte, gibibyte, tebibyte.", u: "/gcse/2/units.html#the-units" }
+- { t: "Least significant bit (LSB)", d: "The bit on the far right of a binary number, which has the smallest place value.", u: "/gcse/2/binary-denary.html#place-values" }
+- { t: "Logical shift", d: "A binary shift that moves bits and fills the gap with 0s. The sign is not kept, so it suits unsigned numbers.", u: "/gcse/2/binary-shifts.html#the-four-shifts" }
+- { t: "Lossless compression", d: "Compression that lets the original data be rebuilt exactly. It saves less space than lossy compression.", u: "/gcse/2/compression.html#lossless-compression" }
+- { t: "Lossy compression", d: "Compression that permanently removes some data, so quality is lost, to make the file much smaller.", u: "/gcse/2/compression.html#lossy-compression" }
+- { t: "Most significant bit (MSB)", d: "The bit on the far left of a binary number, which has the largest place value.", u: "/gcse/2/binary-denary.html#place-values" }
+- { t: "Nibble", d: "A group of 4 bits, or half a byte.", u: "/gcse/2/binary.html#switches-and-bits" }
+- { t: "Overflow error", d: "What happens when the result of a calculation is too big for the number of bits available, so the extra bit is lost.", u: "/gcse/2/binary-addition.html#overflow" }
+- { t: "Pixel", d: "The smallest dot of colour in a bitmap image.", u: "/gcse/2/bitmap-images.html#pixels-and-colour-depth" }
+- { t: "Run-length encoding", d: "Lossless compression that replaces a run of repeated values with the value and a count.", u: "/gcse/3/utility-software.html#u-comp" }
+- { t: "Sample rate", d: "How many times each second the height of a sound wave is measured, in hertz. A higher rate gives a more accurate recording and a bigger file.", u: "/gcse/2/sound.html#key-terms" }
+- { t: "Sampling", d: "Measuring the amplitude of an analogue sound wave at regular intervals so it can be stored as binary.", u: "/gcse/2/sound.html#sampling" }
+- { t: "Sign bit", d: "In two's complement, the leftmost bit, which tells you whether the number is negative.", u: "/gcse/2/twos-complement.html#one-pattern-two-possible-values" }
+- { t: "Signed and unsigned", d: "An unsigned number can only be 0 or positive. A signed number uses one bit to show whether it is negative.", u: "/gcse/2/twos-complement.html#ranges" }
+- { t: "Two's complement", d: "A way to store negative whole numbers in binary, where the most significant bit has a negative place value.", u: "/gcse/2/twos-complement.html#negative-denary-to-twos-complement" }
+- { t: "Unicode", d: "A character set with up to 32 bits per character and over a million codes, covering almost every writing system. Its first 128 codes match ASCII.", u: "/gcse/2/ascii.html#the-limits-of-ascii" }
+
+# ---------------- GCSE Topic 3: Computers ----------------
+- { t: "Accumulator (ACC)", d: "The register that holds the results of calculations done by the ALU.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Actuator", d: "An output component in an embedded system that makes something happen, such as a heater switching on.", u: "/gcse/3/embedded-systems.html#a-thermostat-running" }
+- { t: "Address bus", d: "The bus that carries the address of the memory location to be read or written, from the CPU to memory.", u: "/gcse/3/fde-cycle.html" }
+- { t: "ALU (arithmetic logic unit)", d: "The part of the CPU that does arithmetic and logical comparisons.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Analogue-to-digital converter (ADC)", d: "Changes the smoothly varying signal from a sensor into binary numbers the microcontroller can process.", u: "/gcse/3/embedded-systems.html#inside-the-microcontroller" }
+- { t: "Application software", d: "Software that lets the user do a task, such as writing, drawing or browsing, as opposed to looking after the computer.", u: "/gcse/3/computer-systems.html#three-types-of-software" }
+- { t: "Audit trail", d: "A record of who made which change and when, so that a fault can be traced and the right person asked.", u: "/gcse/3/robust-software.html#audit-trail" }
+- { t: "Backup", d: "A copy of data kept in case the original is lost or damaged. Utility software can copy only the files that changed.", u: "/gcse/3/utility-software.html#u-back" }
+- { t: "Buffer", d: "A temporary store that holds data while it moves between devices of different speeds, such as a printer.", u: "/gcse/3/operating-systems.html#p-peri" }
+- { t: "Bus width", d: "The number of bits a bus can carry at once. A wider bus moves more data in each transfer.", u: "/gcse/3/fde-cycle.html#bus-width-and-clock-speed" }
+- { t: "Clock speed", d: "How many cycles the CPU's clock completes each second, measured in hertz. A higher clock speed lets the CPU do more per second.", u: "/gcse/3/fde-cycle.html#bus-width-and-clock-speed" }
+- { t: "Code review", d: "Checking source code for mistakes before it is used. It can be done by a person or by an automatic tool.", u: "/gcse/3/robust-software.html#code-review" }
+- { t: "Compiler", d: "Translates the whole of a high-level program into machine code before it is run. The result runs without the compiler.", u: "/gcse/3/languages-translators.html#compiler-vs-interpreter" }
+- { t: "Control bus", d: "The bus that carries control signals, such as whether memory is being read or written.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Control unit (CU)", d: "The part of the CPU that directs the fetch-decode-execute cycle and controls the other components.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Current instruction register (CIR)", d: "The register that holds the instruction being decoded and executed.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Data bus", d: "The bus that carries data and instructions between the CPU and memory.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Defragmentation", d: "Utility software that rearranges the pieces of files on a magnetic disk so that each file is stored together and can be read faster.", u: "/gcse/3/utility-software.html#u-defrag" }
+- { t: "Device driver", d: "Software that lets the operating system communicate with a particular piece of hardware.", u: "/gcse/3/operating-systems.html#p-peri" }
+- { t: "Embedded system", d: "A computer built into a larger device to do one dedicated job, such as the control in a thermostat or washing machine.", u: "/gcse/3/embedded-systems.html#embedded-vs-general-purpose" }
+- { t: "Fetch-decode-execute cycle", d: "The repeating process in which the CPU fetches an instruction from memory, decodes it and executes it.", u: "/gcse/3/fde-cycle.html" }
+- { t: "File management", d: "The operating system's job of organising, naming, moving and protecting files and folders.", u: "/gcse/3/operating-systems.html#p-file" }
+- { t: "Flash memory", d: "Storage with no moving parts that keeps its data without power. It holds the program in an embedded system.", u: "/gcse/3/embedded-systems.html#inside-the-microcontroller" }
+- { t: "Graphical user interface (GUI)", d: "An interface that uses windows, icons and menus with a pointer. It is easy to learn.", u: "/gcse/3/operating-systems.html#p-user" }
+- { t: "Hardware", d: "The physical parts of a computer that you can touch.", u: "/gcse/3/computer-systems.html#hardware-or-software" }
+- { t: "High-level language", d: "A programming language written in words close to English, which is easier to read and write and is not tied to one CPU. It must be translated.", u: "/gcse/3/languages-translators.html#one-program-three-levels" }
+- { t: "Interpreter", d: "Translates and runs a high-level program one line at a time. It needs to be present every time the program runs.", u: "/gcse/3/languages-translators.html#compiler-vs-interpreter" }
+- { t: "Internet of Things (IoT)", d: "Everyday devices with sensors and a network connection that can be monitored and controlled over the internet.", u: "/gcse/3/iot.html#switching-on-a-light-from-your-phone" }
+- { t: "Low-level language", d: "Machine code or assembly language, which is close to the instructions that the CPU runs. It depends on the type of CPU.", u: "/gcse/3/languages-translators.html#one-program-three-levels" }
+- { t: "Machine code", d: "Binary instructions that the CPU can run directly.", u: "/gcse/3/languages-translators.html#one-program-three-levels" }
+- { t: "Memory address register (MAR)", d: "The register that holds the address in memory to be read or written next.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Memory data register (MDR)", d: "The register that temporarily holds data or an instruction that has just been read from, or is about to be written to, memory.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Microcontroller", d: "A small chip with a CPU, memory and input/output ports on it. It is the brain of an embedded system.", u: "/gcse/3/embedded-systems.html#inside-the-microcontroller" }
+- { t: "Opcode and operand", d: "The two parts of an instruction. The opcode says what to do and the operand says what to do it with, often an address or a value.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Operating system (OS)", d: "System software that manages the hardware, files, processes and users, and provides the interface.", u: "/gcse/3/operating-systems.html#os-functions" }
+- { t: "Peripheral management", d: "The operating system's job of controlling input and output devices, using device drivers and buffers.", u: "/gcse/3/operating-systems.html#p-peri" }
+- { t: "Portable", d: "Describes a program that can run on different types of CPU. High-level code is portable, but machine code is machine dependent.", u: "/gcse/3/languages-translators.html#same-program-different-cpu" }
+- { t: "Process management", d: "The operating system's job of sharing CPU time and memory between running programs, using a scheduling algorithm.", u: "/gcse/3/operating-systems.html#p-proc" }
+- { t: "Program counter (PC)", d: "The register that holds the address of the next instruction to be fetched.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Registers", d: "Very small, very fast storage locations inside the CPU.", u: "/gcse/3/fde-cycle.html" }
+- { t: "Robust software", d: "Software that keeps working correctly even when things go wrong, helped by reviewing the code and keeping an audit trail.", u: "/gcse/3/robust-software.html#code-review" }
+- { t: "Round robin", d: "A scheduling algorithm that gives each process a small time slice in turn, going back to the first when it reaches the last.", u: "/gcse/3/operating-systems.html#p-proc" }
+- { t: "Scheduling algorithm", d: "The rule an operating system uses to decide which process runs next, such as first in first out, shortest job first or round robin.", u: "/gcse/3/operating-systems.html#p-proc" }
+- { t: "Secondary storage", d: "Non-volatile storage that keeps programs and data when the power is off. Examples are magnetic, optical and solid state.", u: "/gcse/3/secondary-storage.html#power" }
+- { t: "Sensor", d: "An input component that measures something in the real world, such as temperature or movement.", u: "/gcse/3/embedded-systems.html#a-thermostat-running" }
+- { t: "Software", d: "The programs and data that tell the hardware what to do.", u: "/gcse/3/computer-systems.html#hardware-or-software" }
+- { t: "Solid state storage", d: "Secondary storage that stores bits as trapped charge in flash memory, with no moving parts.", u: "/gcse/3/secondary-storage.html#how-the-0s-and-1s-are-stored" }
+- { t: "System software", d: "Software that runs and looks after the computer itself, such as the operating system and utility software.", u: "/gcse/3/computer-systems.html#three-types-of-software" }
+- { t: "User management", d: "The operating system's job of handling accounts, passwords and what each user is allowed to do.", u: "/gcse/3/operating-systems.html#p-user" }
+- { t: "Utility software", d: "System software that maintains, protects and tidies up a computer, such as backup, anti-malware, defragmentation and compression.", u: "/gcse/3/utility-software.html#utility-types" }
+- { t: "Virtual memory", d: "Using part of secondary storage as if it were extra RAM when the real RAM is full.", u: "/gcse/3/operating-systems.html#p-proc" }
+- { t: "Wi-Fi", d: "Wireless networking that uses radio waves to connect devices to a router.", u: "/gcse/3/iot.html#wireless-technologies-used-by-iot-devices" }
+
+# ---------------- GCSE Topic 4: Networks ----------------
+- { t: "Authentication", d: "Proving who you are, using something you know, have or are.", u: "/gcse/4/access-control.html#multi-factor-authentication" }
+- { t: "Availability", d: "The security principle that authorised people can use a system or data when they need it.", u: "/gcse/4/network-security.html#three-things-to-protect" }
+- { t: "Bandwidth", d: "How much data can be sent over a connection each second. A high bandwidth does not stop latency.", u: "/gcse/4/network-speeds.html#bandwidth-and-latency" }
+- { t: "Bluetooth", d: "A short-range wireless technology for connecting nearby devices after pairing them.", u: "/gcse/4/other-technologies.html#bt" }
+- { t: "Bus topology", d: "A network where all nodes connect to a single shared cable, so only one can send at a time and collisions can happen.", u: "/gcse/4/topologies.html#collisions-on-a-bus" }
+- { t: "Checksum", d: "A value calculated from a packet's data and sent with it. The receiver recalculates it to check the data arrived undamaged.", u: "/gcse/4/packet-switching.html#send-a-message" }
+- { t: "Confidentiality", d: "The security principle that data can only be seen by those who are allowed to see it.", u: "/gcse/4/network-security.html#three-things-to-protect" }
+- { t: "Data transfer rate", d: "How quickly data moves across a network, often measured in bits per second, such as Mbps.", u: "/gcse/4/network-speeds.html#units-of-network-speed" }
+- { t: "DHCP", d: "The protocol that automatically gives a device an IP address when it joins a network.", u: "/gcse/4/protocols.html#d-dhcp" }
+- { t: "DNS", d: "The Domain Name System. A DNS server turns a domain name into an IP address.", u: "/gcse/4/protocols.html#d-dns" }
+- { t: "Domain name", d: "A name for a website that is easier to remember than an IP address, such as www.example.com.", u: "/gcse/4/internet.html#domain-names" }
+- { t: "Ethernet", d: "A wired link layer protocol for local networks.", u: "/gcse/4/protocols.html#d-link" }
+- { t: "Fibre-optic cable", d: "A cable that carries data as pulses of light. It is fast and reliable but costs more to install.", u: "/gcse/4/connectivity.html#how-good-is-the-connection" }
+- { t: "File permissions", d: "Settings that decide which users can read, write or run a file.", u: "/gcse/4/access-control.html#file-permissions" }
+- { t: "Firewall", d: "Software or hardware that checks network traffic against a set of rules and blocks what is not allowed.", u: "/gcse/4/firewalls.html#set-the-rules" }
+- { t: "FTP", d: "File Transfer Protocol, which is used to upload files to and download files from a server.", u: "/gcse/4/protocols.html#d-ftp" }
+- { t: "HTTP", d: "The protocol a browser uses to request web pages and receive them from a web server. The data is not encrypted.", u: "/gcse/4/protocols.html#d-http" }
+- { t: "HTTPS", d: "HTTP with encryption, checked with a digital certificate, so that others cannot read the data.", u: "/gcse/4/protocols.html#d-http" }
+- { t: "IMAP", d: "A protocol for collecting email in which the messages stay on the server so they can be read from many devices.", u: "/gcse/4/protocols.html#d-pop" }
+- { t: "Internet", d: "A worldwide network of networks, joined together using routers and cables.", u: "/gcse/4/internet.html#from-your-screen-to-a-web-server-and-back" }
+- { t: "IP address", d: "A number that identifies a device on a network so that packets can be sent to it. IPv4 and IPv6 are two versions.", u: "/gcse/4/internet.html#ip-addresses" }
+- { t: "LAN (local area network)", d: "A network that covers a small area such as a home or building, usually owned by one person or organisation.", u: "/gcse/4/networks.html#what-a-network-lets-you-do" }
+- { t: "Latency", d: "The delay between sending data and it arriving. It matters most for things like live games and calls.", u: "/gcse/4/network-speeds.html#bandwidth-and-latency" }
+- { t: "Mesh topology", d: "A network in which nodes have several links to others, so data can take another route if one link fails.", u: "/gcse/4/topologies.html#comparing-the-topologies" }
+- { t: "Multi-factor authentication", d: "Proving who you are with two or more different kinds of evidence, such as a password and a code from your phone.", u: "/gcse/4/access-control.html#multi-factor-authentication" }
+- { t: "NFC (near field communication)", d: "A very short-range wireless technology used for contactless payments.", u: "/gcse/4/other-technologies.html#nf" }
+- { t: "Node", d: "Any device connected to a network.", u: "/gcse/4/topologies.html#build-it-and-break-it" }
+- { t: "Packet", d: "A small chunk of a message that is sent across a network with a header that includes the source and destination addresses.", u: "/gcse/4/packet-switching.html#send-a-message" }
+- { t: "Packet switching", d: "Sending data as separate packets that can take different routes and are reassembled at the destination.", u: "/gcse/4/packet-switching.html#send-a-message" }
+- { t: "Penetration testing", d: "Deliberately trying to break into a system, with permission, to find weaknesses before an attacker does.", u: "/gcse/4/network-security.html#run-a-penetration-test" }
+- { t: "Physical security", d: "Protecting a network by controlling access to the building and equipment, for example with locks and cards.", u: "/gcse/4/access-control.html#physical-security" }
+- { t: "POP3", d: "A protocol for collecting email in which the messages are downloaded to one device.", u: "/gcse/4/protocols.html#d-pop" }
+- { t: "Principle of least privilege", d: "Giving each user only the access they need to do their job and nothing more.", u: "/gcse/4/access-control.html#file-permissions" }
+- { t: "Protocol", d: "A set of rules that devices agree on so they can communicate.", u: "/gcse/4/protocols.html#why-rules-are-needed" }
+- { t: "RFID", d: "Radio-frequency identification: a tag is read from a short distance by radio waves, often without a battery.", u: "/gcse/4/other-technologies.html#rf" }
+- { t: "SMTP", d: "The protocol used to send an email from a device to a mail server and between mail servers.", u: "/gcse/4/protocols.html#d-email" }
+- { t: "Star topology", d: "A network in which every node connects to a central switch. One broken cable only affects one device, but the switch is a single point of failure.", u: "/gcse/4/topologies.html#build-it-and-break-it" }
+- { t: "Static and dynamic IP address", d: "A static address never changes. A dynamic address is given out for a time and may be different later.", u: "/gcse/4/internet.html#static-and-dynamic-addresses" }
+- { t: "TCP", d: "A transport protocol that splits data into packets, numbers them, checks they arrive and asks for any missing ones again, so it is reliable.", u: "/gcse/4/protocols.html#d-tcp" }
+- { t: "TCP/IP layers", d: "The four layers of protocols that work together: application, transport, internet and link. Each layer can change without the others changing.", u: "/gcse/4/tcp-ip.html#down-the-stack-and-back-up" }
+- { t: "Topology", d: "The way the nodes of a network are arranged and connected, such as bus, star or mesh.", u: "/gcse/4/topologies.html#comparing-the-topologies" }
+- { t: "UDP", d: "A transport protocol that sends packets without checking they arrive. It is faster than TCP, so it suits live video and calls.", u: "/gcse/4/protocols.html#d-udp" }
+- { t: "WAN (wide area network)", d: "A network that covers a large area, made by joining LANs together, often using leased lines.", u: "/gcse/4/networks.html#joining-lans-to-make-a-wan" }
+- { t: "Zigbee", d: "A low-power wireless technology used by IoT devices, often joined in a mesh.", u: "/gcse/4/other-technologies.html#zb" }
+
+# ---------------- GCSE Topic 6: Python ----------------
+- { t: "Assignment", d: "Storing a value in a variable using =. The value on the right is worked out first.", u: "/gcse/6/variables-constants.html#assignment" }
+- { t: "Boolean operators (and, or, not)", d: "Operators that combine conditions into one True or False answer.", u: "/gcse/6/selection.html#combining-conditions-and-or-not" }
+- { t: "Casting (type conversion)", d: "Changing a value from one data type to another, such as int(), float() or str().", u: "/gcse/6/variables-constants.html#converting-between-types" }
+- { t: "Concatenation", d: "Joining strings together end to end, using +.", u: "/gcse/6/strings.html#slicing-and-joining" }
+- { t: "Condition", d: "A question with a True or False answer, such as age >= 18, that a selection statement uses.", u: "/gcse/6/selection.html#conditions-questions-with-a-true-or-false-answer" }
+- { t: "Constant", d: "A value that does not change while the program runs. By convention it is named in capitals.", u: "/gcse/6/variables-constants.html#constants" }
+- { t: "Data type", d: "The kind of value stored, such as integer, float, string or Boolean.", u: "/gcse/6/variables-constants.html#data-types" }
+- { t: "Element", d: "A single item in a list.", u: "/gcse/6/lists.html#index-explorer" }
+- { t: "for loop", d: "A loop that repeats a set number of times, or once for each item in a sequence, using a loop variable.", u: "/gcse/6/for-loops.html#repeating-a-fixed-number-of-times" }
+- { t: "if, elif, else", d: "Selection statements that choose which block of code to run depending on conditions.", u: "/gcse/6/selection.html#if-elif-else" }
+- { t: "Index", d: "The position of an item in a list or string. The first item is at index 0.", u: "/gcse/6/lists.html#index-explorer" }
+- { t: "Infinite loop", d: "A loop that never ends because its condition never becomes False.", u: "/gcse/6/while-loops.html#when-the-loop-never-ends" }
+- { t: "input()", d: "Asks the user to type something and gives it back as a string.", u: "/gcse/6/inputs-outputs.html#input-always-gives-you-a-string" }
+- { t: "Iteration", d: "Repeating a block of code, with a for loop or a while loop.", u: "/gcse/6/for-loops.html#repeating-a-fixed-number-of-times" }
+- { t: "len()", d: "Gives the number of characters in a string or items in a list.", u: "/gcse/6/strings.html#length-and-indexing" }
+- { t: "List", d: "An ordered collection of items stored under one name and reached by index.", u: "/gcse/6/lists.html#creating-a-list-and-reading-items" }
+- { t: "Loop variable", d: "The variable in a for loop that takes a new value on each repeat.", u: "/gcse/6/for-loops.html#the-loop-variable" }
+- { t: "Nested loop", d: "A loop inside another loop. The inner loop runs fully for every repeat of the outer one.", u: "/gcse/6/for-loops.html#a-loop-inside-a-loop" }
+- { t: "Nested selection", d: "An if statement placed inside another if statement.", u: "/gcse/6/selection.html#selection-inside-selection" }
+- { t: "Operator (arithmetic)", d: "A symbol that does a calculation, such as +, -, *, /, // (integer division), % (remainder) and ** (power).", u: "/gcse/6/variables-constants.html#arithmetic-operators" }
+- { t: "print()", d: "Shows a value or message on the screen.", u: "/gcse/6/inputs-outputs.html#output-with-print" }
+- { t: "range()", d: "Produces the sequence of numbers a for loop counts through, from a start, up to but not including a stop, in steps.", u: "/gcse/6/for-loops.html#range-explorer" }
+- { t: "Running total", d: "A variable that starts at 0 and has a value added to it on each repeat of a loop.", u: "/gcse/6/for-loops.html#keeping-a-running-total" }
+- { t: "Selection", d: "Choosing between paths in a program depending on a condition.", u: "/gcse/6/selection.html#if" }
+- { t: "Slicing", d: "Taking part of a string or list using start and stop positions, such as word[1:4].", u: "/gcse/6/strings.html#slice-explorer" }
+- { t: "String", d: "A sequence of characters, such as text, in quotation marks.", u: "/gcse/6/strings.html#length-and-indexing" }
+- { t: "Validation", d: "Checking that input is sensible before it is used, often by repeating the question in a while loop until it is.", u: "/gcse/6/while-loops.html#validation-refusing-bad-input" }
+- { t: "Variable", d: "A named place in memory that stores a value, which can change while the program runs.", u: "/gcse/6/variables-constants.html#assignment" }
+- { t: "while loop", d: "A loop that repeats while its condition is True. It is used when you do not know in advance how many repeats are needed.", u: "/gcse/6/while-loops.html#how-a-while-loop-works" }

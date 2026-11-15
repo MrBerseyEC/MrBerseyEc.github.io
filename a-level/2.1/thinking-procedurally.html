@@ -50,7 +50,7 @@ button.node.open::after{content:""}
 </style>
 <p class="lede">Thinking procedurally means breaking a problem down into smaller parts, working out the order in which the steps must happen, and deciding which parts should become sub-procedures. Each part can then be designed, written and tested separately.</p>
 
-<section class="block">
+<section class="block" id="breaking-a-problem-down">
   <h2>Breaking a problem down</h2>
   <p class="sub">In top-down design, a problem is broken into its major tasks, and each task is broken down again until every part is simple enough to be written as a single subroutine. The result is drawn as a structure chart, also called a hierarchy chart: an upside-down tree with the whole problem at the top. Click a dashed box to break it down further.</p>
   <div class="toolbar" style="margin-bottom:14px">
@@ -62,7 +62,7 @@ button.node.open::after{content:""}
   <p class="note">A structure chart shows which parts make up the solution, not the order of every instruction, and it has no loops or decisions. Reading the bottom boxes from left to right gives the subroutines that need writing. Try drawing the chart on paper for each problem before you reveal it.</p>
 </section>
 
-<section class="block">
+<section class="block" id="finding-the-components-in-a-solution">
   <h2>Finding the components in a solution</h2>
   <p class="sub">This program takes a booking for cinema tickets. It has been written as one block, but it is made of three component parts. Choose a component, then click every line that belongs to it. Each line is tagged with the number of its component.</p>
   <div class="paint">
@@ -75,7 +75,7 @@ button.node.open::after{content:""}
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="from-components-to-sub-procedures">
   <h2>From components to sub-procedures</h2>
   <p class="sub">Each component becomes a sub-procedure named for what it does. The two inputs did the same job with a different prompt, so they become one function called twice, with the prompt passed in as a parameter. Choose a change and compare how much of each version must be edited.</p>
   <div class="seg" role="radiogroup" aria-label="Change" id="chg" style="margin-bottom:12px"></div>
@@ -96,7 +96,7 @@ button.node.open::after{content:""}
   </details>
 </section>
 
-<section class="block">
+<section class="block" id="parameters-at-work">
   <h2>Parameters at work</h2>
   <p class="sub">A builder is planning a new estate. A house is a rectangle with a triangle on top, a street is a row of houses and the estate is several streets. Each level is a procedure that calls the one below it. When the builder changes their mind, no procedure is rewritten: the estate is drawn again with new arguments.</p>
   <div class="estate">
@@ -115,7 +115,7 @@ button.node.open::after{content:""}
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="getting-the-steps-in-the-right-order">
   <h2>Getting the steps in the right order</h2>
   <p class="sub">A program tests the user on a times table of their choice. It asks five questions and tells the user whether each answer is right. If it is wrong, the correct answer is shown. Use the arrows to put the steps into the right sequence.</p>
   <div class="order">
@@ -138,7 +138,7 @@ button.node.open::after{content:""}
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="check-your-understanding">
   <h2>Check your understanding</h2>
   {% include quiz.html %}
 </section>

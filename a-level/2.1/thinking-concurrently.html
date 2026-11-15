@@ -38,7 +38,7 @@ spec: "OCR A LEVEL · 2.1.5"
 </style>
 <p class="lede">Thinking concurrently means working out which parts of a problem can be dealt with at the same time, and which have to wait for something else to finish first. Done well, more work gets finished in the same time. It also brings problems that a program doing one thing at a time never has.</p>
 
-<section class="block">
+<section class="block" id="concurrent-or-parallel">
   <h2>Concurrent or parallel?</h2>
   <p class="sub">Three programs need to run. Two of them spend some of their time waiting, for the user or for the network, and while they wait they do not need the processor. Compare three ways of running them.</p>
   <div class="seg" role="radiogroup" aria-label="How the tasks are run" id="mode">
@@ -62,7 +62,7 @@ spec: "OCR A LEVEL · 2.1.5"
   </details>
 </section>
 
-<section class="block">
+<section class="block" id="what-can-happen-at-the-same-time">
   <h2>What can happen at the same time?</h2>
   <p class="sub">A task can start only when everything it depends on has finished. Tasks that do not depend on each other can be carried out at the same time, if there are enough processors. Choose a problem and change the number of processors.</p>
   <div class="tabs" id="gtabs" role="tablist">
@@ -84,7 +84,7 @@ spec: "OCR A LEVEL · 2.1.5"
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="the-trade-off-shared-data">
   <h2>The trade-off: shared data</h2>
   <p class="sub">A bank account contains £100. Two processes each pay money in at the same moment: one adds £50 and the other adds £20, so the balance should end up as £170. Each process takes three steps, and the processor can switch between them at any point. Step each process in any order you like. Can you make the bank lose money?</p>
   <div class="row" style="margin-bottom:12px"><button class="btn" id="rrst">Reset</button><label class="check"><input type="checkbox" id="lock"> Lock the record while a process is using it</label></div>
@@ -97,7 +97,7 @@ spec: "OCR A LEVEL · 2.1.5"
   <p class="note">Whether the result is right depends on the order in which the steps happen to be interleaved, so the error may appear only once in thousands of runs. That makes concurrent programs much harder to write, test and debug. Locking a record solves this problem, but it makes other processes wait, and two processes that are each waiting for a record the other has locked will wait for ever. That is called deadlock.</p>
 </section>
 
-<section class="block">
+<section class="block" id="apply-it">
   <h2>Apply it</h2>
   {% include quiz.html %}
 </section>

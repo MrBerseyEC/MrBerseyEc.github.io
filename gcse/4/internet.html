@@ -47,7 +47,7 @@ spec: "EDEXCEL GCSE · 4.1.2"
 
 <p class="lede">The word internet is short for <b>inter</b>connected <b>net</b>work. It is a network of networks, large and small, some privately owned and some public, that together link billions of devices around the world. No single organisation or government owns it.</p>
 
-<section class="block">
+<section class="block" id="from-your-screen-to-a-web-server-and-back">
   <h2>From your screen to a web server and back</h2>
   <p class="sub">Your home or school network is one small part of the internet. Step through to see the networks a request for a web page passes through.</p>
   <div class="row"><button class="btn pri" id="step">Step ▸</button><button class="btn" id="play">Play</button><button class="btn" id="reset">Reset</button></div>
@@ -66,7 +66,7 @@ spec: "EDEXCEL GCSE · 4.1.2"
   <p class="note">Each major telecommunication company has its own internet backbone. Network Access Points (NAPs) join the backbones together to form a worldwide mesh, so there are many possible routes between any two places.</p>
 </section>
 
-<section class="block">
+<section class="block" id="ip-addresses">
   <h2>IP addresses</h2>
   <p class="sub">Every device connected to the internet is given an <b>IP address</b>, which uniquely identifies it on the network. An IPv4 address is 32 bits long. To make it easier for people to read, it is written as four denary numbers from 0 to 255, one for each byte, separated by dots. Change the numbers to see the bits the computer actually uses.</p>
   <div class="octs" id="octs"></div>
@@ -80,7 +80,7 @@ spec: "EDEXCEL GCSE · 4.1.2"
   <p class="note">Four billion addresses seemed more than enough when IPv4 was invented in the 1970s. It is nowhere near enough now, which is why IPv6 was introduced.</p>
 </section>
 
-<section class="block">
+<section class="block" id="static-and-dynamic-addresses">
   <h2>Static and dynamic addresses</h2>
   <p class="sub">The router gets one public IP address from the ISP. It then gives each device on its own network a <b>local</b> IP address, which is only visible inside that network. This router has a pool of five addresses to hand out. Click devices to connect and disconnect them.</p>
   <div class="dhcp">
@@ -91,7 +91,7 @@ spec: "EDEXCEL GCSE · 4.1.2"
   <p class="note">A <b>static</b> address never changes, so it suits devices that need constant access and must always be found in the same place, such as routers and servers. A <b>dynamic</b> address is assigned each time a device connects and goes back into the pool when it leaves, so a limited number of addresses can be shared by many devices.</p>
 </section>
 
-<section class="block">
+<section class="block" id="domain-names">
   <h2>Domain names</h2>
   <p class="sub">People are better at remembering words than numbers. The Domain Name System (DNS) lets you type a name, and looks up the IP address that belongs to it. Type an address, or pick one, and watch the lookup.</p>
   <div class="row" style="margin-bottom:12px"><input type="text" id="dom" value="www.example.com" aria-label="Domain name" style="font-family:var(--mono);width:16em"><button class="btn pri" id="look">Go</button><span id="picks"></span></div>
@@ -105,7 +105,7 @@ spec: "EDEXCEL GCSE · 4.1.2"
   <p class="status" id="dnsmsg" style="margin-top:12px"></p>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

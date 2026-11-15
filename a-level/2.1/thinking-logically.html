@@ -45,7 +45,7 @@ spec: "OCR A LEVEL · 2.1.4"
 </style>
 <p class="lede">Thinking logically means identifying the points in an algorithm where a decision has to be made, working out the exact condition that controls each one, and understanding how those decisions change the route taken through the program. Most logic errors are found at decision points.</p>
 
-<section class="block">
+<section class="block" id="where-are-the-decisions">
   <h2>Where are the decisions?</h2>
   <p class="sub">A structured program is built from only three constructs: sequence, selection and iteration. Decisions are made in selection (<span class="mono">if</span> and <span class="mono">switch</span>) and in iteration (the condition that decides whether a loop goes round again). This algorithm has <b>3</b> decision points. Click the lines where a decision is made, then check.</p>
   <div class="row" style="margin-bottom:12px"><button class="btn pri" id="dchk">Check</button><button class="btn" id="drst">Start again</button><span class="score" id="dscore"></span></div>
@@ -56,7 +56,7 @@ spec: "OCR A LEVEL · 2.1.4"
   <p class="note">A <span class="mono">for</span> loop hides a decision too: each time round, the computer tests whether the counter has passed its final value. In a flowchart every decision is drawn as a diamond with two ways out.</p>
 </section>
 
-<section class="block">
+<section class="block" id="writing-the-condition">
   <h2>Writing the condition</h2>
   <p class="sub">Once you know where a decision is, you have to state its condition exactly. Choose the operators to complete each condition. It is tested straight away against a set of test data, including the boundary values where conditions most often go wrong.</p>
   <div class="row" style="margin-bottom:12px"><label class="check">Decision <select id="sc"></select></label></div>
@@ -68,7 +68,7 @@ spec: "OCR A LEVEL · 2.1.4"
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="tracing-a-logic-error">
   <h2>Tracing a logic error</h2>
   <p class="sub">This algorithm is meant to count how many values from the lower bound to the upper bound are divisible by 3, by 5 or by both. Work out the answer you expect, then step through one pass of the loop at a time to build the trace table. Most logic errors are found at decision points, and a trace table is how you find them.</p>
   <div class="tbar">
@@ -83,7 +83,7 @@ spec: "OCR A LEVEL · 2.1.4"
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="decisions-create-paths">
   <h2>Decisions create paths</h2>
   <p class="sub">Every decision splits the flow of a program in two, so each one adds to the number of different routes through it. This algorithm should print the play that received the most votes. It has three decisions and <b>4</b> possible paths. Enter some votes and run it. Can you find test data for every path?</p>
   <div class="two">
@@ -105,7 +105,7 @@ spec: "OCR A LEVEL · 2.1.4"
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="paths-and-testing">
   <h2>Paths and testing</h2>
   <p class="sub">Every path through a program should be followed at least once in testing. Each independent decision doubles the number of paths, and some conditions are rarely true, like the checks for errors. Add decisions from an online shop's checkout, then see how far random test data gets you.</p>
   <div class="tbar">
@@ -131,7 +131,7 @@ spec: "OCR A LEVEL · 2.1.4"
   </details>
 </section>
 
-<section class="block">
+<section class="block" id="check-your-understanding">
   <h2>Check your understanding</h2>
   {% include quiz.html %}
 </section>

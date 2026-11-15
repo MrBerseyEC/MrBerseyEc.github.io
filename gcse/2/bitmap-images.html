@@ -29,7 +29,7 @@ published: false
 
 <p class="lede">A bitmap image is a grid of tiny blocks of colour called <b>pixels</b> (picture elements). Each pixel is one single colour, and that colour is stored as a binary pattern. The image file is all of those patterns, one after another.</p>
 
-<section class="block">
+<section class="block" id="pixels-and-colour-depth">
   <h2>Pixels and colour depth</h2>
   <p class="sub">The <b>colour depth</b> is the number of bits used to store the colour of each pixel. Pick a colour and click or drag on the grid to paint. Change the colour depth to get more colours, and watch what it does to the binary and the file size.</p>
   <div class="toolbar" style="margin-bottom:12px">
@@ -50,7 +50,7 @@ published: false
   <p class="note">With a colour depth of <i>n</i> bits there are 2<sup><i>n</i></sup> possible colours. One bit gives 2 colours, which is fine for black and white. Most images today use 24 bits: 8 bits each for red, green and blue, giving 16,777,216 colours.</p>
 </section>
 
-<section class="block">
+<section class="block" id="quality-against-file-size">
   <h2>Quality against file size</h2>
   <p class="sub">The same picture, stored with different numbers of pixels and different colour depths. More pixels and more bits per pixel make the picture closer to the original, but the file gets bigger.</p>
   <div class="photo">
@@ -65,7 +65,7 @@ published: false
   <p class="note">With too few pixels the image becomes <b>pixelated</b>: you can see the individual squares. With too few bits per pixel, smooth changes of colour turn into bands, because there are not enough colours to show the shades in between. There is no point going far beyond 24 bits, because the human eye cannot tell that many colours apart.</p>
 </section>
 
-<section class="block">
+<section class="block" id="image-size-and-resolution">
   <h2>Image size and resolution</h2>
   <div class="scroll"><table class="t" style="max-width:820px">
     <tr><th>Term</th><th>Meaning</th><th>Example</th></tr>
@@ -76,7 +76,7 @@ published: false
   </table></div>
 </section>
 
-<section class="block">
+<section class="block" id="calculating-file-size">
   <h2>Calculating file size</h2>
   <p class="sub">File size in bits = width × height × colour depth. Divide by 8 for bytes, then by 1024 for kibibytes, then by 1024 again for mebibytes.</p>
   <div class="calc">
@@ -88,12 +88,12 @@ published: false
   <p class="note">In the exam you are usually asked to <b>construct an expression</b> rather than work out the answer, for example <span class="mono">(640 × 480 × 24) ÷ (8 × 1024)</span> for a size in kibibytes. Images intended for the screen are nearly always compressed, so real files are smaller than this.</p>
 </section>
 
-<section class="block">
+<section class="block" id="practice">
   <h2>Practice</h2>
   <div id="drill"></div>
 </section>
 
-<section class="block">
+<section class="block" id="quick-check">
   <h2>Quick check</h2>
   {% include quiz.html %}
 </section>

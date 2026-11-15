@@ -49,7 +49,7 @@
   {%- unless live contains p.url -%}{%- continue -%}{%- endunless -%}
   <a href="{{ p.url | relative_url }}"{% if p.url == page.url %} aria-current="page"{% endif %}>{{ p.nav | escape }}</a>
 {%- endfor -%}
-</nav>
+<a class="gl" href="{{ '/glossary.html' | relative_url }}">Glossary</a></nav>
 <p class="spec">{{ page.spec | escape }}</p>
 <h1>{{ page.heading | default: page.title | escape }}</h1>
 {{ content }}
