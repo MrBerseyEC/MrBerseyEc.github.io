@@ -54,3 +54,10 @@ Every demo block on a page has an `id`, so a page can be opened at a particular 
 - The level (F, GCSE or A-Level) is taken from the course in `_data/courses.yml` that holds the page, so there is nothing to set. The same term may appear once for each level and is grouped on the page.
 - A term whose page has `published: false` is still listed, shown as "demo not published yet" with no link. It links up automatically when the page is published.
 - Add the new demo's terms to `_data/glossary.yml` when you add the demo.
+
+## Algorithm player extras
+
+- **Keys:** Space plays or pauses, ← and → step back and forward, R resets. They are ignored while typing in a field.
+- **Scrubber:** the Step slider jumps to any step.
+- **Remembered:** speed, list type, number of items and the code language (per page for the list settings) are kept in `localStorage` under `htb-settings`. Quiz answers are kept per page and quiz, and cleared by "Reset questions".
+- **Share links:** "Copy link" gives `page.html#try-it?d=8,3,5,1&t=7&s=12` (the list, the search target and the step). Opening it restores that exact state. Invalid values are ignored.

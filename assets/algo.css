@@ -82,3 +82,6 @@
 .box.cmp .pip,.box.cur .pip,.box.pivot .pip,.box.sorted .pip,.box.swap .pip,.box.found .pip{color:inherit}
 .box.hole .pip{visibility:hidden}
 .tn span .pip{top:3px;left:3px;font-size:.6rem}
+
+.ad-scrubl{flex:1 1 180px}.ad-scrubl input{flex:1;min-width:100px}
+.ad-keys{margin:8px 0 0;font-size:.85rem}.ad-keys kbd{font-family:var(--mono,monospace);border:1px solid currentColor;border-radius:4px;padding:0 5px;opacity:.85}

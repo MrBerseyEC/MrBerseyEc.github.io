@@ -13,7 +13,9 @@
   <div class="row">
     <button class="btn" id="ad-reset">⏮ Reset</button><button class="btn" id="ad-back">◀ Back</button><button class="btn pri" id="ad-play">▶ Play</button><button class="btn" id="ad-step">Step ▶</button>
     <label class="check">Speed <input type="range" id="ad-speed" min="1" max="10" value="5"></label>
+    <label class="check ad-scrubl">Step <input type="range" id="ad-scrub" min="0" max="0" value="0" aria-label="Jump to step"></label>
   </div>
+  <p class="sub ad-keys">Keys: <kbd>Space</kbd> play or pause, <kbd>←</kbd> <kbd>→</kbd> step back or forward, <kbd>R</kbd> reset.</p>
   <div class="ad-info">
     <div class="ad-msg" id="ad-msg" aria-live="polite"></div>
     <div class="ad-side"><div class="vars" id="ad-vars"></div><div id="ad-count"></div></div>

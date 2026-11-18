@@ -144,6 +144,7 @@ function algoDemo(cfg){
     document.querySelectorAll('#ad-flows g[data-n]').forEach(g=>g.classList.toggle('on',st.f.includes(g.dataset.n)));
     q('ad-back').disabled=idx===0;q('ad-step').disabled=idx>=steps.length-1;
     q('ad-play').textContent=timer?'⏸ Pause':'▶ Play';
+    const sc=q('ad-scrub');sc.max=steps.length-1;sc.value=idx;
   }
   const delay=()=>Math.max(60,1150-q('ad-speed').value*100);
   function pause(){clearTimeout(timer);timer=null}
@@ -152,6 +153,17 @@ function algoDemo(cfg){
   q('ad-step').onclick=()=>{pause();if(idx<steps.length-1)idx++;draw()};
   q('ad-back').onclick=()=>{pause();if(idx>0)idx--;draw()};
   q('ad-reset').onclick=()=>{pause();idx=0;draw()};
+  q('ad-scrub').oninput=e=>{pause();idx=Math.min(steps.length-1,Math.max(0,+e.target.value));draw()};
+  /* keyboard: Space play/pause, arrows step, R reset. Ignored while typing, or when a button/slider has focus and would use the key itself */
+  document.addEventListener('keydown',e=>{
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    const t=e.target,tag=t.tagName;
+    if(tag==='TEXTAREA'||tag==='SELECT'||t.isContentEditable||tag==='INPUT'&&t.type!=='range')return;
+    if(e.key===' '||e.key==='Spacebar'){if(tag==='BUTTON'||tag==='A')return;e.preventDefault();q('ad-play').click()}
+    else if(e.key==='ArrowRight'&&tag!=='INPUT'){e.preventDefault();q('ad-step').click()}
+    else if(e.key==='ArrowLeft'&&tag!=='INPUT'){e.preventDefault();q('ad-back').click()}
+    else if(e.key==='r'||e.key==='R'){q('ad-reset').click()}
+  });
 
   /* ---------- cards or bars ---------- */
   const vw=q('ad-view');
@@ -169,7 +181,7 @@ function algoDemo(cfg){
   const opts=isS?[['random','Unsorted'],['sortedS','Sorted']]:[['random','Random'],['nearly','Nearly sorted'],['rev','Reversed'],['sorted','Already sorted'],['custom','Type your own']];
   setup.innerHTML=`<label>List <select id="ad-data">${opts.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></label>
     <label>Items <input type="range" id="ad-n" min="${isS?6:4}" max="${maxN}" value="${isS?12:10}"> <b class="mono" id="ad-nv"></b></label>
-    <button class="btn" id="ad-new">New data</button>
+    <button class="btn" id="ad-new">New data</button><button class="btn" id="ad-share">Copy link</button>
     ${isS?`<label>Target <input type="number" id="ad-t" min="1" max="13" style="width:5.5em"></label><button class="btn" id="ad-tin">Pick one in the list</button><button class="btn" id="ad-tout">Pick one not in the list</button>`
          :`<span id="ad-cust" class="hidden"><input type="text" id="ad-ctext" placeholder="e.g. 8, 3, 5, 1" size="22" aria-label="Numbers separated by commas"> <button class="btn" id="ad-cgo">Use these</button></span>`}
     <span class="status" id="ad-err" style="margin:0"></span>`;
@@ -246,5 +258,48 @@ function algoDemo(cfg){
   q('ad-bo-mode').onchange=drawChart;
 
   if(cfg.needsSorted)q('ad-data').value='sortedS';
+
+  /* ---------- remembered settings ---------- */
+  /* Speed is shared by every demo; list type, size and code language are remembered per page. Custom lists are not remembered. */
+  const store=typeof settings==='undefined'?{get(){},set(){}}:settings;
+  const SK='algo:'+location.pathname+':';
+  const sp=store.get('algoSpeed');if(sp)q('ad-speed').value=sp;
+  q('ad-speed').addEventListener('input',()=>store.set('algoSpeed',q('ad-speed').value));
+  const lt=store.get(SK+'list');if(lt&&lt!=='custom'&&[...q('ad-data').options].some(o=>o.value===lt))q('ad-data').value=lt;
+  const sn=+store.get(SK+'n');if(sn>=+q('ad-n').min&&sn<=+q('ad-n').max)q('ad-n').value=sn;
+  q('ad-data').addEventListener('change',()=>store.set(SK+'list',q('ad-data').value));
+  q('ad-n').addEventListener('change',()=>store.set(SK+'n',q('ad-n').value));
+  const ct=[...q('ad-codetabs').querySelectorAll('[role=tab]')];
+  const lang=store.get('algoLang');const lb=ct.find(b=>b.dataset.p===lang);if(lb)lb.click();
+  ct.forEach(b=>b.addEventListener('click',()=>store.set('algoLang',b.dataset.p)));
+
   fresh();drawChart();
+
+  /* ---------- shareable links: #block?d=8,3,5&t=5&s=12 (data, search target, step) ---------- */
+  const blockId=q('ad-setup').closest('.block').id;
+  function shareURL(){
+    let h='#'+blockId+'?d='+data.join(',')+(isS?'&t='+target:'')+'&s='+idx;
+    return location.origin+location.pathname+location.search+h;
+  }
+  q('ad-share').onclick=()=>{
+    const url=shareURL(),b=q('ad-share');
+    try{history.replaceState(null,'',url)}catch(e){}
+    const done=ok=>{b.textContent=ok?'Copied!':'Copy the address bar';setTimeout(()=>b.textContent='Copy link',1800)};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(()=>done(true),()=>done(false));else done(false);
+  };
+  (function fromLink(){
+    const h=decodeURIComponent(location.hash.slice(1)),i=h.indexOf('?');
+    if(i<0||h.slice(0,i)!==blockId)return;
+    const p=new URLSearchParams(h.slice(i+1));
+    const nums=(p.get('d')||'').split(',').filter(Boolean).map(Number);
+    if(nums.length<2||nums.length>maxN||nums.some(v=>!Number.isInteger(v)||v<1||v>13))return;
+    pause();data=nums.slice();
+    q('ad-n').value=Math.min(+q('ad-n').max,Math.max(+q('ad-n').min,nums.length));q('ad-nv').textContent=nums.length;
+    if(isS){
+      const t=parseInt(p.get('t'),10);target=t>=1&&t<=13?t:data[0];q('ad-t').value=target;
+      q('ad-data').value=data.every((v,k)=>!k||v>data[k-1])?'sortedS':'random';
+    }else{q('ad-data').value='custom';q('ad-cust').classList.remove('hidden');q('ad-ctext').value=nums.join(', ')}
+    build();
+    const st=parseInt(p.get('s'),10);if(st>0){idx=Math.min(st,steps.length-1);draw()}
+  })();
 }

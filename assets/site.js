@@ -6,21 +6,27 @@ const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim
 function tabs(root){const b=[...root.querySelectorAll('[role=tab]')];b.forEach(x=>x.onclick=()=>b.forEach(y=>{y.setAttribute('aria-selected',y===x);document.getElementById(y.dataset.p).classList.toggle('hidden',y!==x)}))}
 /* multiple-choice cards. items: {q,a,why,opts?} */
 function cardQuiz(el,items,opts,scoreEl,resetBtn){
+  /* answers are remembered per page and quiz, as the chosen option for each question number */
+  const SK='quiz:'+location.pathname+':'+(el.id||''),store=typeof settings==='undefined'?{get(){},set(){}}:settings;
+  let picks=store.get(SK);if(!picks||typeof picks!=='object')picks={};
   function build(){
     let right=0,done=0;el.innerHTML='';
     const show=()=>{if(scoreEl)scoreEl.textContent=`${right} correct out of ${done} answered (${items.length} questions)`};
-    items.forEach(it=>{
+    items.forEach((it,n)=>{
       const c=document.createElement('div');c.className='card';
       c.innerHTML=`<div>${it.q}</div><div class="opts"></div><p class="fb hidden"></p>`;
       const o=c.querySelector('.opts'),fb=c.querySelector('.fb');
-      (it.opts||opts).forEach(op=>{const b=document.createElement('button');b.textContent=op;b.onclick=()=>{
+      const answer=(b,op,save)=>{
         if(c.dataset.done)return;c.dataset.done=1;done++;b.classList.add('picked');
         const ok=op===it.a;if(ok)right++;c.classList.add(ok?'right':'wrong');
-        fb.innerHTML=(ok?'<b>Correct.</b> ':`<b>Answer: ${it.a}.</b> `)+it.why;fb.classList.remove('hidden');show()};o.appendChild(b)});
+        fb.innerHTML=(ok?'<b>Correct.</b> ':`<b>Answer: ${it.a}.</b> `)+it.why;fb.classList.remove('hidden');
+        if(save){picks[n]=op;store.set(SK,picks)}show()};
+      (it.opts||opts).forEach(op=>{const b=document.createElement('button');b.textContent=op;b.onclick=()=>answer(b,op,true);o.appendChild(b);
+        if(picks[n]===op)answer(b,op,false)});
       el.appendChild(c)});
     show();
   }
-  build();if(resetBtn)resetBtn.onclick=build;
+  build();if(resetBtn)resetBtn.onclick=()=>{picks={};store.set(SK,picks);build()};
 }
 /* binary helpers: toBin(173) gives "10101101", nibbles("10101101") gives "1010 1101" */
 const toBin=(n,w=8)=>(n>>>0).toString(2).padStart(w,'0').slice(-w), nibbles=s=>s.replace(/(?=(?:.{4})+$)(?!^)/g,' ');
@@ -83,7 +89,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     h.append(a);
   });
   const go=()=>{
-    const id=decodeURIComponent(location.hash.slice(1));if(!id)return;
+    const id=decodeURIComponent(location.hash.slice(1)).split('?')[0];if(!id)return;
     const t=d.getElementById(id);if(!t)return;
     const panel=t.closest('.hidden');
     const btn=panel&&panel.id&&d.querySelector(`[role=tab][data-p="${panel.id}"]`);if(btn)btn.click();
