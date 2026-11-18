@@ -3,6 +3,7 @@
   <h2>{{ include.title | default: "Try it" }}</h2>
   <p class="sub">{{ include.sub }}</p>
   <div class="toolbar" id="ad-setup"></div>
+  <div class="ad-view" id="ad-view"><span>Show items as</span><span class="seg"><button type="button" data-v="cards" aria-pressed="true">Cards</button><button type="button" data-v="bars" aria-pressed="false">Bars</button></span></div>
   <div class="ad-stage">
     <div id="ad-cells" class="cells"></div>
     <div id="ad-tmp" class="tmp hidden"></div>

@@ -1,9 +1,10 @@
 /* Styles for the OCR 2.3 algorithm demos (load with `algo: true` in the page's front matter). Behaviour is in algo.js. */
-.ad-stage{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:14px 10px 10px;margin:12px 0;overflow-x:auto}
+.ad-stage{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:40px 10px 10px;margin:12px 0;overflow-x:auto}
 .cells{display:flex;gap:6px;justify-content:center;min-width:max-content;margin:0 auto}
 .cell{width:44px;display:flex;flex-direction:column;align-items:center}
 .barwrap{height:210px;width:100%;display:flex;align-items:flex-end}
-.cells.search .barwrap{height:auto}
+.cells.cards .barwrap{height:auto}
+.ad-view{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--muted);margin:10px 0 0;justify-content:flex-end}
 .bar,.box{width:100%;display:flex;justify-content:center;font:700 .78rem var(--mono);background:var(--off);color:var(--ink);transition:height .15s,background .15s}
 .bar{border-radius:6px 6px 0 0;padding-top:3px;align-items:flex-start}
 .box{height:46px;align-items:center;border-radius:8px;border:2px solid var(--ink);background:var(--panel);font-size:.9rem}
@@ -13,6 +14,7 @@
 .bar.R,.box.R{background:var(--hl-soft)}
 .bar.cmp,.box.cmp{background:var(--hl);color:#16202B;border-color:var(--hl)}
 .bar.swap{background:var(--bad);color:#fff}
+.box.swap{background:var(--bad);color:#fff;border-color:var(--bad)}
 .bar.cur,.box.cur{background:var(--one);color:#fff;border-color:var(--one)}
 .bar.pivot,.box.pivot{background:#7B4DFF;color:#fff;border-color:#7B4DFF}
 .bar.sorted,.box.sorted{background:var(--ok);color:#fff;border-color:var(--ok)}
@@ -53,3 +55,30 @@
 .ad-legend i{display:inline-block;width:22px;height:0;border-top:3px solid;vertical-align:middle;margin-right:6px}
 .ad-legend i.d{border-top-style:dashed}
 .cols2>*{min-width:0}
+
+/* merge sort tree (card view) */
+.tree-in{position:relative;flex:none}
+.tn{position:absolute;display:flex;gap:2px;height:58px;box-sizing:border-box;padding:3px;border-radius:9px;transition:opacity .15s}
+.tn span{flex:1;min-width:0;position:relative;display:flex;align-items:center;justify-content:center;font:700 .85rem var(--mono);background:#fff;color:#16202B;border:1.5px solid #8b95a5;border-radius:6px;box-shadow:0 1px 0 rgba(22,32,43,.18)}
+.tn span sup{position:absolute;bottom:1px;right:3px;font:700 .6rem var(--mono);color:var(--one)}
+.tn span.L{background:var(--one-soft)}.tn span.R{background:var(--hl-soft)}
+.tn span.cmp{background:var(--hl);color:#16202B}
+.tn span.sorted{background:var(--ok);color:#fff}
+.tn span.used{opacity:.35}
+.tn span.hole{background:transparent;border:2px dashed var(--one)}
+.tn span.cmp .pip,.tn span.sorted .pip{color:inherit}
+.tn.on{box-shadow:0 0 0 3px var(--one);z-index:1}
+.tn.dim{opacity:.4}
+.tn-ar{position:absolute;left:0;top:0;color:var(--muted);pointer-events:none}
+.tn-ar line{stroke:currentColor;stroke-width:1.6}
+.tcap{position:absolute;left:0;font:700 .74rem var(--mono);color:var(--muted);white-space:nowrap}
+
+/* playing-card look for the card view */
+:where(.cells.cards) .box{position:relative;height:66px;border:1.5px solid #8b95a5;border-radius:7px;background:#fff;color:#16202B;font-size:1rem;box-shadow:0 2px 0 rgba(22,32,43,.18)}
+.pip{position:absolute;font:700 .68rem/1 var(--sans);font-style:normal;color:#16202B}
+.pip.red{color:#D6303F}
+.box .pip:first-child{top:4px;left:4px}
+.box .pip:last-child{bottom:4px;right:4px;transform:rotate(180deg)}
+.box.cmp .pip,.box.cur .pip,.box.pivot .pip,.box.sorted .pip,.box.swap .pip,.box.found .pip{color:inherit}
+.box.hole .pip{visibility:hidden}
+.tn span .pip{top:3px;left:3px;font-size:.6rem}

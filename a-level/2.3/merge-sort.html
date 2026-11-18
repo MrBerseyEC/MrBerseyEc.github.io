@@ -29,7 +29,7 @@ published: false
   </div>
 </section>
 
-{% include algo-demo.html sub="Press Play. The window of the list being worked on is bright and the rest is faded. The left half is blue and the right half is amber. The temp row fills as items are copied, then it is copied back. Use Step to follow one merge carefully." %}
+{% include algo-demo.html sub="Press Play. First the list is divided, one level of the tree at a time, until every part has one item. Then the parts are merged back up. In each merge the two halves are blue and amber, and the dashed boxes below them fill up as the smaller front item is copied across. Use Step to follow one merge carefully, or switch to Bars for the flat view." %}
 
 {% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
 
@@ -40,7 +40,7 @@ published: false
 
 <script>
 algoDemo({
- kind:'sort',cLabel:'Comparisons',wLabel:'Items copied back',refs:['n','nlogn','n2'],
+ kind:'sort',tree:true,cLabel:'Comparisons',wLabel:'Items copied back',refs:['n','nlogn','n2'],
  key:'<span><i class="L"></i>left half</span><span><i class="R"></i>right half</span><span><i class="cmp"></i>being compared</span><span><i class="sorted"></i>merged and sorted</span>',
  bigO:{best:'O(n log n)',avg:'O(n log n)',worst:'O(n log n)',space:'O(n)'},
  why:[
@@ -62,48 +62,53 @@ algoDemo({
    arrows:[{d:'M250 52V78'},{d:'M250 122V153'},{d:'M250 217V258',l:'Yes',x:270,y:242},{d:'M345 185H415',l:'No',x:380,y:177},{d:'M155 290H140V363',l:'Yes',x:140,y:282},{d:'M345 290H360V363',l:'No',x:372,y:282},
     {d:'M140 407V430H20V185H155'},{d:'M360 407V430H140'},{d:'M500 207V268'},{d:'M500 312V448'}]}],
  run:function*(X){
-  const a=X.a,S=X.S,n=a.length,stack=[],m=new Array(n).fill(false);
-  const x=()=>'Calls in progress: '+stack.slice(-4).map(s=>`mergeSort(${s})`).join(' → ')+(stack.length>4?' (…)':'');
+  const a=X.a,S=X.S,n=a.length,tr=splitTree(n),D=tr.depth,m=new Array(n).fill(false);
+  const done={};let dd=0,mg=false;
+  const T=act=>({dd,mg,done:Object.assign({},done),act});
   const base=()=>{const k={};m.forEach((f,t)=>{if(f)k[t]='sorted'});return k};
-  function* ms(lo,hi){
-    stack.push(lo+'–'+hi);
-    if(lo<hi){
-      const mid=(lo+hi)>>1,k=base();for(let t=lo;t<=mid;t++)k[t]='L';for(let t=mid+1;t<=hi;t++)k[t]='R';
-      const v={low:lo,mid,high:hi};
-      yield S(`<b>mergeSort(${lo}–${hi})</b>: ${hi-lo+1} items, so low &lt; high. Split at mid = (${lo} + ${hi}) DIV 2 = <b>${mid}</b>: left half ${lo}–${mid}, right half ${mid+1}–${hi}.`,[0,1,2],[0,1,2],['call','if','mid'],{k,rng:[lo,hi],x:x(),v});
-      yield S(`Call mergeSort on the <b>left</b> half, positions ${lo}–${mid}.`,3,3,'l',{k,rng:[lo,hi],x:x(),v});
-      yield* ms(lo,mid);
-      yield S(`The left half (${lo}–${mid}) is sorted. Now call mergeSort on the <b>right</b> half, positions ${mid+1}–${hi}.`,4,4,'r',{k:Object.assign(base(),k),rng:[lo,hi],x:x(),v});
-      yield* ms(mid+1,hi);
-      yield* merge(lo,mid,hi);
-    }else{
-      yield S(`<b>mergeSort(${lo}–${hi})</b>: only one item, so low is not less than high. A list of one item is already sorted.`,[0,1],[0,1],['call','if'],{k:Object.assign(base(),{[lo]:'cur'}),rng:[lo,hi],x:x(),v:{low:lo,high:hi}});
-    }
-    stack.pop();
+  const fmt=(lo,hi)=>'['+a.slice(lo,hi+1).join(', ')+']';
+  /* stage 1: divide, one level of the tree per step */
+  yield S(`The list has ${n} items. Call <b>mergeSort(0, ${n-1})</b> to sort the whole list. First comes the <b>divide</b> stage: keep splitting until every part has one item.`,[39,40],[34,35],'call',{x:'Stage 1: divide',v:{low:0,high:n-1},tree:T(null)});
+  for(let d=1;d<=D;d++){
+    dd=d;const k={};
+    tr.nodes.filter(z=>z.d===d).forEach(z=>{for(let t=z.lo;t<=z.hi;t++)k[t]=z.side});
+    const sp=tr.nodes.filter(z=>z.d===d-1&&!z.leaf).map(z=>`<b>${fmt(z.lo,z.hi)}</b> splits at mid = ${(z.lo+z.hi)>>1}`);
+    const one=tr.nodes.filter(z=>z.d===d-1&&z.leaf).length;
+    yield S(`<b>Divide, level ${d}:</b> ${sp.join('; ')}.${one?` ${one===1?'A part':one+' parts'} with one item can\u2019t be split any more (the base case).`:''} Left halves are blue, right halves amber.`,[1,2,3,4],[1,2,3,4],['if','mid','l','r'],{k,x:'Stage 1: divide',v:{level:d},tree:T(null)});
   }
+  mg=true;
+  yield S(`<b>Divide finished.</b> Every part is a single item, and a list of one item is already sorted. Now the <b>merge</b> stage joins the parts back up, from the bottom of the tree to the top.`,[0,1],[0,1],'if',{x:'Stage 2: merge',tree:T(null)});
+  /* stage 2: merge, in the order the recursive calls would finish */
   function* merge(lo,mid,hi){
     let i=lo,j=mid+1,k=0;const tmp=new Array(hi-lo+1).fill(null);
     const KK=e=>{const kk=base();for(let t=lo;t<=mid;t++)kk[t]=t<i?'used':'L';for(let t=mid+1;t<=hi;t++)kk[t]=t<j?'used':'R';return Object.assign(kk,e)};
     const V=()=>({low:lo,mid,high:hi,i,j,k});
-    yield S(`Both halves, ${lo}–${mid} and ${mid+1}–${hi}, are now sorted. Call <b>merge</b> to combine them.`,5,5,'merge',{k:KK(),rng:[lo,hi],x:x(),v:V()});
-    yield S(`Set up an empty <b>temp</b> list. <b>i</b> points at the front of the left half, <b>j</b> at the front of the right half, and <b>k</b> at the next free place in temp.`,[9,10,11,12,13],[9,10,11,12],'setup',{k:KK(),rng:[lo,hi],p:[[i,'i'],[j,'j']],tmp:tmp.slice(),x:x(),v:V()});
+    const x=`Stage 2: merge ${lo}\u2013${mid} with ${mid+1}\u2013${hi}`;
+    const tr_=()=>T({lo,hi,tmp:tmp.slice()});
+    yield S(`Both halves, ${lo}\u2013${mid} and ${mid+1}\u2013${hi}, are sorted. Call <b>merge</b> to combine them into the part below.`,5,5,'merge',{k:KK(),rng:[lo,hi],x,v:V(),tree:tr_()});
+    yield S(`Set up an empty <b>temp</b> list (the dashed boxes). <b>i</b> points at the front of the left half, <b>j</b> at the front of the right half, and <b>k</b> at the next free place in temp.`,[9,10,11,12,13],[9,10,11,12],'setup',{k:KK(),rng:[lo,hi],p:[[i,'i'],[j,'j']],tmp:tmp.slice(),x,v:V(),tree:tr_()});
     while(i<=mid&&j<=hi){
       X.c++;const left=a[i]<=a[j],kk=KK({[i]:'cmp',[j]:'cmp'}),p=[[i,'i'],[j,'j']],ai=a[i],aj=a[j];
       if(left){tmp[k]=a[i];i++}else{tmp[k]=a[j];j++}k++;
-      yield S(`Compare ${ai} and ${aj}: ${left?`${ai} ≤ ${aj}, so copy <b>${ai}</b> from the left half`:`${ai} is bigger, so copy <b>${aj}</b> from the right half`} into temp.`,left?[14,15,16,17,22]:[14,15,18,19,20,22],left?[13,14,15,16]:[13,14,17,18,19],['mc','cmp',left?'tl':'tr'],{k:kk,rng:[lo,hi],p,tmp:tmp.slice(),x:x(),v:V()});
+      yield S(`Compare ${ai} and ${aj}: ${left?`${ai} \u2264 ${aj}, so copy <b>${ai}</b> from the left half`:`${ai} is bigger, so copy <b>${aj}</b> from the right half`} into temp.`,left?[14,15,16,17,22]:[14,15,18,19,20,22],left?[13,14,15,16]:[13,14,17,18,19],['mc','cmp',left?'tl':'tr'],{k:kk,rng:[lo,hi],p,tmp:tmp.slice(),x,v:V(),tree:tr_()});
     }
     while(i<=mid){const ai=a[i];tmp[k]=a[i];i++;k++;
-      yield S(`The right half has run out. Copy the rest of the left half: <b>${ai}</b>.`,[24,25,26,27],[22,23,24],'left',{k:KK({[i-1]:'cmp'}),rng:[lo,hi],p:[[i-1,'i']],tmp:tmp.slice(),x:x(),v:V()})}
+      yield S(`The right half has run out. Copy the rest of the left half: <b>${ai}</b>.`,[24,25,26,27],[22,23,24],'left',{k:KK({[i-1]:'cmp'}),rng:[lo,hi],p:[[i-1,'i']],tmp:tmp.slice(),x,v:V(),tree:tr_()})}
     while(j<=hi){const aj=a[j];tmp[k]=a[j];j++;k++;
-      yield S(`The left half has run out. Copy the rest of the right half: <b>${aj}</b>.`,[29,30,31,32],[25,26,27],'left',{k:KK({[j-1]:'cmp'}),rng:[lo,hi],p:[[j-1,'j']],tmp:tmp.slice(),x:x(),v:V()})}
+      yield S(`The left half has run out. Copy the rest of the right half: <b>${aj}</b>.`,[29,30,31,32],[25,26,27],'left',{k:KK({[j-1]:'cmp'}),rng:[lo,hi],p:[[j-1,'j']],tmp:tmp.slice(),x,v:V(),tree:tr_()})}
     for(let t=0;t<tmp.length;t++)a[lo+t]=tmp[t];
     X.w+=tmp.length;for(let t=lo;t<=hi;t++)m[t]=true;
-    yield S(`Copy temp back into positions ${lo}–${hi}. These ${tmp.length} items are now <b>sorted</b>.`,[34,35,36],[29,30,31],'copy',{k:base(),rng:[lo,hi],tmp:tmp.slice(),x:x(),v:{low:lo,mid,high:hi}});
+    done[lo+'-'+hi]=tmp.slice();
+    yield S(`Copy temp back into positions ${lo}\u2013${hi}. These ${tmp.length} items are now <b>sorted</b>.`,[34,35,36],[29,30,31],'copy',{k:base(),rng:[lo,hi],tmp:tmp.slice(),x,v:{low:lo,mid,high:hi},tree:T(null)});
   }
-  yield S(`The list has ${n} items. Call <b>mergeSort(0, ${n-1})</b> to sort the whole list.`,[39,40],[34,35],'call',{x:'',v:{low:0,high:n-1}});
-  yield* ms(0,n-1);
+  function* up(z){
+    if(z.leaf)return;
+    yield* up(z.kids[0]);yield* up(z.kids[1]);
+    yield* merge(z.lo,z.kids[0].hi,z.hi);
+  }
+  yield* up(tr.nodes[0]);
   const k={};a.forEach((_,t)=>k[t]='sorted');
-  yield S(`<b>Sorted.</b> ${X.c} comparisons, and ${X.w} items copied back from temp.`,[7],[7],'end',{k});
+  yield S(`<b>Sorted.</b> ${X.c} comparisons, and ${X.w} items copied back from temp.`,[7],[7],'end',{k,tree:T(null)});
  }
 });
 cardQuiz($('#quiz'),[

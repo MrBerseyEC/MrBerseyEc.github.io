@@ -11,24 +11,41 @@
      why:    [html]  reasons for those figures
      refs:   which curves to draw against the measured results: 'n', 'nlogn', 'n2', 'logn'
      key:    html for the colour key under the chart (optional)
+     tree:   true for merge sort: in card view the list is drawn as a divide-then-merge tree (see treeHTML). Steps then carry extra.tree
      needsSorted: true for a binary search, which warns when the list is not in order
      best:   (sorted array) => the target that gives the best case (searches only)
    }
    X.S(message, ocrLines, swiftLines, flowNodes, extra) builds one step. ocrLines, swiftLines and flowNodes may be a single value or a list.
    extra may hold:  k {index: class}   ov {index: value shown instead}   p [[index, label]]   rng [low, high]   v {name: value}   tmp [values]   x text
    X.c and X.w are the two counters. The generator adds to them. */
+const SUITS=['\u2660','\u2665','\u2666','\u2663'];
+const face=v=>({1:'A',11:'J',12:'Q',13:'K'})[v]||v;
+const suit=v=>{const i=((v%4)+4)%4;return`<em class="pip${i===1||i===2?' red':''}">${SUITS[i]}</em>`};
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const log2=n=>Math.log(n)/Math.LN2;
 
+/* The tree a merge sort splits a list of n items into: {nodes:[{lo,hi,d,side,leaf,kids}], depth}. Used by the merge sort demo and by treeHTML(). */
+const _splitCache={};
+function splitTree(n){
+  if(_splitCache[n])return _splitCache[n];
+  const nodes=[];let depth=0;
+  (function go(lo,hi,d,side){
+    const z={lo,hi,d,side,leaf:lo===hi};nodes.push(z);depth=Math.max(depth,d);
+    if(lo<hi){const mid=(lo+hi)>>1;z.kids=[go(lo,mid,d+1,'L'),go(mid+1,hi,d+1,'R')]}
+    return z})(0,n-1,0,'');
+  return _splitCache[n]={nodes,depth};
+}
+
 function algoDemo(cfg){
   const isS=cfg.kind==='search';
-  const maxN=isS?20:16;
-  let data=[],target=0,steps=[],idx=0,timer=null;
+  const maxN=isS?12:13; /* a suit of cards runs from Ace (1) to King (13), so there are at most 13 different values */
+  let data=[],target=0,steps=[],idx=0,timer=null,view='cards',prevVals=null,prevIdx=0;
+  try{if(localStorage.getItem('algoView')==='bars')view='bars'}catch(e){}
   const q=id=>document.getElementById(id);
   const list=v=>v===undefined||v===null?[]:[].concat(v);
 
   /* ---------- data ---------- */
-  function unique(n){const s=new Set();while(s.size<n)s.add(rnd(5,99));return[...s]}
+  function unique(n){const s=new Set();while(s.size<n)s.add(rnd(1,13));return[...s]}
   function make(type,n){
     let a=unique(n);
     if(type==='sorted'||type==='nearly'||type==='rev'||isS&&type==='sortedS')a.sort((x,y)=>x-y);
@@ -49,23 +66,74 @@ function algoDemo(cfg){
     if(cfg.needsSorted&&data.some((v,i)=>i&&v<data[i-1]))first.m+='<br><b class="badc">This list is not sorted, so a binary search cannot be trusted. Try it anyway to see what goes wrong.</b>';
     steps=[first];
     for(const st of cfg.run(X)){steps.push(st);if(steps.length>6000)break}
-    idx=0;draw();
+    idx=0;prevVals=null;draw();
   }
 
   /* ---------- drawing ---------- */
+  /* Slide each card from where it was to where it is now. Cards are matched up by value, so a swap shows the two cards passing over each other. */
+  function flip(prev,cur){
+    if(prev.length!==cur.length||window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    const blank=v=>v===null||v===undefined||v==='',used=[],from=[];
+    cur.forEach((v,i)=>{if(!blank(v)&&prev[i]===v){used[i]=true;from[i]=i}});
+    cur.forEach((v,i)=>{if(blank(v)||from[i]!==undefined)return;const j=prev.findIndex((p,x)=>!used[x]&&p===v);if(j>=0){used[j]=true;from[i]=j}});
+    const kids=q('ad-cells').children,dur=Math.max(120,Math.min(480,delay()*.75));
+    cur.forEach((v,i)=>{
+      const j=from[i];if(j===undefined||j===i||!kids[i])return;
+      const el=kids[i].firstElementChild,dx=(j-i)*50,lift=(dx>0?-1:1)*Math.min(30,12+Math.abs(j-i)*6);
+      el.style.position='relative';el.style.zIndex=2;
+      el.animate([{transform:`translate(${dx}px,0)`},{transform:`translate(${dx/2}px,${lift}px)`,offset:.5},{transform:'none'}],{duration:dur,easing:'ease-in-out'});
+    });
+  }
+  /* Merge sort as a tree: the divide stage on top (each row is one level of splitting), the merge stage underneath
+     (the same rows in reverse, so the finished list is at the bottom). Each node sits over the original positions it covers.
+     st.tree = {dd: deepest level shown in the divide stage, mg: merge stage started, done: {'lo-hi': merged values}, act: {lo,hi,tmp} the merge in progress} */
+  function treeHTML(st){
+    const PW=48,CH=58,RH=74,n=data.length,tr=splitTree(n),D=tr.depth,W=n*PW-6;
+    const T=st.tree||{dd:0,mg:false,done:{},act:null},k=st.k||{},act=T.act,pt={};
+    (st.p||[]).forEach(([i,l])=>(pt[i]=pt[i]||[]).push(l));
+    const dTop=24,capM=dTop+D*RH+CH+14,mTop=capM+26,H=mTop+D*RH+CH+2;
+    const dY=z=>dTop+z.d*RH,mY=z=>mTop+(D-z.d)*RH,cx=z=>z.lo*PW+((z.hi-z.lo+1)*PW-6)/2;
+    const card=(v,cl,g)=>`<span class="${cl}">${v===null?'':suit(v)+face(v)}${pt[g]?`<sup>${pt[g].join(' ')}</sup>`:''}</span>`;
+    const node=(z,y,vals,cl,cls,ptr)=>`<div class="tn ${cls}" style="left:${z.lo*PW}px;top:${y}px;width:${(z.hi-z.lo+1)*PW-6}px">${vals.map((v,i)=>card(v,cl(i),ptr?z.lo+i:-1)).join('')}</div>`;
+    const key=z=>z.lo+'-'+z.hi,isAct=z=>act&&act.lo===z.lo&&act.hi===z.hi;
+    const mvals=z=>z.leaf?[data[z.lo]]:T.done[key(z)]||(isAct(z)?act.tmp:null);
+    let html=`<div class="tree-in" style="width:${W}px;height:${H}px"><div class="tcap" style="top:0">1 · DIVIDE: split in half until every part has one item</div><div class="tcap" style="top:${capM}px">2 · MERGE: join the sorted parts back together, in order</div>`;
+    let ar='';
+    const line=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" marker-end="url(#ah)"/>`;
+    for(const z of tr.nodes){
+      if(z.d<=T.dd){
+        const tint=!T.mg&&z.d===T.dd&&z.d>0?z.side:'';
+        html+=node(z,dY(z),data.slice(z.lo,z.hi+1),()=>tint,isAct(z)?'on':T.mg?'dim':'');
+        if(z.kids&&z.kids[0].d<=T.dd)z.kids.forEach(c=>ar+=line(cx(z),dY(z)+CH+1,cx(c),dY(c)-3));
+      }
+      const v=T.mg&&mvals(z);
+      if(v){
+        const dim=st.rng&&(z.hi<st.rng[0]||z.lo>st.rng[1]);
+        html+=node(z,mY(z),v,isAct(z)?(i=>v[i]===null?'hole':''):(i=>k[z.lo+i]||''),(isAct(z)?'on ':'')+(dim?'dim':''),true);
+        if(z.kids)z.kids.forEach(c=>{if(mvals(c))ar+=line(cx(c),mY(c)+CH+1,cx(z),mY(z)-3)});
+      }
+    }
+    return html+`<svg class="tn-ar" width="${W}" height="${H}" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs>${ar}</svg></div>`;
+  }
+
   function draw(){
     const st=steps[idx],a=st.a;
     const max=Math.max(...data,1);
     const k=st.k||{},ov=st.ov||{};
     const ptr={};(st.p||[]).forEach(([i,l])=>{if(i>=0&&i<a.length)(ptr[i]=ptr[i]||[]).push(l)});
-    q('ad-cells').className='cells'+(isS?' search':'');
-    q('ad-cells').innerHTML=a.map((v0,i)=>{
+    const cards=isS||view==='cards',tree=cfg.tree&&!isS&&cards;
+    q('ad-cells').className='cells'+(cards?' cards':'');
+    if(tree)q('ad-cells').innerHTML=treeHTML(st);
+    else q('ad-cells').innerHTML=a.map((v0,i)=>{
       const v=i in ov?ov[i]:v0;let cl=k[i]||'';
       if(st.rng&&(i<st.rng[0]||i>st.rng[1])&&!/sorted|found/.test(cl))cl+=' dim';
-      const body=isS?`<div class="box ${cl}">${v}</div>`:`<div class="bar ${cl}" style="height:${Math.max(14,v/max*100)}%">${v}</div>`;
+      const body=cards?`<div class="box ${cl}">${suit(v)}${face(v)}${suit(v)}</div>`:`<div class="bar ${cl}" style="height:${Math.max(14,v/max*100)}%">${v}</div>`;
       return`<div class="cell"><div class="barwrap">${body}</div><div class="idx">${i}</div><div class="ptr">${(ptr[i]||[]).join(' ')}</div></div>`}).join('');
+    const vals=a.map((v0,i)=>i in ov?ov[i]:v0);
+    if(!tree&&prevVals&&Math.abs(idx-prevIdx)===1)flip(prevVals,vals);
+    prevVals=tree?null:vals;prevIdx=idx;
     const tmp=q('ad-tmp');
-    if(st.tmp){tmp.innerHTML='<b>temp</b>'+st.tmp.map(v=>`<span class="${v===null?'':'f'}">${v===null?'':v}</span>`).join('');tmp.classList.remove('hidden')}else tmp.classList.add('hidden');
+    if(st.tmp&&!tree){tmp.innerHTML='<b>temp</b>'+st.tmp.map(v=>`<span class="${v===null?'':'f'}">${v===null?'':v}</span>`).join('');tmp.classList.remove('hidden')}else tmp.classList.add('hidden');
     q('ad-x').textContent=st.x||'';
     q('ad-msg').innerHTML=st.m;
     q('ad-vars').innerHTML=Object.entries(st.v||{}).map(([n,v])=>`<span>${n} = ${v}</span>`).join('');
@@ -85,14 +153,24 @@ function algoDemo(cfg){
   q('ad-back').onclick=()=>{pause();if(idx>0)idx--;draw()};
   q('ad-reset').onclick=()=>{pause();idx=0;draw()};
 
+  /* ---------- cards or bars ---------- */
+  const vw=q('ad-view');
+  if(isS)vw.classList.add('hidden');
+  else{
+    const sync=()=>vw.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===view));
+    vw.querySelectorAll('button').forEach(b=>b.onclick=()=>{view=b.dataset.v;try{localStorage.setItem('algoView',view)}catch(e){}sync();draw()});
+    sync();
+  }
+
   /* ---------- setting up the data ---------- */
   if(cfg.key)q('ad-key').innerHTML=cfg.key;
+  q('ad-key').insertAdjacentHTML('beforeend','<span>Values run from Ace = 1 to King = 13: Jack = 11, Queen = 12</span>');
   const setup=q('ad-setup');
   const opts=isS?[['random','Unsorted'],['sortedS','Sorted']]:[['random','Random'],['nearly','Nearly sorted'],['rev','Reversed'],['sorted','Already sorted'],['custom','Type your own']];
   setup.innerHTML=`<label>List <select id="ad-data">${opts.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></label>
     <label>Items <input type="range" id="ad-n" min="${isS?6:4}" max="${maxN}" value="${isS?12:10}"> <b class="mono" id="ad-nv"></b></label>
     <button class="btn" id="ad-new">New data</button>
-    ${isS?`<label>Target <input type="number" id="ad-t" min="0" max="999" style="width:5.5em"></label><button class="btn" id="ad-tin">Pick one in the list</button><button class="btn" id="ad-tout">Pick one not in the list</button>`
+    ${isS?`<label>Target <input type="number" id="ad-t" min="1" max="13" style="width:5.5em"></label><button class="btn" id="ad-tin">Pick one in the list</button><button class="btn" id="ad-tout">Pick one not in the list</button>`
          :`<span id="ad-cust" class="hidden"><input type="text" id="ad-ctext" placeholder="e.g. 8, 3, 5, 1" size="22" aria-label="Numbers separated by commas"> <button class="btn" id="ad-cgo">Use these</button></span>`}
     <span class="status" id="ad-err" style="margin:0"></span>`;
   const type=()=>q('ad-data').value;
@@ -108,11 +186,11 @@ function algoDemo(cfg){
   if(isS){
     q('ad-t').oninput=()=>{const v=parseInt(q('ad-t').value,10);if(isNaN(v))return;pause();target=v;build()};
     q('ad-tin').onclick=()=>{pause();target=data[rnd(0,data.length-1)];q('ad-t').value=target;build()};
-    q('ad-tout').onclick=()=>{pause();let v;do{v=rnd(1,100)}while(data.includes(v));target=v;q('ad-t').value=v;build()};
+    q('ad-tout').onclick=()=>{pause();let v;do{v=rnd(1,13)}while(data.includes(v));target=v;q('ad-t').value=v;build()};
   }else{
     q('ad-cgo').onclick=()=>{
       const nums=q('ad-ctext').value.split(/[\s,]+/).filter(Boolean).map(Number);
-      if(nums.length<2||nums.length>maxN||nums.some(v=>!Number.isInteger(v)||v<0||v>999)){q('ad-err').textContent=`Enter between 2 and ${maxN} whole numbers from 0 to 999, separated by commas.`;return}
+      if(nums.length<2||nums.length>maxN||nums.some(v=>!Number.isInteger(v)||v<1||v>13)){q('ad-err').textContent=`Enter between 2 and ${maxN} whole numbers from 1 to 13 (Ace = 1, Jack = 11, Queen = 12, King = 13), separated by commas.`;return}
       q('ad-err').textContent='';pause();data=nums;build();
     };
     q('ad-ctext').onkeydown=e=>{if(e.key==='Enter')q('ad-cgo').click()};
