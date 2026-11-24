@@ -12,11 +12,14 @@
      refs:   which curves to draw against the measured results: 'n', 'nlogn', 'n2', 'logn'
      key:    html for the colour key under the chart (optional)
      tree:   true for merge sort: in card view the list is drawn as a divide-then-merge tree (see treeHTML). Steps then carry extra.tree
+     recur:  true for quick sort: adds a Recursion tree view, a vertical call tree (see recHTML). Steps then carry extra.rec
+     variants: {label, list:[{v, t, desc, ocr, swift, flows, key, why, bigO}]}  lets the student pick between versions of the algorithm
+             (quick sort's two partition methods). The run function reads the choice from X.opt. Fields left out fall back to cfg's own.
      needsSorted: true for a binary search, which warns when the list is not in order
      best:   (sorted array) => the target that gives the best case (searches only)
    }
    X.S(message, ocrLines, swiftLines, flowNodes, extra) builds one step. ocrLines, swiftLines and flowNodes may be a single value or a list.
-   extra may hold:  k {index: class}   ov {index: value shown instead}   p [[index, label]]   rng [low, high]   v {name: value}   tmp [values]   x text
+   extra may hold:  rec {c:[{lo,hi,d,st,L,R}], a: index of the running call}   k {index: class}   ov {index: value shown instead}   p [[index, label]]   rng [low, high]   v {name: value}   tmp [values]   x text
    X.c and X.w are the two counters. The generator adds to them. */
 const SUITS=['\u2660','\u2665','\u2666','\u2663'];
 const face=v=>({1:'A',11:'J',12:'Q',13:'K'})[v]||v;
@@ -39,8 +42,10 @@ function splitTree(n){
 function algoDemo(cfg){
   const isS=cfg.kind==='search';
   const maxN=isS?12:13; /* a suit of cards runs from Ace (1) to King (13), so there are at most 13 different values */
-  let data=[],target=0,steps=[],idx=0,timer=null,view='cards',prevVals=null,prevIdx=0;
-  try{if(localStorage.getItem('algoView')==='bars')view='bars'}catch(e){}
+  let data=[],target=0,steps=[],idx=0,timer=null,view=cfg.recur?'tree':'cards',prevVals=null,prevIdx=0,vk=cfg.variants?cfg.variants.list[0].v:'';
+  try{const sv=localStorage.getItem('algoView');if(sv==='bars'||sv==='cards'||sv==='tree'&&cfg.recur)view=sv}catch(e){}
+  const VAR=()=>cfg.variants?cfg.variants.list.find(o=>o.v===vk):{};
+  const pick=f=>VAR()[f]||cfg[f];
   const q=id=>document.getElementById(id);
   const list=v=>v===undefined||v===null?[]:[].concat(v);
 
@@ -56,7 +61,7 @@ function algoDemo(cfg){
 
   /* ---------- steps ---------- */
   function newX(a,t,fast){
-    const X={a:a.slice(),t,c:0,w:0,fast};
+    const X={a:a.slice(),t,c:0,w:0,fast,opt:vk};
     X.S=(m,o,s,f,e)=>fast?null:Object.assign({m,o:list(o),s:list(s),f:list(f),a:X.a.slice(),c:X.c,w:X.w},e);
     return X;
   }
@@ -116,24 +121,57 @@ function algoDemo(cfg){
     return html+`<svg class="tn-ar" width="${W}" height="${H}" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs>${ar}</svg></div>`;
   }
 
+  /* Quick sort as a vertical call tree: each recursive call is a row of cards under the call that made it.
+     st.rec = {c: [{lo,hi,d,st:'run'|'done',L,R}], a: the call running now}. L and R are the two ranges the call's partition handed on. */
+  const REC={PW:48,CH:58,RH:98,GX:64};
+  function recHTML(st){
+    const {PW,CH,RH,GX}=REC,n=data.length,R=st.rec||{c:[],a:-1},k=st.k||{},a=st.a,pt={};
+    (st.p||[]).forEach(([i,l])=>(pt[i]=pt[i]||[]).push(l));
+    const W=GX+n*PW-6,cs=R.c,D=cs.reduce((m,z)=>Math.max(m,z.d),0),H=24+(D+1)*RH,ar=[];
+    const cx=z=>GX+z.lo*PW+((z.hi-z.lo+1)*PW-6)/2,y=z=>20+z.d*RH;
+    const within=(r,t)=>r&&t>=r[0]&&t<=r[1];
+    let html=`<div class="tree-in" style="width:${W}px;height:${H}px">`;
+    for(let d=0;d<=D;d++)html+=`<div class="tcap" style="top:${y({d})+CH/2-7}px">depth ${d}</div>`;
+    cs.forEach((z,id)=>{
+      const act=id===R.a,state=act?'on':z.st==='run'?'wait':'fin',len=z.hi-z.lo+1;
+      let cards='';
+      for(let t=z.lo;t<=z.hi;t++){
+        let cl=k[t]==='sorted'?'sorted':'';
+        if(!cl&&act&&k[t])cl=k[t];
+        if(!cl)cl=within(z.L,t)?'L':within(z.R,t)?'R':'';
+        cards+=`<span class="${cl}">${suit(a[t])}${face(a[t])}${act&&pt[t]?`<sup>${pt[t].join(' ')}</sup>`:''}</span>`;
+      }
+      const lab=len>=3?`quickSort(${z.lo}, ${z.hi})`:`(${z.lo}, ${z.hi})`;
+      html+=`<div class="tn ${state}" style="left:${GX+z.lo*PW}px;top:${y(z)}px;width:${len*PW-6}px"><b class="rl">${lab}</b>${cards}</div>`;
+      if(z.par>=0){const p=cs[z.par];ar.push(`<line x1="${cx(p)}" y1="${y(p)+CH+1}" x2="${cx(z)}" y2="${y(z)-17}" marker-end="url(#ah)"/>`)}
+    });
+    return html+`<svg class="tn-ar" width="${W}" height="${H}" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs>${ar.join('')}</svg></div>`;
+  }
+
   function draw(){
     const st=steps[idx],a=st.a;
     const max=Math.max(...data,1);
     const k=st.k||{},ov=st.ov||{};
     const ptr={};(st.p||[]).forEach(([i,l])=>{if(i>=0&&i<a.length)(ptr[i]=ptr[i]||[]).push(l)});
-    const cards=isS||view==='cards',tree=cfg.tree&&!isS&&cards;
-    q('ad-cells').className='cells'+(cards?' cards':'');
-    if(tree)q('ad-cells').innerHTML=treeHTML(st);
+    const rec=!isS&&cfg.recur&&view==='tree',cards=isS||rec||view==='cards',tree=cfg.tree&&!isS&&cards;
+    const cel=q('ad-cells'),keep=cel.scrollTop;
+    cel.className='cells'+(cards?' cards':'')+(rec?' rec':'');
+    if(rec){
+      cel.innerHTML=recHTML(st);cel.scrollTop=keep;
+      const on=cel.querySelector('.tn.on');
+      if(on){const top=on.offsetTop-24,bot=on.offsetTop+REC.CH+30;if(top<cel.scrollTop)cel.scrollTop=top;else if(bot>cel.scrollTop+cel.clientHeight)cel.scrollTop=bot-cel.clientHeight}
+    }
+    else if(tree)q('ad-cells').innerHTML=treeHTML(st);
     else q('ad-cells').innerHTML=a.map((v0,i)=>{
       const v=i in ov?ov[i]:v0;let cl=k[i]||'';
       if(st.rng&&(i<st.rng[0]||i>st.rng[1])&&!/sorted|found/.test(cl))cl+=' dim';
       const body=cards?`<div class="box ${cl}">${suit(v)}${face(v)}${suit(v)}</div>`:`<div class="bar ${cl}" style="height:${Math.max(14,v/max*100)}%">${v}</div>`;
       return`<div class="cell"><div class="barwrap">${body}</div><div class="idx">${i}</div><div class="ptr">${(ptr[i]||[]).join(' ')}</div></div>`}).join('');
     const vals=a.map((v0,i)=>i in ov?ov[i]:v0);
-    if(!tree&&prevVals&&Math.abs(idx-prevIdx)===1)flip(prevVals,vals);
-    prevVals=tree?null:vals;prevIdx=idx;
+    if(!tree&&!rec&&prevVals&&Math.abs(idx-prevIdx)===1)flip(prevVals,vals);
+    prevVals=tree||rec?null:vals;prevIdx=idx;
     const tmp=q('ad-tmp');
-    if(st.tmp&&!tree){tmp.innerHTML='<b>temp</b>'+st.tmp.map(v=>`<span class="${v===null?'':'f'}">${v===null?'':v}</span>`).join('');tmp.classList.remove('hidden')}else tmp.classList.add('hidden');
+    if(st.tmp&&!tree&&!rec){tmp.innerHTML='<b>temp</b>'+st.tmp.map(v=>`<span class="${v===null?'':'f'}">${v===null?'':v}</span>`).join('');tmp.classList.remove('hidden')}else tmp.classList.add('hidden');
     q('ad-x').textContent=st.x||'';
     q('ad-msg').innerHTML=st.m;
     q('ad-vars').innerHTML=Object.entries(st.v||{}).map(([n,v])=>`<span>${n} = ${v}</span>`).join('');
@@ -169,17 +207,19 @@ function algoDemo(cfg){
   const vw=q('ad-view');
   if(isS)vw.classList.add('hidden');
   else{
+    if(cfg.recur){vw.firstElementChild.textContent='View as';vw.querySelector('.seg').insertAdjacentHTML('afterbegin','<button type="button" data-v="tree" aria-pressed="false">Recursion tree</button>')}
     const sync=()=>vw.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===view));
     vw.querySelectorAll('button').forEach(b=>b.onclick=()=>{view=b.dataset.v;try{localStorage.setItem('algoView',view)}catch(e){}sync();draw()});
     sync();
   }
 
   /* ---------- setting up the data ---------- */
-  if(cfg.key)q('ad-key').innerHTML=cfg.key;
-  q('ad-key').insertAdjacentHTML('beforeend','<span>Values run from Ace = 1 to King = 13: Jack = 11, Queen = 12</span>');
   const setup=q('ad-setup');
+  if(cfg.variants)setup.insertAdjacentHTML('afterend','<p class="sub ad-vdesc" id="ad-vdesc"></p>');
   const opts=isS?[['random','Unsorted'],['sortedS','Sorted']]:[['random','Random'],['nearly','Nearly sorted'],['rev','Reversed'],['sorted','Already sorted'],['custom','Type your own']];
+  const CV=cfg.variants;
   setup.innerHTML=`<label>List <select id="ad-data">${opts.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></label>
+    ${CV?`<label>${CV.label} <select id="ad-var">${CV.list.map(o=>`<option value="${o.v}">${o.t}</option>`).join('')}</select></label>`:''}
     <label>Items <input type="range" id="ad-n" min="${isS?6:4}" max="${maxN}" value="${isS?12:10}"> <b class="mono" id="ad-nv"></b></label>
     <button class="btn" id="ad-new">New data</button><button class="btn" id="ad-share">Copy link</button>
     ${isS?`<label>Target <input type="number" id="ad-t" min="1" max="13" style="width:5.5em"></label><button class="btn" id="ad-tin">Pick one in the list</button><button class="btn" id="ad-tout">Pick one not in the list</button>`
@@ -209,15 +249,23 @@ function algoDemo(cfg){
   }
 
   /* ---------- code and flowcharts ---------- */
-  listing(q('ad-ocr'),cfg.ocr);listing(q('ad-swift'),cfg.swift);
   tabs(q('ad-codetabs').parentElement);
-  q('ad-flows').innerHTML=cfg.flows.map((f,i)=>`<div class="flowbox"><h3${f.title?'':' class="hidden"'}>${f.title||''}</h3><div id="ad-flow${i}" data-label="Flowchart: ${f.title||'the algorithm'}"></div></div>`).join('');
-  cfg.flows.forEach((f,i)=>flow(q('ad-flow'+i),f.w,f.h,f.nodes,f.arrows));
+  function showCode(){
+    listing(q('ad-ocr'),pick('ocr'));listing(q('ad-swift'),pick('swift'));
+    const fl=pick('flows');
+    q('ad-flows').innerHTML=fl.map((f,i)=>`<div class="flowbox"><h3${f.title?'':' class="hidden"'}>${f.title||''}</h3><div id="ad-flow${i}" data-label="Flowchart: ${f.title||'the algorithm'}"></div></div>`).join('');
+    fl.forEach((f,i)=>flow(q('ad-flow'+i),f.w,f.h,f.nodes,f.arrows));
+  }
+  function showVariant(){
+    showCode();
+    if(pick('key'))q('ad-key').innerHTML=pick('key');q('ad-key').querySelectorAll('.ad-vals').forEach(e=>e.remove());q('ad-key').insertAdjacentHTML('beforeend','<span class="ad-vals">Values run from Ace = 1 to King = 13: Jack = 11, Queen = 12</span>');
+    const bo=pick('bigO');
+    q('ad-bo-facts').innerHTML=[['Best case time',bo.best],['Average case time',bo.avg],['Worst case time',bo.worst],['Space',bo.space]].map(([l,v])=>`<div class="fact"><small>${l}</small><b>${v}</b></div>`).join('');
+    q('ad-bo-why').innerHTML=pick('why').map(w=>`<li>${w}</li>`).join('');
+    if(cfg.variants){q('ad-vdesc').innerHTML=VAR().desc||'';q('ad-var').value=vk}
+  }
 
   /* ---------- Big O ---------- */
-  const bo=cfg.bigO;
-  q('ad-bo-facts').innerHTML=[['Best case time',bo.best],['Average case time',bo.avg],['Worst case time',bo.worst],['Space',bo.space]].map(([l,v])=>`<div class="fact"><small>${l}</small><b>${v}</b></div>`).join('');
-  q('ad-bo-why').innerHTML=cfg.why.map(w=>`<li>${w}</li>`).join('');
   const modes=isS?[['worst','Worst case: the target is not in the list'],['best','Best case: the target is found first time'],['avg','Average: a target chosen at random from the list']]
                  :[['random','Random order'],['sorted','Already sorted'],['rev','Reversed']];
   const sizes=isS?[16,32,64,128,256,512,1024]:[8,16,32,64,128];
@@ -273,12 +321,17 @@ function algoDemo(cfg){
   const lang=store.get('algoLang');const lb=ct.find(b=>b.dataset.p===lang);if(lb)lb.click();
   ct.forEach(b=>b.addEventListener('click',()=>store.set('algoLang',b.dataset.p)));
 
+  if(cfg.variants){
+    const sv=store.get(SK+'variant');if(cfg.variants.list.some(o=>o.v===sv))vk=sv;
+    q('ad-var').onchange=()=>{pause();vk=q('ad-var').value;store.set(SK+'variant',vk);showVariant();build();drawChart()};
+  }
+  showVariant();
   fresh();drawChart();
 
   /* ---------- shareable links: #block?d=8,3,5&t=5&s=12 (data, search target, step) ---------- */
   const blockId=q('ad-setup').closest('.block').id;
   function shareURL(){
-    let h='#'+blockId+'?d='+data.join(',')+(isS?'&t='+target:'')+'&s='+idx;
+    let h='#'+blockId+'?d='+data.join(',')+(isS?'&t='+target:'')+(cfg.variants?'&v='+vk:'')+'&s='+idx;
     return location.origin+location.pathname+location.search+h;
   }
   q('ad-share').onclick=()=>{
@@ -294,6 +347,7 @@ function algoDemo(cfg){
     const nums=(p.get('d')||'').split(',').filter(Boolean).map(Number);
     if(nums.length<2||nums.length>maxN||nums.some(v=>!Number.isInteger(v)||v<1||v>13))return;
     pause();data=nums.slice();
+    const lv=p.get('v');if(cfg.variants&&cfg.variants.list.some(o=>o.v===lv)){vk=lv;showVariant()}
     q('ad-n').value=Math.min(+q('ad-n').max,Math.max(+q('ad-n').min,nums.length));q('ad-nv').textContent=nums.length;
     if(isS){
       const t=parseInt(p.get('t'),10);target=t>=1&&t<=13?t:data[0];q('ad-t').value=target;
