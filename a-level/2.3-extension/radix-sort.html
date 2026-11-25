@@ -1,0 +1,98 @@
+---
+layout: demo
+title: "Radix Sort"
+spec: "A LEVEL EXTENSION · BEYOND THE OCR SPECIFICATION"
+algo: true
+---
+<p class="lede">A radix sort sorts whole numbers one <b>digit</b> at a time, starting with the units digit, using 10 buckets numbered 0 to 9. After every digit the buckets are collected back into a list, and the next digit is used, until even the most significant digit has been processed. Like counting sort, no two items are ever compared directly.</p>
+
+<section class="block" id="how-it-works">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>Find the largest value in the list, to know how many digits to process.</li>
+      <li>Starting with <span class="mono">digit</span> = 1 (the units place), create 10 empty buckets, numbered 0 to 9.</li>
+      <li>For every item, work out that digit's value: <span class="mono">(value DIV digit) MOD 10</span>. Add the item to the <b>back</b> of that bucket.</li>
+      <li>Collect the buckets back into one list, in order from bucket 0 to bucket 9.</li>
+      <li>Multiply <span class="mono">digit</span> by 10 (move to the next digit: tens, then hundreds, and so on) and repeat from step 2.</li>
+      <li>Stop once <span class="mono">digit</span> is bigger than the largest value. The list is now fully sorted.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>Each pass over one digit is really a <b>stable counting sort</b> keyed on that digit, so items that share a bucket keep the order they arrived in.</li>
+        <li>That stability is essential: a later, more significant digit relies on an earlier pass having already put the less significant digits in order.</li>
+        <li>No two items are ever compared with each other — only sorted by one digit's value — so this is not a comparison sort.</li>
+        <li>The number of passes depends on how many digits the largest value has, not on how the list starts out.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Press Play to watch each pass: first every item is read for its current digit, then the list is rebuilt bucket by bucket. The cards here only go up to 13, so there are just two passes: units, then tens." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block" id="check-your-understanding">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'sort',cLabel:'Digits read',wLabel:'Items placed',refs:['n'],
+ key:'<span><i class="cmp"></i>being read or placed</span><span><i class="sorted"></i>fully sorted</span>',
+ bigO:{best:'O(n)',avg:'O(n)',worst:'O(n)',space:'O(n)'},
+ why:[
+  '<b>O(d(n + k)) in general:</b> each of the d digit passes is a counting sort costing O(n + k), where k = 10 (one bucket per digit value). With d treated as a small, fixed number of digits, this becomes O(n).',
+  '<b>d depends on the data, not n:</b> sorting bigger numbers means more digits and more passes, even for the same number of items. Radix sort suits data with a fixed, modest number of digits, such as exam numbers or dates.',
+  '<b>Stability is not optional:</b> unlike most sorts, radix sort only works at all if every single digit pass is stable, because each pass depends on the order left behind by the one before it.',
+  '<b>Space, O(n):</b> the 10 buckets between them hold every item once per pass, the same as a counting sort’s output list.'],
+ ocr:['procedure radixSort(numbers:byRef)','  maxVal = largest value in numbers','  digit = 1','  while digit <= maxVal','    create 10 empty buckets, numbered 0 to 9','    for each item v in numbers','      d = (v DIV digit) MOD 10','      add v to the end of bucket[d]','    next item','    numbers = buckets 0,1,2,...,9 joined together, in order','    digit = digit * 10','  endwhile','endprocedure'],
+ swift:['func radixSort(_ numbers: inout [Int]) {','    guard let maxVal = numbers.max() else { return }','    var digit = 1','    while digit <= maxVal {','        var buckets = [[Int]](repeating: [], count: 10)','        for v in numbers {','            let d = (v / digit) % 10','            buckets[d].append(v)','        }','        numbers = buckets.flatMap { $0 }','        digit *= 10','    }','}'],
+ flows:[{w:560,h:500,nodes:[
+  {id:'start',t:'term',x:220,y:30,s:'Start'},{id:'init',t:'proc',x:220,y:100,s:'maxVal = largest value|digit = 1'},{id:'d1',t:'dec',x:220,y:180,s:'digit <= maxVal ?'},
+  {id:'dist',t:'proc',x:220,y:270,s:'distribute every item into|bucket (value DIV digit) MOD 10'},{id:'coll',t:'proc',x:220,y:360,s:'collect buckets 0→9 back|into the list'},
+  {id:'inc',t:'proc',x:220,y:440,s:'digit = digit × 10'},{id:'end',t:'term',x:480,y:180,s:'End'}],
+  arrows:[{d:'M220 52V78'},{d:'M220 122V148'},{d:'M315 180H385',l:'No',x:340,y:172},{d:'M220 212V248',l:'Yes',x:240,y:238},
+   {d:'M220 292V338'},{d:'M220 382V418'},{d:'M135 440H40V180H125'}]}],
+ run:function*(X){
+  const a=X.a,S=X.S,n=a.length;
+  const maxVal=Math.max(...a);
+  yield S(`The largest value is <b>${maxVal}</b>. Radix sort processes one digit at a time, starting with the units digit, using 10 buckets numbered 0 to 9.`,[1,2],[1,2],'init',{v:{maxVal,digit:1}});
+  let digit=1,passNo=0;
+  while(digit<=maxVal){
+   passNo++;
+   const buckets=Array.from({length:10},()=>[]);
+   const name=digit===1?'units':digit===10?'tens':'hundreds';
+   const sizes=()=>buckets.map(b=>b.length);
+   yield S(`<b>Pass ${passNo}: the ${name} digit.</b> Create 10 empty buckets, 0 to 9.`,[4],[4],'d1',{x:`${name} digit · bucket sizes 0–9`,tmp:sizes(),v:{digit}});
+   for(let i=0;i<n;i++){
+    const d=Math.floor(a[i]/digit)%10;
+    buckets[d].push(a[i]);X.c++;
+    yield S(`${a[i]}'s ${name} digit is <b>${d}</b>, so it joins the back of bucket ${d}.`,[5,6,7,8],[5,6,7],'dist',{k:{[i]:'cmp'},x:`${name} digit · bucket sizes 0–9`,tmp:sizes(),v:{digit,item:a[i],bucket:d}});
+   }
+   let pos=0;
+   yield S(`Collect the buckets back into one list, from bucket 0 to bucket 9. Items that share a bucket keep the order they arrived in — this is what makes the pass <b>stable</b>.`,[9],[8],'coll',{x:`${name} digit · bucket sizes 0–9`,tmp:sizes(),v:{digit}});
+   for(let d=0;d<10;d++){
+    for(const v of buckets[d]){
+     a[pos]=v;X.w++;
+     yield S(`From bucket ${d}: place <b>${v}</b> at position ${pos}.`,[9],[8],'coll',{k:{[pos]:'cmp'},x:`${name} digit · bucket sizes 0–9`,v:{digit,value:v,pos}});
+     pos++;
+    }
+   }
+   digit*=10;
+   yield S(`Every item has been placed by its ${name} digit. Move on to the next digit.`,10,9,'inc',{v:{digit}});
+  }
+  const k={};a.forEach((_,t)=>k[t]='sorted');
+  yield S(`<b>Sorted.</b> Every digit, from units up to the most significant, has now redistributed the list. ${X.c} digits read, ${X.w} items placed.`,[7],[],'end',{k});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'A radix sort processes the units digit of 23 and 7. Which bucket does each go into?',opts:['23 into bucket 3, 7 into bucket 7','23 into bucket 2, 7 into bucket 7','Both into bucket 0'],a:'23 into bucket 3, 7 into bucket 7',why:'The units digit of 23 is 3, and the units digit of 7 is 7, so (value DIV 1) MOD 10 gives those bucket numbers.'},
+ {q:'Why must every digit pass in a radix sort be stable?',opts:['Because each pass relies on the ordering left behind by the pass before it','Because unstable passes run slower','Because it only works on already-sorted data'],a:'Because each pass relies on the ordering left behind by the pass before it',why:'If two items share the next digit, their order from the previous, less significant digit must be kept, or the final list will not be sorted.'},
+ {q:'How many passes does a radix sort need to fully sort a list of 4-digit numbers?',opts:['4: one for each digit, from units to thousands','1: all digits are read in the same pass','log₂ 4 = 2 passes'],a:'4: one for each digit, from units to thousands',why:'A pass processes exactly one digit, starting with the least significant, so d digits need d passes.'},
+ {q:'Which digit does a radix sort process first?',opts:['The units (least significant) digit','The most significant digit','Whichever digit differs most between items'],a:'The units (least significant) digit',why:'This is why it is sometimes called a least significant digit (LSD) radix sort.'},
+ {q:'Why is radix sort not considered a comparison sort?',opts:['Items are distributed into buckets by digit value, never compared with each other','It only sorts numbers smaller than 10','It uses recursion instead of loops'],a:'Items are distributed into buckets by digit value, never compared with each other',why:'Like a counting sort, it reads a value (here, one digit of it) and places the item accordingly, without ever asking "is this bigger than that?"'},
+ {q:'A programmer has a list of a million 3-digit exam marks (000–999) to sort. Why might radix sort suit this better than sorting by the full mark with a counting sort?',opts:['It needs only 10 buckets per pass instead of one count for every possible mark','It is a comparison sort and so is always faster','It does not need the data to be whole numbers'],a:'It needs only 10 buckets per pass instead of one count for every possible mark',why:'A counting sort on the whole value would need k = 1000 counts; radix sort instead does 3 passes with just 10 buckets each.'},
+],null,$('#score'),$('#qreset'));
+</script>

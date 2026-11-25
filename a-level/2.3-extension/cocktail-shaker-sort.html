@@ -1,0 +1,100 @@
+---
+layout: demo
+title: "Cocktail Shaker Sort"
+spec: "A LEVEL EXTENSION · BEYOND THE OCR SPECIFICATION"
+algo: true
+---
+<p class="lede">A cocktail shaker sort is a bubble sort that works in <b>both directions</b>. A forward pass bubbles the largest unsorted item to the right, then a backward pass bubbles the smallest unsorted item to the left, so the unsorted window shrinks from both ends on every cycle. It fixes bubble sort's weakness with small items stuck near the end of the list, sometimes called "turtles".</p>
+
+<section class="block" id="how-it-works">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>Keep two bounds, <span class="mono">left</span> and <span class="mono">right</span>, marking the unsorted window. They start at the two ends of the list.</li>
+      <li><b>Forward pass:</b> compare neighbours from <span class="mono">left</span> to <span class="mono">right</span>, swapping any pair the wrong way round. The largest item left ends up at <span class="mono">right</span>, so move <span class="mono">right</span> one place in.</li>
+      <li><b>Backward pass:</b> compare neighbours from <span class="mono">right</span> back down to <span class="mono">left</span>, swapping any pair the wrong way round. The smallest item left ends up at <span class="mono">left</span>, so move <span class="mono">left</span> one place in.</li>
+      <li>Keep a <span class="mono">swapped</span> flag, as in a bubble sort, so a cycle with no swaps at all stops the sort early.</li>
+      <li>Repeat forward and backward passes until a whole cycle makes no swap, or the window closes.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>A plain bubble sort only ever pushes large items one way. A small item near the end still has to wait for a whole pass to move it just one place left — these slow-moving small items are called <b>turtles</b>.</li>
+        <li>The backward pass gives turtles a free ride all the way to the front in a single pass, instead of one place at a time.</li>
+        <li>It is still <b>in place</b> and <b>stable</b>, just like a bubble sort, since it only ever swaps a strictly-out-of-order neighbouring pair.</li>
+        <li>It still has an O(n²) worst case — it is not faster overall, just better balanced on certain inputs.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Press Play to watch the window shrink from both ends: amber for the forward pass, then the same pass in reverse. Try Reversed to see the worst case, and Already sorted to see it stop after one cycle." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block" id="check-your-understanding">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'sort',cLabel:'Comparisons',wLabel:'Swaps',refs:['n','n2'],
+ bigO:{best:'O(n)',avg:'O(n²)',worst:'O(n²)',space:'O(1)'},
+ why:[
+  '<b>Worst case, O(n²):</b> a reversed list still needs about n ÷ 2 cycles, each doing a forward and a backward pass over a shrinking window — about n × n ÷ 2 comparisons in total, the same order as a bubble sort.',
+  '<b>Best case, O(n):</b> with the <span class="mono">swapped</span> flag, a list that is already sorted makes one forward pass and one backward pass with no swaps, then stops.',
+  '<b>Turtles fixed, not the worst case:</b> a single small item near the end, which a plain bubble sort would need many passes to move, reaches the front in one backward pass instead. The overall worst case is still O(n²).',
+  '<b>Space, O(1):</b> the list is sorted in place, using only left, right and a swapped flag.'],
+ ocr:['procedure cocktailShakerSort(numbers:byRef)','  left = 0','  right = numbers.length - 1','  swapped = true','  do','    swapped = false','    for i = left to right - 1','      if numbers[i] > numbers[i + 1] then','        swap numbers[i] and numbers[i + 1]','        swapped = true','      endif','    next i','    right = right - 1','    for i = right to left + 1 step -1','      if numbers[i - 1] > numbers[i] then','        swap numbers[i - 1] and numbers[i]','        swapped = true','      endif','    next i','    left = left + 1','  until swapped == false','endprocedure'],
+ swift:['func cocktailShakerSort(_ numbers: inout [Int]) {','    guard numbers.count > 1 else { return }','    var left = 0','    var right = numbers.count - 1','    var swapped = true','    while swapped {','        swapped = false','        for i in left..<right {','            if numbers[i] > numbers[i + 1] {','                numbers.swapAt(i, i + 1)','                swapped = true','            }','        }','        right -= 1','        var i = right','        while i > left {','            if numbers[i - 1] > numbers[i] {','                numbers.swapAt(i - 1, i)','                swapped = true','            }','            i -= 1','        }','        left += 1','    }','}'],
+ flows:[{w:560,h:560,nodes:[
+  {id:'start',t:'term',x:200,y:30,s:'Start'},{id:'setup',t:'proc',x:200,y:100,s:'left = 0|right = n - 1'},{id:'sw0',t:'proc',x:200,y:180,s:'swapped = false'},
+  {id:'fwd',t:'proc',x:200,y:270,s:'Forward pass: swap any pair|left → right the wrong way round|right = right - 1'},
+  {id:'bwd',t:'proc',x:200,y:370,s:'Backward pass: swap any pair|right → left the wrong way round|left = left + 1'},
+  {id:'d1',t:'dec',x:200,y:460,s:'swapped = true ?'},{id:'end',t:'term',x:440,y:180,s:'End'}],
+  arrows:[{d:'M200 52V78'},{d:'M200 122V158'},{d:'M200 202V228'},{d:'M200 312V328'},{d:'M200 412V428'},
+   {d:'M115 460H20V180H120',l:'Yes',x:40,y:452},{d:'M295 460H440V202',l:'No',x:330,y:452}]}],
+ run:function*(X){
+  const a=X.a,S=X.S,n=a.length;let left=0,right=n-1,swapped=true,pass=0;
+  const K=e=>{const k={};for(let t=0;t<left;t++)k[t]='sorted';for(let t=right+1;t<n;t++)k[t]='sorted';return Object.assign(k,e)};
+  yield S(`The list has <b>${n}</b> items. A cocktail shaker sort bubbles the largest item right, then the smallest item left, shrinking the unsorted window from <b>left</b> and <b>right</b> each cycle.`,[1,2,3],[2,3,4],'setup',{v:{left,right}});
+  do{
+   pass++;swapped=false;
+   yield S(`<b>Cycle ${pass}, forward pass.</b> Compare neighbours from left (${left}) to right (${right}), swapping any pair the wrong way round.`,[5,6,7,8,9,10,11],[6,7,8,9,10,11],'fwd',{k:K(),v:{left,right,swapped}});
+   for(let i=left;i<right;i++){
+    X.c++;const gt=a[i]>a[i+1];
+    yield S(`Is ${a[i]} &gt; ${a[i+1]}? ${gt?'<b>Yes</b>: swap them.':'<b>No</b>: leave them.'}`,[7,8],[8,9],'fwd',{k:K({[i]:'cmp',[i+1]:'cmp'}),p:[[i,'i'],[i+1,'i+1']],v:{left,right,i,swapped}});
+    if(gt){
+     [a[i],a[i+1]]=[a[i+1],a[i]];X.w++;swapped=true;
+     yield S(`Swapped. ${a[i]} and ${a[i+1]} are now in the right order.`,[8,9],[9,10],'fwd',{k:K({[i]:'swap',[i+1]:'swap'}),p:[[i,'i'],[i+1,'i+1']],v:{left,right,i,swapped}});
+    }
+   }
+   const pushed=a[right];right--;
+   yield S(`End of the forward pass. <b>${pushed}</b> is now in its final place. <b>right</b> becomes ${right}.`,12,13,'fwd',{k:K(),v:{left,right,swapped}});
+   yield S(`<b>Backward pass.</b> Compare neighbours from right (${right}) down to left (${left}), swapping any pair the wrong way round.`,[13,14,15,16,17,18],[14,15,16,17,18],'bwd',{k:K(),v:{left,right,swapped}});
+   for(let i=right;i>left;i--){
+    X.c++;const gt=a[i-1]>a[i];
+    yield S(`Is ${a[i-1]} &gt; ${a[i]}? ${gt?'<b>Yes</b>: swap them.':'<b>No</b>: leave them.'}`,[14],[16],'bwd',{k:K({[i-1]:'cmp',[i]:'cmp'}),p:[[i-1,'i-1'],[i,'i']],v:{left,right,i,swapped}});
+    if(gt){
+     [a[i-1],a[i]]=[a[i],a[i-1]];X.w++;swapped=true;
+     yield S(`Swapped. ${a[i-1]} and ${a[i]} are now in the right order.`,[15,16],[17,18],'bwd',{k:K({[i-1]:'swap',[i]:'swap'}),p:[[i-1,'i-1'],[i,'i']],v:{left,right,i,swapped}});
+    }
+   }
+   const pulled=a[left];
+   yield S(`End of the backward pass. <b>${pulled}</b> is now in its final place. <b>left</b> becomes ${left+1}.`,19,22,'bwd',{k:K({[left]:'sorted'}),v:{left,right,swapped}});
+   left++;
+   yield S(`${swapped?'At least one swap was made, so another cycle is needed.':'<b>No swaps were made in either pass</b>: the list is sorted.'}`,20,5,'d1',{k:K(),v:{left,right,swapped}});
+  }while(swapped&&left<=right);
+  const k={};a.forEach((_,t)=>k[t]='sorted');
+  yield S(`<b>Sorted.</b> It took ${pass} cycle${pass>1?'s':''}, ${X.c} comparisons and ${X.w} swaps.`,21,24,'end',{k});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'What does the backward pass of a cocktail shaker sort do?',opts:['Bubbles the smallest unsorted item to the left of the window','Bubbles the largest unsorted item to the right of the window','Checks whether the list is already sorted'],a:'Bubbles the smallest unsorted item to the left of the window',why:'It compares neighbours from right to left, so a small item travels all the way to the front in one pass instead of one place per pass.'},
+ {q:'What problem with a plain bubble sort does the backward pass fix?',opts:['Turtles: small items near the end that take many passes to reach the front','It makes the sort stable','It removes the need for the swapped flag'],a:'Turtles: small items near the end that take many passes to reach the front',why:'A bubble sort only moves large items right quickly; a small item at the far end still moves left one place per pass.'},
+ {q:'What is the worst-case time complexity of a cocktail shaker sort?',opts:['O(n²)','O(n log n)','O(n)'],a:'O(n²)',why:'It still compares and swaps neighbouring pairs on a shrinking window, giving the same order of growth as a bubble sort.'},
+ {q:'Why do left and right move inward after every cycle?',opts:['The largest and smallest unsorted items have just been placed at the two ends','To skip comparing the middle of the list','To make the sort unstable'],a:'The largest and smallest unsorted items have just been placed at the two ends',why:'Once an item reaches its final place at either end, it never needs to be looked at again.'},
+ {q:'What does the swapped flag do in a cocktail shaker sort?',opts:['Stops the sort as soon as a whole cycle makes no swaps','Counts how many swaps have been made','Decides whether to run forward or backward next'],a:'Stops the sort as soon as a whole cycle makes no swaps',why:'If neither pass in a cycle swapped anything, every neighbouring pair is already in order, so the list is sorted.'},
+ {q:'Is a cocktail shaker sort stable?',opts:['Yes: it only swaps a pair that is strictly the wrong way round','No: the backward pass can reorder equal items','Yes, but only in the best case'],a:'Yes: it only swaps a pair that is strictly the wrong way round',why:'Equal items are never swapped, in either direction, so their original order is kept.'},
+],null,$('#score'),$('#qreset'));
+</script>

@@ -1,0 +1,92 @@
+---
+layout: demo
+title: "Counting Sort"
+spec: "A LEVEL EXTENSION · BEYOND THE OCR SPECIFICATION"
+algo: true
+---
+<p class="lede">A counting sort never compares two items with each other. Instead it <b>counts</b> how many times each possible value appears, then uses those counts to write every item straight into its final position. It is extremely fast, but only works when the values are whole numbers from a known, fairly small range.</p>
+
+<section class="block" id="how-it-works">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>Find the largest value, <span class="mono">maxVal</span>, in the list.</li>
+      <li>Create a <b>count array</b> with one place for every value from 0 to <span class="mono">maxVal</span>, all starting at 0.</li>
+      <li>Scan the original list once. For every item, add one to the count at that value's index: <span class="mono">counts[value]</span>.</li>
+      <li>The count array now holds how many times each value appears.</li>
+      <li>Rebuild the list in order: for each possible value, from smallest to largest, write it out <span class="mono">counts[value]</span> times.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>No two items are ever compared, so this is not a comparison sort — it sidesteps the O(n log n) limit that applies to sorts like merge sort.</li>
+        <li>Its speed depends on <b>k</b>, the range of possible values, as well as <b>n</b>, the number of items: it takes O(n + k) time.</li>
+        <li>It only works on data that can be counted this way, such as whole numbers, grades, or ranks — not arbitrary text or decimals.</li>
+        <li>If <b>k</b> is much larger than <b>n</b>, most of the count array is wasted on zeros, so it stops being a good choice.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Press Play to watch the count array fill up as the list is scanned once, then watch the list get rebuilt straight from those counts. Because the playing cards here only run from 1 to 13, k is always small and fixed, which is exactly when a counting sort works best." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block" id="check-your-understanding">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'sort',cLabel:'Values read',wLabel:'Items placed',refs:['n'],
+ key:'<span><i class="cmp"></i>being read</span><span><i class="sorted"></i>placed in its final position</span>',
+ bigO:{best:'O(n + k)',avg:'O(n + k)',worst:'O(n + k)',space:'O(n + k)'},
+ why:[
+  '<b>O(n + k) in every case:</b> one pass of n items builds the counts, and one pass over the k possible values rebuilds the list — n and k are each looked at once, whatever order the data starts in.',
+  '<b>Not a comparison sort:</b> because items are counted rather than compared, counting sort can beat the O(n log n) lower bound that applies to comparison-based sorts such as merge sort.',
+  '<b>k matters as much as n:</b> here the playing cards only run from 1 to 13, so k is small and fixed, and the chart below looks close to O(n). With a huge range of possible values, k would dominate and the sort would need a lot of memory for very little benefit.',
+  '<b>Space, O(n + k):</b> it needs the count array (size k) and a second list to rebuild into (size n), so it is not an in-place sort.'],
+ ocr:['procedure countingSort(numbers:byRef)','  maxVal = numbers[0]','  for i = 1 to numbers.length - 1','    if numbers[i] > maxVal then','      maxVal = numbers[i]','    endif','  next i','  array counts[maxVal + 1]','  for v = 0 to maxVal','    counts[v] = 0','  next v','  for i = 0 to numbers.length - 1','    counts[numbers[i]] = counts[numbers[i]] + 1','  next i','  pos = 0','  for v = 0 to maxVal','    for c = 1 to counts[v]','      numbers[pos] = v','      pos = pos + 1','    next c','  next v','endprocedure'],
+ swift:['func countingSort(_ numbers: inout [Int]) {','    guard let maxVal = numbers.max() else { return }','    var counts = [Int](repeating: 0, count: maxVal + 1)','    for v in numbers {','        counts[v] += 1','    }','    var pos = 0','    for v in 0...maxVal {','        for _ in 0..<counts[v] {','            numbers[pos] = v','            pos += 1','        }','    }','}'],
+ flows:[{w:460,h:560,nodes:[
+  {id:'start',t:'term',x:200,y:30,s:'Start'},{id:'findmax',t:'proc',x:200,y:110,s:'maxVal = largest value|in the list'},
+  {id:'mkcounts',t:'proc',x:200,y:200,s:'create counts[0..maxVal],|all set to 0'},{id:'count',t:'proc',x:200,y:300,s:'for each item v in the list:|counts[v] = counts[v] + 1'},
+  {id:'rebuild',t:'proc',x:200,y:420,s:'pos = 0|for v = 0 to maxVal:|  for c = 1 to counts[v]:|    list[pos] = v; pos = pos + 1'},{id:'end',t:'term',x:200,y:520,s:'End'}],
+  arrows:[{d:'M200 52V88'},{d:'M200 132V178'},{d:'M200 222V278'},{d:'M200 322V376'},{d:'M200 464V498'}]}],
+ run:function*(X){
+  const a=X.a,S=X.S,n=a.length;
+  let maxVal=a[0];
+  yield S(`Counting sort needs to know the largest value in the list first. The first item, <b>${maxVal}</b>, is the largest found so far.`,1,1,'findmax',{k:{0:'cmp'},v:{maxVal}});
+  for(let i=1;i<n;i++){
+   X.c++;const bigger=a[i]>maxVal;if(bigger)maxVal=a[i];
+   yield S(`Is ${a[i]} &gt; the largest found so far? ${bigger?`<b>Yes</b>: maxVal is now ${maxVal}.`:'<b>No</b>: leave maxVal as it is.'}`,[2,3,4,5],1,'findmax',{k:{[i]:'cmp'},v:{maxVal}});
+  }
+  const counts=new Array(maxVal+1).fill(0);
+  yield S(`The largest value is <b>${maxVal}</b>. Create a <b>count array</b> with one place for every value from 0 to ${maxVal}, all starting at 0.`,[7,8,9,10],[2],'mkcounts',{x:'count array (index = value, box = how many times seen)',tmp:counts.slice(),v:{maxVal}});
+  for(let i=0;i<n;i++){
+   X.c++;counts[a[i]]++;
+   yield S(`Read <b>${a[i]}</b> at position ${i} and add one to <b>counts[${a[i]}]</b>, which is now ${counts[a[i]]}.`,[11,12,13],[4,5],'count',{k:{[i]:'cmp'},x:'count array (index = value, box = how many times seen)',tmp:counts.slice(),v:{value:a[i]}});
+  }
+  let pos=0;
+  yield S(`Every count is now known. Rebuild the list in order: for each value from 0 up to ${maxVal}, write it out <b>counts[value]</b> times.`,[14,15,16,17,18,19,20],[6,7,8,9,10],'rebuild',{x:'count array (index = value, box = how many times seen)',tmp:counts.slice(),v:{pos}});
+  for(let v=0;v<=maxVal;v++){
+   for(let c=0;c<counts[v];c++){
+    X.w++;a[pos]=v;
+    const k={};for(let t=0;t<pos;t++)k[t]='sorted';k[pos]='sorted';
+    yield S(`<b>counts[${v}]</b> says ${v} appears here. Place <b>${v}</b> at position ${pos}.`,[16,17,18],[8,9],'rebuild',{k,x:'count array (index = value, box = how many times seen)',tmp:counts.slice(),v:{value:v,pos}});
+    pos++;
+   }
+  }
+  const k={};a.forEach((_,t)=>k[t]='sorted');
+  yield S(`<b>Sorted.</b> No two items were ever compared directly — only counted. ${X.c} values read, ${X.w} items placed.`,21,13,'end',{k});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'A counting sort is run on 2, 5, 2, 1. What is counts[2] after the counting step?',opts:['2','1','5'],a:'2',why:'The value 2 appears twice in the list, so counts[2] is incremented twice.'},
+ {q:'Why is a counting sort not a comparison sort?',opts:['Items are never compared with each other, only counted','It only works on sorted lists','It uses recursion instead of comparisons'],a:'Items are never compared with each other, only counted',why:'It reads values and tallies them, so the usual O(n log n) limit on comparison sorts does not apply to it.'},
+ {q:'What is k in the time complexity O(n + k) of a counting sort?',opts:['The range of possible values the items can take','The number of items in the list','The number of swaps made'],a:'The range of possible values the items can take',why:'The count array needs one place for every possible value, from 0 up to the largest value seen.'},
+ {q:'Why would a counting sort be a poor choice for sorting 1000 unique 9-digit account numbers?',opts:['k would be enormous, so the count array would need far more memory than the list itself','It cannot sort numbers at all','It would need to compare every pair of numbers'],a:'k would be enormous, so the count array would need far more memory than the list itself',why:'The range of possible 9-digit numbers is about a billion, so almost all of the count array would be wasted on zeros.'},
+ {q:'What is the space complexity of a counting sort?',opts:['O(n + k): a count array of size k and an output list of size n','O(1): it sorts in place like a bubble sort','O(log n): the same as a binary search'],a:'O(n + k): a count array of size k and an output list of size n',why:'It needs both the count array and somewhere to write the rebuilt list, so it is not an in-place sort.'},
+ {q:'Which kind of data suits a counting sort well?',opts:['Whole numbers from a small, known range, such as exam grades 1 to 9','Arbitrary pieces of text of any length','Decimal numbers with many possible values'],a:'Whole numbers from a small, known range, such as exam grades 1 to 9',why:'A small k keeps both the count array and the total time close to O(n).'},
+],null,$('#score'),$('#qreset'));
+</script>

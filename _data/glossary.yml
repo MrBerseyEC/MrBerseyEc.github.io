@@ -84,6 +84,15 @@
 - { t: "Stable sort", d: "A sort that keeps items with equal keys in their original order. Merge sort is stable.", u: "/a-level/2.3/merge-sort.html#how-it-works" }
 - { t: "Time complexity", d: "How the number of steps an algorithm takes grows with the size of the input, written in Big O notation.", u: "/a-level/2.3/linear-search.html#big-o" }
 
+# ---------------- A-Level: 2.3 Algorithms — Extension ----------------
+- { t: "Bucket", d: "In a radix sort, one of 10 queues (0 to 9) that items are distributed into based on the digit being processed.", u: "/a-level/2.3-extension/radix-sort.html#how-it-works" }
+- { t: "Cocktail shaker sort", d: "A bidirectional bubble sort: a forward pass bubbles the largest item right, then a backward pass bubbles the smallest item left. Worst case still O(n²).", u: "/a-level/2.3-extension/cocktail-shaker-sort.html#how-it-works" }
+- { t: "Counting sort", d: "A non-comparison sort that counts how many times each value appears, then uses those counts to write every item into its final position. O(n + k) time.", u: "/a-level/2.3-extension/counting-sort.html#how-it-works" }
+- { t: "Natural run", d: "In tim sort, a stretch of a list that is already in non-decreasing order, found by scanning rather than sorting.", u: "/a-level/2.3-extension/tim-sort.html#how-it-works" }
+- { t: "Radix sort", d: "A non-comparison sort that sorts whole numbers one digit at a time, from least to most significant, using 10 buckets per pass.", u: "/a-level/2.3-extension/radix-sort.html#how-it-works" }
+- { t: "Selection sort", d: "Sorts by repeatedly finding the smallest item left in the unsorted part of the list and swapping it to the front. O(n²) in every case, but at most n − 1 swaps.", u: "/a-level/2.3-extension/selection-sort.html#how-it-works" }
+- { t: "Tim sort", d: "A hybrid sort that splits a list into small runs, sorts each with insertion sort, then merges the runs like a merge sort. Best case O(n), used by Python and Java.", u: "/a-level/2.3-extension/tim-sort.html#how-it-works" }
+
 # ---------------- GCSE Topic 2: Data ----------------
 - { t: "Amplitude", d: "The height of a sound wave, which sets how loud the sound is. Sampling records it at each sample point.", u: "/gcse/2/sound.html#sound-waves" }
 - { t: "Analogue", d: "Data that varies smoothly and continuously, such as a sound wave. It has to be sampled to be stored by a computer.", u: "/gcse/2/sound.html#sound-waves" }

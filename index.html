@@ -22,6 +22,12 @@ a.card:hover,a.card:focus-visible{border-color:var(--ink);background:var(--hl-so
 a.card .num{font:600 .78rem var(--mono);color:var(--muted)}
 a.card .arrow{margin-left:auto;font-family:var(--mono);color:var(--muted);transition:transform .15s}
 a.card:hover .arrow{transform:translateX(3px);color:var(--ink)}
+.ext-toggle{margin:12px 0 0;display:inline-flex;align-items:center;gap:7px;font:600 .82rem var(--mono);color:var(--muted);background:none;border:1.5px dashed var(--line);border-radius:999px;padding:6px 14px;cursor:pointer}
+.ext-toggle:hover,.ext-toggle:focus-visible{color:var(--ink);border-color:var(--ink)}
+.ext-toggle .chev{display:inline-block;transition:transform .15s}
+.ext-toggle[aria-expanded=true] .chev{transform:rotate(90deg)}
+.ext-panel{margin-top:14px;padding:14px 14px 2px;border:1.5px dashed var(--line);border-radius:10px;background:var(--panel)}
+.ext-panel .note{margin:0 0 10px;font:600 .72rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 footer{margin-top:28px;color:var(--muted);font:.78rem var(--mono)}
 [hidden]{display:none!important}
 </style>
@@ -64,24 +70,51 @@ const COURSES = {{ site.data.courses | jsonify }}
 const main = document.getElementById("main");
 let total = 0;
 
-main.innerHTML = COURSES.map(c => `
+const cardsHTML = (pages, topicTitle) => pages.map(({title: name, url}, i) => (total++, `
+  <a class="card" href="{{ site.baseurl }}${url}" data-search="${(name + " " + topicTitle).toLowerCase()}">
+    <span class="num">${String(i + 1).padStart(2, "0")}</span>
+    <span>${name}</span>
+    <span class="arrow">→</span>
+  </a>`)).join("");
+
+// A topic with `extends: <other topic's title>` is that other topic's extension material.
+// Its cards are rendered behind an "Extensions" toggle on the parent topic, rather than as a topic of their own.
+main.innerHTML = COURSES.map(c => {
+  const extByParent = new Map(c.topics.filter(t => t.extends).map(t => [t.extends, t]));
+  const mainTopics = c.topics.filter(t => !t.extends);
+  return `
   <section class="block course" data-c="${c.id}">
     <h2>${c.name}<span class="spec">${c.tag.toUpperCase()}</span></h2>
-    ${c.topics.map(t => `
+    ${mainTopics.map(t => {
+      const ext = extByParent.get(t.title);
+      return `
       <div class="topic">
         <h3>${t.title}</h3>
-        <div class="cards">
-          ${t.pages.map(({title: name, url}, i) => (total++, `
-            <a class="card" href="{{ site.baseurl }}${url}" data-search="${(name + " " + t.title).toLowerCase()}">
-              <span class="num">${String(i + 1).padStart(2, "0")}</span>
-              <span>${name}</span>
-              <span class="arrow">→</span>
-            </a>`)).join("")}
-        </div>
-      </div>`).join("")}
-  </section>`).join("");
+        <div class="cards">${cardsHTML(t.pages, t.title)}</div>
+        ${ext ? `
+        <button class="ext-toggle" type="button" aria-expanded="false">
+          <span class="chev">▸</span> Extensions <span class="count">(${ext.pages.length})</span>
+        </button>
+        <div class="ext-panel" hidden>
+          <p class="note">Beyond the specification</p>
+          <div class="cards">${cardsHTML(ext.pages, ext.title)}</div>
+        </div>` : ""}
+      </div>`;
+    }).join("")}
+  </section>`;
+}).join("");
 
 document.getElementById("count").textContent = total;
+
+document.querySelectorAll(".ext-toggle").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const panel = btn.nextElementSibling;
+    const open = panel.hidden;
+    panel.hidden = !open;
+    btn.dataset.manual = open ? "open" : "closed";
+    btn.setAttribute("aria-expanded", String(open));
+  });
+});
 
 const q = document.getElementById("q");
 const buttons = document.querySelectorAll("#filters button");
@@ -102,6 +135,17 @@ function apply() {
       });
       topic.hidden = !topicShown;
       secShown += topicShown;
+
+      // Auto-open an Extensions panel while a search matches something inside it;
+      // otherwise put it back how the user last left it.
+      const panel = topic.querySelector(".ext-panel");
+      const toggle = topic.querySelector(".ext-toggle");
+      if (panel && toggle) {
+        const extMatch = term && [...panel.querySelectorAll(".card")].some(c => !c.hidden);
+        const open = extMatch || toggle.dataset.manual === "open";
+        panel.hidden = !open;
+        toggle.setAttribute("aria-expanded", String(open));
+      }
     });
     sec.hidden = !secShown;
     shown += secShown;

@@ -1,0 +1,99 @@
+---
+layout: demo
+title: "Selection Sort"
+spec: "A LEVEL EXTENSION · BEYOND THE OCR SPECIFICATION"
+algo: true
+---
+<p class="lede">A selection sort repeatedly finds the <b>smallest</b> item left in the unsorted part of the list and swaps it into place at the front. It is not on the OCR specification, but it is a natural algorithm to compare with bubble and insertion sort: it makes far fewer swaps, but just as many comparisons.</p>
+
+<section class="block" id="how-it-works">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>Set <span class="mono">minIndex</span> to the position of the first unsorted item.</li>
+      <li>Scan the rest of the unsorted part. Whenever an item smaller than the one at <span class="mono">minIndex</span> is found, <span class="mono">minIndex</span> is updated to point at it.</li>
+      <li>When the scan reaches the end, the item at <span class="mono">minIndex</span> is the smallest left in the list.</li>
+      <li><b>Swap</b> it with the first unsorted item, unless it is already there.</li>
+      <li>The sorted part is now one item longer. Repeat from the next position.</li>
+      <li>After <b>n − 1</b> passes every item is in its final place.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>It works <b>in place</b>, needing only a few extra variables.</li>
+        <li>Each pass makes exactly <b>one</b> swap at most, so a selection sort never does more than <b>n − 1</b> swaps in total — far fewer than a bubble sort, which can do up to about n² ÷ 2.</li>
+        <li>It always scans the whole unsorted part on every pass, even if the list is already sorted, so it has <b>no best case speed-up</b> the way bubble and insertion sort do.</li>
+        <li>It is <b>not stable</b>: swapping the smallest item into place can jump it past an equal item, changing their original order.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Press Play to watch minIndex track the smallest unsorted item as the list is scanned, then jump to the front of the unsorted part. Try Already sorted to see that it still makes every comparison, and compare the swap count with a bubble sort on the same data." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block" id="check-your-understanding">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'sort',cLabel:'Comparisons',wLabel:'Swaps',refs:['n','n2'],
+ key:'<span><i class="cur"></i>current smallest (minIndex)</span><span><i class="cmp"></i>being compared</span><span><i class="swap"></i>swapped into place</span><span><i class="sorted"></i>in its final place</span>',
+ bigO:{best:'O(n²)',avg:'O(n²)',worst:'O(n²)',space:'O(1)'},
+ why:[
+  '<b>Every case is O(n²):</b> the scan for the smallest item always looks at every remaining item, whatever order the list starts in. Unlike bubble or insertion sort, there is no early exit, so the number of comparisons is always about n × n ÷ 2.',
+  '<b>Swaps, O(n):</b> at most one swap happens per pass, so at most n − 1 swaps in total. This makes selection sort useful when writing to memory is expensive, even though comparisons are not reduced.',
+  '<b>Space, O(1):</b> the list is sorted in place, using only minIndex and a loop counter.',
+  '<b>Compared with bubble sort:</b> both are O(n²), but selection sort trades a worse best case (no O(n) speed-up) for far fewer writes to the list.'],
+ ocr:['procedure selectionSort(numbers:byRef)','  n = numbers.length','  for i = 0 to n - 2','    minIndex = i','    for j = i + 1 to n - 1','      if numbers[j] < numbers[minIndex] then','        minIndex = j','      endif','    next j','    if minIndex <> i then','      temp = numbers[i]','      numbers[i] = numbers[minIndex]','      numbers[minIndex] = temp','    endif','  next i','endprocedure'],
+ swift:['func selectionSort(_ numbers: inout [Int]) {','    guard numbers.count > 1 else { return }','    for i in 0..<(numbers.count - 1) {','        var minIndex = i','        for j in (i + 1)..<numbers.count {','            if numbers[j] < numbers[minIndex] {','                minIndex = j','            }','        }','        if minIndex != i {','            numbers.swapAt(i, minIndex)','        }','    }','}'],
+ flows:[{w:650,h:680,nodes:[
+  {id:'start',t:'term',x:220,y:30,s:'Start'},{id:'i0',t:'proc',x:220,y:100,s:'i = 0'},{id:'d1',t:'dec',x:220,y:180,s:'i <= n - 2 ?'},
+  {id:'setup',t:'proc',x:220,y:270,s:'minIndex = i|j = i + 1'},{id:'d2',t:'dec',x:220,y:360,s:'j <= n - 1 ?'},{id:'d3',t:'dec',x:470,y:360,s:'list[j] <|list[minIndex]?'},
+  {id:'setm',t:'proc',x:470,y:450,s:'minIndex = j'},{id:'jinc',t:'proc',x:470,y:530,s:'j = j + 1'},{id:'d4',t:'dec',x:220,y:450,s:'minIndex <> i ?'},
+  {id:'swap',t:'proc',x:220,y:540,s:'swap list[i] and|list[minIndex]'},{id:'iinc',t:'proc',x:220,y:620,s:'i = i + 1'},{id:'end',t:'term',x:470,y:180,s:'End'}],
+  arrows:[{d:'M220 52V78'},{d:'M220 122V148'},{d:'M220 212V248',l:'Yes',x:240,y:238},{d:'M315 180H425',l:'No',x:340,y:172},
+   {d:'M220 292V328'},{d:'M315 360H375',l:'Yes',x:330,y:352},{d:'M220 392V428',l:'No',x:240,y:412},
+   {d:'M470 392V428',l:'Yes',x:490,y:414},{d:'M565 360H600V530H555',l:'No',x:580,y:352},{d:'M470 472V508'},
+   {d:'M385 530H40V360H125'},{d:'M220 482V518',l:'Yes',x:240,y:503},{d:'M315 450H360V620H305',l:'No',x:320,y:442},
+   {d:'M220 562V598'},{d:'M135 620H40V180H125'}]}],
+ run:function*(X){
+  const a=X.a,S=X.S,n=a.length;
+  yield S(`The list has <b>${n}</b> items. A selection sort makes <b>n − 1</b> passes, each one finding the smallest item left and swapping it to the front of the unsorted part.`,[1,2],[1,2],'start',{v:{n}});
+  for(let i=0;i<n-1;i++){
+   let minIndex=i;
+   const K=(e)=>{const k={};for(let t=0;t<i;t++)k[t]='sorted';k[minIndex]='cur';return Object.assign(k,e)};
+   yield S(`<b>i = ${i}.</b> Assume the smallest item left is at position ${i}: set <b>minIndex</b> to ${i}, then scan the rest of the list.`,[3,4],[3,4],'setup',{k:K(),p:[[i,'i'],[minIndex,'minIndex']],v:{i,minIndex}});
+   for(let j=i+1;j<n;j++){
+    X.c++;const lt=a[j]<a[minIndex];
+    yield S(`Is ${a[j]} &lt; ${a[minIndex]} (the smallest found so far)? ${lt?`<b>Yes</b>: ${a[j]} is now the smallest.`:'<b>No</b>: leave minIndex where it is.'}`,[5,6],[5,6],'d3',{k:K({[j]:'cmp'}),p:[[i,'i'],[j,'j'],[minIndex,'minIndex']],v:{i,j,minIndex}});
+    if(lt){
+     minIndex=j;
+     yield S(`<b>minIndex</b> is now ${minIndex}.`,6,6,'setm',{k:K({[j]:'cur'}),p:[[i,'i'],[j,'j'],[minIndex,'minIndex']],v:{i,j,minIndex}});
+    }
+   }
+   const K2=(e)=>{const k={};for(let t=0;t<i;t++)k[t]='sorted';return Object.assign(k,e)};
+   if(minIndex!==i){
+    yield S(`<b>minIndex</b> (${minIndex}) is not <b>i</b> (${i}), so swap ${a[i]} and ${a[minIndex]} into place.`,[9,10,11,12],[8,9],'d4',{k:K2({[i]:'cmp',[minIndex]:'cmp'}),p:[[i,'i'],[minIndex,'minIndex']],v:{i,minIndex}});
+    [a[i],a[minIndex]]=[a[minIndex],a[i]];X.w++;
+    yield S(`Swapped. <b>${a[i]}</b> is now in its final place at position ${i}.`,[9,10,11,12],[8,9],'swap',{k:K2({[i]:'swap'}),v:{i,minIndex}});
+   }else{
+    yield S(`<b>minIndex</b> is already <b>i</b>, so ${a[i]} is already the smallest left and needs no swap.`,9,8,'d4',{k:K2({[i]:'sorted'}),v:{i,minIndex}});
+   }
+  }
+  const k={};a.forEach((_,t)=>k[t]='sorted');
+  yield S(`<b>Sorted.</b> It took ${X.c} comparisons and only ${X.w} swap${X.w===1?'':'s'} — a bubble sort on the same data usually needs far more.`,15,13,'end',{k});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'A selection sort scans 5, 2, 8, 1 for the smallest item. What does minIndex point to once the scan has finished?',opts:['The position of 1','The position of 2','The position of 5'],a:'The position of 1',why:'1 is the smallest value in the list, so minIndex ends up pointing at it, wherever it started.'},
+ {q:'After minIndex has been found in a pass, what happens next?',opts:['It is swapped with the first item in the unsorted part','It is swapped with the last item in the list','It is compared again with every item'],a:'It is swapped with the first item in the unsorted part',why:'This puts the smallest remaining item at the front of the unsorted part, extending the sorted part by one.'},
+ {q:'What is the maximum number of swaps a selection sort makes on a list of n items?',opts:['n − 1','n² ÷ 2','0'],a:'n − 1',why:'At most one swap happens per pass, and there are n − 1 passes.'},
+ {q:'Why does a selection sort have no best case speed-up, unlike a bubble sort?',opts:['It always scans the whole unsorted part to find the minimum, even if the list is already sorted','It always makes a swap on every pass','It only works on reversed lists'],a:'It always scans the whole unsorted part to find the minimum, even if the list is already sorted',why:'There is no way to tell the list is already sorted without comparing every item, so the comparisons never reduce.'},
+ {q:'What is the time complexity of a selection sort in the best, average and worst cases?',opts:['O(n²) in all three','O(n) best, O(n²) worst','O(n log n) in all three'],a:'O(n²) in all three',why:'The number of comparisons does not depend on the starting order of the list.'},
+ {q:'Why might a selection sort be chosen over a bubble sort?',opts:['It makes far fewer swaps, which matters if writing to memory is slow or costly','It has a better worst-case time complexity','It is a stable sort'],a:'It makes far fewer swaps, which matters if writing to memory is slow or costly',why:'Both are O(n²) in time, but selection sort writes to the list far less often. It is also not stable.'},
+ {q:'Is a selection sort stable?',opts:['No: swapping the minimum into place can move it past an equal item','Yes: items are only ever compared, never moved out of order','Yes, but only on an already sorted list'],a:'No: swapping the minimum into place can move it past an equal item',why:'A long-distance swap can jump an item over an equal one that appeared earlier, changing their relative order.'},
+],null,$('#score'),$('#qreset'));
+</script>

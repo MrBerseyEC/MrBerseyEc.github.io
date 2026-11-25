@@ -5,6 +5,9 @@
 #   url:   the path to the page, starting with /
 # To hide a demo, put `published: false` in the page's own front matter. Leave its line here.
 # A topic with no published pages is left off the home page.
+# `extends: <other topic's title>` marks a topic as that other topic's extension material: on the
+# home page its cards sit behind an "Extensions" toggle on the parent topic, instead of being a
+# topic of their own. It still gets its own strip of tabs at the top of its own demo pages.
 
 - id: alevel
   name: A-Level Computer Science
@@ -37,6 +40,16 @@
         - { title: "Insertion Sort",  nav: "Insertion sort",  url: /a-level/2.3/insertion-sort.html }
         - { title: "Merge Sort",      nav: "Merge sort",      url: /a-level/2.3/merge-sort.html }
         - { title: "Quick Sort",      nav: "Quick sort",      url: /a-level/2.3/quick-sort.html }
+
+    - title: 2.3 Algorithms — Extension
+      label: 2.3 extension demos
+      extends: 2.3 Algorithms
+      pages:
+        - { title: "Selection Sort",        nav: "Selection sort",        url: /a-level/2.3-extension/selection-sort.html }
+        - { title: "Cocktail Shaker Sort",  nav: "Cocktail shaker sort",  url: /a-level/2.3-extension/cocktail-shaker-sort.html }
+        - { title: "Tim Sort",              nav: "Tim sort",              url: /a-level/2.3-extension/tim-sort.html }
+        - { title: "Counting Sort",         nav: "Counting sort",         url: /a-level/2.3-extension/counting-sort.html }
+        - { title: "Radix Sort",            nav: "Radix sort",            url: /a-level/2.3-extension/radix-sort.html }
 
 - id: gcse
   name: GCSE Computer Science

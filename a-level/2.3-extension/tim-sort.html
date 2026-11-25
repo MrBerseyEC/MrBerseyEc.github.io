@@ -1,0 +1,138 @@
+---
+layout: demo
+title: "Tim Sort"
+spec: "A LEVEL EXTENSION · BEYOND THE OCR SPECIFICATION"
+algo: true
+---
+<p class="lede">Tim sort is a <b>hybrid</b> sort: it combines insertion sort and merge sort to get the best of both. It splits the list into small runs, sorts each run with insertion sort, then merges the runs back together exactly like a merge sort. It is the sort used by Python's <span class="mono">sort()</span> and by Java for sorting objects. This page shows a simplified version of the real algorithm.</p>
+
+<section class="block" id="how-it-works">
+  <h2>How it works</h2>
+  <div class="cols2" style="align-items:start">
+    <ol class="steps-en">
+      <li>Choose a small run length, <span class="mono">minRun</span> (this demo uses 4).</li>
+      <li>Starting from the front of the list, find the next <b>natural run</b>: a stretch of items that is already in non-decreasing order.</li>
+      <li>If that natural run is shorter than <span class="mono">minRun</span>, extend it up to <span class="mono">minRun</span> items and sort the whole run with <b>insertion sort</b>, just as on the <a href="/a-level/2.3/insertion-sort.html">Insertion Sort</a> page.</li>
+      <li>Record the run's start and end, and move on to find the next run, until the whole list has been split into runs.</li>
+      <li>Repeatedly <b>merge</b> neighbouring runs in pairs, exactly as in <a href="/a-level/2.3/merge-sort.html">Merge Sort</a>, until only one run — the whole sorted list — is left.</li>
+    </ol>
+    <div>
+      <ul class="why" style="margin:0;padding-left:1.2em">
+        <li>Insertion sort is very fast on short or nearly-sorted runs, so it is used to get each small run in order cheaply.</li>
+        <li>Merging is then used to combine those runs, giving the same O(n log n) guarantee as a merge sort — without insertion sort's O(n²) risk on a long list.</li>
+        <li>If the whole list is already sorted, it is found to be <b>one single natural run</b>, so no merging is needed at all: this is where tim sort's excellent best case comes from.</li>
+        <li><b>Real tim sort goes further</b> than this demo: it picks minRun based on n (usually between 32 and 64), reverses strictly descending runs instead of insertion-sorting them, and merges runs using a smarter stack and a "galloping" mode that speeds up merges when one run is consistently winning.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% include algo-demo.html sub="Press Play to watch the list split into runs — blue where a natural run was found, amber where insertion sort had to extend and finish it off — and then merged back together in pairs, just like a merge sort." %}
+
+{% include algo-bigo.html sub="Big O describes how the work grows as the list gets longer, ignoring constants, and is normally quoted for the worst case." %}
+
+<section class="block" id="check-your-understanding">
+  <h2>Check your understanding</h2>
+  {% include quiz.html %}
+</section>
+
+<script>
+algoDemo({
+ kind:'sort',cLabel:'Comparisons',wLabel:'Writes',refs:['n','nlogn'],
+ key:'<span><i class="L"></i>a sorted run, or the left run in a merge</span><span><i class="R"></i>the right run in a merge</span><span><i class="cmp"></i>being compared</span><span><i class="sorted"></i>fully sorted</span>',
+ bigO:{best:'O(n)',avg:'O(n log n)',worst:'O(n log n)',space:'O(n)'},
+ why:[
+  '<b>Best case, O(n):</b> an already-sorted list is found to be one single natural run covering the whole list, so no insertion sort or merging is ever needed — just the one scan that detects it.',
+  '<b>Worst and average case, O(n log n):</b> once the list is split into runs of about minRun items, merging them in pairs takes about log₂(n / minRun) levels, each handling all n items between them — the same reasoning as a merge sort.',
+  '<b>Why not plain insertion sort?</b> Insertion sort alone is O(n²) in the worst case. Keeping runs short and merging them keeps the worst case down to O(n log n), while still being fast on data that is nearly sorted in places.',
+  '<b>Space, O(n):</b> merging runs needs a temporary buffer, exactly as in a merge sort. This demo uses a fixed minRun of 4; real tim sort scales minRun with n and merges more cleverly, but the same trade-off between insertion sort and merge sort is at its heart.'],
+ ocr:['procedure timSort(numbers:byRef)','  n = numbers.length','  minRun = 4','  low = 0','  runs = empty list','  while low < n','    high = low','    while high + 1 < n AND numbers[high + 1] >= numbers[high]','      high = high + 1','    endwhile','    if high - low + 1 < minRun then','      high = min(low + minRun - 1, n - 1)','      insertionSort(numbers, low, high)','    endif','    append (low, high) to runs','    low = high + 1','  endwhile','  while runs.length > 1','    take the first two runs, (low, mid) and (mid + 1, high), from runs','    merge(numbers, low, mid, high)','    replace them with the single run (low, high)','  endwhile','endprocedure'],
+ swift:['func timSort(_ numbers: inout [Int]) {','    let n = numbers.count','    let minRun = 4','    var low = 0','    var runs: [(Int, Int)] = []','    while low < n {','        var high = low','        while high + 1 < n && numbers[high + 1] >= numbers[high] {','            high += 1','        }','        if high - low + 1 < minRun {','            high = min(low + minRun - 1, n - 1)','            insertionSort(&numbers, low, high)','        }','        runs.append((low, high))','        low = high + 1','    }','    while runs.count > 1 {','        let (low1, high1) = runs.removeFirst()','        let (low2, high2) = runs.removeFirst()','        merge(&numbers, low1, high1, high2)','        runs.append((low1, high2))','    }','}'],
+ flows:[
+  {title:'Stage 1: find and extend runs',w:460,h:620,nodes:[
+   {id:'start',t:'term',x:200,y:30,s:'Start'},{id:'init',t:'proc',x:200,y:100,s:'low = 0|runs = empty list'},{id:'d1',t:'dec',x:200,y:180,s:'low < n ?'},
+   {id:'scan',t:'proc',x:200,y:270,s:'find the natural run from low:|high = end of ascending run'},{id:'d2',t:'dec',x:200,y:360,s:'run length < minRun ?'},
+   {id:'ext',t:'proc',x:200,y:450,s:'extend to minRun items,|insertionSort(low, high)'},{id:'add',t:'proc',x:200,y:540,s:'add (low, high) to runs|low = high + 1'},{id:'end1',t:'term',x:430,y:180,s:'End of stage 1'}],
+   arrows:[{d:'M200 52V78'},{d:'M200 122V148'},{d:'M295 180H340',l:'No',x:300,y:172},{d:'M200 212V238',l:'Yes',x:220,y:228},
+    {d:'M200 302V328'},{d:'M200 392V418',l:'Yes',x:220,y:408},{d:'M295 360H360V540H250',l:'No',x:320,y:352},
+    {d:'M200 482V508'},{d:'M105 540H20V180H125'}]},
+  {title:'Stage 2: merge the runs',w:460,h:440,nodes:[
+   {id:'start2',t:'term',x:200,y:30,s:'Start stage 2'},{id:'d3',t:'dec',x:200,y:110,s:'more than one run ?'},
+   {id:'take',t:'proc',x:200,y:200,s:'take the first two runs,|(low, mid) and (mid+1, high)'},{id:'mrg',t:'proc',x:200,y:280,s:'merge(low, mid, high)'},
+   {id:'repl',t:'proc',x:200,y:360,s:'replace them with the|single run (low, high)'},{id:'end2',t:'term',x:430,y:110,s:'End'}],
+   arrows:[{d:'M200 52V88'},{d:'M295 110H340',l:'No',x:300,y:102},{d:'M200 142V168',l:'Yes',x:220,y:160},
+    {d:'M200 222V248'},{d:'M200 302V328'},{d:'M105 360H20V110H125'}]}],
+ run:function*(X){
+  const a=X.a,S=X.S,n=a.length,MINRUN=4;
+  yield S(`The list has <b>${n}</b> items. Tim sort first finds short <b>runs</b> that are already in order, extends any that are too short with <b>insertion sort</b>, then <b>merges</b> the runs back together in pairs.`,[1,2,3,4],[1,2,3,4],'init',{v:{n,minRun:MINRUN}});
+  let runs=[],low=0;
+  while(low<n){
+   let high=low;
+   while(high+1<n&&a[high+1]>=a[high])high++;
+   const natural=high-low+1;
+   const RK=()=>{const k={};for(let t=low;t<=high;t++)k[t]='cmp';return k};
+   yield S(`Starting at position <b>${low}</b>: the list is already non-decreasing for <b>${natural}</b> item${natural===1?'':'s'} &mdash; a natural run.`,[6,7,8,9],[6,7,8,9],'scan',{k:RK(),rng:[low,high],p:[[low,'low'],[high,'high']],v:{low,high,natural}});
+   if(natural<MINRUN){
+    const oldHigh=high;high=Math.min(low+MINRUN-1,n-1);
+    yield S(`${natural} is shorter than minRun (${MINRUN}), so extend the run to position ${high} and sort it with insertion sort.`,[10,11,12],[10,11,12],'ext',{k:RK(),rng:[low,high],p:[[low,'low'],[high,'high']],v:{low,high}});
+    for(let i=Math.max(low+1,oldHigh+1);i<=high;i++){
+     const cur=a[i];let j=i-1;
+     while(j>=low){
+      X.c++;
+      if(a[j]>cur){a[j+1]=a[j];X.w++;j--;}else break;
+     }
+     a[j+1]=cur;
+    }
+    const k2={};for(let t=low;t<=high;t++)k2[t]='L';
+    yield S(`Run sorted: positions ${low}–${high} are now <b>${a.slice(low,high+1).join(', ')}</b>.`,12,12,'ext',{k:k2,rng:[low,high],v:{low,high}});
+   }else{
+    const k2={};for(let t=low;t<=high;t++)k2[t]='L';
+    yield S(`${natural} is already at least minRun, so this run needs no insertion sort.`,[10],[10],'scan',{k:k2,rng:[low,high],v:{low,high}});
+   }
+   runs.push([low,high]);
+   low=high+1;
+  }
+  yield S(`<b>${runs.length}</b> run${runs.length===1?'':'s'} found: ${runs.map(r=>`[${r[0]}–${r[1]}]`).join(', ')}. Now merge neighbouring runs together, two at a time, until one sorted run is left.`,[17],[17],'take',{v:{runCount:runs.length}});
+  function* merge(lo,mid,hi){
+   let i=lo,j=mid+1,k=0;const tmp=new Array(hi-lo+1).fill(null);
+   const KK=e=>{const kk={};for(let t=lo;t<=mid;t++)kk[t]=t<i?'used':'L';for(let t=mid+1;t<=hi;t++)kk[t]=t<j?'used':'R';return Object.assign(kk,e)};
+   const V=()=>({low:lo,mid,high:hi,i,j,k});
+   yield S(`Merge the two sorted runs ${lo}–${mid} and ${mid+1}–${hi}.`,[18,19],20,'mrg',{k:KK(),rng:[lo,hi],tmp:tmp.slice(),v:V()});
+   while(i<=mid&&j<=hi){
+    X.c++;const left=a[i]<=a[j],ai=a[i],aj=a[j];
+    if(left){tmp[k]=a[i];i++}else{tmp[k]=a[j];j++}
+    k++;
+    yield S(`Compare ${ai} and ${aj}: copy <b>${left?ai:aj}</b> into temp.`,19,20,'mrg',{k:KK({[left?i-1:j-1]:'cmp'}),rng:[lo,hi],tmp:tmp.slice(),v:V()});
+   }
+   while(i<=mid){tmp[k]=a[i];i++;k++}
+   while(j<=hi){tmp[k]=a[j];j++;k++}
+   for(let t=0;t<tmp.length;t++)a[lo+t]=tmp[t];
+   X.w+=tmp.length;
+   const k2={};for(let t=lo;t<=hi;t++)k2[t]='L';
+   yield S(`Copy temp back into positions ${lo}–${hi}. This run is now sorted.`,20,21,'repl',{k:k2,rng:[lo,hi],tmp:tmp.slice(),v:{low:lo,high:hi}});
+  }
+  while(runs.length>1){
+   const next=[];
+   for(let idx=0;idx<runs.length;idx+=2){
+    if(idx+1<runs.length){
+     const[lo,hiL]=runs[idx],[,hiR]=runs[idx+1];
+     yield* merge(lo,hiL,hiR);
+     next.push([lo,hiR]);
+    }else next.push(runs[idx]);
+   }
+   runs=next;
+  }
+  const k={};a.forEach((_,t)=>k[t]='sorted');
+  yield S(`<b>Sorted.</b> ${X.c} comparisons and ${X.w} writes in total.`,22,23,'end',{k});
+ }
+});
+cardQuiz($('#quiz'),[
+ {q:'What two algorithms does tim sort combine?',opts:['Insertion sort and merge sort','Bubble sort and quick sort','Counting sort and radix sort'],a:'Insertion sort and merge sort',why:'Small runs are sorted with insertion sort, then the sorted runs are combined with the same merging step as a merge sort.'},
+ {q:'Why does tim sort have a best-case time of O(n), unlike a plain merge sort?',opts:['An already-sorted list is detected as a single natural run, so no merging is needed at all','It never has to use insertion sort','It always uses a minRun of 1'],a:'An already-sorted list is detected as a single natural run, so no merging is needed at all',why:'Finding the natural run only takes one scan of the list, which is O(n), and there is nothing left to merge.'},
+ {q:'What is minRun for?',opts:['A minimum length that every run is extended to, using insertion sort, before merging begins','The smallest value allowed in the list','The number of buckets used while merging'],a:'A minimum length that every run is extended to, using insertion sort, before merging begins',why:'Runs that are too short to find naturally are padded out to at least minRun items and put in order with insertion sort.'},
+ {q:'Why use insertion sort for short runs instead of plain merge sort all the way down to single items?',opts:['Insertion sort has little overhead and is fast on short, nearly-sorted runs','Insertion sort is always faster than merge sort','Merge sort cannot sort short lists'],a:'Insertion sort has little overhead and is fast on short, nearly-sorted runs',why:'Splitting a list all the way down to single items, as plain merge sort does, adds overhead that insertion sort avoids on small runs.'},
+ {q:'What is the worst-case and average-case time complexity of tim sort?',opts:['O(n log n)','O(n²)','O(n)'],a:'O(n log n)',why:'Once the runs are formed, merging them in pairs costs about n log(n / minRun) comparisons, the same order as a merge sort.'},
+ {q:'Which real programming languages use a version of tim sort?',opts:['Python’s sort() and Java’s object sort','C’s qsort() and every spreadsheet’s SORT function','Only academic textbooks, never real software'],a:'Python’s sort() and Java’s object sort',why:'Tim sort was designed by Tim Peters for Python, and Java later adopted a version of it for sorting arrays of objects.'},
+ {q:'Which feature of the real tim sort is left out of this simplified demo?',opts:['Reversing strictly descending runs, and using galloping mode in merges','Using insertion sort on short runs','Merging sorted runs together'],a:'Reversing strictly descending runs, and using galloping mode in merges',why:'The real algorithm also detects descending runs and speeds up merges when one run keeps winning, using a technique called galloping.'},
+],null,$('#score'),$('#qreset'));
+</script>
