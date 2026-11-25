@@ -252,7 +252,7 @@ function algoDemo(cfg){
   /* ---------- code and flowcharts ---------- */
   tabs(q('ad-codetabs').parentElement);
   function showCode(){
-    listing(q('ad-ocr'),pick('ocr'));listing(q('ad-swift'),pick('swift'));
+    listing(q('ad-ocr'),pick('ocr'),'ocr');listing(q('ad-swift'),pick('swift'),'swift');
     const fl=pick('flows');
     q('ad-flows').innerHTML=fl.map((f,i)=>`<div class="flowbox"><h3${f.title?'':' class="hidden"'}>${f.title||''}</h3><div id="ad-flow${i}" data-label="Flowchart: ${f.title||'the algorithm'}"></div></div>`).join('');
     fl.forEach((f,i)=>flow(q('ad-flow'+i),f.w,f.h,f.nodes,f.arrows));

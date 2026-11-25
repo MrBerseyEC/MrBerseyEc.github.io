@@ -103,6 +103,10 @@ details.recap>.scroll{padding:4px 8px 8px}
 .pc{font:.88rem/1.7 var(--mono);font-variant-ligatures:none;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px 0;margin:0;overflow-x:auto}
 .pc span{display:block;padding:0 12px;border-left:4px solid transparent;white-space:pre}
 .pc span.cur{background:var(--one-soft);border-left-color:var(--one)}
+.pc i{font-style:normal}
+.pc .tk-k{color:#A626A4;font-weight:700}.pc .tk-t{color:#0B7285}.pc .tk-f{color:#1F5BFF}.pc .tk-s{color:#0E7A3E}.pc .tk-n{color:#C2560A}.pc .tk-c{color:var(--muted);font-style:italic}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .pc .tk-k{color:#D68CFF}:root:not([data-theme=light]) .pc .tk-t{color:#4FD1E8}:root:not([data-theme=light]) .pc .tk-f{color:#7FA6FF}:root:not([data-theme=light]) .pc .tk-s{color:#6FD99B}:root:not([data-theme=light]) .pc .tk-n{color:#FFA05C}}
+:root[data-theme=dark] .pc .tk-k{color:#D68CFF}:root[data-theme=dark] .pc .tk-t{color:#4FD1E8}:root[data-theme=dark] .pc .tk-f{color:#7FA6FF}:root[data-theme=dark] .pc .tk-s{color:#6FD99B}:root[data-theme=dark] .pc .tk-n{color:#FFA05C}
 .pc.pick span{cursor:pointer}
 .pc.pick span:hover{background:var(--hl-soft)}
 .pc span.flag{background:var(--hl-soft);border-left-color:var(--hl)}
