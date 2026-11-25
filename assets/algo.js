@@ -19,7 +19,7 @@
      best:   (sorted array) => the target that gives the best case (searches only)
    }
    X.S(message, ocrLines, swiftLines, flowNodes, extra) builds one step. ocrLines, swiftLines and flowNodes may be a single value or a list.
-   extra may hold:  rec {c:[{lo,hi,d,st,L,R}], a: index of the running call}   k {index: class}   ov {index: value shown instead}   p [[index, label]]   rng [low, high]   v {name: value}   tmp [values]   x text
+   extra may hold:  rec {c:[{lo,hi,d,st,L,R, vals,cl,sd}], a: index of the running call}  (vals, cl, sd: the call's own list, its card colours, sorted yet: for a version that makes new lists)   k {index: class}   ov {index: value shown instead}   p [[index, label]]   rng [low, high]   v {name: value}   tmp [values]   x text
    X.c and X.w are the two counters. The generator adds to them. */
 const SUITS=['\u2660','\u2665','\u2666','\u2663'];
 const face=v=>({1:'A',11:'J',12:'Q',13:'K'})[v]||v;
@@ -136,10 +136,11 @@ function algoDemo(cfg){
       const act=id===R.a,state=act?'on':z.st==='run'?'wait':'fin',len=z.hi-z.lo+1;
       let cards='';
       for(let t=z.lo;t<=z.hi;t++){
-        let cl=k[t]==='sorted'?'sorted':'';
-        if(!cl&&act&&k[t])cl=k[t];
-        if(!cl)cl=within(z.L,t)?'L':within(z.R,t)?'R':'';
-        cards+=`<span class="${cl}">${suit(a[t])}${face(a[t])}${act&&pt[t]?`<sup>${pt[t].join(' ')}</sup>`:''}</span>`;
+        /* a call with its own list (z.vals, the not-in-place version) shows that list and its own colours; the others show the shared list */
+        const own=z.vals,val=own?z.vals[t-z.lo]:a[t];
+        let cl=own?(z.sd?'sorted':z.cl?z.cl[t-z.lo]||'':''):k[t]==='sorted'?'sorted':'';
+        if(!own){if(!cl&&act&&k[t])cl=k[t];if(!cl)cl=within(z.L,t)?'L':within(z.R,t)?'R':''}
+        cards+=`<span class="${cl}">${suit(val)}${face(val)}${act&&pt[t]?`<sup>${pt[t].join(' ')}</sup>`:''}</span>`;
       }
       const lab=len>=3?`quickSort(${z.lo}, ${z.hi})`:`(${z.lo}, ${z.hi})`;
       html+=`<div class="tn ${state}" style="left:${GX+z.lo*PW}px;top:${y(z)}px;width:${len*PW-6}px"><b class="rl">${lab}</b>${cards}</div>`;
@@ -175,7 +176,7 @@ function algoDemo(cfg){
     q('ad-x').textContent=st.x||'';
     q('ad-msg').innerHTML=st.m;
     q('ad-vars').innerHTML=Object.entries(st.v||{}).map(([n,v])=>`<span>${n} = ${v}</span>`).join('');
-    q('ad-count').innerHTML=`${cfg.cLabel}: <b>${st.c}</b>`+(cfg.wLabel?` &nbsp; ${cfg.wLabel}: <b>${st.w}</b>`:'')+`<br>Step <b>${idx}</b> of ${steps.length-1}`;
+    q('ad-count').innerHTML=`${cfg.cLabel}: <b>${st.c}</b>`+(pick('wLabel')?` &nbsp; ${pick('wLabel')}: <b>${st.w}</b>`:'')+`<br>Step <b>${idx}</b> of ${steps.length-1}`;
     [['ad-ocr',st.o],['ad-swift',st.s]].forEach(([id,ls])=>{
       const pre=q(id);[...pre.children].forEach((s,i)=>s.classList.toggle('cur',ls.includes(i)));
       const first=pre.children[ls[0]];if(first&&pre.offsetParent){const top=first.offsetTop-pre.clientHeight/3;pre.scrollTop=Math.max(0,top)}});
@@ -299,7 +300,7 @@ function algoDemo(cfg){
     svg+=`<path class="m" d="${rows.map((r,i)=>(i?'L':'M')+x(r.n)+' '+y(r.c)).join('')}"/>`+rows.map(r=>`<circle cx="${x(r.n)}" cy="${y(r.c)}" r="4"/>`).join('')+'</svg>';
     q('ad-bo-chart').innerHTML=svg;
     q('ad-bo-legend').innerHTML=`<span><i></i>Measured ${cfg.cLabel.toLowerCase()}</span>`+cfg.refs.map(k=>`<span><i class="d" style="border-color:${REF[k].col}"></i>${REF[k].name}</span>`).join('');
-    q('ad-bo-tbl').innerHTML=`<table class="t"><tr><th>n</th><th>${cfg.cLabel}</th>${cfg.wLabel&&!isS?`<th>${cfg.wLabel}</th>`:''}</tr>`+rows.map(r=>`<tr><td class="mono">${r.n}</td><td class="mono">${r.c}</td>${cfg.wLabel&&!isS?`<td class="mono">${r.w}</td>`:''}</tr>`).join('')+'</table>';
+    q('ad-bo-tbl').innerHTML=`<table class="t"><tr><th>n</th><th>${cfg.cLabel}</th>${pick('wLabel')&&!isS?`<th>${pick('wLabel')}</th>`:''}</tr>`+rows.map(r=>`<tr><td class="mono">${r.n}</td><td class="mono">${r.c}</td>${pick("wLabel")&&!isS?`<td class="mono">${r.w}</td>`:''}</tr>`).join('')+'</table>';
     const a=rows[rows.length-2],b=rows[rows.length-1];
     q('ad-bo-note').innerHTML=`Doubling n from <b>${a.n}</b> to <b>${b.n}</b> multiplied the work by <b>${(b.c/Math.max(a.c,.0001)).toFixed(2)}</b>. A factor near 1 suggests constant or logarithmic time, near 2 suggests linear (or n log n, which is slightly above 2), and near 4 suggests n².`;
   }
