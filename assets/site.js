@@ -53,7 +53,30 @@ function drill(el,gen){
 }
 /* a pseudocode listing inside <pre class="pc">: one <span data-i> per line */
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
-function listing(el,lines){el.innerHTML=lines.map((l,i)=>`<span data-i="${i}">${esc(l)||' '}</span>`).join('')}
+const KW={
+  swift:'func var let if else guard return for in while repeat switch case default break continue struct class enum init self inout where true false nil import private public static mutating extension protocol throws throw try catch defer as is some any _',
+  ocr:'procedure endprocedure function endfunction if then elseif else endif for to step next while endwhile do until switch case default endswitch return and or not mod div true false byval byref const global array print input import class endclass new private public super this'};
+const TY=/^[A-Z][A-Za-z0-9]*$/;
+/* tiny one-line tokenizer for the code tabs: wraps comments, strings, numbers, keywords, types and calls in <span class="tk-*"> */
+function highlight(line,lang){
+  const kw=new Set(KW[lang].split(' ')),ci=lang==='ocr';
+  const re=/(\/\/.*$)|("(?:[^"\\]|\\.)*"?)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][A-Za-z0-9_]*)(\s*\()?|([\s\S])/g;
+  let o='',m;
+  while((m=re.exec(line))){
+    if(m[1])o+=`<i class="tk-c">${esc(m[1])}</i>`;
+    else if(m[2])o+=`<i class="tk-s">${esc(m[2])}</i>`;
+    else if(m[3])o+=`<i class="tk-n">${m[3]}</i>`;
+    else if(m[4]){
+      const w=m[4],k=ci?w.toLowerCase():w,paren=m[5]||'';
+      if(kw.has(k))o+=`<i class="tk-k">${w}</i>${esc(paren)}`;
+      else if(lang==='swift'&&TY.test(w))o+=`<i class="tk-t">${w}</i>${esc(paren)}`;
+      else if(paren)o+=`<i class="tk-f">${w}</i>${esc(paren)}`;
+      else o+=esc(w);
+    }else o+=esc(m[6]);
+  }
+  return o;
+}
+function listing(el,lines,lang){el.innerHTML=lines.map((l,i)=>`<span data-i="${i}">${(lang?highlight(l,lang):esc(l))||' '}</span>`).join('')}
 /* a flowchart. nodes: {id,t,x,y,s} centred on x,y, where t is term, io, dec or proc and s is the text with | for a line break.
    arrows: {d,l,x,y} where d is an SVG path and l an optional label placed at x,y */
 function flow(el,w,h,nodes,arrows){
